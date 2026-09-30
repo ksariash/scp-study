@@ -12,7 +12,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 25;
+  const APP_VERSION = 26;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const ANALYTICS_COHORT = 'SCP 2026 Summer';
   const ANALYTICS_SETTINGS_KEY = 'scpStudy.analytics.v1';

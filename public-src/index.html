@@ -218,6 +218,16 @@
             <span class="materials-question-count" id="materialsQuestionCount">58 questions</span>
           </div>
 
+          <div class="essay-practice-entry">
+            <div class="essay-practice-entry-copy">
+              <span class="eyebrow">Essay practice</span>
+              <strong>Build the answer from names, positions, and key details</strong>
+              <p>Choose the right blocks, pair each authority with the correct position, and leave the distractors out.</p>
+              <span class="essay-practice-progress" id="essayPracticeProgress">0 facts mastered</span>
+            </div>
+            <button class="primary" type="button" id="startEssayPracticeBtn">Start practice</button>
+          </div>
+
           <div class="materials-question-searchbar" role="search">
             <span class="materials-question-search-icon" aria-hidden="true">⌕</span>
             <input id="materialsQuestionInput" type="text" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Search questions, answers, explanations, or transcripts" aria-label="Search course questions" />
@@ -343,6 +353,69 @@
 
       <div class="modal-footer materials-footer">
         <button class="primary" type="button" id="doneMaterialsBtn">Done</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="essayPracticeDialog" class="modal wide essay-practice-dialog">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>Essay Practice</h2>
+          <p>Recall the green-highlight material by assembling the correct name → position → detail pairings.</p>
+        </div>
+        <button class="close-btn" id="closeEssayPractice" aria-label="Close">×</button>
+      </div>
+
+      <div class="essay-practice-topline">
+        <div>
+          <span class="pill" id="essayPracticeTopic">Essay practice</span>
+          <span class="pill subtle" id="essayPracticeCounter">1 / 1</span>
+        </div>
+        <span class="essay-mastery" id="essayMasterySummary">0 facts mastered</span>
+      </div>
+
+      <section class="essay-question-card">
+        <h3 id="essayPracticeTitle">Essay question</h3>
+        <p id="essayPracticePrompt"></p>
+      </section>
+
+      <section class="essay-builder-section" aria-labelledby="essayBuilderHeading">
+        <div class="essay-builder-head">
+          <div>
+            <span class="eyebrow">Your answer</span>
+            <h3 id="essayBuilderHeading">Build the essay outline</h3>
+          </div>
+          <button class="secondary compact" type="button" id="essayClearBtn">Clear</button>
+        </div>
+        <p class="essay-builder-help">Tap blocks below to add them. Tap a block in your answer to remove it. Keep each name with its position and qualification.</p>
+        <div class="essay-answer-zone" id="essayAnswerZone" aria-live="polite">
+          <span class="essay-answer-placeholder" id="essayAnswerPlaceholder">Your selected blocks will appear here.</span>
+        </div>
+      </section>
+
+      <section class="essay-bank-section" aria-labelledby="essayBankHeading">
+        <div class="essay-bank-head">
+          <span class="eyebrow">Building blocks</span>
+          <span id="essayBankCount"></span>
+        </div>
+        <h3 id="essayBankHeading" class="sr-only">Available answer blocks</h3>
+        <div class="essay-chip-bank" id="essayChipBank"></div>
+      </section>
+
+      <div class="essay-feedback hidden" id="essayFeedback" aria-live="polite"></div>
+
+      <details class="essay-model-answer hidden" id="essayModelAnswerWrap">
+        <summary>Show model answer</summary>
+        <p id="essayModelAnswer"></p>
+      </details>
+
+      <div class="modal-footer split essay-practice-footer">
+        <button class="secondary" type="button" id="essayTryAgainBtn" hidden>Try again</button>
+        <div class="essay-footer-right">
+          <button class="secondary" type="button" id="essayNextBtn" hidden>Next essay</button>
+          <button class="primary" type="button" id="essaySubmitBtn">Submit</button>
+        </div>
       </div>
     </div>
   </dialog>
@@ -524,6 +597,7 @@
   <script src="questions.js"></script>
   <script src="audio-reviews.js"></script>
   <script src="glossary.js"></script>
+  <script src="essay-practice.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

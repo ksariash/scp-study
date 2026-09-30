@@ -81,13 +81,14 @@
   const el = id => document.getElementById(id);
   const dom = {
     modeLabel: el('modeLabel'), timerLabel: el('timerLabel'), mainTimer: el('mainTimer'), timerCard: el('timerCard'),
-    categoriesBtn: el('categoriesBtn'), materialsBtn: el('materialsBtn'), statsBtn: el('statsBtn'), testBtn: el('testBtn'), questionSearchFab: el('questionSearchFab'), installBtn: el('installBtn'), installGuideDialog: el('installGuideDialog'), closeInstallGuide: el('closeInstallGuide'),
+    categoriesBtn: el('categoriesBtn'), materialsBtn: el('materialsBtn'), statsBtn: el('statsBtn'), essayBtn: el('essayBtn'), testBtn: el('testBtn'), questionSearchFab: el('questionSearchFab'), installBtn: el('installBtn'), installGuideDialog: el('installGuideDialog'), closeInstallGuide: el('closeInstallGuide'),
     testProgressWrap: el('testProgressWrap'), testQuestionCount: el('testQuestionCount'), testAnsweredCount: el('testAnsweredCount'), testProgressFill: el('testProgressFill'),
     questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), answerForm: el('answerForm'),
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
-    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), startEssayPracticeBtn: el('startEssayPracticeBtn'), essayPracticeProgress: el('essayPracticeProgress'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
+    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
+    essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayPracticeDialog: el('essayPracticeDialog'), closeEssayPractice: el('closeEssayPractice'), essayPracticeTopic: el('essayPracticeTopic'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayClearBtn: el('essayClearBtn'), essayAnswerZone: el('essayAnswerZone'), essayAnswerPlaceholder: el('essayAnswerPlaceholder'), essayChipBank: el('essayChipBank'), essayBankCount: el('essayBankCount'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'), essaySubmitBtn: el('essaySubmitBtn'),
     audioPlayerShell: el('audioPlayerShell'), audioPlayer: el('audioPlayer'), audioTrackTitle: el('audioTrackTitle'), audioTrackCounter: el('audioTrackCounter'), audioPrevBtn: el('audioPrevBtn'), audioBack10Btn: el('audioBack10Btn'), audioForward10Btn: el('audioForward10Btn'), audioNextBtn: el('audioNextBtn'), audioEmptyState: el('audioEmptyState'), audioPlaylistWrap: el('audioPlaylistWrap'), audioPlaylistCount: el('audioPlaylistCount'), audioPlaylistToggle: el('audioPlaylistToggle'), audioPlaylist: el('audioPlaylist'), transcriptPanel: el('transcriptPanel'), transcriptToggle: el('transcriptToggle'), audioTranscript: el('audioTranscript'), transcriptClock: el('transcriptClock'), miniAudioPlayer: el('miniAudioPlayer'), miniAudioOpen: el('miniAudioOpen'), miniAudioTitle: el('miniAudioTitle'), miniAudioTime: el('miniAudioTime'), miniAudioBack10: el('miniAudioBack10'), miniAudioPlayPause: el('miniAudioPlayPause'), miniAudioStop: el('miniAudioStop'),
     statsDialog: el('statsDialog'), statsContent: el('statsContent'), closeStats: el('closeStats'), resetStatsBtn: el('resetStatsBtn'), doneStatsBtn: el('doneStatsBtn'),
@@ -125,7 +126,7 @@
   let essayProgressState = loadEssayProgress();
   let essayRun = null;
   let essaySessionNumber = 0;
-  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog].filter(Boolean);
+  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog].filter(Boolean);
 
   function analyticsSettings() {
     try {
@@ -459,8 +460,22 @@
     const text = summary.total
       ? `${summary.mastered}/${summary.total} facts mastered · ${summary.seen}/${summary.total} seen`
       : 'Essay practice unavailable';
-    if (dom.essayPracticeProgress) dom.essayPracticeProgress.textContent = text;
     if (dom.essayMasterySummary) dom.essayMasterySummary.textContent = text;
+
+    const essayStats = Object.values(essayProgressState.essays || {});
+    const practiced = essayStats.filter(stat => (Number(stat?.attempts) || 0) > 0).length;
+    const perfect = essayStats.filter(stat => (Number(stat?.perfect) || 0) > 0).length;
+    if (dom.essayIntroMastered) dom.essayIntroMastered.textContent = `${summary.mastered}/${summary.total}`;
+    if (dom.essayIntroSeen) dom.essayIntroSeen.textContent = `${summary.seen}/${summary.total}`;
+    if (dom.essayIntroPracticed) dom.essayIntroPracticed.textContent = `${practiced}/${ESSAY_BANK.length}`;
+    if (dom.essayIntroPerfect) dom.essayIntroPerfect.textContent = String(perfect);
+  }
+
+  function openEssayIntro() {
+    if (mode === 'test' || !ESSAY_BANK.length) return;
+    flushQuestionTime();
+    updateEssayProgressUi();
+    if (!dom.essayIntroDialog.open) dom.essayIntroDialog.showModal();
   }
 
   function essayAverageMastery(essay) {
@@ -677,9 +692,10 @@
   }
 
   function startEssayPractice() {
-    if (!ESSAY_BANK.length) return;
+    if (!ESSAY_BANK.length || mode === 'test') return;
     flushQuestionTime();
     if (dom.materialsDialog?.open) dom.materialsDialog.close();
+    if (dom.essayIntroDialog?.open) dom.essayIntroDialog.close();
     essaySessionNumber = 0;
     beginEssayRound(chooseEssayPractice());
     if (!dom.essayPracticeDialog.open) dom.essayPracticeDialog.showModal();
@@ -1116,9 +1132,10 @@
     dom.timerCard.classList.toggle('is-clickable', mode === 'study');
     dom.timerCard.setAttribute('title', mode === 'study' ? 'Click to reset the study session timer' : 'Practice test countdown');
     dom.timerCard.setAttribute('aria-label', mode === 'study' ? 'Study session timer. Click to reset.' : 'Practice test countdown timer');
-    dom.testBtn.textContent = mode === 'test' ? 'Exit test' : 'Test mode';
+    dom.testBtn.textContent = mode === 'test' ? 'Exit test' : 'Test';
     dom.categoriesBtn.disabled = mode === 'test';
     dom.statsBtn.disabled = mode === 'test';
+    if (dom.essayBtn) dom.essayBtn.disabled = mode === 'test';
     dom.testProgressWrap.classList.toggle('hidden', mode !== 'test');
 
     if (mode === 'test') {
@@ -2519,6 +2536,11 @@
       }
     });
 
+    dom.essayBtn?.addEventListener('click', openEssayIntro);
+    dom.closeEssayIntro?.addEventListener('click', () => dom.essayIntroDialog.close());
+    dom.cancelEssayStart?.addEventListener('click', () => dom.essayIntroDialog.close());
+    dom.startEssayFromIntroBtn?.addEventListener('click', startEssayPractice);
+
     dom.testBtn.addEventListener('click', () => {
       if (mode === 'test') requestExitTest();
       else {
@@ -2543,7 +2565,6 @@
         e.currentTarget.value = '';
       }
     });
-    dom.startEssayPracticeBtn?.addEventListener('click', startEssayPractice);
     dom.closeEssayPractice?.addEventListener('click', () => dom.essayPracticeDialog.close());
     dom.essayChipBank?.addEventListener('click', e => {
       if (!essayRun || essayRun.submitted) return;

@@ -16,7 +16,7 @@ npm install
 npm run build
 ```
 
-`npm run build` creates `public/` from the versioned text chunks in `parts/` plus the binary static-asset bundle stored as base64 chunks in `assets/`. Review audio is intentionally not included in that archive.
+`npm run build` creates `public/` from the versioned text sources in `public-src/` plus the binary static-asset bundle stored as base64 chunks in `assets/`. Review audio is intentionally not included in that archive.
 
 ## Deploy
 
@@ -41,9 +41,12 @@ After the repository is connected to the existing `scp-study` Worker, pushes to 
 
 The app still refers to review files at paths such as `/audio/nat-bar-nat-foundations.m4a`. The Worker maps those paths to identically named R2 objects, supports `GET`, `HEAD`, and byte-range responses, and preserves long-lived cache metadata. The app's existing per-track and Download All offline-cache controls continue to work.
 
-## Release 24
+## Release 25
 
 - Moved the 16 large Short & Sweet recordings out of the static deployment and into R2.
 - Kept all existing audio URLs same-origin.
 - Reduced the iOS installation tutorial image from 1223×1286 / ~1.5 MB to 768×808 / ~250 KB while preserving the same artwork.
-- Bumped the app/service-worker release to v24.
+- Added sticky Audio / Glossary / Downloads tabs to the Materials dialog, with remembered tab and scroll position.
+- Contextual transcript links and the mini audio bar open Materials directly to Audio.
+- Kept the transcript and mobile playlist collapsible within the Audio tab.
+- Bumped the app/service-worker release to v25.

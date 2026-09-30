@@ -1,4 +1,4 @@
-const CACHE_NAME = 'scp-study-v27';
+const CACHE_NAME = 'scp-study-v28';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v1';
 const APP_SHELL = [
   './',
@@ -7,6 +7,7 @@ const APP_SHELL = [
   './questions.js',
   './audio-reviews.js',
   './glossary.js',
+  './essay-practice.js',
   './app.js',
   './manifest.webmanifest',
   './icons/icon-192.png',

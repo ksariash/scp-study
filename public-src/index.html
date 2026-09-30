@@ -389,7 +389,7 @@
       <div class="modal-head">
         <div>
           <h2>Essay Practice</h2>
-          <p>Recall the green-highlight material by assembling the correct name → position → detail pairings.</p>
+          <p>Match one name and position at a time while the complete essay builds in front of you.</p>
         </div>
         <button class="close-btn" id="closeEssayPractice" aria-label="Close">×</button>
       </div>
@@ -397,7 +397,7 @@
       <div class="essay-practice-topline">
         <div>
           <span class="pill" id="essayPracticeTopic">Essay practice</span>
-          <span class="pill subtle" id="essayPracticeCounter">1 / 1</span>
+          <span class="pill subtle" id="essayPracticeCounter">Pairing 1 of 1</span>
         </div>
         <span class="essay-mastery" id="essayMasterySummary">0 facts mastered</span>
       </div>
@@ -410,27 +410,33 @@
       <section class="essay-builder-section" aria-labelledby="essayBuilderHeading">
         <div class="essay-builder-head">
           <div>
-            <span class="eyebrow">Your answer</span>
-            <h3 id="essayBuilderHeading">Build the essay outline</h3>
+            <span class="eyebrow">Essay buildout</span>
+            <h3 id="essayBuilderHeading">Your answer so far</h3>
           </div>
-          <button class="secondary compact" type="button" id="essayClearBtn">Clear</button>
+          <span class="essay-build-progress" id="essayBuildProgress">0 of 0 complete</span>
         </div>
-        <p class="essay-builder-help">Tap blocks below to add them. Tap a block in your answer to remove it. Keep each name with its position and qualification.</p>
-        <div class="essay-answer-zone" id="essayAnswerZone" aria-live="polite">
-          <span class="essay-answer-placeholder" id="essayAnswerPlaceholder">Your selected blocks will appear here.</span>
+        <div class="essay-answer-zone essay-built-answer" id="essayAnswerZone" aria-live="polite">
+          <span class="essay-answer-placeholder">Correct pairings will build the essay here.</span>
         </div>
       </section>
 
-      <section class="essay-bank-section" aria-labelledby="essayBankHeading">
-        <div class="essay-bank-head">
-          <span class="eyebrow">Building blocks</span>
-          <span id="essayBankCount"></span>
+      <section class="essay-match-section" id="essayMatchSection" aria-labelledby="essayMatchHeading">
+        <div class="essay-match-head">
+          <div>
+            <span class="eyebrow">Next pairing</span>
+            <h3 id="essayMatchHeading">Which position matches?</h3>
+          </div>
+          <span class="essay-match-count" id="essayMatchCount">1 of 1</span>
         </div>
-        <h3 id="essayBankHeading" class="sr-only">Available answer blocks</h3>
-        <div class="essay-chip-bank" id="essayChipBank"></div>
-      </section>
 
-      <div class="essay-feedback hidden" id="essayFeedback" aria-live="polite"></div>
+        <div class="essay-match-target">
+          <span class="essay-match-context" id="essayMatchContext"></span>
+          <strong id="essayMatchName"></strong>
+        </div>
+
+        <div class="essay-choice-list" id="essayChoiceList" role="group" aria-label="Choose the matching position"></div>
+        <div class="essay-choice-feedback hidden" id="essayFeedback" aria-live="polite"></div>
+      </section>
 
       <details class="essay-model-answer hidden" id="essayModelAnswerWrap">
         <summary>Show model answer</summary>
@@ -438,10 +444,9 @@
       </details>
 
       <div class="modal-footer split essay-practice-footer">
-        <button class="secondary" type="button" id="essayTryAgainBtn" hidden>Try again</button>
+        <button class="secondary" type="button" id="essayTryAgainBtn" hidden>Practice again</button>
         <div class="essay-footer-right">
-          <button class="secondary" type="button" id="essayNextBtn" hidden>Next essay</button>
-          <button class="primary" type="button" id="essaySubmitBtn">Submit</button>
+          <button class="primary" type="button" id="essayNextBtn" hidden>Next essay</button>
         </div>
       </div>
     </div>
@@ -546,7 +551,7 @@
 
       <div class="callout">
         <strong>How essay practice works</strong>
-        <p>Build an essay outline from shuffled names, positions, and key details. Leave the distractors out. After you submit, wrong pairings and extra blocks are marked in red and missing material is listed. Weak facts return more often; mastered facts appear less often.</p>
+        <p>Build the essay one pairing at a time. For each authority or concept, choose the matching position. You get feedback immediately; a correct pairing is added to the essay and the next one appears automatically. Weak facts return more often; mastered facts appear less often.</p>
       </div>
 
       <div class="modal-footer essay-intro-footer">

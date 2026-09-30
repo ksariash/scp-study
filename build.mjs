@@ -49,22 +49,4 @@ while (offset + 512 <= tar.length) {
   offset += 512 + Math.ceil(size / 512) * 512;
 }
 
-async function writeBase64Asset(prefix, relativePath) {
-  let data = '';
-  for (let i = 1; ; i++) {
-    const part = new URL(`./${prefix}.${String(i).padStart(2, '0')}.part`, assetsDir);
-    try { data += await readFile(part, 'utf8'); }
-    catch (error) { if (error?.code === 'ENOENT') break; throw error; }
-  }
-  if (!data) throw new Error(`No base64 asset parts found for ${prefix}.`);
-  const destination = new URL(`./${relativePath}`, outputDir);
-  await mkdir(dirname(destination.pathname), { recursive: true });
-  await writeFile(destination, Buffer.from(data, 'base64'));
-}
-
-await writeBase64Asset(
-  'essay-questions-answers.pdf.b64',
-  'documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf'
-);
-
-console.log('Built SCP Study static assets, including the Essay Questions & Sample Answers PDF. Short & Sweet review audio remains in R2.');
+console.log('Built SCP Study static assets. Short & Sweet review audio remains in R2.');

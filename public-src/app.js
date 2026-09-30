@@ -90,7 +90,7 @@
     materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
-    essayPracticeDialog: el('essayPracticeDialog'), closeEssayPractice: el('closeEssayPractice'), essayPracticeTopic: el('essayPracticeTopic'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayClearBtn: el('essayClearBtn'), essayAnswerZone: el('essayAnswerZone'), essayAnswerPlaceholder: el('essayAnswerPlaceholder'), essayChipBank: el('essayChipBank'), essayBankCount: el('essayBankCount'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'), essaySubmitBtn: el('essaySubmitBtn'),
+    essayPracticeDialog: el('essayPracticeDialog'), closeEssayPractice: el('closeEssayPractice'), essayPracticeTopic: el('essayPracticeTopic'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
     audioPlayerShell: el('audioPlayerShell'), audioPlayer: el('audioPlayer'), audioTrackTitle: el('audioTrackTitle'), audioTrackCounter: el('audioTrackCounter'), audioPrevBtn: el('audioPrevBtn'), audioBack10Btn: el('audioBack10Btn'), audioForward10Btn: el('audioForward10Btn'), audioNextBtn: el('audioNextBtn'), audioEmptyState: el('audioEmptyState'), audioPlaylistWrap: el('audioPlaylistWrap'), audioPlaylistCount: el('audioPlaylistCount'), audioPlaylistToggle: el('audioPlaylistToggle'), audioPlaylist: el('audioPlaylist'), transcriptPanel: el('transcriptPanel'), transcriptToggle: el('transcriptToggle'), audioTranscript: el('audioTranscript'), transcriptClock: el('transcriptClock'), miniAudioPlayer: el('miniAudioPlayer'), miniAudioOpen: el('miniAudioOpen'), miniAudioTitle: el('miniAudioTitle'), miniAudioTime: el('miniAudioTime'), miniAudioBack10: el('miniAudioBack10'), miniAudioPlayPause: el('miniAudioPlayPause'), miniAudioStop: el('miniAudioStop'),
     statsDialog: el('statsDialog'), statsContent: el('statsContent'), closeStats: el('closeStats'), resetStatsBtn: el('resetStatsBtn'), doneStatsBtn: el('doneStatsBtn'),
     questionReviewDialog: el('questionReviewDialog'), closeQuestionReview: el('closeQuestionReview'), reviewTitle: el('reviewTitle'), reviewContextLabel: el('reviewContextLabel'), reviewSearchInput: el('reviewSearchInput'), reviewSearchClear: el('reviewSearchClear'), reviewSearchCount: el('reviewSearchCount'), reviewSearchEmpty: el('reviewSearchEmpty'), reviewNav: el('reviewNav'), reviewBody: el('reviewBody'), reviewQuestionNumber: el('reviewQuestionNumber'), reviewCategory: el('reviewCategory'), reviewStatsGrid: el('reviewStatsGrid'), reviewLastAnswer: el('reviewLastAnswer'), reviewPrompt: el('reviewPrompt'), reviewChoices: el('reviewChoices'), reviewExplanation: el('reviewExplanation'), reviewCorrectAnswer: el('reviewCorrectAnswer'), reviewAnswerDetails: el('reviewAnswerDetails'), reviewRevealBtn: el('reviewRevealBtn'), reviewAudio: el('reviewAudio'), reviewPrevBtn: el('reviewPrevBtn'), reviewNextBtn: el('reviewNextBtn'), reviewCounter: el('reviewCounter'),
@@ -585,69 +585,50 @@
     return (pool.length ? pool[Math.floor(Math.random() * pool.length)] : ranked[0]).essay;
   }
 
-  function essayChipList(essay) {
-    const required = essay.facts.flatMap(fact => fact.tokens.map(([id, text], tokenIndex) => ({
-      id, text, factId: fact.id, required: true, role: tokenIndex === 0 ? 'name' : 'position'
-    })));
-    const distractors = (essay.distractors || []).map(([id, text]) => ({
-      id, text, factId: null, required: false, role: 'extra'
-    }));
-    return [...required, ...distractors];
+  function essayPositionText(fact) {
+    return fact?.tokens?.[1]?.[1] || '';
   }
 
-  function indexOfSequence(haystack, needle) {
-    if (!needle.length || needle.length > haystack.length) return -1;
-    outer: for (let i = 0; i <= haystack.length - needle.length; i++) {
-      for (let j = 0; j < needle.length; j++) if (haystack[i + j] !== needle[j]) continue outer;
-      return i;
-    }
-    return -1;
+  function essayNameText(fact) {
+    return fact?.tokens?.[0]?.[1] || fact?.label || '';
   }
 
-  function essayGrade(essay, selectedIds) {
-    const chipMap = new Map(essayChipList(essay).map(chip => [chip.id, chip]));
-    const correctFacts = [];
-    const missingFacts = [];
-    const pairingFacts = [];
-    const correctTokenIds = new Set();
-
-    essay.facts.forEach(fact => {
-      const ids = fact.tokens.map(([id]) => id);
-      const at = indexOfSequence(selectedIds, ids);
-      if (at >= 0) {
-        correctFacts.push(fact);
-        ids.forEach(id => correctTokenIds.add(id));
-        return;
-      }
-      const selectedCount = ids.filter(id => selectedIds.includes(id)).length;
-      if (selectedCount) pairingFacts.push(fact);
-      else missingFacts.push(fact);
-    });
-
-    const distractorIds = selectedIds.filter(id => chipMap.get(id)?.required === false);
-    const wrongRequiredIds = selectedIds.filter(id => chipMap.get(id)?.required && !correctTokenIds.has(id));
-    return { correctFacts, missingFacts, pairingFacts, distractorIds, wrongRequiredIds, correctTokenIds };
+  function buildEssayStepChoices(essay, index) {
+    const current = essay.facts[index];
+    if (!current) return [];
+    const currentName = essayNameText(current);
+    const differentNames = essay.facts.filter((fact, i) => i !== index && essayNameText(fact) !== currentName);
+    const fallback = essay.facts.filter((fact, i) => i !== index && !differentNames.includes(fact));
+    const others = [...shuffle(differentNames), ...shuffle(fallback)].slice(0, 2);
+    return shuffle([current, ...others].map(fact => fact.id));
   }
 
-  function recordEssayGrade(essay, grade) {
-    const retry = Math.max(0, Number(essayRun?.attemptInRound) || 0);
-    essay.facts.forEach(fact => {
-      const prior = essayFactStat(fact.id);
-      const correct = grade.correctFacts.some(item => item.id === fact.id);
-      const increment = retry > 0 ? .35 : 1;
-      essayProgressState.facts[fact.id] = {
-        seen: prior.seen + 1,
-        correct: prior.correct + (correct ? 1 : 0),
-        mastery: correct ? Math.min(3, prior.mastery + increment) : Math.max(0, prior.mastery - 1),
-        lastSeen: Date.now()
-      };
-    });
+  function currentEssayFact() {
+    if (!essayRun || essayRun.finished) return null;
+    return essayRun.essay.facts[essayRun.currentIndex] || null;
+  }
+
+  function recordEssayFactResult(fact, firstTry) {
+    const prior = essayFactStat(fact.id);
+    essayProgressState.facts[fact.id] = {
+      seen: prior.seen + 1,
+      correct: prior.correct + 1,
+      mastery: firstTry ? Math.min(3, prior.mastery + 1) : Math.max(0, prior.mastery - .5),
+      lastSeen: Date.now()
+    };
+    saveEssayProgress();
+  }
+
+  function finishEssayRound() {
+    if (!essayRun || essayRun.finished) return;
+    essayRun.finished = true;
+    const essay = essayRun.essay;
     const priorEssay = essayProgressState.essays[essay.id] || { attempts: 0, perfect: 0 };
-    const perfect = grade.correctFacts.length === essay.facts.length && !grade.distractorIds.length && !grade.wrongRequiredIds.length;
+    const perfect = essayRun.totalWrong === 0;
     essayProgressState.essays[essay.id] = {
       attempts: (Number(priorEssay.attempts) || 0) + 1,
       perfect: (Number(priorEssay.perfect) || 0) + (perfect ? 1 : 0),
-      lastScore: grade.correctFacts.length,
+      lastScore: essayRun.firstTryCorrect,
       lastTotal: essay.facts.length,
       lastAttempt: Date.now()
     };
@@ -655,120 +636,154 @@
     saveEssayProgress();
   }
 
-  function setEssayChipState() {
-    if (!essayRun) return;
-    const selected = new Set(essayRun.selectedIds);
-    dom.essayChipBank?.querySelectorAll('[data-essay-chip]').forEach(button => {
-      const used = selected.has(button.dataset.essayChip);
-      button.classList.toggle('used', used);
-      button.disabled = essayRun.submitted || used;
-    });
-  }
-
-  function renderEssayAnswer() {
+  function renderEssayBuiltAnswer() {
     if (!essayRun || !dom.essayAnswerZone) return;
     const essay = essayRun.essay;
-    const chipMap = new Map(essayChipList(essay).map(chip => [chip.id, chip]));
     dom.essayAnswerZone.innerHTML = '';
-    if (!essayRun.selectedIds.length) {
+    if (!essayRun.completedFactIds.length) {
       const empty = document.createElement('span');
       empty.className = 'essay-answer-placeholder';
-      empty.textContent = 'Your selected blocks will appear here.';
+      empty.textContent = 'Correct pairings will build the essay here.';
       dom.essayAnswerZone.append(empty);
-      setEssayChipState();
       return;
     }
-    essayRun.selectedIds.forEach((id, index) => {
-      const chip = chipMap.get(id);
-      if (!chip) return;
-      const previous = index > 0 ? chipMap.get(essayRun.selectedIds[index - 1]) : null;
-      if (chip.role === 'position' && previous?.role === 'name') {
-        const connector = document.createElement('span');
-        connector.className = 'essay-answer-connector';
-        connector.textContent = '→';
-        connector.setAttribute('aria-hidden', 'true');
-        dom.essayAnswerZone.append(connector);
+    essayRun.completedFactIds.forEach(id => {
+      const fact = essay.facts.find(item => item.id === id);
+      if (!fact) return;
+      const row = document.createElement('div');
+      row.className = 'essay-built-row';
+      row.innerHTML = `
+        <span class="essay-built-check" aria-hidden="true">✓</span>
+        <div class="essay-built-copy">
+          <strong>${escapeHtml(essayNameText(fact))}</strong>
+          <span>${escapeHtml(essayPositionText(fact))}</span>
+        </div>
+      `;
+      dom.essayAnswerZone.append(row);
+    });
+  }
+
+  function renderEssayStep() {
+    if (!essayRun || !dom.essayMatchSection) return;
+    const essay = essayRun.essay;
+    const fact = currentEssayFact();
+    const complete = essayRun.finished;
+
+    dom.essayMatchSection.classList.toggle('complete', complete);
+    if (dom.essayBuildProgress) dom.essayBuildProgress.textContent = `${essayRun.completedFactIds.length} of ${essay.facts.length} complete`;
+
+    if (complete) {
+      if (dom.essayPracticeCounter) dom.essayPracticeCounter.textContent = `Complete · ${essay.facts.length} pairings`;
+      if (dom.essayMatchCount) dom.essayMatchCount.textContent = 'Complete';
+      if (dom.essayMatchContext) dom.essayMatchContext.textContent = 'Essay complete';
+      if (dom.essayMatchName) dom.essayMatchName.textContent = 'All pairings matched';
+      if (dom.essayChoiceList) dom.essayChoiceList.innerHTML = '';
+      if (dom.essayFeedback) {
+        dom.essayFeedback.className = 'essay-choice-feedback correct';
+        dom.essayFeedback.innerHTML = `<strong>Essay complete.</strong><span>${essayRun.firstTryCorrect}/${essay.facts.length} pairings were correct on the first try.</span>`;
       }
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = `essay-chip essay-answer-chip essay-chip-${chip.role}`;
-      button.dataset.essaySelectedIndex = String(index);
-      button.dataset.essayChip = id;
-      button.textContent = chip.text;
-      if (essayRun.submitted && essayRun.grade) {
-        const correct = essayRun.grade.correctTokenIds.has(id);
-        button.classList.add(correct ? 'correct' : 'incorrect');
-        button.disabled = true;
+      return;
+    }
+
+    const step = essayRun.currentIndex + 1;
+    if (dom.essayPracticeCounter) dom.essayPracticeCounter.textContent = `Pairing ${step} of ${essay.facts.length}`;
+    if (dom.essayMatchCount) dom.essayMatchCount.textContent = `${step} of ${essay.facts.length}`;
+    if (dom.essayMatchContext) dom.essayMatchContext.textContent = fact.label || 'Match the position';
+    if (dom.essayMatchName) dom.essayMatchName.textContent = essayNameText(fact);
+
+    if (dom.essayChoiceList) {
+      dom.essayChoiceList.innerHTML = '';
+      essayRun.stepChoices.forEach(id => {
+        const optionFact = essay.facts.find(item => item.id === id);
+        if (!optionFact) return;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'essay-choice';
+        button.dataset.essayChoice = id;
+        button.textContent = essayPositionText(optionFact);
+        if (essayRun.wrongChoiceIds.includes(id)) {
+          button.classList.add('incorrect');
+          button.disabled = true;
+        }
+        if (essayRun.transitioning) {
+          button.disabled = true;
+          if (id === fact.id) button.classList.add('correct');
+        }
+        dom.essayChoiceList.append(button);
+      });
+    }
+
+    if (dom.essayFeedback) {
+      if (!essayRun.feedbackType) {
+        dom.essayFeedback.className = 'essay-choice-feedback hidden';
+        dom.essayFeedback.textContent = '';
       } else {
-        button.title = 'Tap to remove';
+        dom.essayFeedback.className = `essay-choice-feedback ${essayRun.feedbackType}`;
+        dom.essayFeedback.innerHTML = essayRun.feedbackType === 'correct'
+          ? '<strong>Correct.</strong><span>That pairing was added to the essay.</span>'
+          : '<strong>Not that pairing.</strong><span>That position belongs elsewhere in this essay. Try another choice.</span>';
       }
-      dom.essayAnswerZone.append(button);
-    });
-    setEssayChipState();
-  }
-
-  function renderEssayBank() {
-    if (!essayRun || !dom.essayChipBank) return;
-    const chips = new Map(essayChipList(essayRun.essay).map(chip => [chip.id, chip]));
-    dom.essayChipBank.innerHTML = '';
-    essayRun.bankOrder.forEach(id => {
-      const chip = chips.get(id);
-      if (!chip) return;
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = `essay-chip essay-bank-chip essay-chip-${chip.role}`;
-      button.dataset.essayChip = id;
-      button.textContent = chip.text;
-      dom.essayChipBank.append(button);
-    });
-    if (dom.essayBankCount) dom.essayBankCount.textContent = `${essayRun.bankOrder.length} blocks`;
-    setEssayChipState();
-  }
-
-  function renderEssayFeedback() {
-    if (!essayRun?.submitted || !essayRun.grade || !dom.essayFeedback) {
-      dom.essayFeedback?.classList.add('hidden');
-      return;
     }
-    const grade = essayRun.grade;
-    const total = essayRun.essay.facts.length;
-    const perfect = grade.correctFacts.length === total && !grade.distractorIds.length && !grade.wrongRequiredIds.length;
-    const chipMap = new Map(essayChipList(essayRun.essay).map(chip => [chip.id, chip]));
-    const missing = grade.missingFacts.map(fact => `<li>${escapeHtml(fact.label)}</li>`).join('');
-    const pairing = grade.pairingFacts.map(fact => `<li>${escapeHtml(fact.label)}</li>`).join('');
-    const extras = grade.distractorIds.map(id => `<li>${escapeHtml(chipMap.get(id)?.text || id)}</li>`).join('');
-    dom.essayFeedback.className = `essay-feedback ${perfect ? 'perfect' : 'needs-work'}`;
-    dom.essayFeedback.innerHTML = `
-      <div class="essay-feedback-score"><strong>${grade.correctFacts.length}/${total} pairings correct</strong><span>${perfect ? 'Complete answer — no distractors.' : 'Correct the red blocks, then try the same essay again.'}</span></div>
-      ${pairing ? `<div class="essay-feedback-group"><strong>Wrong pairing / order</strong><ul>${pairing}</ul></div>` : ''}
-      ${missing ? `<div class="essay-feedback-group"><strong>Missing</strong><ul>${missing}</ul></div>` : ''}
-      ${extras ? `<div class="essay-feedback-group"><strong>Distractors included</strong><ul>${extras}</ul></div>` : ''}
-    `;
   }
 
   function renderEssayPractice() {
     if (!essayRun) return;
     const essay = essayRun.essay;
     if (dom.essayPracticeTopic) dom.essayPracticeTopic.textContent = essay.title;
-    if (dom.essayPracticeCounter) dom.essayPracticeCounter.textContent = `Essay ${essaySessionNumber} · ${essay.facts.length} pairings`;
     if (dom.essayPracticeTitle) dom.essayPracticeTitle.textContent = essay.title;
     if (dom.essayPracticePrompt) dom.essayPracticePrompt.textContent = essay.prompt;
     if (dom.essayModelAnswer) dom.essayModelAnswer.textContent = essay.modelAnswer;
     if (dom.essayModelAnswerWrap) {
-      dom.essayModelAnswerWrap.classList.toggle('hidden', !essayRun.submitted);
-      dom.essayModelAnswerWrap.open = false;
+      dom.essayModelAnswerWrap.classList.toggle('hidden', !essayRun.finished);
+      if (!essayRun.finished) dom.essayModelAnswerWrap.open = false;
     }
-    if (dom.essaySubmitBtn) {
-      dom.essaySubmitBtn.hidden = essayRun.submitted;
-      dom.essaySubmitBtn.disabled = essayRun.selectedIds.length === 0;
-    }
-    if (dom.essayTryAgainBtn) dom.essayTryAgainBtn.hidden = !essayRun.submitted;
-    if (dom.essayNextBtn) dom.essayNextBtn.hidden = !essayRun.submitted;
-    if (dom.essayClearBtn) dom.essayClearBtn.disabled = essayRun.submitted || essayRun.selectedIds.length === 0;
-    renderEssayBank();
-    renderEssayAnswer();
-    renderEssayFeedback();
+    if (dom.essayTryAgainBtn) dom.essayTryAgainBtn.hidden = !essayRun.finished;
+    if (dom.essayNextBtn) dom.essayNextBtn.hidden = !essayRun.finished;
+    renderEssayBuiltAnswer();
+    renderEssayStep();
     updateEssayProgressUi();
+  }
+
+  function handleEssayChoice(choiceId) {
+    if (!essayRun || essayRun.finished || essayRun.transitioning) return;
+    const fact = currentEssayFact();
+    if (!fact) return;
+
+    if (choiceId !== fact.id) {
+      if (!essayRun.wrongChoiceIds.includes(choiceId)) {
+        essayRun.wrongChoiceIds.push(choiceId);
+        essayRun.totalWrong += 1;
+      }
+      essayRun.stepHadError = true;
+      essayRun.feedbackType = 'incorrect';
+      renderEssayStep();
+      return;
+    }
+
+    const firstTry = !essayRun.stepHadError;
+    essayRun.transitioning = true;
+    essayRun.feedbackType = 'correct';
+    essayRun.completedFactIds.push(fact.id);
+    if (firstTry) essayRun.firstTryCorrect += 1;
+    recordEssayFactResult(fact, firstTry);
+    renderEssayPractice();
+
+    const essayId = essayRun.essay.id;
+    window.setTimeout(() => {
+      if (!essayRun || essayRun.essay.id !== essayId) return;
+      essayRun.currentIndex += 1;
+      essayRun.transitioning = false;
+      essayRun.stepHadError = false;
+      essayRun.wrongChoiceIds = [];
+      essayRun.feedbackType = null;
+
+      if (essayRun.currentIndex >= essayRun.essay.facts.length) {
+        finishEssayRound();
+      } else {
+        essayRun.stepChoices = buildEssayStepChoices(essayRun.essay, essayRun.currentIndex);
+      }
+      renderEssayPractice();
+    }, 520);
   }
 
   function beginEssayRound(essay, { retry = false } = {}) {
@@ -777,10 +792,16 @@
     const attemptInRound = retry && essayRun ? essayRun.attemptInRound + 1 : 0;
     essayRun = {
       essay,
-      selectedIds: [],
-      bankOrder: shuffle(essayChipList(essay).map(chip => chip.id)),
-      submitted: false,
-      grade: null,
+      currentIndex: 0,
+      completedFactIds: [],
+      stepChoices: buildEssayStepChoices(essay, 0),
+      wrongChoiceIds: [],
+      stepHadError: false,
+      feedbackType: null,
+      transitioning: false,
+      firstTryCorrect: 0,
+      totalWrong: 0,
+      finished: false,
       attemptInRound
     };
     renderEssayPractice();
@@ -794,14 +815,6 @@
     essaySessionNumber = 0;
     beginEssayRound(chooseEssayPractice());
     if (!dom.essayPracticeDialog.open) dom.essayPracticeDialog.showModal();
-  }
-
-  function submitEssayPractice() {
-    if (!essayRun || essayRun.submitted || !essayRun.selectedIds.length) return;
-    essayRun.grade = essayGrade(essayRun.essay, essayRun.selectedIds);
-    essayRun.submitted = true;
-    recordEssayGrade(essayRun.essay, essayRun.grade);
-    renderEssayPractice();
   }
 
   function retryEssayPractice() {
@@ -2676,28 +2689,10 @@
       }
     });
     dom.closeEssayPractice?.addEventListener('click', () => dom.essayPracticeDialog.close());
-    dom.essayChipBank?.addEventListener('click', e => {
-      if (!essayRun || essayRun.submitted) return;
-      const chip = e.target.closest('[data-essay-chip]');
-      if (!chip || essayRun.selectedIds.includes(chip.dataset.essayChip)) return;
-      essayRun.selectedIds.push(chip.dataset.essayChip);
-      renderEssayPractice();
+    dom.essayChoiceList?.addEventListener('click', e => {
+      const button = e.target.closest('[data-essay-choice]');
+      if (button) handleEssayChoice(button.dataset.essayChoice);
     });
-    dom.essayAnswerZone?.addEventListener('click', e => {
-      if (!essayRun || essayRun.submitted) return;
-      const chip = e.target.closest('[data-essay-selected-index]');
-      if (!chip) return;
-      const index = Number(chip.dataset.essaySelectedIndex);
-      if (!Number.isInteger(index) || index < 0 || index >= essayRun.selectedIds.length) return;
-      essayRun.selectedIds.splice(index, 1);
-      renderEssayPractice();
-    });
-    dom.essayClearBtn?.addEventListener('click', () => {
-      if (!essayRun || essayRun.submitted) return;
-      essayRun.selectedIds = [];
-      renderEssayPractice();
-    });
-    dom.essaySubmitBtn?.addEventListener('click', submitEssayPractice);
     dom.essayTryAgainBtn?.addEventListener('click', retryEssayPractice);
     dom.essayNextBtn?.addEventListener('click', nextEssayPractice);
     dom.materialsBrowseAllQuestions?.addEventListener('click', () => openQuestionSearch(''));

@@ -65,3 +65,13 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 - Moved anonymous usage sharing into Settings.
 - Added Settings controls to clear the offline cache and reset local study statistics.
 - Kept the mobile tab strip to a single compact row to preserve question-reading space.
+
+
+## Release 28
+
+- Added Essay Practice based on the compact course review's essay/name material.
+- Essay answers are built from shuffled name, position, and qualification blocks with plausible distractors.
+- Grading checks each required name → position → detail relationship rather than requiring one rigid full-answer sentence order.
+- Wrong pairings and selected distractors are marked red; missing relationships are listed explicitly.
+- Added immediate same-question retry, model answers after submission, and weighted fact-level mastery so weak associations return more often.
+- Essay mastery is saved locally and is cleared by Reset statistics.

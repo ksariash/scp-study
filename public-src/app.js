@@ -560,7 +560,7 @@
     flushQuestionTime();
     if (dom.essayLibraryDialog?.open) dom.essayLibraryDialog.close();
     if (dom.essayIntroDialog?.open) dom.essayIntroDialog.close();
-    essaySessionNumber = 1;
+    essaySessionNumber = 0;
     beginEssayRound(essay);
     if (!dom.essayPracticeDialog.open) dom.essayPracticeDialog.showModal();
   }
@@ -586,11 +586,11 @@
   }
 
   function essayChipList(essay) {
-    const required = essay.facts.flatMap(fact => fact.tokens.map(([id, text]) => ({
-      id, text, factId: fact.id, required: true
+    const required = essay.facts.flatMap(fact => fact.tokens.map(([id, text], tokenIndex) => ({
+      id, text, factId: fact.id, required: true, role: tokenIndex === 0 ? 'name' : 'position'
     })));
     const distractors = (essay.distractors || []).map(([id, text]) => ({
-      id, text, factId: null, required: false
+      id, text, factId: null, required: false, role: 'position'
     }));
     return [...required, ...distractors];
   }
@@ -681,9 +681,17 @@
     essayRun.selectedIds.forEach((id, index) => {
       const chip = chipMap.get(id);
       if (!chip) return;
+      const previous = index > 0 ? chipMap.get(essayRun.selectedIds[index - 1]) : null;
+      if (chip.role === 'position' && previous?.role === 'name') {
+        const connector = document.createElement('span');
+        connector.className = 'essay-answer-connector';
+        connector.textContent = '→';
+        connector.setAttribute('aria-hidden', 'true');
+        dom.essayAnswerZone.append(connector);
+      }
       const button = document.createElement('button');
       button.type = 'button';
-      button.className = 'essay-chip essay-answer-chip';
+      button.className = `essay-chip essay-answer-chip essay-chip-${chip.role}`;
       button.dataset.essaySelectedIndex = String(index);
       button.dataset.essayChip = id;
       button.textContent = chip.text;
@@ -708,7 +716,7 @@
       if (!chip) return;
       const button = document.createElement('button');
       button.type = 'button';
-      button.className = 'essay-chip essay-bank-chip';
+      button.className = `essay-chip essay-bank-chip essay-chip-${chip.role}`;
       button.dataset.essayChip = id;
       button.textContent = chip.text;
       dom.essayChipBank.append(button);

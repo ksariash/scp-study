@@ -50,3 +50,9 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 - Contextual transcript links and the mini audio bar open Materials directly to Audio.
 - Kept the transcript and mobile playlist collapsible within the Audio tab.
 - Bumped the app/service-worker release to v25.
+
+
+## Release 26
+
+- Simplified the 10-second seek controls to clean circular-arrow icons without numeric labels.
+- Made the quick-access audio bar use the same rewind icon as the main player.

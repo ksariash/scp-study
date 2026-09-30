@@ -102,7 +102,7 @@
         "Second-fill sherry casks have more room for leniency because the retained taste is older and weaker."
       ]
     ],
-    "modelAnswer": "For a ben-yomo vessel, Shach, Ben Ish Chai, and Kaf HaChaim forbid deliberately creating the weak taste in order to add the opposite type, while Rav Ovadya permits on the lenient S”A track. For an eino-ben-yomo vessel, Gra and Badei HaShulchan permit; Chochmat Adam and Rav Elyashiv initially forbid but allow when no other pot is available. Rav Moshe permits the taught dry-plate application לכתחילה, with a Pri Megadim dissent."
+    "modelAnswer": "For a ben-yomo vessel, Shach, Ben Ish Chai, and Kaf HaChaim forbid לכתחילה deliberately cooking the parve food when the plan is to add the opposite type, while Rav Ovadya permits לכתחילה. For an eino-ben-yomo vessel, Gra and Badei HaShulchan permit; Chochmat Adam and Rav Elyashiv initially forbid but allow when no other pot is available. Rav Moshe permits לכתחילה placing dry parve food cooked in a ben-yomo meat or dairy vessel onto a clean plate of the opposite type, while Pri Megadim dissents."
   },
   {
     "id": "nbn-model-failures",

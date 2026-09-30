@@ -93,3 +93,11 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 - Reworked Essay Practice into cleaner two-part concept pairings: authority/concept + complete held position/qualification.
 - Distractors now use plausible position blocks that can be paired with the wrong authority instead of awkward sentence fragments.
 - Split mixed-authority concept blocks so each graded relationship tests one clean association.
+
+
+## Release 31
+
+- Rewrote Essay Practice position blocks so each name pairing is self-contained and does not depend on phrases such as “this case” or “the lenient track.”
+- Replaced near-miss false distractors with clearly off-topic statements that are themselves true course facts, reducing the risk of reinforcing an incorrect name/position association.
+- Distractor blocks remain visually comparable to position blocks but are treated as standalone extras rather than name pairings.
+- Added SCP Study — Essay Questions & Sample Answers to the Downloads tab with Print and Download controls.

@@ -101,3 +101,13 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 - Replaced near-miss false distractors with clearly off-topic statements that are themselves true course facts, reducing the risk of reinforcing an incorrect name/position association.
 - Distractor blocks remain visually comparable to position blocks but are treated as standalone extras rather than name pairings.
 - Added SCP Study — Essay Questions & Sample Answers to the Downloads tab with Print and Download controls.
+
+
+## Release 32
+
+- Rebuilt Essay Practice as a one-pairing-at-a-time matching flow instead of a large block bank.
+- Removed distractors entirely.
+- Each step shows one authority/concept and three position choices drawn only from correct facts in that essay.
+- Wrong choices receive immediate feedback and are disabled; correct choices are immediately added to the essay buildout.
+- The next pairing appears automatically, so there is no Submit button.
+- Essay completion now records first-try accuracy and reveals Practice again, Next essay, and the model answer.

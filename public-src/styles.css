@@ -2469,3 +2469,8 @@ body.mini-audio-visible .question-search-fab { bottom: calc(max(12px, env(safe-a
     font-size: .68rem;
   }
 }
+
+.essay-chip-extra {
+  background: #fff;
+  color: #33445f;
+}

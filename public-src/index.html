@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#172554" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="SCP Study" />
+  <meta name="description" content="SCP Study — offline spaced repetition and cumulative practice testing." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon-192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>SCP Study</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <img class="brand-logo" src="icons/icon-192.png" alt="" aria-hidden="true" />
+        <div>
+          <div class="brand">SCP Study</div>
+          <div class="subbrand" id="modeLabel">Study mode</div>
+        </div>
+      </div>
+      <div class="timer-card" id="timerCard" aria-live="polite" role="button" tabindex="0" title="Click to reset the study session timer">
+        <span class="timer-label" id="timerLabel">Session</span>
+        <strong id="mainTimer">00:00:00</strong>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="categoriesBtn" type="button" aria-label="Filter categories">Categories</button>
+        <button class="icon-btn" id="materialsBtn" type="button">Materials</button>
+        <button class="icon-btn" id="statsBtn" type="button">Stats</button>
+        <button class="primary compact" id="testBtn" type="button">Test mode</button>
+      </div>
+    </header>
+
+    <section class="test-progress hidden" id="testProgressWrap" aria-label="Test progress">
+      <div class="test-progress-row">
+        <strong id="testQuestionCount">1/58</strong>
+        <span id="testAnsweredCount">0 answered</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="testProgressFill"></div></div>
+    </section>
+
+    <main class="main-wrap">
+      <article class="question-card" id="questionCard">
+        <div class="question-topline">
+          <div>
+            <span class="pill" id="questionNumber">Question</span>
+            <span class="pill subtle" id="questionCategory">Category</span>
+          </div>
+          <span class="status-chip" id="questionStatus">Unanswered</span>
+        </div>
+
+        <h1 id="questionPrompt">Loading…</h1>
+        <p class="multi-note hidden" id="multiNote">Select all that apply.</p>
+
+        <section class="question-audio hidden" id="questionAudio" aria-label="Relevant audio review"></section>
+
+        <form id="answerForm" class="choices" autocomplete="off"></form>
+
+        <section class="feedback hidden" id="feedbackBox" aria-live="polite">
+          <div class="feedback-head">
+            <strong id="feedbackResult">Correct</strong>
+            <span id="feedbackTime"></span>
+          </div>
+          <div class="feedback-category" id="feedbackCategory"></div>
+          <p id="feedbackExplanation"></p>
+          <p class="correct-answer" id="correctAnswerLine"></p>
+        </section>
+
+        <div class="nav-row">
+          <button class="secondary" id="prevBtn" type="button">← Previous</button>
+          <button class="primary" id="submitBtn" type="button">Submit answer</button>
+          <button class="secondary" id="nextBtn" type="button">Next →</button>
+        </div>
+      </article>
+
+      <div class="save-note" id="saveNote">Progress is saved automatically on this device. Tip: use ← and → to move, number keys to choose answers, and Enter to submit.</div>
+    </main>
+  </div>
+
+  <dialog id="categoriesDialog" class="modal">
+    <form method="dialog" class="modal-inner" id="categoriesForm">
+      <div class="modal-head">
+        <div>
+          <h2>Study categories</h2>
+          <p>Choose which categories may be selected in study mode. Test mode always uses all 58 questions.</p>
+        </div>
+        <button class="close-btn" value="cancel" aria-label="Close">×</button>
+      </div>
+      <div class="modal-actions-inline">
+        <button type="button" class="text-btn" id="selectAllCategories">Select all</button>
+        <button type="button" class="text-btn" id="clearCategories">Clear</button>
+      </div>
+      <div id="categoryOptions" class="category-options"></div>
+      <div class="modal-footer">
+        <button class="secondary" value="cancel">Cancel</button>
+        <button class="primary" type="button" id="applyCategories">Apply filters</button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <dialog id="materialsDialog" class="modal wide">
+    <div class="modal-inner">
+      <div class="modal-head materials-modal-head">
+        <div>
+          <h2>Course materials</h2>
+          <p>Audio reviews, searchable glossary, and downloadable course references.</p>
+        </div>
+        <div class="materials-head-actions">
+          <button class="secondary materials-question-search" id="materialsQuestionSearchBtn" type="button" aria-label="Search course questions">⌕ <span>Search questions</span></button>
+          <button class="close-btn" id="closeMaterials" aria-label="Close">×</button>
+        </div>
+      </div>
+
+      <nav class="materials-tabs" id="materialsTabs" role="tablist" aria-label="Course materials sections">
+        <button class="materials-tab active" type="button" role="tab" id="materialsTabAudio" data-materials-tab="audio" aria-selected="true" aria-controls="materialsPanelAudio">Audio</button>
+        <button class="materials-tab" type="button" role="tab" id="materialsTabGlossary" data-materials-tab="glossary" aria-selected="false" aria-controls="materialsPanelGlossary">Glossary</button>
+        <button class="materials-tab" type="button" role="tab" id="materialsTabDownloads" data-materials-tab="downloads" aria-selected="false" aria-controls="materialsPanelDownloads">Downloads</button>
+      </nav>
+
+      <div class="materials-panel" id="materialsPanelAudio" role="tabpanel" aria-labelledby="materialsTabAudio" data-materials-panel="audio">
+      <section class="audio-review-section" aria-labelledby="audioReviewHeading">
+        <div class="audio-review-head">
+          <div>
+            <span class="eyebrow">Audio</span>
+            <h3 id="audioReviewHeading">Short and Sweet Audio Reviews</h3>
+          </div>
+          <div class="audio-library-actions">
+            <button class="secondary audio-download-all" type="button" id="downloadAllAudioBtn">Download all</button>
+            <span class="audio-cache-status" id="audioCacheStatus" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <div class="audio-player-shell" id="audioPlayerShell">
+          <div class="audio-now-playing">
+            <div class="audio-art" aria-hidden="true"><img src="icons/icon-192.png" alt="" /></div>
+            <div class="audio-track-copy">
+              <span class="audio-kicker">Now playing</span>
+              <strong id="audioTrackTitle">Audio Reviews</strong>
+              <span id="audioTrackCounter">No reviews added</span>
+            </div>
+          </div>
+
+          <audio id="audioPlayer" controls preload="metadata"></audio>
+
+          <div class="audio-control-row">
+            <div class="audio-skip-controls" role="group" aria-label="Audio navigation">
+              <button class="audio-icon-btn" type="button" id="audioPrevBtn" aria-label="Previous audio review" title="Previous review">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.75 5.5v13M18 6.75 9.5 12 18 17.25V6.75Z"/></svg>
+              </button>
+              <button class="audio-icon-btn audio-seek-icon" type="button" id="audioBack10Btn" aria-label="Rewind 10 seconds" title="Rewind 10 seconds">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 8.2H3.8V4.8"/><path d="M4.2 8a8 8 0 1 1-1 7.7"/><text x="12.2" y="15.1" text-anchor="middle">10</text></svg>
+              </button>
+              <button class="audio-icon-btn audio-seek-icon" type="button" id="audioForward10Btn" aria-label="Forward 10 seconds" title="Forward 10 seconds">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.8 8.2h3.4V4.8"/><path d="M19.8 8a8 8 0 1 0 1 7.7"/><text x="11.8" y="15.1" text-anchor="middle">10</text></svg>
+              </button>
+              <button class="audio-icon-btn" type="button" id="audioNextBtn" aria-label="Next audio review" title="Next review">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.25 5.5v13M6 6.75 14.5 12 6 17.25V6.75Z"/></svg>
+              </button>
+            </div>
+            <div class="audio-speed" role="group" aria-label="Playback speed">
+              <span>Speed</span>
+              <button class="speed-btn active" type="button" data-audio-rate="1">1×</button>
+              <button class="speed-btn" type="button" data-audio-rate="1.2">1.2×</button>
+              <button class="speed-btn" type="button" data-audio-rate="1.5">1.5×</button>
+              <button class="speed-btn" type="button" data-audio-rate="2">2×</button>
+            </div>
+          </div>
+
+          <div class="audio-empty hidden" id="audioEmptyState">
+            <strong>Audio unavailable.</strong>
+          </div>
+
+          <div class="audio-library-grid">
+            <div class="audio-playlist hidden" id="audioPlaylistWrap">
+              <div class="audio-playlist-head">
+                <span id="audioPlaylistCount">0 reviews</span>
+                <button class="audio-playlist-toggle" type="button" id="audioPlaylistToggle" aria-expanded="false" aria-controls="audioPlaylist">
+                  <span class="audio-playlist-toggle-label">Choose another shiur</span>
+                  <span class="audio-playlist-chevron" aria-hidden="true">⌄</span>
+                </button>
+              </div>
+              <div id="audioPlaylist" class="audio-playlist-list" role="list"></div>
+            </div>
+
+            <section class="transcript-panel" id="transcriptPanel" aria-label="Audio transcript">
+              <div class="transcript-head">
+                <div class="transcript-head-copy">
+                  <strong>Transcript</strong>
+                  <span id="transcriptClock">0:00</span>
+                </div>
+                <button class="transcript-toggle" type="button" id="transcriptToggle" aria-expanded="true" aria-controls="audioTranscript">
+                  <span class="transcript-toggle-label">Hide transcript</span>
+                  <span class="transcript-toggle-chevron" aria-hidden="true">⌃</span>
+                </button>
+              </div>
+              <div id="audioTranscript" class="transcript-scroll" tabindex="0"></div>
+            </section>
+          </div>
+        </div>
+      </section>
+      </div>
+
+      <div class="materials-panel" id="materialsPanelGlossary" role="tabpanel" aria-labelledby="materialsTabGlossary" data-materials-panel="glossary" hidden>
+      <section class="glossary-section" aria-labelledby="glossaryHeading">
+        <div class="glossary-head">
+          <div>
+            <span class="eyebrow">Reference</span>
+            <h3 id="glossaryHeading">Course Glossary</h3>
+            <p>Search Hebrew and halachic terms, hear the pronunciation, or jump to related question categories.</p>
+          </div>
+          <span class="glossary-count" id="glossaryCount">0 terms</span>
+        </div>
+        <div class="glossary-search" role="search">
+          <span class="glossary-search-icon" aria-hidden="true">⌕</span>
+          <input id="glossarySearchInput" type="text" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Search terms, pronunciation, definition, or category" aria-label="Search course glossary" />
+          <button class="glossary-search-clear hidden" type="button" id="glossarySearchClear" aria-label="Clear glossary search">×</button>
+        </div>
+        <div class="glossary-list" id="glossaryList"></div>
+        <div class="glossary-empty hidden" id="glossaryEmpty">No matching glossary terms.</div>
+      </section>
+      </div>
+
+      <div class="materials-panel" id="materialsPanelDownloads" role="tabpanel" aria-labelledby="materialsTabDownloads" data-materials-panel="downloads" hidden>
+      <section class="downloads-section" aria-labelledby="downloadsHeading">
+        <div class="materials-section-head">
+          <div>
+            <span class="eyebrow">Downloads</span>
+            <h3 id="downloadsHeading">Course PDFs</h3>
+            <p>Download or print the core review and cumulative test materials.</p>
+          </div>
+        </div>
+        <div class="resource-list">
+          <div class="resource-card">
+            <span class="resource-icon" aria-hidden="true">PDF</span>
+            <span class="resource-copy"><strong>SCP Study — Compact Course Review</strong><span>Highlighted course summary and study reference.</span></span>
+            <span class="resource-actions">
+              <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Compact-Course-Review.pdf">Print</button>
+              <a class="resource-btn primary-link" href="documents/SCP-Study-Compact-Course-Review.pdf" download>Download</a>
+            </span>
+          </div>
+          <div class="resource-card">
+            <span class="resource-icon" aria-hidden="true">PDF</span>
+            <span class="resource-copy"><strong>SCP Study — Cumulative Test</strong><span>Student version of the 58-question cumulative test.</span></span>
+            <span class="resource-actions">
+              <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Cumulative-Test.pdf">Print</button>
+              <a class="resource-btn primary-link" href="documents/SCP-Study-Cumulative-Test.pdf" download>Download</a>
+            </span>
+          </div>
+          <div class="resource-card">
+            <span class="resource-icon" aria-hidden="true">PDF</span>
+            <span class="resource-copy"><strong>SCP Study — Cumulative Test Answer Key</strong><span>Instructor key, explanations, coverage audit, and scope check.</span></span>
+            <span class="resource-actions">
+              <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf">Print</button>
+              <a class="resource-btn primary-link" href="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" download>Download</a>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section class="analytics-preference" aria-labelledby="analyticsPreferenceHeading">
+        <div class="analytics-preference-copy">
+          <span class="eyebrow">Course improvement</span>
+          <h3 id="analyticsPreferenceHeading">Anonymous study statistics</h3>
+          <p>Helps instructors see which questions and topics need more review. The app shares answer results, timing ranges, study-aid use, which glossary terms are opened, cohort, and broad location derived by Cloudflare from the network request. It does not send your name, email, notes, searches, or precise GPS location.</p>
+          <span class="analytics-status" id="analyticsStatus" aria-live="polite"></span>
+        </div>
+        <label class="analytics-switch">
+          <input id="analyticsToggle" type="checkbox" checked />
+          <span class="analytics-switch-track" aria-hidden="true"><span></span></span>
+          <span>Share anonymous stats</span>
+        </label>
+      </section>
+      </div>
+
+      <div class="modal-footer materials-footer">
+        <button class="primary" type="button" id="doneMaterialsBtn">Done</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="statsDialog" class="modal wide">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>Progress & stats</h2>
+          <p>Study history, response speed, and practice-test results saved on this device.</p>
+        </div>
+        <button class="close-btn" id="closeStats" aria-label="Close">×</button>
+      </div>
+      <div id="statsContent"></div>
+      <div class="modal-footer split">
+        <button class="danger" type="button" id="resetStatsBtn">Reset all progress</button>
+        <button class="primary" type="button" id="doneStatsBtn">Done</button>
+      </div>
+    </div>
+  </dialog>
+
+
+  <dialog id="questionReviewDialog" class="modal wide review-modal">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2 id="reviewTitle">Question review</h2>
+          <p id="reviewContextLabel">All questions</p>
+        </div>
+        <button class="close-btn" id="closeQuestionReview" aria-label="Close">×</button>
+      </div>
+
+      <div class="review-tools-sticky">
+        <div class="review-search" role="search">
+          <div class="review-search-field">
+            <span class="review-search-icon" aria-hidden="true">⌕</span>
+            <input id="reviewSearchInput" type="text" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Search questions, answers, explanations, or transcripts" aria-label="Search question explorer" />
+            <button class="review-search-clear hidden" type="button" id="reviewSearchClear" aria-label="Clear question search">×</button>
+          </div>
+          <span class="review-search-count" id="reviewSearchCount">58 questions</span>
+        </div>
+
+        <div class="review-nav review-nav-top" id="reviewNav">
+          <button class="secondary" type="button" id="reviewPrevBtn">← Previous</button>
+          <span id="reviewCounter" class="review-counter">1/58</span>
+          <button class="secondary" type="button" id="reviewNextBtn">Next →</button>
+        </div>
+      </div>
+
+      <div class="review-search-empty hidden" id="reviewSearchEmpty">
+        <strong>No matching questions</strong>
+        <span>Try a different word or phrase.</span>
+      </div>
+
+      <div id="reviewBody">
+        <div class="review-topline">
+          <span class="pill" id="reviewQuestionNumber">Question</span>
+          <span class="pill subtle" id="reviewCategory">Category</span>
+        </div>
+
+        <div id="reviewStatsGrid" class="stat-grid review-stat-grid"></div>
+        <p class="review-last-answer" id="reviewLastAnswer"></p>
+
+        <section class="review-question">
+          <h3 id="reviewPrompt"></h3>
+          <div id="reviewChoices" class="review-choices"></div>
+        </section>
+
+        <div class="review-reveal-row">
+          <button class="secondary review-reveal-btn" type="button" id="reviewRevealBtn">Show answer & explanation</button>
+        </div>
+
+        <section class="review-explanation hidden" id="reviewAnswerDetails">
+          <div class="review-explanation-label">Explanation</div>
+          <p id="reviewExplanation"></p>
+          <p class="correct-answer" id="reviewCorrectAnswer"></p>
+        </section>
+
+        <section class="question-audio hidden review-audio" id="reviewAudio" aria-label="Relevant audio review"></section>
+
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="testIntroDialog" class="modal">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>Practice test</h2>
+          <p>All 58 questions, shuffled, with a 90-minute countdown. Answer timing and results also feed your study-mode scheduling.</p>
+        </div>
+        <button class="close-btn" id="closeTestIntro" aria-label="Close">×</button>
+      </div>
+      <div class="callout">
+        <strong>What happens during the test</strong>
+        <p>Each submitted answer is locked and immediately graded with the category and explanation. You may move backward and forward. The test finishes automatically when all 58 questions are submitted or the timer reaches zero.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="secondary" type="button" id="cancelTestStart">Cancel</button>
+        <button class="primary" type="button" id="startTestBtn">Start 90-minute test</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="testResultDialog" class="modal wide">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>Practice test results</h2>
+          <p id="testResultSubtitle"></p>
+        </div>
+        <button class="close-btn" id="closeTestResult" aria-label="Close">×</button>
+      </div>
+      <div id="testResultContent"></div>
+      <div class="modal-footer">
+        <button class="secondary" type="button" id="reviewStatsAfterTest">View all stats</button>
+        <button class="primary" type="button" id="returnToStudy">Return to study mode</button>
+      </div>
+    </div>
+  </dialog>
+
+
+  <dialog id="glossaryTermDialog" class="modal glossary-term-modal">
+    <div class="modal-inner glossary-term-inner">
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow">Glossary</span>
+          <h2 id="glossaryTermTitle">Term</h2>
+        </div>
+        <button class="close-btn" id="closeGlossaryTerm" aria-label="Close">×</button>
+      </div>
+      <div class="glossary-term-pronunciation">
+        <span>Pronunciation</span>
+        <strong id="glossaryTermPronunciation"></strong>
+        <small id="glossaryTermIpa" class="glossary-term-ipa"></small>
+        <button class="secondary glossary-speak-btn" type="button" id="glossarySpeakBtn" aria-label="Hear pronunciation">▶ Hear</button>
+      </div>
+      <p class="glossary-term-definition" id="glossaryTermDefinition"></p>
+      <div class="glossary-term-categories hidden" id="glossaryTermCategoriesWrap">
+        <span>Related question categories</span>
+        <div class="glossary-category-links" id="glossaryTermCategories"></div>
+      </div>
+    </div>
+  </dialog>
+
+
+  <dialog id="installGuideDialog" class="modal install-guide-modal">
+    <div class="modal-inner install-guide-inner">
+      <div class="modal-head">
+        <div><h2>Add SCP Study to Home Screen</h2></div>
+        <button class="close-btn" id="closeInstallGuide" aria-label="Close">×</button>
+      </div>
+      <img class="install-guide-image" src="images/install-scp-study-ios.png" alt="Instructions for adding SCP Study to the iPhone Home Screen" />
+    </div>
+  </dialog>
+
+  <button class="question-search-fab" id="questionSearchFab" type="button" aria-label="Search course questions" title="Search course questions (/)" >
+    <span class="question-search-fab-icon" aria-hidden="true">⌕</span><span>Search</span>
+  </button>
+
+  <button class="install-fab hidden" id="installBtn" type="button" aria-label="Install SCP Study" title="Install SCP Study">
+    <img src="icons/icon-192.png" alt="" aria-hidden="true" /><span>Install</span>
+  </button>
+
+  <aside class="mini-audio-player hidden" id="miniAudioPlayer" aria-label="Audio playback controls">
+    <button class="mini-audio-info" id="miniAudioOpen" type="button" aria-label="Open audio player">
+      <img src="icons/icon-192.png" alt="" aria-hidden="true" />
+      <span class="mini-audio-copy">
+        <small>Short and Sweet</small>
+        <strong id="miniAudioTitle">Audio Review</strong>
+      </span>
+    </button>
+    <span class="mini-audio-time" id="miniAudioTime">0:00</span>
+    <button class="mini-audio-btn mini-audio-rewind" id="miniAudioBack10" type="button" aria-label="Rewind 10 seconds" title="Rewind 10 seconds"><span aria-hidden="true">↶</span><small aria-hidden="true">10</small></button>
+    <button class="mini-audio-btn" id="miniAudioPlayPause" type="button" aria-label="Pause audio">❚❚</button>
+    <button class="mini-audio-btn stop" id="miniAudioStop" type="button" aria-label="Stop audio">■</button>
+  </aside>
+
+  <script src="questions.js"></script>
+  <script src="audio-reviews.js"></script>
+  <script src="glossary.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

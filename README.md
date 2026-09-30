@@ -83,3 +83,13 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 - Renamed the top-bar “Test mode” button to “Test”.
 - Added an Essay intro dialog with instructions, mastery/coverage stats, essay-attempt stats, and a Start essay practice button.
 - Kept the five mobile header controls (Categories, Materials, Stats, Essay, Test) on one compact row.
+
+
+## Release 30
+
+- Added a searchable Essay Questions & Answers library from the Essay intro popup.
+- Each essay can show its required green-highlight pairings and model answer, with a Practice this essay shortcut.
+- Reworded all essay prompts to read like normal exam questions.
+- Reworked Essay Practice into cleaner two-part concept pairings: authority/concept + complete held position/qualification.
+- Distractors now use plausible position blocks that can be paired with the wrong authority instead of awkward sentence fragments.
+- Split mixed-authority concept blocks so each graded relationship tests one clean association.

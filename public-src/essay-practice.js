@@ -92,16 +92,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "nbn-safe-1",
-        "A fixed weekly return schedule undermines יוצא ונכנס because predictability removes the deterrent."
-      ],
-      [
-        "nbn-safe-2",
-        "Second-fill sherry casks have more room for leniency because the retained taste is older and weaker."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "For a ben-yomo vessel, Shach, Ben Ish Chai, and Kaf HaChaim forbid לכתחילה deliberately cooking the parve food when the plan is to add the opposite type, while Rav Ovadya permits לכתחילה. For an eino-ben-yomo vessel, Gra and Badei HaShulchan permit; Chochmat Adam and Rav Elyashiv initially forbid but allow when no other pot is available. Rav Moshe permits לכתחילה placing dry parve food cooked in a ben-yomo meat or dairy vessel onto a clean plate of the opposite type, while Pri Megadim dissents."
   },
   {
@@ -208,16 +199,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "nbf-safe-1",
-        "Modern dishwasher filters can undermine assumptions used in older dishwasher leniencies."
-      ],
-      [
-        "nbf-safe-2",
-        "A Muslim wedding has a different idolatry dimension from a classic idolatrous celebration."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "Pri Megadim and Aruch HaShulchan do not count the first food-to-food transfer as נ״ט בר נ״ט; Pnei Aryeh and Rav Ovadya do, while Chavot Da’at and Yad Yehuda are intermediate. For an ongoing cooking connection, Chavot Da’at says the weakening has not yet occurred, Beit Ephraim says it can, Ashkenazic practice can rely on Beit Ephraim בדיעבד or for significant loss, and Rav Ovadya follows the lenient view."
   },
   {
@@ -310,16 +292,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "fmb-safe-1",
-        "Hot water that traveled through pipes can be treated as weakened to כלי שני in the sink application."
-      ],
-      [
-        "fmb-safe-2",
-        "A fixed weekly return schedule undermines יוצא ונכנס because predictability removes the deterrent."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "Maharil says bitul does not apply to סכנה, while Issur VeHeiter permits and the course follows the lenient practical custom. Without ששים after an accidental mixture, S”A’s rule allowing added היתר to an accidental rabbinic mixture, Pitchei Teshuvah’s question whether אין מבטלין governs סכנה, Magen Avraham’s question whether the danger applies today, and Divrei Malkiel’s extension to actual mixture are distinct possible tzirufim."
   },
   {
@@ -426,16 +399,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "dt-safe-1",
-        "Second-fill sherry casks have more room for leniency because the retained taste is older and weaker."
-      ],
-      [
-        "dt-safe-2",
-        "A Muslim wedding has a different idolatry dimension from a classic idolatrous celebration."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "S”A permits simultaneous clean ben-yomo meat and dairy vessels in hot parve water, while Rama forbids. For עירוי onto dirty opposite dishes, Rama permits and Shach forbids because עירוי can transfer כדי קליפה. For a continuous hot parve stream from a ben-yomo meat pot into a cold dairy bowl, Rama forbids the bowl while Shach permits it as נ״ט בר נ״ט. Ohr L’Tzion supplies an additional sink leniency by treating travel through pipes as weakening to כלי שני."
   },
   {
@@ -528,16 +492,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "sd-safe-1",
-        "A fixed weekly return schedule undermines יוצא ונכנס because predictability removes the deterrent."
-      ],
-      [
-        "sd-safe-2",
-        "Second-fill sherry casks have more room for leniency because the retained taste is older and weaker."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "Piskei Uteshuvot raises a concern whether ordinary soap is sufficiently פוגם; Chazon Ish and Rav Forst give it substantial weight. Rav Moshe permits sequential use with separate racks, Rav Shmuel Tuvia Stern permits even with the same racks, and Rav Ovadya permits when the initial rinse is cold. Agurah B’Ohalecha cautions that modern filters can undermine older dishwasher analysis."
   },
   {
@@ -658,16 +613,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "syb-safe-1",
-        "Separate racks are one basis for permitting sequential meat-and-dairy dishwasher use."
-      ],
-      [
-        "syb-safe-2",
-        "Dry parve food cooked in a ben-yomo vessel may be placed on a clean plate of the opposite type according to the taught lenient application."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "Beit Yosef explains the benefit ban by modeling סתם יינם on יין נסך; Ran connects it to preventing benefit from actual יין נסך; Rashba describes a later benefit decree after the original drinking decree. Rashi and the Geonim permit benefit today while drinking remains prohibited; Rosh distinguishes the non-Jew’s own wine from Jewish wine touched by a non-Jew; Rambam keeps benefit prohibited in both. S”A follows Rambam, while Rama allows Geonic/Rashi reliance בדיעבד or for loss."
   },
   {
@@ -760,16 +706,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "mp-safe-1",
-        "A fixed weekly return schedule undermines יוצא ונכנס because predictability removes the deterrent."
-      ],
-      [
-        "mp-safe-2",
-        "Second-fill sherry casks have more room for leniency because the retained taste is older and weaker."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "Rosh, Ritva, and Ramban permit non-Jewish ownership of kosher mevushal wine on the “not ordinary wine” logic; R. Akiva Eiger’s analysis keeps the ownership decree, while the notes read S”A/Taz practically toward permission. On pasteurization, Shach, Ran, and Rashba emphasize heating with some evaporation; Rav Moshe and Rav Ovadya accept יד סולדת בו; R. Shlomo Zalman and others require a more meaningful cooking/evaporation change."
   },
   {
@@ -876,16 +813,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "sc-safe-1",
-        "Hot water that traveled through pipes can be treated as weakened to כלי שני in the sink application."
-      ],
-      [
-        "sc-safe-2",
-        "A fixed weekly return schedule undermines יוצא ונכנס because predictability removes the deterrent."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "Shach can require ששים against the absorbed wine/barrel thickness; S”A and Taz use a 1:6 measure against כדי קליפה. Rav Moshe describes the remnant as weakened קיוהא, while Mishna Halachot says the sherry prevents bad oak flavor rather than adding tasted wine flavor. For אין מבטלין איסור לכתחילה, the notes/key give a manufacture-for-non-Jews route and Rav Moshe’s limitation for a rabbinic prohibition without a practical biblical libation root. Second-fill casks have more room because the retained taste is older/weaker."
   },
   {
@@ -992,16 +920,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "sdb-safe-1",
-        "Second-fill sherry casks have more room for leniency because the retained taste is older and weaker."
-      ],
-      [
-        "sdb-safe-2",
-        "A fixed weekly return schedule undermines יוצא ונכנס because predictability removes the deterrent."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "Rama limits the beer decree so ordinary grain beer is outside it; Gra rejects that narrowing. Kaf HaChaim and Pri Chadash stress sporadic place and infrequency in the non-fixed case. For a business drink, S”A/Gra prohibit as the baseline, Rav Moshe allows room where refusal creates איבה, and Ohr L’Tzion remains cautious. Gra and Panim Meirot are among the stricter views on prestigious coffee-shop social drinking."
   },
   {
@@ -1108,16 +1027,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "sdw-safe-1",
-        "Hot water that traveled through pipes can be treated as weakened to כלי שני in the sink application."
-      ],
-      [
-        "sdw-safe-2",
-        "Second-fill sherry casks have more room for leniency because the retained taste is older and weaker."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "Rambam forbids drinking even one’s own kosher/mevushal wine at a non-Jewish party; S”A’s wedding rule is especially strong. Taz rejects a general איבה waiver, while Shach records possible room rather than a categorical permission. Rav Ovadya permits a Muslim wedding because the idolatry dimension differs; Darchei Teshuva still invokes intermarriage/social concern; Shav V’Rafah permits a ger’s family celebration in its circumstances."
   },
   {
@@ -1196,16 +1106,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "wta-safe-1",
-        "Separate racks are one basis for permitting sequential meat-and-dairy dishwasher use."
-      ],
-      [
-        "wta-safe-2",
-        "Second-fill sherry casks have more room for leniency because the retained taste is older and weaker."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "Rama’s “non-Jews today” approach can downgrade some touch results; Shach often limits reliance especially to loss. Muslim touch retains a drinking concern but permits benefit, and Rav Ovadya permits drinking in doubtful Muslim-touch cases. The course separately teaches that wine touched by a public Shabbat desecrator can be forbidden to drink while benefit remains permitted."
   },
   {
@@ -1354,16 +1255,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "wca-safe-1",
-        "Separate racks are one basis for permitting sequential meat-and-dairy dishwasher use."
-      ],
-      [
-        "wca-safe-2",
-        "A fixed weekly return schedule undermines יוצא ונכנס because predictability removes the deterrent."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "For pouring without full shaking, S”A prohibits drinking but permits benefit; Rama’s downgrade can permit drinking, with Shach emphasizing reliance especially for loss. S”A similarly prohibits drinking after accidental touch while permitting benefit; Rama can be more lenient for today’s non-Jews, with Shach more cautious without loss. On shaking an open bottle, S”A prohibits drinking and benefit while Rama permits on his downgrade. Rav Ovadya still forbids drinking after a Muslim’s deliberate pour, and Rav Elyashiv treats a nonreligious Jew’s pour as significant because pouring can function like shaking."
   },
   {
@@ -1442,16 +1334,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "nz-safe-1",
-        "Modern dishwasher filters can undermine assumptions used in older dishwasher leniencies."
-      ],
-      [
-        "nz-safe-2",
-        "Ordinary grain beer is treated more leniently than prestigious social drinking in the course’s social-drinking framework."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "Rashi and Rav Chisda treat נצוק as a connection, while Rabbeinu Tam does not. S”A and Rama allow reliance on the non-connection view in genuine significant loss. A mevushal source can still face the issue when poured into already-forbidden non-mevushal residue; sufficient ששים can provide a bitul route, though deliberately creating the ratio raises אין מבטלין איסור לכתחילה."
   },
   {
@@ -1544,16 +1427,7 @@
         ]
       }
     ],
-    "distractors": [
-      [
-        "uw-safe-1",
-        "Second-fill sherry casks have more room for leniency because the retained taste is older and weaker."
-      ],
-      [
-        "uw-safe-2",
-        "Hot water that traveled through pipes can be treated as weakened to כלי שני in the sink application."
-      ]
-    ],
+    "distractors": [],
     "modelAnswer": "S”A prohibits open wine immediately when it is left alone with an idolater under the access conditions. For a Muslim, the course rule uses enough time to walk a mil, though Shach can be stricter where drinking itself is the concern. יוצא ונכנס depends on unpredictability of return and lack of visual/locking barriers; a fixed known schedule undermines it. Effective seals or other protections must create tamper evidence or credible fear of being caught."
   }
 ];

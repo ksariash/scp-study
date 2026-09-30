@@ -2441,7 +2441,11 @@
     state = defaultState();
     mode = 'study';
     lastFinishedTest = null;
+    essayProgressState = defaultEssayProgress();
+    essayRun = null;
+    try { localStorage.removeItem(ESSAY_PRACTICE_KEY); } catch (_) {}
     saveState();
+    updateEssayProgressUi();
     if (closeStats && dom.statsDialog.open) dom.statsDialog.close();
     appendStudyQuestion();
     beginStudyTimeIfNeeded();
@@ -2539,6 +2543,32 @@
         e.currentTarget.value = '';
       }
     });
+    dom.startEssayPracticeBtn?.addEventListener('click', startEssayPractice);
+    dom.closeEssayPractice?.addEventListener('click', () => dom.essayPracticeDialog.close());
+    dom.essayChipBank?.addEventListener('click', e => {
+      if (!essayRun || essayRun.submitted) return;
+      const chip = e.target.closest('[data-essay-chip]');
+      if (!chip || essayRun.selectedIds.includes(chip.dataset.essayChip)) return;
+      essayRun.selectedIds.push(chip.dataset.essayChip);
+      renderEssayPractice();
+    });
+    dom.essayAnswerZone?.addEventListener('click', e => {
+      if (!essayRun || essayRun.submitted) return;
+      const chip = e.target.closest('[data-essay-selected-index]');
+      if (!chip) return;
+      const index = Number(chip.dataset.essaySelectedIndex);
+      if (!Number.isInteger(index) || index < 0 || index >= essayRun.selectedIds.length) return;
+      essayRun.selectedIds.splice(index, 1);
+      renderEssayPractice();
+    });
+    dom.essayClearBtn?.addEventListener('click', () => {
+      if (!essayRun || essayRun.submitted) return;
+      essayRun.selectedIds = [];
+      renderEssayPractice();
+    });
+    dom.essaySubmitBtn?.addEventListener('click', submitEssayPractice);
+    dom.essayTryAgainBtn?.addEventListener('click', retryEssayPractice);
+    dom.essayNextBtn?.addEventListener('click', nextEssayPractice);
     dom.materialsBrowseAllQuestions?.addEventListener('click', () => openQuestionSearch(''));
     dom.materialsCurrentQuestionBtn?.addEventListener('click', () => {
       const qid = currentQuestion()?.id || QUESTIONS[0]?.id;
@@ -2811,6 +2841,7 @@
     setupMediaSession();
     updateInstallButtonVisibility();
     updateAnalyticsUi();
+    updateEssayProgressUi();
     void flushAnalyticsQueue();
     activeMaterialsTab = savedMaterialsTab();
     setMaterialsTab(activeMaterialsTab, { remember: false });

@@ -2474,3 +2474,250 @@ body.mini-audio-visible .question-search-fab { bottom: calc(max(12px, env(safe-a
   background: #fff;
   color: #33445f;
 }
+
+
+/* Essay Practice sequential matcher — v32 */
+.essay-build-progress,
+.essay-match-count {
+  flex: 0 0 auto;
+  color: #6d7b91;
+  font-size: .68rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.essay-built-answer {
+  display: grid;
+  gap: 8px;
+  min-height: 74px;
+}
+
+.essay-built-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 9px;
+  align-items: start;
+  padding: 10px 11px;
+  border: 1px solid #d8e8de;
+  border-radius: 11px;
+  background: #f5fbf7;
+}
+
+.essay-built-check {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: #dff3e6;
+  color: #267044;
+  font-size: .72rem;
+  font-weight: 900;
+}
+
+.essay-built-copy {
+  min-width: 0;
+}
+
+.essay-built-copy strong {
+  display: block;
+  color: #24406e;
+  font-size: .76rem;
+}
+
+.essay-built-copy span {
+  display: block;
+  margin-top: 3px;
+  color: #45546a;
+  font-size: .73rem;
+  line-height: 1.42;
+}
+
+.essay-match-section {
+  margin-top: 13px;
+  padding: 15px;
+  border: 1px solid #dbe4f1;
+  border-radius: 15px;
+  background: #fff;
+}
+
+.essay-match-section.complete {
+  border-color: #badbc5;
+  background: #f7fcf8;
+}
+
+.essay-match-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.essay-match-head h3 {
+  margin: 2px 0 0;
+  color: #263c65;
+  font-size: .92rem;
+}
+
+.essay-match-target {
+  margin-top: 12px;
+  padding: 13px 14px;
+  border-radius: 13px;
+  background: #eef4ff;
+  border: 1px solid #ccdaf2;
+}
+
+.essay-match-context {
+  display: block;
+  color: #637390;
+  font-size: .64rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.essay-match-target strong {
+  display: block;
+  margin-top: 4px;
+  color: #1d4a95;
+  font-size: .96rem;
+  line-height: 1.3;
+}
+
+.essay-choice-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 11px;
+}
+
+.essay-choice {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid #d7e0ec;
+  border-radius: 12px;
+  background: #fff;
+  color: #33445f;
+  box-shadow: 0 1px 3px rgba(26,48,86,.04);
+  font: inherit;
+  font-size: .75rem;
+  font-weight: 720;
+  line-height: 1.42;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .14s ease, background .14s ease, transform .14s ease;
+}
+
+.essay-choice:hover:not(:disabled) {
+  border-color: #afc2e0;
+  background: #f7f9fd;
+}
+
+.essay-choice:active:not(:disabled) {
+  transform: scale(.995);
+}
+
+.essay-choice.incorrect {
+  border-color: #e2a6ad;
+  background: #fff1f2;
+  color: #972936;
+}
+
+.essay-choice.correct {
+  border-color: #94caa8;
+  background: #effaf3;
+  color: #17613a;
+}
+
+.essay-choice:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.essay-choice-feedback {
+  display: flex;
+  gap: 7px;
+  align-items: baseline;
+  margin-top: 9px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  font-size: .7rem;
+  line-height: 1.35;
+}
+
+.essay-choice-feedback.incorrect {
+  background: #fff3f4;
+  color: #8f303a;
+}
+
+.essay-choice-feedback.correct {
+  background: #eff9f2;
+  color: #24603a;
+}
+
+.essay-choice-feedback strong {
+  flex: 0 0 auto;
+}
+
+.essay-choice-feedback span {
+  color: inherit;
+}
+
+@media (max-width: 700px) {
+  .essay-builder-section,
+  .essay-match-section {
+    padding: 10px;
+  }
+
+  .essay-built-answer {
+    gap: 6px;
+    min-height: 62px;
+  }
+
+  .essay-built-row {
+    gap: 7px;
+    padding: 8px 9px;
+  }
+
+  .essay-built-check {
+    width: 20px;
+    height: 20px;
+    font-size: .65rem;
+  }
+
+  .essay-built-copy strong,
+  .essay-built-copy span {
+    font-size: .69rem;
+  }
+
+  .essay-match-target {
+    margin-top: 9px;
+    padding: 10px 11px;
+  }
+
+  .essay-match-target strong {
+    font-size: .86rem;
+  }
+
+  .essay-choice-list {
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .essay-choice {
+    min-height: 43px;
+    padding: 8px 9px;
+    border-radius: 10px;
+    font-size: .69rem;
+  }
+
+  .essay-choice-feedback {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 9px;
+    font-size: .66rem;
+  }
+}

@@ -12,7 +12,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 26;
+  const APP_VERSION = 27;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const ANALYTICS_COHORT = 'SCP 2026 Summer';
   const ANALYTICS_SETTINGS_KEY = 'scpStudy.analytics.v1';
@@ -85,7 +85,7 @@
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
-    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsQuestionSearchBtn: el('materialsQuestionSearchBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'),
+    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
     audioPlayerShell: el('audioPlayerShell'), audioPlayer: el('audioPlayer'), audioTrackTitle: el('audioTrackTitle'), audioTrackCounter: el('audioTrackCounter'), audioPrevBtn: el('audioPrevBtn'), audioBack10Btn: el('audioBack10Btn'), audioForward10Btn: el('audioForward10Btn'), audioNextBtn: el('audioNextBtn'), audioEmptyState: el('audioEmptyState'), audioPlaylistWrap: el('audioPlaylistWrap'), audioPlaylistCount: el('audioPlaylistCount'), audioPlaylistToggle: el('audioPlaylistToggle'), audioPlaylist: el('audioPlaylist'), transcriptPanel: el('transcriptPanel'), transcriptToggle: el('transcriptToggle'), audioTranscript: el('audioTranscript'), transcriptClock: el('transcriptClock'), miniAudioPlayer: el('miniAudioPlayer'), miniAudioOpen: el('miniAudioOpen'), miniAudioTitle: el('miniAudioTitle'), miniAudioTime: el('miniAudioTime'), miniAudioBack10: el('miniAudioBack10'), miniAudioPlayPause: el('miniAudioPlayPause'), miniAudioStop: el('miniAudioStop'),
     statsDialog: el('statsDialog'), statsContent: el('statsContent'), closeStats: el('closeStats'), resetStatsBtn: el('resetStatsBtn'), doneStatsBtn: el('doneStatsBtn'),
     questionReviewDialog: el('questionReviewDialog'), closeQuestionReview: el('closeQuestionReview'), reviewTitle: el('reviewTitle'), reviewContextLabel: el('reviewContextLabel'), reviewSearchInput: el('reviewSearchInput'), reviewSearchClear: el('reviewSearchClear'), reviewSearchCount: el('reviewSearchCount'), reviewSearchEmpty: el('reviewSearchEmpty'), reviewNav: el('reviewNav'), reviewBody: el('reviewBody'), reviewQuestionNumber: el('reviewQuestionNumber'), reviewCategory: el('reviewCategory'), reviewStatsGrid: el('reviewStatsGrid'), reviewLastAnswer: el('reviewLastAnswer'), reviewPrompt: el('reviewPrompt'), reviewChoices: el('reviewChoices'), reviewExplanation: el('reviewExplanation'), reviewCorrectAnswer: el('reviewCorrectAnswer'), reviewAnswerDetails: el('reviewAnswerDetails'), reviewRevealBtn: el('reviewRevealBtn'), reviewAudio: el('reviewAudio'), reviewPrevBtn: el('reviewPrevBtn'), reviewNextBtn: el('reviewNextBtn'), reviewCounter: el('reviewCounter'),
@@ -113,7 +113,7 @@
   let cachedAudioUrls = new Set();
   let transcriptExpanded = true;
   let activeMaterialsTab = 'audio';
-  const materialsScrollByTab = { audio: 0, glossary: 0, downloads: 0 };
+  const materialsScrollByTab = { audio: 0, questions: 0, glossary: 0, downloads: 0, settings: 0 };
   let glossaryPronunciationAudio = null;
   let resumeCourseAudioAfterGlossary = false;
   let analyticsFlushInFlight = false;
@@ -1514,7 +1514,7 @@
     dom.installBtn.classList.toggle('hidden', !(showIOSHelp || showNativePrompt));
   }
 
-  const MATERIALS_TABS = new Set(['audio', 'glossary', 'downloads']);
+  const MATERIALS_TABS = new Set(['audio', 'questions', 'glossary', 'downloads', 'settings']);
 
   function savedMaterialsTab() {
     try {
@@ -1562,6 +1562,66 @@
       renderAudioPlaylist();
       renderAudioTranscript();
       setTimeout(() => syncTranscriptToAudio(true), 20);
+    }
+    if (next === 'questions') renderMaterialsQuestions();
+    if (next === 'settings') updateAnalyticsUi();
+  }
+
+  function renderMaterialsQuestions() {
+    if (dom.materialsQuestionCount) dom.materialsQuestionCount.textContent = `${QUESTIONS.length} questions`;
+    const qid = currentQuestion()?.id;
+    if (dom.materialsCurrentQuestionBtn) {
+      dom.materialsCurrentQuestionBtn.textContent = qid ? `Open question ${qid}` : 'Open current question';
+      dom.materialsCurrentQuestionBtn.disabled = !qid;
+    }
+    if (!dom.materialsQuestionCategories || dom.materialsQuestionCategories.childElementCount) return;
+    const fragment = document.createDocumentFragment();
+    categories.forEach(category => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'materials-question-category';
+      button.dataset.questionCategory = category;
+      const count = QUESTIONS.filter(q => q.category === category).length;
+      const label = document.createElement('span');
+      label.textContent = category;
+      const meta = document.createElement('small');
+      meta.textContent = `${count} question${count === 1 ? '' : 's'}`;
+      button.append(label, meta);
+      fragment.append(button);
+    });
+    dom.materialsQuestionCategories.append(fragment);
+  }
+
+  function launchMaterialsQuestionSearch() {
+    openQuestionSearch(dom.materialsQuestionInput?.value || '');
+  }
+
+  function setSettingsStatus(message = '') {
+    if (dom.settingsStatus) dom.settingsStatus.textContent = message;
+  }
+
+  async function clearOfflineCache() {
+    const msg = 'Clear downloaded audio and cached app files? Your study statistics and settings will not be erased.';
+    if (!confirm(msg)) return;
+    if (!('caches' in window)) {
+      setSettingsStatus('Offline cache controls are not available in this browser.');
+      return;
+    }
+    if (dom.clearCacheBtn) dom.clearCacheBtn.disabled = true;
+    setSettingsStatus('Clearing cache…');
+    try {
+      const keys = await caches.keys();
+      const appKeys = keys.filter(key => key.startsWith('scp-study-'));
+      await Promise.all(appKeys.map(key => caches.delete(key)));
+      cachedAudioUrls.clear();
+      updateAudioCacheStatus();
+      renderAudioPlaylist();
+      setSettingsStatus('Cache cleared. Files will download again as needed.');
+    } catch (err) {
+      console.warn('Could not clear offline cache:', err);
+      setSettingsStatus('Could not clear the cache. Please try again.');
+    } finally {
+      if (dom.clearCacheBtn) dom.clearCacheBtn.disabled = false;
     }
   }
 
@@ -1880,10 +1940,15 @@
     openQuestionReview(qid, QUESTIONS.map(q => q.id), 'All questions');
   }
 
-  function openQuestionSearch() {
+  function openQuestionSearch(initialQuery = '') {
+    const query = typeof initialQuery === 'string' ? initialQuery.trim() : '';
     const qid = currentQuestion()?.id || QUESTIONS[0]?.id;
     if (dom.materialsDialog?.open) dom.materialsDialog.close();
     openQuestionReviewAll(qid);
+    if (query && dom.reviewSearchInput) {
+      dom.reviewSearchInput.value = query;
+      applyQuestionReviewSearch(query, { preserveQuestion: false });
+    }
     requestAnimationFrame(() => {
       dom.reviewSearchInput?.focus({ preventScroll: true });
       try { dom.reviewSearchInput?.select(); } catch (_) {}
@@ -2066,19 +2131,22 @@
     dom.statsDialog.showModal();
   }
 
-  function resetAllProgress() {
+  function resetAllProgress(options = {}) {
+    const closeStats = options?.closeStats !== false;
     const msg = 'Reset all study history, timing, category filters, and practice-test results? This cannot be undone.';
-    if (!confirm(msg)) return;
+    if (!confirm(msg)) return false;
     flushQuestionTime();
     flushStudyTime();
     state = defaultState();
     mode = 'study';
     lastFinishedTest = null;
     saveState();
-    if (dom.statsDialog.open) dom.statsDialog.close();
+    if (closeStats && dom.statsDialog.open) dom.statsDialog.close();
     appendStudyQuestion();
     beginStudyTimeIfNeeded();
     render();
+    renderMaterialsQuestions();
+    return true;
   }
 
   function escapeHtml(value) {
@@ -2160,7 +2228,33 @@
 
     dom.closeMaterials.addEventListener('click', () => dom.materialsDialog.close());
     dom.doneMaterialsBtn.addEventListener('click', () => dom.materialsDialog.close());
-    dom.materialsQuestionSearchBtn?.addEventListener('click', openQuestionSearch);
+    dom.materialsQuestionGoBtn?.addEventListener('click', launchMaterialsQuestionSearch);
+    dom.materialsQuestionInput?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        launchMaterialsQuestionSearch();
+      } else if (e.key === 'Escape' && e.currentTarget.value) {
+        e.preventDefault();
+        e.currentTarget.value = '';
+      }
+    });
+    dom.materialsBrowseAllQuestions?.addEventListener('click', () => openQuestionSearch(''));
+    dom.materialsCurrentQuestionBtn?.addEventListener('click', () => {
+      const qid = currentQuestion()?.id || QUESTIONS[0]?.id;
+      if (dom.materialsDialog?.open) dom.materialsDialog.close();
+      openQuestionReviewAll(qid);
+    });
+    dom.materialsQuestionCategories?.addEventListener('click', e => {
+      const button = e.target.closest('[data-question-category]');
+      if (!button) return;
+      const category = button.dataset.questionCategory;
+      if (dom.materialsDialog?.open) dom.materialsDialog.close();
+      openQuestionReviewCategory(category);
+    });
+    dom.clearCacheBtn?.addEventListener('click', () => void clearOfflineCache());
+    dom.settingsResetStatsBtn?.addEventListener('click', () => {
+      if (resetAllProgress({ closeStats: false })) setSettingsStatus('Study statistics reset.');
+    });
     dom.materialsTabs?.addEventListener('click', e => {
       const tab = e.target.closest('[data-materials-tab]');
       if (tab) setMaterialsTab(tab.dataset.materialsTab);
@@ -2421,6 +2515,7 @@
     setMaterialsTab(activeMaterialsTab, { remember: false });
     setTranscriptExpanded(savedTranscriptExpanded(), { remember: false });
     renderGlossary('');
+    renderMaterialsQuestions();
     void loadAudioLibrary({ preserveCurrent: false }).then(() => refreshAudioCacheState());
     const expired = checkExpiredTestOnLoad();
     if (!expired) {

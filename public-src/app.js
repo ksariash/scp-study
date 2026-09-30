@@ -590,7 +590,7 @@
       id, text, factId: fact.id, required: true, role: tokenIndex === 0 ? 'name' : 'position'
     })));
     const distractors = (essay.distractors || []).map(([id, text]) => ({
-      id, text, factId: null, required: false, role: 'position'
+      id, text, factId: null, required: false, role: 'extra'
     }));
     return [...required, ...distractors];
   }

@@ -59,7 +59,7 @@
           ],
           [
             "nbn4b",
-            "forbid deliberately cooking parve food in an eino-ben-yomo meat or dairy vessel for the opposite type, but allow it when no other pot is available."
+            "forbid לכתחילה deliberately cooking parve food in an eino-ben-yomo meat or dairy vessel for later use with the opposite type, but allow the cooking when no other pot is available."
           ]
         ]
       },
@@ -87,7 +87,7 @@
           ],
           [
             "nbn6b",
-            "forbids the taught dry-plate application that Rav Moshe permits."
+            "forbids לכתחילה placing dry parve food cooked in a ben-yomo meat or dairy vessel onto a clean plate of the opposite type."
           ]
         ]
       }

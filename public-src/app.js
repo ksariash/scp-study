@@ -88,7 +88,8 @@
     prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
     materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
-    essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
+    essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
+    essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
     essayPracticeDialog: el('essayPracticeDialog'), closeEssayPractice: el('closeEssayPractice'), essayPracticeTopic: el('essayPracticeTopic'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayClearBtn: el('essayClearBtn'), essayAnswerZone: el('essayAnswerZone'), essayAnswerPlaceholder: el('essayAnswerPlaceholder'), essayChipBank: el('essayChipBank'), essayBankCount: el('essayBankCount'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'), essaySubmitBtn: el('essaySubmitBtn'),
     audioPlayerShell: el('audioPlayerShell'), audioPlayer: el('audioPlayer'), audioTrackTitle: el('audioTrackTitle'), audioTrackCounter: el('audioTrackCounter'), audioPrevBtn: el('audioPrevBtn'), audioBack10Btn: el('audioBack10Btn'), audioForward10Btn: el('audioForward10Btn'), audioNextBtn: el('audioNextBtn'), audioEmptyState: el('audioEmptyState'), audioPlaylistWrap: el('audioPlaylistWrap'), audioPlaylistCount: el('audioPlaylistCount'), audioPlaylistToggle: el('audioPlaylistToggle'), audioPlaylist: el('audioPlaylist'), transcriptPanel: el('transcriptPanel'), transcriptToggle: el('transcriptToggle'), audioTranscript: el('audioTranscript'), transcriptClock: el('transcriptClock'), miniAudioPlayer: el('miniAudioPlayer'), miniAudioOpen: el('miniAudioOpen'), miniAudioTitle: el('miniAudioTitle'), miniAudioTime: el('miniAudioTime'), miniAudioBack10: el('miniAudioBack10'), miniAudioPlayPause: el('miniAudioPlayPause'), miniAudioStop: el('miniAudioStop'),
     statsDialog: el('statsDialog'), statsContent: el('statsContent'), closeStats: el('closeStats'), resetStatsBtn: el('resetStatsBtn'), doneStatsBtn: el('doneStatsBtn'),
@@ -126,7 +127,7 @@
   let essayProgressState = loadEssayProgress();
   let essayRun = null;
   let essaySessionNumber = 0;
-  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog].filter(Boolean);
+  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog].filter(Boolean);
 
   function analyticsSettings() {
     try {
@@ -476,6 +477,92 @@
     flushQuestionTime();
     updateEssayProgressUi();
     if (!dom.essayIntroDialog.open) dom.essayIntroDialog.showModal();
+  }
+
+  function essayLibraryHaystack(essay) {
+    return [
+      essay.title,
+      essay.prompt,
+      essay.modelAnswer,
+      ...essay.facts.flatMap(fact => [fact.label, ...fact.tokens.map(([, text]) => text)])
+    ].join(' ').toLowerCase();
+  }
+
+  function essayFactMasteryLabel(factId) {
+    const stat = essayFactStat(factId);
+    if (stat.mastery >= 2) return 'Mastered';
+    if (stat.seen > 0) return 'Learning';
+    return 'New';
+  }
+
+  function renderEssayLibrary(query = '') {
+    if (!dom.essayLibraryList) return;
+    const term = String(query || '').trim().toLowerCase();
+    const rows = ESSAY_BANK.filter(essay => !term || essayLibraryHaystack(essay).includes(term));
+    dom.essayLibraryList.innerHTML = '';
+
+    rows.forEach((essay, index) => {
+      const practiced = Number(essayProgressState.essays?.[essay.id]?.attempts) || 0;
+      const masteredFacts = essay.facts.filter(fact => essayFactStat(fact.id).mastery >= 2).length;
+      const card = document.createElement('article');
+      card.className = 'essay-library-card';
+      card.innerHTML = `
+        <div class="essay-library-card-head">
+          <div>
+            <span class="eyebrow">Essay ${index + 1}</span>
+            <h3>${escapeHtml(essay.title)}</h3>
+          </div>
+          <span class="essay-library-progress">${masteredFacts}/${essay.facts.length} mastered</span>
+        </div>
+        <p class="essay-library-prompt">${escapeHtml(essay.prompt)}</p>
+        <div class="essay-library-actions">
+          <button class="secondary compact" type="button" data-essay-library-practice="${escapeHtml(essay.id)}">Practice this essay</button>
+          <span>${practiced ? `${practiced} attempt${practiced === 1 ? '' : 's'}` : 'Not practiced yet'}</span>
+        </div>
+        <details class="essay-library-details">
+          <summary>Required points</summary>
+          <div class="essay-library-points">
+            ${essay.facts.map(fact => {
+              const statement = fact.tokens.map(([, text]) => text).join(' ');
+              const status = essayFactMasteryLabel(fact.id);
+              return `<div class="essay-library-point"><span class="essay-library-point-status ${status.toLowerCase()}">${status}</span><span>${escapeHtml(statement)}</span></div>`;
+            }).join('')}
+          </div>
+        </details>
+        <details class="essay-library-details">
+          <summary>Model answer</summary>
+          <p class="essay-library-model">${escapeHtml(essay.modelAnswer)}</p>
+        </details>
+      `;
+      dom.essayLibraryList.append(card);
+    });
+
+    if (dom.essayLibrarySummary) {
+      const summary = essayMasterySummary();
+      dom.essayLibrarySummary.textContent = `${rows.length} of ${ESSAY_BANK.length} essays · ${summary.mastered}/${summary.total} facts mastered`;
+    }
+    dom.essayLibraryEmpty?.classList.toggle('hidden', rows.length > 0);
+    dom.essayLibrarySearchClear?.classList.toggle('hidden', !term);
+  }
+
+  function openEssayLibrary() {
+    if (mode === 'test' || !ESSAY_BANK.length) return;
+    flushQuestionTime();
+    if (dom.essayIntroDialog?.open) dom.essayIntroDialog.close();
+    if (dom.essayLibrarySearch) dom.essayLibrarySearch.value = '';
+    renderEssayLibrary('');
+    if (!dom.essayLibraryDialog.open) dom.essayLibraryDialog.showModal();
+  }
+
+  function startSpecificEssay(essayId) {
+    const essay = ESSAY_BANK.find(item => item.id === essayId);
+    if (!essay || mode === 'test') return;
+    flushQuestionTime();
+    if (dom.essayLibraryDialog?.open) dom.essayLibraryDialog.close();
+    if (dom.essayIntroDialog?.open) dom.essayIntroDialog.close();
+    essaySessionNumber = 1;
+    beginEssayRound(essay);
+    if (!dom.essayPracticeDialog.open) dom.essayPracticeDialog.showModal();
   }
 
   function essayAverageMastery(essay) {
@@ -2540,6 +2627,21 @@
     dom.closeEssayIntro?.addEventListener('click', () => dom.essayIntroDialog.close());
     dom.cancelEssayStart?.addEventListener('click', () => dom.essayIntroDialog.close());
     dom.startEssayFromIntroBtn?.addEventListener('click', startEssayPractice);
+    dom.viewEssayLibraryBtn?.addEventListener('click', openEssayLibrary);
+    dom.closeEssayLibrary?.addEventListener('click', () => dom.essayLibraryDialog.close());
+    dom.doneEssayLibrary?.addEventListener('click', () => dom.essayLibraryDialog.close());
+    dom.essayLibrarySearch?.addEventListener('input', e => renderEssayLibrary(e.currentTarget.value));
+    dom.essayLibrarySearchClear?.addEventListener('click', () => {
+      if (dom.essayLibrarySearch) {
+        dom.essayLibrarySearch.value = '';
+        dom.essayLibrarySearch.focus();
+      }
+      renderEssayLibrary('');
+    });
+    dom.essayLibraryList?.addEventListener('click', e => {
+      const button = e.target.closest('[data-essay-library-practice]');
+      if (button) startSpecificEssay(button.dataset.essayLibraryPractice);
+    });
 
     dom.testBtn.addEventListener('click', () => {
       if (mode === 'test') requestExitTest();

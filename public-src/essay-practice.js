@@ -1227,7 +1227,7 @@
         "tokens": [
           [
             "wta5a",
-            "Public Shabbat desecrator"
+            "A public Shabbat desecrator"
           ],
           [
             "wta5b",
@@ -1315,29 +1315,57 @@
       },
       {
         "id": "wca5",
-        "label": "Accidental touch — Rama/Shach",
+        "label": "Accidental touch — Rama",
         "tokens": [
           [
             "wca5a",
-            "Rama / Shach"
+            "Rama"
           ],
           [
             "wca5b",
-            "Rama can permit accidental touch by today’s non-Jews, while Shach is more cautious without a case of loss."
+            "can permit drinking and benefit after accidental touch by today’s non-Jews."
+          ]
+        ]
+      },
+      {
+        "id": "wca5s",
+        "label": "Accidental touch — Shach",
+        "tokens": [
+          [
+            "wca5sa",
+            "Shach"
+          ],
+          [
+            "wca5sb",
+            "is more cautious about that accidental-touch leniency when there is no case of loss."
           ]
         ]
       },
       {
         "id": "wca6",
-        "label": "Shake open bottle",
+        "label": "Shake open bottle — S”A",
         "tokens": [
           [
             "wca6a",
-            "S”A / Rama"
+            "S”A"
           ],
           [
             "wca6b",
-            "S”A prohibits drinking and benefit after an open bottle is shaken without lifting, while Rama permits on his downgrade."
+            "prohibits drinking and benefit when an open bottle is shaken without lifting."
+          ]
+        ]
+      },
+      {
+        "id": "wca6r",
+        "label": "Shake open bottle — Rama",
+        "tokens": [
+          [
+            "wca6ra",
+            "Rama"
+          ],
+          [
+            "wca6rb",
+            "permits that shaking case under his modern-non-Jew downgrade."
           ]
         ]
       },
@@ -1503,7 +1531,7 @@
         "tokens": [
           [
             "uw2a",
-            "Course rule for a Muslim"
+            "The course rule for a Muslim"
           ],
           [
             "uw2b",

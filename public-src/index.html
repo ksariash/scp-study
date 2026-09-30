@@ -109,18 +109,19 @@
       <div class="modal-head materials-modal-head">
         <div>
           <h2>Course materials</h2>
-          <p>Audio reviews, searchable glossary, and downloadable course references.</p>
+          <p>Audio, questions, glossary, downloads, and app settings.</p>
         </div>
         <div class="materials-head-actions">
-          <button class="secondary materials-question-search" id="materialsQuestionSearchBtn" type="button" aria-label="Search course questions">⌕ <span>Search questions</span></button>
           <button class="close-btn" id="closeMaterials" aria-label="Close">×</button>
         </div>
       </div>
 
       <nav class="materials-tabs" id="materialsTabs" role="tablist" aria-label="Course materials sections">
         <button class="materials-tab active" type="button" role="tab" id="materialsTabAudio" data-materials-tab="audio" aria-selected="true" aria-controls="materialsPanelAudio">Audio</button>
+        <button class="materials-tab" type="button" role="tab" id="materialsTabQuestions" data-materials-tab="questions" aria-selected="false" aria-controls="materialsPanelQuestions">Questions</button>
         <button class="materials-tab" type="button" role="tab" id="materialsTabGlossary" data-materials-tab="glossary" aria-selected="false" aria-controls="materialsPanelGlossary">Glossary</button>
         <button class="materials-tab" type="button" role="tab" id="materialsTabDownloads" data-materials-tab="downloads" aria-selected="false" aria-controls="materialsPanelDownloads">Downloads</button>
+        <button class="materials-tab" type="button" role="tab" id="materialsTabSettings" data-materials-tab="settings" aria-selected="false" aria-controls="materialsPanelSettings">Settings</button>
       </nav>
 
       <div class="materials-panel" id="materialsPanelAudio" role="tabpanel" aria-labelledby="materialsTabAudio" data-materials-panel="audio">
@@ -206,6 +207,35 @@
       </section>
       </div>
 
+      <div class="materials-panel" id="materialsPanelQuestions" role="tabpanel" aria-labelledby="materialsTabQuestions" data-materials-panel="questions" hidden>
+        <section class="materials-questions-section" aria-labelledby="materialsQuestionsHeading">
+          <div class="materials-section-head">
+            <div>
+              <span class="eyebrow">Review</span>
+              <h3 id="materialsQuestionsHeading">Question Explorer</h3>
+              <p>Search all 58 questions or jump directly to a topic.</p>
+            </div>
+            <span class="materials-question-count" id="materialsQuestionCount">58 questions</span>
+          </div>
+
+          <div class="materials-question-searchbar" role="search">
+            <span class="materials-question-search-icon" aria-hidden="true">⌕</span>
+            <input id="materialsQuestionInput" type="text" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Search questions, answers, explanations, or transcripts" aria-label="Search course questions" />
+            <button class="primary compact" type="button" id="materialsQuestionGoBtn">Search</button>
+          </div>
+
+          <div class="materials-question-actions">
+            <button class="secondary" type="button" id="materialsBrowseAllQuestions">Browse all questions</button>
+            <button class="secondary" type="button" id="materialsCurrentQuestionBtn">Open current question</button>
+          </div>
+
+          <div class="materials-question-category-wrap">
+            <span class="materials-question-category-label">Browse by topic</span>
+            <div class="materials-question-categories" id="materialsQuestionCategories"></div>
+          </div>
+        </section>
+      </div>
+
       <div class="materials-panel" id="materialsPanelGlossary" role="tabpanel" aria-labelledby="materialsTabGlossary" data-materials-panel="glossary" hidden>
       <section class="glossary-section" aria-labelledby="glossaryHeading">
         <div class="glossary-head">
@@ -263,6 +293,19 @@
         </div>
       </section>
 
+
+      </div>
+
+      <div class="materials-panel" id="materialsPanelSettings" role="tabpanel" aria-labelledby="materialsTabSettings" data-materials-panel="settings" hidden>
+        <section class="settings-section" aria-labelledby="settingsHeading">
+          <div class="materials-section-head">
+            <div>
+              <span class="eyebrow">Settings</span>
+              <h3 id="settingsHeading">App settings</h3>
+              <p>Privacy, offline storage, and study statistics for this device.</p>
+            </div>
+          </div>
+
       <section class="analytics-preference" aria-labelledby="analyticsPreferenceHeading">
         <div class="analytics-preference-copy">
           <span class="eyebrow">Course improvement</span>
@@ -276,6 +319,26 @@
           <span>Share anonymous stats</span>
         </label>
       </section>
+
+          <div class="settings-actions">
+            <div class="settings-action-card">
+              <div>
+                <strong>Offline cache</strong>
+                <p>Remove downloaded audio and cached app files. Your study statistics and settings are kept.</p>
+              </div>
+              <button class="secondary settings-action-btn" type="button" id="clearCacheBtn">Clear cache</button>
+            </div>
+
+            <div class="settings-action-card danger-card">
+              <div>
+                <strong>Study statistics</strong>
+                <p>Reset question history, response timing, category filters, and practice-test results on this device.</p>
+              </div>
+              <button class="danger settings-action-btn" type="button" id="settingsResetStatsBtn">Reset statistics</button>
+            </div>
+          </div>
+          <span class="settings-status" id="settingsStatus" aria-live="polite"></span>
+        </section>
       </div>
 
       <div class="modal-footer materials-footer">

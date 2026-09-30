@@ -16,7 +16,7 @@ npm install
 npm run build
 ```
 
-`npm run build` creates `public/` from the text sources in `public-src/` plus the binary static-asset archive in `assets/static-binaries.tar.gz`. Review audio is intentionally not included in that archive.
+`npm run build` creates `public/` from the versioned text chunks in `parts/` plus the binary static-asset bundle stored as base64 chunks in `assets/`. Review audio is intentionally not included in that archive.
 
 ## Deploy
 

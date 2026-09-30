@@ -75,3 +75,11 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 - Wrong pairings and selected distractors are marked red; missing relationships are listed explicitly.
 - Added immediate same-question retry, model answers after submission, and weighted fact-level mastery so weak associations return more often.
 - Essay mastery is saved locally and is cleared by Reset statistics.
+
+
+## Release 29
+
+- Moved Essay Practice out of the Questions tab and into a dedicated top-bar Essay button immediately before Test.
+- Renamed the top-bar “Test mode” button to “Test”.
+- Added an Essay intro dialog with instructions, mastery/coverage stats, essay-attempt stats, and a Start essay practice button.
+- Kept the five mobile header controls (Categories, Materials, Stats, Essay, Test) on one compact row.

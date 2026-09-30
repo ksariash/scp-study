@@ -32,7 +32,8 @@
         <button class="icon-btn" id="categoriesBtn" type="button" aria-label="Filter categories">Categories</button>
         <button class="icon-btn" id="materialsBtn" type="button">Materials</button>
         <button class="icon-btn" id="statsBtn" type="button">Stats</button>
-        <button class="primary compact" id="testBtn" type="button">Test mode</button>
+        <button class="icon-btn essay-mode-btn" id="essayBtn" type="button">Essay</button>
+        <button class="primary compact" id="testBtn" type="button">Test</button>
       </div>
     </header>
 
@@ -216,16 +217,6 @@
               <p>Search all 58 questions or jump directly to a topic.</p>
             </div>
             <span class="materials-question-count" id="materialsQuestionCount">58 questions</span>
-          </div>
-
-          <div class="essay-practice-entry">
-            <div class="essay-practice-entry-copy">
-              <span class="eyebrow">Essay practice</span>
-              <strong>Build the answer from names, positions, and key details</strong>
-              <p>Choose the right blocks, pair each authority with the correct position, and leave the distractors out.</p>
-              <span class="essay-practice-progress" id="essayPracticeProgress">0 facts mastered</span>
-            </div>
-            <button class="primary" type="button" id="startEssayPracticeBtn">Start practice</button>
           </div>
 
           <div class="materials-question-searchbar" role="search">
@@ -496,6 +487,35 @@
 
         <section class="question-audio hidden review-audio" id="reviewAudio" aria-label="Relevant audio review"></section>
 
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="essayIntroDialog" class="modal">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>Essay practice</h2>
+          <p>Drill the green-highlight names, held positions, and important qualifications until the pairings become automatic.</p>
+        </div>
+        <button class="close-btn" id="closeEssayIntro" aria-label="Close">×</button>
+      </div>
+
+      <div class="essay-intro-stats" aria-label="Essay practice statistics">
+        <div class="essay-intro-stat"><strong id="essayIntroMastered">0/0</strong><span>Facts mastered</span></div>
+        <div class="essay-intro-stat"><strong id="essayIntroSeen">0/0</strong><span>Facts seen</span></div>
+        <div class="essay-intro-stat"><strong id="essayIntroPracticed">0/0</strong><span>Essays practiced</span></div>
+        <div class="essay-intro-stat"><strong id="essayIntroPerfect">0</strong><span>Perfect essays</span></div>
+      </div>
+
+      <div class="callout">
+        <strong>How essay practice works</strong>
+        <p>Build an essay outline from shuffled names, positions, and key details. Leave the distractors out. After you submit, wrong pairings and extra blocks are marked in red and missing material is listed. Weak facts return more often; mastered facts appear less often.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="secondary" type="button" id="cancelEssayStart">Cancel</button>
+        <button class="primary" type="button" id="startEssayFromIntroBtn">Start essay practice</button>
       </div>
     </div>
   </dialog>

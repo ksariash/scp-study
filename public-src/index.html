@@ -348,6 +348,34 @@
     </div>
   </dialog>
 
+  <dialog id="essayLibraryDialog" class="modal wide essay-library-dialog">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>Essay questions &amp; answers</h2>
+          <p>Review every essay prompt, the required green-highlight pairings, and a model answer.</p>
+        </div>
+        <button class="close-btn" id="closeEssayLibrary" aria-label="Close">×</button>
+      </div>
+
+      <div class="essay-library-toolbar">
+        <div class="essay-library-search" role="search">
+          <span aria-hidden="true">⌕</span>
+          <input id="essayLibrarySearch" type="search" autocomplete="off" spellcheck="false" placeholder="Search essay topics, names, or positions" aria-label="Search essay questions and answers" />
+          <button class="essay-library-search-clear hidden" id="essayLibrarySearchClear" type="button" aria-label="Clear essay search">×</button>
+        </div>
+        <span class="essay-library-summary" id="essayLibrarySummary"></span>
+      </div>
+
+      <div class="essay-library-list" id="essayLibraryList"></div>
+      <div class="essay-library-empty hidden" id="essayLibraryEmpty">No essay questions match that search.</div>
+
+      <div class="modal-footer">
+        <button class="primary" type="button" id="doneEssayLibrary">Done</button>
+      </div>
+    </div>
+  </dialog>
+
   <dialog id="essayPracticeDialog" class="modal wide essay-practice-dialog">
     <div class="modal-inner">
       <div class="modal-head">
@@ -513,8 +541,9 @@
         <p>Build an essay outline from shuffled names, positions, and key details. Leave the distractors out. After you submit, wrong pairings and extra blocks are marked in red and missing material is listed. Weak facts return more often; mastered facts appear less often.</p>
       </div>
 
-      <div class="modal-footer">
+      <div class="modal-footer essay-intro-footer">
         <button class="secondary" type="button" id="cancelEssayStart">Cancel</button>
+        <button class="secondary" type="button" id="viewEssayLibraryBtn">View Q&amp;A</button>
         <button class="primary" type="button" id="startEssayFromIntroBtn">Start essay practice</button>
       </div>
     </div>

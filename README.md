@@ -56,3 +56,12 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 
 - Simplified the 10-second seek controls to clean circular-arrow icons without numeric labels.
 - Made the quick-access audio bar use the same rewind icon as the main player.
+
+
+## Release 27
+
+- Expanded Course Materials to five compact tabs in this order: Audio, Questions, Glossary, Downloads, Settings.
+- Added a Questions tab with search, current-question access, all-question browsing, and topic shortcuts.
+- Moved anonymous usage sharing into Settings.
+- Added Settings controls to clear the offline cache and reset local study statistics.
+- Kept the mobile tab strip to a single compact row to preserve question-reading space.

@@ -1,15 +1,38 @@
-import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { dirname } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 
 const ROOT = new URL('.', import.meta.url);
-const sourceDir = new URL('./public-src/', ROOT);
 const outputDir = new URL('./public/', ROOT);
+const partsDir = new URL('./parts/', ROOT);
 const assetsDir = new URL('./assets/', ROOT);
+
+const textTargets = [
+  ['index.html', 'public__index.html'],
+  ['styles.css', 'public__styles.css'],
+  ['questions.js', 'public__questions.js'],
+  ['audio-reviews.js', 'public__audio-reviews.js'],
+  ['glossary.js', 'public__glossary.js'],
+  ['app.js', 'public__app.js'],
+  ['manifest.webmanifest', 'public__manifest.webmanifest'],
+  ['sw.js', 'public__sw.js']
+];
 
 await rm(outputDir, { recursive: true, force: true });
 await mkdir(outputDir, { recursive: true });
-await cp(sourceDir, outputDir, { recursive: true });
+
+for (const [target, prefix] of textTargets) {
+  let content = '';
+  for (let i = 1; ; i++) {
+    const part = new URL(`./${prefix}.${String(i).padStart(2, '0')}.part`, partsDir);
+    try { content += await readFile(part, 'utf8'); }
+    catch (error) { if (error?.code === 'ENOENT') break; throw error; }
+  }
+  if (!content) throw new Error(`No source parts found for ${target}`);
+  const destination = new URL(`./${target}`, outputDir);
+  await mkdir(dirname(destination.pathname), { recursive: true });
+  await writeFile(destination, content, 'utf8');
+}
 
 let encoded = '';
 for (let i = 1; ; i++) {
@@ -18,6 +41,7 @@ for (let i = 1; ; i++) {
   catch (error) { if (error?.code === 'ENOENT') break; throw error; }
 }
 if (!encoded) throw new Error('No static binary asset bundle parts found.');
+
 const tar = gunzipSync(Buffer.from(encoded, 'base64'));
 let offset = 0;
 while (offset + 512 <= tar.length) {

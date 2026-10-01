@@ -149,3 +149,5 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 - PDF downloads show Print + Download on desktop and Download only on mobile; on iOS Download opens the native file/share sheet.
 - The Compact Course Review is no longer generated at build time. Its original PDF stays in the versioned static asset bundle and is copied unchanged.
 - The cumulative test, answer key, and essay PDF remain generated from the same source-controlled question and essay banks as the app.
+
+PDF regression diagnostics compare generated study PDFs against the legacy reference layout during CI.

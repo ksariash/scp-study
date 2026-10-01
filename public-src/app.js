@@ -13,10 +13,10 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 40;
+  const APP_VERSION = 41;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
-  const ANALYTICS_COHORT = 'SCP 2026 Summer';
+  const ANALYTICS_COHORT = "Nat Bar Nat & Stam Ye'enam - Summer 26";
   const ANALYTICS_SETTINGS_KEY = 'scpStudy.analytics.v1';
   const ANALYTICS_QUEUE_KEY = 'scpStudy.analyticsQueue.v1';
   const ANALYTICS_INSTALLATION_KEY = 'scpStudy.analyticsInstallation.v1';

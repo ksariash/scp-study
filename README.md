@@ -170,3 +170,8 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 ## Release 41
 
 - Renames the analytics cohort to `Nat Bar Nat & Stam Ye'enam - Summer 26`.
+
+
+## Release 42
+
+- Adds Essay Practice progress to the main Stats view, including facts mastered/seen, essays practiced, perfect essays, total/perfect rounds, and expandable per-essay progress.

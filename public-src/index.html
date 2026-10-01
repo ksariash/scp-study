@@ -20,7 +20,7 @@
       <div class="brand-wrap">
         <img class="brand-logo brand-info-target" id="brandLogo" src="icons/icon-192.png" alt="SCP Study app information" role="button" tabindex="0" aria-label="About SCP Study" title="About SCP Study" />
         <div>
-          <div class="brand brand-share-target" id="brandTitle" data-share-app>SCP Study</div>
+          <div class="brand brand-info-target" id="brandTitle" role="button" tabindex="0" aria-label="About SCP Study" title="About SCP Study">SCP Study</div>
           <div class="subbrand" id="modeLabel">Study mode</div>
         </div>
       </div>
@@ -732,8 +732,11 @@
       <div class="modal-head">
         <div>
           <span class="eyebrow">About</span>
-          <h2 id="appInfoTitle">SCP Study</h2>
-          <p>SCP Study v44. Created by KBT congregation of Los Angeles.</p>
+          <div class="app-info-title-row">
+            <h2 id="appInfoTitle">SCP Study</h2>
+            <span class="app-info-version">v45</span>
+          </div>
+          <p>A spaced repetition study aid for the Semichas Chaver Program created by KBT congregation of Los Angeles.</p>
         </div>
         <button class="close-btn" id="closeAppInfo" aria-label="Close">×</button>
       </div>
@@ -746,6 +749,7 @@
         </div>
       </div>
       <div class="app-info-actions">
+        <button class="secondary" type="button" id="appInfoShareBtn">Share app</button>
         <button class="secondary" type="button" id="appInfoUpdateBtn">Check for updates</button>
         <button class="primary" type="button" id="appInfoSettingsBtn">Open settings</button>
       </div>

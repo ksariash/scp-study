@@ -3123,3 +3123,12 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
 @media(max-width:430px){
   .app-info-actions{grid-template-columns:1fr}
 }
+
+/* v45: About dialog title/version and shared info targets */
+.app-info-title-row{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.app-info-title-row h2{margin:0}
+.app-info-version{color:var(--muted);font-size:.92rem;font-weight:400;white-space:nowrap}
+.brand-info-target{cursor:pointer}
+@media(min-width:431px){
+  .app-info-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+}

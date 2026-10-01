@@ -191,3 +191,9 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - Makes Categories work in Essay mode by filtering both the Essay quick-jump list and adaptive Essay selection by essay-topic tags.
 - Adds an App Info popup on the top-left icon with version/creator information, mode controls, update check, and a Settings shortcut.
 - Makes service-worker updates reload from the page after controller activation instead of navigating clients from the service worker, avoiding the iOS installed-app crash seen during pull-to-update.
+
+
+## Release 45
+
+- Both the app icon and SCP Study title now open the App Info dialog.
+- Simplifies About copy, shows the current version beside the title, and adds a Share app action inside the dialog.

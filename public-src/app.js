@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 44;
+  const APP_VERSION = 45;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const ANALYTICS_COHORT = "Nat Bar Nat & Stam Ye'enam - Summer 26";
@@ -112,7 +112,7 @@
   const el = id => document.getElementById(id);
   const dom = {
     modeLabel: el('modeLabel'), timerLabel: el('timerLabel'), mainTimer: el('mainTimer'), timerCard: el('timerCard'), brandLogo: el('brandLogo'), brandTitle: el('brandTitle'),
-    appInfoDialog: el('appInfoDialog'), closeAppInfo: el('closeAppInfo'), appInfoMcBtn: el('appInfoMcBtn'), appInfoEssayBtn: el('appInfoEssayBtn'), appInfoTestBtn: el('appInfoTestBtn'), appInfoUpdateBtn: el('appInfoUpdateBtn'), appInfoSettingsBtn: el('appInfoSettingsBtn'),
+    appInfoDialog: el('appInfoDialog'), closeAppInfo: el('closeAppInfo'), appInfoMcBtn: el('appInfoMcBtn'), appInfoEssayBtn: el('appInfoEssayBtn'), appInfoTestBtn: el('appInfoTestBtn'), appInfoShareBtn: el('appInfoShareBtn'), appInfoUpdateBtn: el('appInfoUpdateBtn'), appInfoSettingsBtn: el('appInfoSettingsBtn'),
     categoriesBtn: el('categoriesBtn'), materialsBtn: el('materialsBtn'), statsBtn: el('statsBtn'), essayBtn: el('essayBtn'), testBtn: el('testBtn'), questionSearchFab: el('questionSearchFab'), installBtn: el('installBtn'), installGuideDialog: el('installGuideDialog'), closeInstallGuide: el('closeInstallGuide'),
     testProgressWrap: el('testProgressWrap'), testQuestionCount: el('testQuestionCount'), testAnsweredCount: el('testAnsweredCount'), testProgressFill: el('testProgressFill'),
     questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), answerForm: el('answerForm'),
@@ -274,7 +274,6 @@
   }
 
   async function shareStudyApp() {
-    if (!isMobileShareLayout()) return;
     const url = new URL('./', window.location.href).href;
     try {
       if (navigator.share) {
@@ -291,25 +290,13 @@
   }
 
   function updateBrandShareAffordance() {
-    if (dom.brandLogo) {
-      dom.brandLogo.tabIndex = 0;
-      dom.brandLogo.setAttribute('role', 'button');
-      dom.brandLogo.setAttribute('aria-label', 'About SCP Study');
-      dom.brandLogo.setAttribute('title', 'About SCP Study');
-    }
-    const mobile = isMobileShareLayout();
-    if (dom.brandTitle) {
-      dom.brandTitle.tabIndex = mobile ? 0 : -1;
-      if (mobile) {
-        dom.brandTitle.setAttribute('role', 'button');
-        dom.brandTitle.setAttribute('aria-label', 'Share SCP Study');
-        dom.brandTitle.setAttribute('title', 'Share SCP Study');
-      } else {
-        dom.brandTitle.removeAttribute('role');
-        dom.brandTitle.removeAttribute('aria-label');
-        dom.brandTitle.removeAttribute('title');
-      }
-    }
+    [dom.brandLogo, dom.brandTitle].forEach(node => {
+      if (!node) return;
+      node.tabIndex = 0;
+      node.setAttribute('role', 'button');
+      node.setAttribute('aria-label', 'About SCP Study');
+      node.setAttribute('title', 'About SCP Study');
+    });
   }
 
   function updateAppInfoModeUi() {
@@ -3544,19 +3531,14 @@
       if (nextId && nextId !== currentId) goToQuestionNumber(nextId);
     });
 
-    dom.brandLogo?.addEventListener('click', openAppInfo);
-    dom.brandLogo?.addEventListener('keydown', e => {
-      if (e.key !== 'Enter' && e.key !== ' ') return;
-      e.preventDefault();
-      openAppInfo();
+    [dom.brandLogo, dom.brandTitle].forEach(node => {
+      node?.addEventListener('click', openAppInfo);
+      node?.addEventListener('keydown', e => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        openAppInfo();
+      });
     });
-    dom.brandTitle?.addEventListener('click', () => void shareStudyApp());
-    dom.brandTitle?.addEventListener('keydown', e => {
-      if (!isMobileShareLayout() || (e.key !== 'Enter' && e.key !== ' ')) return;
-      e.preventDefault();
-      void shareStudyApp();
-    });
-    window.matchMedia?.('(max-width: 780px), (pointer: coarse)')?.addEventListener?.('change', updateBrandShareAffordance);
 
     dom.settingsChaburaLocation?.addEventListener('change', e => {
       fillChaburaSelect(dom.settingsChaburaSelect, e.currentTarget.value, '');
@@ -3635,6 +3617,7 @@
     dom.appInfoMcBtn?.addEventListener('click', () => chooseModeFromAppInfo('mc'));
     dom.appInfoEssayBtn?.addEventListener('click', () => chooseModeFromAppInfo('essay'));
     dom.appInfoTestBtn?.addEventListener('click', () => chooseModeFromAppInfo('test'));
+    dom.appInfoShareBtn?.addEventListener('click', () => void shareStudyApp());
     dom.appInfoUpdateBtn?.addEventListener('click', () => {
       dom.appInfoDialog?.close();
       void checkForAppUpdate({ manual: true });

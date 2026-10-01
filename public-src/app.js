@@ -15,10 +15,13 @@
   }));
   const APP_VERSION = 32;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
+  const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const ANALYTICS_COHORT = 'SCP 2026 Summer';
   const ANALYTICS_SETTINGS_KEY = 'scpStudy.analytics.v1';
   const ANALYTICS_QUEUE_KEY = 'scpStudy.analyticsQueue.v1';
   const ANALYTICS_INSTALLATION_KEY = 'scpStudy.analyticsInstallation.v1';
+  const CONTENT_FEEDBACK_QUEUE_KEY = 'scpStudy.contentFeedbackQueue.v1';
+  const CONTENT_FEEDBACK_SENT_KEY = 'scpStudy.contentFeedbackSent.v1';
   const ANALYTICS_MAX_QUEUE = 500;
   const TEST_DURATION_MS = 90 * 60 * 1000;
   const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -83,20 +86,21 @@
     modeLabel: el('modeLabel'), timerLabel: el('timerLabel'), mainTimer: el('mainTimer'), timerCard: el('timerCard'),
     categoriesBtn: el('categoriesBtn'), materialsBtn: el('materialsBtn'), statsBtn: el('statsBtn'), essayBtn: el('essayBtn'), testBtn: el('testBtn'), questionSearchFab: el('questionSearchFab'), installBtn: el('installBtn'), installGuideDialog: el('installGuideDialog'), closeInstallGuide: el('closeInstallGuide'),
     testProgressWrap: el('testProgressWrap'), testQuestionCount: el('testQuestionCount'), testAnsweredCount: el('testAnsweredCount'), testProgressFill: el('testProgressFill'),
-    questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), answerForm: el('answerForm'),
+    questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), answerForm: el('answerForm'),
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
     materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
-    essayPracticeDialog: el('essayPracticeDialog'), closeEssayPractice: el('closeEssayPractice'), essayPracticeTopic: el('essayPracticeTopic'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
+    essayPracticeDialog: el('essayPracticeDialog'), closeEssayPractice: el('closeEssayPractice'), essayPracticeTopic: el('essayPracticeTopic'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
     audioPlayerShell: el('audioPlayerShell'), audioPlayer: el('audioPlayer'), audioTrackTitle: el('audioTrackTitle'), audioTrackCounter: el('audioTrackCounter'), audioPrevBtn: el('audioPrevBtn'), audioBack10Btn: el('audioBack10Btn'), audioForward10Btn: el('audioForward10Btn'), audioNextBtn: el('audioNextBtn'), audioEmptyState: el('audioEmptyState'), audioPlaylistWrap: el('audioPlaylistWrap'), audioPlaylistCount: el('audioPlaylistCount'), audioPlaylistToggle: el('audioPlaylistToggle'), audioPlaylist: el('audioPlaylist'), transcriptPanel: el('transcriptPanel'), transcriptToggle: el('transcriptToggle'), audioTranscript: el('audioTranscript'), transcriptClock: el('transcriptClock'), miniAudioPlayer: el('miniAudioPlayer'), miniAudioOpen: el('miniAudioOpen'), miniAudioTitle: el('miniAudioTitle'), miniAudioTime: el('miniAudioTime'), miniAudioBack10: el('miniAudioBack10'), miniAudioPlayPause: el('miniAudioPlayPause'), miniAudioStop: el('miniAudioStop'),
     statsDialog: el('statsDialog'), statsContent: el('statsContent'), closeStats: el('closeStats'), resetStatsBtn: el('resetStatsBtn'), doneStatsBtn: el('doneStatsBtn'),
-    questionReviewDialog: el('questionReviewDialog'), closeQuestionReview: el('closeQuestionReview'), reviewTitle: el('reviewTitle'), reviewContextLabel: el('reviewContextLabel'), reviewSearchInput: el('reviewSearchInput'), reviewSearchClear: el('reviewSearchClear'), reviewSearchCount: el('reviewSearchCount'), reviewSearchEmpty: el('reviewSearchEmpty'), reviewNav: el('reviewNav'), reviewBody: el('reviewBody'), reviewQuestionNumber: el('reviewQuestionNumber'), reviewCategory: el('reviewCategory'), reviewStatsGrid: el('reviewStatsGrid'), reviewLastAnswer: el('reviewLastAnswer'), reviewPrompt: el('reviewPrompt'), reviewChoices: el('reviewChoices'), reviewExplanation: el('reviewExplanation'), reviewCorrectAnswer: el('reviewCorrectAnswer'), reviewAnswerDetails: el('reviewAnswerDetails'), reviewRevealBtn: el('reviewRevealBtn'), reviewAudio: el('reviewAudio'), reviewPrevBtn: el('reviewPrevBtn'), reviewNextBtn: el('reviewNextBtn'), reviewCounter: el('reviewCounter'),
+    questionReviewDialog: el('questionReviewDialog'), closeQuestionReview: el('closeQuestionReview'), reviewTitle: el('reviewTitle'), reviewContextLabel: el('reviewContextLabel'), reviewSearchInput: el('reviewSearchInput'), reviewSearchClear: el('reviewSearchClear'), reviewSearchCount: el('reviewSearchCount'), reviewSearchEmpty: el('reviewSearchEmpty'), reviewNav: el('reviewNav'), reviewBody: el('reviewBody'), reviewQuestionNumber: el('reviewQuestionNumber'), reviewCategory: el('reviewCategory'), reviewQuestionReportBtn: el('reviewQuestionReportBtn'), reviewStatsGrid: el('reviewStatsGrid'), reviewLastAnswer: el('reviewLastAnswer'), reviewPrompt: el('reviewPrompt'), reviewChoices: el('reviewChoices'), reviewExplanation: el('reviewExplanation'), reviewCorrectAnswer: el('reviewCorrectAnswer'), reviewAnswerDetails: el('reviewAnswerDetails'), reviewRevealBtn: el('reviewRevealBtn'), reviewAudio: el('reviewAudio'), reviewPrevBtn: el('reviewPrevBtn'), reviewNextBtn: el('reviewNextBtn'), reviewCounter: el('reviewCounter'),
     testIntroDialog: el('testIntroDialog'), closeTestIntro: el('closeTestIntro'), cancelTestStart: el('cancelTestStart'), startTestBtn: el('startTestBtn'),
     testResultDialog: el('testResultDialog'), testResultSubtitle: el('testResultSubtitle'), testResultContent: el('testResultContent'), closeTestResult: el('closeTestResult'), reviewStatsAfterTest: el('reviewStatsAfterTest'), returnToStudy: el('returnToStudy'),
-    glossaryTermDialog: el('glossaryTermDialog'), closeGlossaryTerm: el('closeGlossaryTerm'), glossaryTermTitle: el('glossaryTermTitle'), glossaryTermPronunciation: el('glossaryTermPronunciation'), glossaryTermIpa: el('glossaryTermIpa'), glossaryTermDefinition: el('glossaryTermDefinition'), glossarySpeakBtn: el('glossarySpeakBtn'), glossaryTermCategoriesWrap: el('glossaryTermCategoriesWrap'), glossaryTermCategories: el('glossaryTermCategories')
+    glossaryTermDialog: el('glossaryTermDialog'), closeGlossaryTerm: el('closeGlossaryTerm'), glossaryTermTitle: el('glossaryTermTitle'), glossaryTermPronunciation: el('glossaryTermPronunciation'), glossaryTermIpa: el('glossaryTermIpa'), glossaryTermDefinition: el('glossaryTermDefinition'), glossarySpeakBtn: el('glossarySpeakBtn'), glossaryTermCategoriesWrap: el('glossaryTermCategoriesWrap'), glossaryTermCategories: el('glossaryTermCategories'),
+    contentFeedbackDialog: el('contentFeedbackDialog'), closeContentFeedback: el('closeContentFeedback'), cancelContentFeedback: el('cancelContentFeedback'), submitContentFeedback: el('submitContentFeedback'), contentFeedbackType: el('contentFeedbackType'), contentFeedbackTitle: el('contentFeedbackTitle'), contentFeedbackPreview: el('contentFeedbackPreview'), contentFeedbackDetails: el('contentFeedbackDetails'), contentFeedbackCount: el('contentFeedbackCount'), contentFeedbackStatus: el('contentFeedbackStatus')
   };
 
   let state = loadState();
@@ -127,7 +131,9 @@
   let essayProgressState = loadEssayProgress();
   let essayRun = null;
   let essaySessionNumber = 0;
-  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog].filter(Boolean);
+  let activeContentFeedbackTarget = null;
+  let contentFeedbackFlushInFlight = false;
+  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog].filter(Boolean);
 
   function analyticsSettings() {
     try {
@@ -167,6 +173,243 @@
     id = (crypto?.randomUUID?.() || `anon-${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`);
     try { localStorage.setItem(ANALYTICS_INSTALLATION_KEY, id); } catch (_) {}
     return id;
+  }
+
+  function feedbackHash(value) {
+    let hash = 2166136261;
+    const input = String(value || '');
+    for (let i = 0; i < input.length; i++) {
+      hash ^= input.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    return (hash >>> 0).toString(16).padStart(8, '0');
+  }
+
+  function contentFeedbackQueue() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(CONTENT_FEEDBACK_QUEUE_KEY) || '[]');
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function saveContentFeedbackQueue(queue) {
+    try { localStorage.setItem(CONTENT_FEEDBACK_QUEUE_KEY, JSON.stringify(queue.slice(-100))); } catch (_) {}
+  }
+
+  function contentFeedbackSentMap() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(CONTENT_FEEDBACK_SENT_KEY) || '{}');
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function saveContentFeedbackSent(key) {
+    const map = contentFeedbackSentMap();
+    map[key] = Date.now();
+    const entries = Object.entries(map).sort((a,b) => Number(b[1]) - Number(a[1])).slice(0, 250);
+    try { localStorage.setItem(CONTENT_FEEDBACK_SENT_KEY, JSON.stringify(Object.fromEntries(entries))); } catch (_) {}
+  }
+
+  function feedbackTargetKey(target) {
+    return target ? `${target.contentType}:${target.contentId}:${feedbackHash(target.wording)}` : '';
+  }
+
+  function questionFeedbackTarget(q, source = 'study') {
+    if (!q) return null;
+    const entry = currentEntry();
+    const wording = [
+      q.prompt,
+      ...(q.choices || []).map((choice, i) => `${LETTERS[i]}. ${choice}`),
+      `Correct: ${(q.answer || []).join(', ')}`,
+      q.explanation ? `Explanation: ${q.explanation}` : ''
+    ].filter(Boolean).join('\n');
+    return {
+      contentType: 'question',
+      contentId: String(q.id),
+      parentId: null,
+      title: `Question ${q.id}`,
+      category: q.category || '',
+      preview: q.prompt,
+      wording,
+      source,
+      context: {
+        mode,
+        selected: Array.isArray(entry?.selected) ? [...entry.selected] : [],
+        answered: !!entry?.answered
+      }
+    };
+  }
+
+  function essayPromptFeedbackTarget(essay, source = 'essay_practice') {
+    if (!essay) return null;
+    return {
+      contentType: 'essay_prompt',
+      contentId: String(essay.id),
+      parentId: String(essay.id),
+      title: essay.title || 'Essay question',
+      category: essay.title || '',
+      preview: essay.prompt || '',
+      wording: essay.prompt || '',
+      source,
+      context: { essayId: essay.id }
+    };
+  }
+
+  function essayPairingFeedbackTarget(essay, fact, source = 'essay_practice') {
+    if (!essay || !fact) return null;
+    const name = essayNameText(fact);
+    const position = essayPositionText(fact);
+    return {
+      contentType: 'essay_pairing',
+      contentId: String(fact.id),
+      parentId: String(essay.id),
+      title: `${essay.title} · ${name}`,
+      category: essay.title || '',
+      preview: `${name} → ${position}`,
+      wording: `${name} → ${position}`,
+      source,
+      context: {
+        essayId: essay.id,
+        pairingLabel: fact.label || '',
+        options: essayRun?.essay?.id === essay.id
+          ? (essayRun.stepChoices || []).map(id => essay.facts.find(item => item.id === id)).filter(Boolean).map(item => essayPositionText(item))
+          : []
+      }
+    };
+  }
+
+  function resetContentFeedbackForm() {
+    dom.contentFeedbackDialog?.querySelectorAll('input[name="contentFeedbackReason"]').forEach(input => { input.checked = false; });
+    if (dom.contentFeedbackDetails) dom.contentFeedbackDetails.value = '';
+    if (dom.contentFeedbackCount) dom.contentFeedbackCount.textContent = '0/500';
+    if (dom.contentFeedbackStatus) dom.contentFeedbackStatus.textContent = '';
+    if (dom.submitContentFeedback) dom.submitContentFeedback.disabled = true;
+  }
+
+  function openContentFeedback(target) {
+    if (!target || !dom.contentFeedbackDialog) return;
+    activeContentFeedbackTarget = target;
+    resetContentFeedbackForm();
+    const labels = { question: 'Question', essay_prompt: 'Essay question', essay_pairing: 'Essay pairing' };
+    if (dom.contentFeedbackType) dom.contentFeedbackType.textContent = labels[target.contentType] || 'Content';
+    if (dom.contentFeedbackTitle) dom.contentFeedbackTitle.textContent = target.title || '';
+    if (dom.contentFeedbackPreview) dom.contentFeedbackPreview.textContent = target.preview || target.wording || '';
+    const key = feedbackTargetKey(target);
+    const already = !!contentFeedbackSentMap()[key] || contentFeedbackQueue().some(item => item.dedupeKey === key);
+    if (already) {
+      if (dom.contentFeedbackStatus) dom.contentFeedbackStatus.textContent = 'You already reported this wording. You can report it again after the content changes.';
+      if (dom.submitContentFeedback) dom.submitContentFeedback.disabled = true;
+    }
+    if (!dom.contentFeedbackDialog.open) dom.contentFeedbackDialog.showModal();
+  }
+
+  function selectedContentFeedbackReason() {
+    return dom.contentFeedbackDialog?.querySelector('input[name="contentFeedbackReason"]:checked')?.value || '';
+  }
+
+  function updateContentFeedbackSubmitState() {
+    if (!dom.submitContentFeedback) return;
+    const target = activeContentFeedbackTarget;
+    const key = feedbackTargetKey(target);
+    const duplicate = !!contentFeedbackSentMap()[key] || contentFeedbackQueue().some(item => item.dedupeKey === key);
+    dom.submitContentFeedback.disabled = !target || !selectedContentFeedbackReason() || duplicate;
+  }
+
+  async function sendContentFeedbackEvent(event) {
+    const response = await fetch(CONTENT_FEEDBACK_ENDPOINT, {
+      method: 'POST',
+      mode: 'cors',
+      credentials: 'omit',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json', 'X-SCP-Analytics-Version': '1' },
+      body: JSON.stringify(event)
+    });
+    if (!response.ok) {
+      let message = `Feedback upload failed (${response.status})`;
+      try {
+        const data = await response.json();
+        if (data?.error) message = data.error;
+      } catch (_) {}
+      throw new Error(message);
+    }
+    return response;
+  }
+
+  async function flushContentFeedbackQueue() {
+    if (contentFeedbackFlushInFlight || !navigator.onLine) return;
+    const queue = contentFeedbackQueue();
+    if (!queue.length) return;
+    contentFeedbackFlushInFlight = true;
+    const remaining = [...queue];
+    try {
+      while (remaining.length && navigator.onLine) {
+        const item = remaining[0];
+        await sendContentFeedbackEvent(item.event);
+        saveContentFeedbackSent(item.dedupeKey);
+        remaining.shift();
+        saveContentFeedbackQueue(remaining);
+      }
+    } catch (err) {
+      console.warn('Content feedback upload deferred:', err);
+    } finally {
+      contentFeedbackFlushInFlight = false;
+    }
+  }
+
+  async function submitActiveContentFeedback() {
+    const target = activeContentFeedbackTarget;
+    const reason = selectedContentFeedbackReason();
+    if (!target || !reason) return;
+    const details = String(dom.contentFeedbackDetails?.value || '').trim().slice(0, 500);
+    const contentHash = feedbackHash(target.wording);
+    const dedupeKey = feedbackTargetKey(target);
+    if (contentFeedbackSentMap()[dedupeKey] || contentFeedbackQueue().some(item => item.dedupeKey === dedupeKey)) {
+      if (dom.contentFeedbackStatus) dom.contentFeedbackStatus.textContent = 'This wording was already reported from this device.';
+      updateContentFeedbackSubmitState();
+      return;
+    }
+
+    const event = {
+      eventId: crypto?.randomUUID?.() || `fb-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      installationId: analyticsInstallationId(),
+      cohort: ANALYTICS_COHORT,
+      appVersion: String(APP_VERSION),
+      clientTs: new Date().toISOString(),
+      contentType: target.contentType,
+      contentId: target.contentId,
+      parentId: target.parentId || null,
+      title: target.title || '',
+      category: target.category || '',
+      wording: target.wording || '',
+      contentHash,
+      reason,
+      details,
+      source: target.source || 'other',
+      context: target.context || {}
+    };
+
+    if (dom.submitContentFeedback) dom.submitContentFeedback.disabled = true;
+    if (dom.contentFeedbackStatus) dom.contentFeedbackStatus.textContent = 'Sending…';
+    try {
+      await sendContentFeedbackEvent(event);
+      saveContentFeedbackSent(dedupeKey);
+      if (dom.contentFeedbackStatus) dom.contentFeedbackStatus.textContent = 'Thanks — your feedback was sent.';
+      setTimeout(() => {
+        if (dom.contentFeedbackDialog?.open) dom.contentFeedbackDialog.close();
+      }, 700);
+    } catch (err) {
+      const queue = contentFeedbackQueue();
+      queue.push({ dedupeKey, event });
+      saveContentFeedbackQueue(queue);
+      if (dom.contentFeedbackStatus) dom.contentFeedbackStatus.textContent = 'Saved on this device and will send when you are back online.';
+      setTimeout(() => {
+        if (dom.contentFeedbackDialog?.open) dom.contentFeedbackDialog.close();
+      }, 900);
+    }
   }
 
   function analyticsQueue() {
@@ -517,6 +760,7 @@
         <p class="essay-library-prompt">${escapeHtml(essay.prompt)}</p>
         <div class="essay-library-actions">
           <button class="secondary compact" type="button" data-essay-library-practice="${escapeHtml(essay.id)}">Practice this essay</button>
+          <button class="content-report-link" type="button" data-report-essay-prompt="${escapeHtml(essay.id)}">⚑ Report question</button>
           <span>${practiced ? `${practiced} attempt${practiced === 1 ? '' : 's'}` : 'Not practiced yet'}</span>
         </div>
         <details class="essay-library-details">
@@ -525,7 +769,7 @@
             ${essay.facts.map(fact => {
               const statement = fact.tokens.map(([, text]) => text).join(' ');
               const status = essayFactMasteryLabel(fact.id);
-              return `<div class="essay-library-point"><span class="essay-library-point-status ${status.toLowerCase()}">${status}</span><span>${escapeHtml(statement)}</span></div>`;
+              return `<div class="essay-library-point"><span class="essay-library-point-status ${status.toLowerCase()}">${status}</span><span>${escapeHtml(statement)}</span><button class="content-report-btn essay-library-point-report" type="button" data-report-essay-pairing="${escapeHtml(fact.id)}" data-report-essay-id="${escapeHtml(essay.id)}" aria-label="Report an issue with this pairing" title="Report an issue">⚑</button></div>`;
             }).join('')}
           </div>
         </details>
@@ -658,6 +902,7 @@
           <strong>${escapeHtml(essayNameText(fact))}</strong>
           <span>${escapeHtml(essayPositionText(fact))}</span>
         </div>
+        <button class="content-report-btn essay-built-report" type="button" data-report-essay-pairing="${escapeHtml(fact.id)}" aria-label="Report an issue with this pairing" title="Report an issue">⚑</button>
       `;
       dom.essayAnswerZone.append(row);
     });
@@ -677,6 +922,7 @@
       if (dom.essayMatchCount) dom.essayMatchCount.textContent = 'Complete';
       if (dom.essayMatchContext) dom.essayMatchContext.textContent = 'Essay complete';
       if (dom.essayMatchName) dom.essayMatchName.textContent = 'All pairings matched';
+      if (dom.essayPairingReportBtn) dom.essayPairingReportBtn.disabled = true;
       if (dom.essayChoiceList) dom.essayChoiceList.innerHTML = '';
       if (dom.essayFeedback) {
         dom.essayFeedback.className = 'essay-choice-feedback correct';
@@ -690,6 +936,7 @@
     if (dom.essayMatchCount) dom.essayMatchCount.textContent = `${step} of ${essay.facts.length}`;
     if (dom.essayMatchContext) dom.essayMatchContext.textContent = fact.label || 'Match the position';
     if (dom.essayMatchName) dom.essayMatchName.textContent = essayNameText(fact);
+    if (dom.essayPairingReportBtn) dom.essayPairingReportBtn.disabled = false;
 
     if (dom.essayChoiceList) {
       dom.essayChoiceList.innerHTML = '';

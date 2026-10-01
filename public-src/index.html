@@ -52,7 +52,10 @@
             <span class="pill" id="questionNumber">Question</span>
             <span class="pill subtle" id="questionCategory">Category</span>
           </div>
-          <span class="status-chip" id="questionStatus">Unanswered</span>
+          <div class="question-top-actions">
+            <button class="content-report-btn" id="questionReportBtn" type="button" aria-label="Report an issue with this question" title="Report an issue">⚑</button>
+            <span class="status-chip" id="questionStatus">Unanswered</span>
+          </div>
         </div>
 
         <h1 id="questionPrompt">Loading…</h1>
@@ -403,7 +406,10 @@
       </div>
 
       <section class="essay-question-card">
-        <h3 id="essayPracticeTitle">Essay question</h3>
+        <div class="essay-question-card-head">
+          <h3 id="essayPracticeTitle">Essay question</h3>
+          <button class="content-report-btn" id="essayPromptReportBtn" type="button" aria-label="Report an issue with this essay question" title="Report an issue">⚑</button>
+        </div>
         <p id="essayPracticePrompt"></p>
       </section>
 
@@ -426,7 +432,10 @@
             <span class="eyebrow">Next pairing</span>
             <h3 id="essayMatchHeading">Which position matches?</h3>
           </div>
-          <span class="essay-match-count" id="essayMatchCount">1 of 1</span>
+          <div class="essay-match-actions">
+            <button class="content-report-btn" id="essayPairingReportBtn" type="button" aria-label="Report an issue with this essay pairing" title="Report an issue">⚑</button>
+            <span class="essay-match-count" id="essayMatchCount">1 of 1</span>
+          </div>
         </div>
 
         <div class="essay-match-target">
@@ -448,6 +457,45 @@
         <div class="essay-footer-right">
           <button class="primary" type="button" id="essayNextBtn" hidden>Next essay</button>
         </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="contentFeedbackDialog" class="modal content-feedback-dialog">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>Report a content issue</h2>
+          <p>Help improve this question or essay pairing. Feedback is sent anonymously and is separate from the anonymous usage setting.</p>
+        </div>
+        <button class="close-btn" id="closeContentFeedback" type="button" aria-label="Close">×</button>
+      </div>
+
+      <div class="content-feedback-target">
+        <span class="eyebrow" id="contentFeedbackType">Question</span>
+        <strong id="contentFeedbackTitle"></strong>
+        <p id="contentFeedbackPreview"></p>
+      </div>
+
+      <fieldset class="content-feedback-reasons">
+        <legend>What is the issue?</legend>
+        <label><input type="radio" name="contentFeedbackReason" value="confusing" /> <span>Confusing</span></label>
+        <label><input type="radio" name="contentFeedbackReason" value="inaccurate" /> <span>May be inaccurate</span></label>
+        <label><input type="radio" name="contentFeedbackReason" value="wording" /> <span>Wording or typo</span></label>
+        <label><input type="radio" name="contentFeedbackReason" value="incomplete" /> <span>Missing or incomplete</span></label>
+        <label><input type="radio" name="contentFeedbackReason" value="other" /> <span>Other</span></label>
+      </fieldset>
+
+      <label class="content-feedback-details">
+        <span>Additional details <small>optional</small></span>
+        <textarea id="contentFeedbackDetails" maxlength="500" rows="5" placeholder="What should we know?"></textarea>
+        <span class="content-feedback-count" id="contentFeedbackCount">0/500</span>
+      </label>
+      <div class="content-feedback-status" id="contentFeedbackStatus" aria-live="polite"></div>
+
+      <div class="modal-footer">
+        <button class="secondary" id="cancelContentFeedback" type="button">Cancel</button>
+        <button class="primary" id="submitContentFeedback" type="button" disabled>Send feedback</button>
       </div>
     </div>
   </dialog>
@@ -504,8 +552,11 @@
 
       <div id="reviewBody">
         <div class="review-topline">
-          <span class="pill" id="reviewQuestionNumber">Question</span>
-          <span class="pill subtle" id="reviewCategory">Category</span>
+          <div>
+            <span class="pill" id="reviewQuestionNumber">Question</span>
+            <span class="pill subtle" id="reviewCategory">Category</span>
+          </div>
+          <button class="content-report-btn" id="reviewQuestionReportBtn" type="button" aria-label="Report an issue with this question" title="Report an issue">⚑</button>
         </div>
 
         <div id="reviewStatsGrid" class="stat-grid review-stat-grid"></div>

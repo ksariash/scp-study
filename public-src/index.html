@@ -778,15 +778,19 @@
   <dialog id="pdfViewerDialog" class="pdf-viewer-dialog" aria-labelledby="pdfViewerTitle">
     <div class="pdf-viewer-shell">
       <nav class="pdf-viewer-nav" aria-label="PDF viewer controls">
-        <button class="pdf-viewer-btn" type="button" id="pdfViewerBackBtn">← Back</button>
+        <button class="pdf-viewer-btn pdf-viewer-back" type="button" id="pdfViewerBackBtn">← Back</button>
         <strong class="pdf-viewer-title" id="pdfViewerTitle">PDF</strong>
         <select class="pdf-viewer-jump hidden" id="pdfViewerJump" aria-label="Jump to a question or essay"></select>
-        <span class="pdf-viewer-spacer"></span>
-        <button class="pdf-viewer-btn" type="button" id="pdfViewerShareBtn">Share</button>
-        <button class="pdf-viewer-btn" type="button" id="pdfViewerPrintBtn">Print</button>
-        <button class="pdf-viewer-btn primary" type="button" id="pdfViewerDownloadBtn">Download</button>
+        <div class="pdf-viewer-actions">
+          <button class="pdf-viewer-btn" type="button" id="pdfViewerShareBtn">Share</button>
+          <button class="pdf-viewer-btn" type="button" id="pdfViewerPrintBtn">Print</button>
+          <button class="pdf-viewer-btn primary" type="button" id="pdfViewerDownloadBtn">Download</button>
+        </div>
       </nav>
-      <iframe class="pdf-viewer-frame" id="pdfViewerFrame" title="PDF viewer"></iframe>
+      <div class="pdf-viewer-body" id="pdfViewerBody" tabindex="0">
+        <div class="pdf-viewer-status" id="pdfViewerStatus" role="status" aria-live="polite">Loading PDF…</div>
+        <div class="pdf-viewer-pages" id="pdfViewerPages" aria-label="PDF pages"></div>
+      </div>
     </div>
   </dialog>
 
@@ -797,7 +801,7 @@
           <span class="eyebrow">About</span>
           <div class="app-info-title-row">
             <h2 id="appInfoTitle">SCP Study</h2>
-            <span class="app-info-version">v47</span>
+            <span class="app-info-version">v49</span>
           </div>
           <p>A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.</p>
         </div>

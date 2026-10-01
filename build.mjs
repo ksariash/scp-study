@@ -17,6 +17,11 @@ await rm(outputDir, { recursive: true, force: true });
 await mkdir(outputDir, { recursive: true });
 await cp(sourceDir, outputDir, { recursive: true });
 
+const pdfJsOutput = new URL('./pdfjs/', outputDir);
+await mkdir(pdfJsOutput, { recursive: true });
+await cp(new URL('./node_modules/pdfjs-dist/legacy/build/pdf.mjs', ROOT), new URL('./pdf.mjs', pdfJsOutput));
+await cp(new URL('./node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs', ROOT), new URL('./pdf.worker.mjs', pdfJsOutput));
+
 let encoded = '';
 for (let i = 1; ; i++) {
   const part = new URL(`./static-binaries.tar.gz.b64.${String(i).padStart(2, '0')}.part`, assetsDir);

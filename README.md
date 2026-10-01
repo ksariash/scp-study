@@ -219,3 +219,10 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - Adds an Essays tab to Materials with searchable access to all 14 essays and the full Essay Library.
 - Uses a 3-by-2 Materials tab layout on mobile now that there are six sections.
 - Shortens feedback choices to “Wrong location in notes” and “Wrong location in audio.”
+
+
+## Release 49
+
+- Replaces the embedded browser PDF frame with an in-app PDF.js renderer so all pages scroll correctly in iOS/standalone mode.
+- Rebuilds the mobile PDF toolbar into fixed-width rows that cannot overflow the viewport.
+- Course-note jumps now search the mapped page for the selected question or essay and scroll to the matching text location, with a temporary on-page marker.

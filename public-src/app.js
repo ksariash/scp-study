@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 48;
+  const APP_VERSION = 49;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const ANALYTICS_COHORT = "Nat Bar Nat & Stam Ye'enam - Summer 26";
@@ -133,7 +133,7 @@
     glossaryTermDialog: el('glossaryTermDialog'), closeGlossaryTerm: el('closeGlossaryTerm'), glossaryTermTitle: el('glossaryTermTitle'), glossaryTermPronunciation: el('glossaryTermPronunciation'), glossaryTermIpa: el('glossaryTermIpa'), glossaryTermDefinition: el('glossaryTermDefinition'), glossarySpeakBtn: el('glossarySpeakBtn'), glossaryTermCategoriesWrap: el('glossaryTermCategoriesWrap'), glossaryTermCategories: el('glossaryTermCategories'),
     contentFeedbackDialog: el('contentFeedbackDialog'), closeContentFeedback: el('closeContentFeedback'), cancelContentFeedback: el('cancelContentFeedback'), submitContentFeedback: el('submitContentFeedback'), contentFeedbackType: el('contentFeedbackType'), contentFeedbackTitle: el('contentFeedbackTitle'), contentFeedbackPreview: el('contentFeedbackPreview'), contentFeedbackDetails: el('contentFeedbackDetails'), contentFeedbackCount: el('contentFeedbackCount'), contentFeedbackStatus: el('contentFeedbackStatus'),
     appVersionFooter: el('appVersionFooter'), appToast: el('appToast'), updatePullIndicator: el('updatePullIndicator'),
-    pdfViewerDialog: el('pdfViewerDialog'), pdfViewerBackBtn: el('pdfViewerBackBtn'), pdfViewerTitle: el('pdfViewerTitle'), pdfViewerJump: el('pdfViewerJump'), pdfViewerShareBtn: el('pdfViewerShareBtn'), pdfViewerPrintBtn: el('pdfViewerPrintBtn'), pdfViewerDownloadBtn: el('pdfViewerDownloadBtn'), pdfViewerFrame: el('pdfViewerFrame'),
+    pdfViewerDialog: el('pdfViewerDialog'), pdfViewerBackBtn: el('pdfViewerBackBtn'), pdfViewerTitle: el('pdfViewerTitle'), pdfViewerJump: el('pdfViewerJump'), pdfViewerShareBtn: el('pdfViewerShareBtn'), pdfViewerPrintBtn: el('pdfViewerPrintBtn'), pdfViewerDownloadBtn: el('pdfViewerDownloadBtn'), pdfViewerBody: el('pdfViewerBody'), pdfViewerStatus: el('pdfViewerStatus'), pdfViewerPages: el('pdfViewerPages'),
     chaburaDialog: el('chaburaDialog'), chaburaDialogLocation: el('chaburaDialogLocation'), chaburaDialogSelect: el('chaburaDialogSelect'), saveChaburaDialogBtn: el('saveChaburaDialogBtn')
   };
 
@@ -172,6 +172,7 @@
   let appToastTimer = null;
   let updateCheckInFlight = null;
   let activePdfViewer = null;
+  let pdfJsPromise = null;
   const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.statsDialog, dom.questionReviewDialog, dom.pdfViewerDialog, dom.appInfoDialog, dom.mcIntroDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.chaburaDialog].filter(Boolean);
 
 
@@ -2725,6 +2726,13 @@
     return COURSE_NOTE_REFS.docs?.[key] || null;
   }
 
+  function courseNotePage(ref, docKey) {
+    const value = ref?.[docKey];
+    const rawPage = value && typeof value === 'object' ? value.page : value;
+    const page = Number(rawPage);
+    return Number.isFinite(page) && page >= 1 ? Math.floor(page) : 0;
+  }
+
   function renderCourseNoteLinks(container, kind, id) {
     if (!container) return;
     const ref = courseNoteRef(kind, id);
@@ -2732,7 +2740,7 @@
     if (!ref) { container.classList.add('hidden'); return; }
     [['compact', 'Concise notes'], ['full', 'Full notes']].forEach(([key, label]) => {
       const doc = courseNoteDoc(key);
-      const page = Number(ref[key]);
+      const page = courseNotePage(ref, key);
       if (!doc || !Number.isFinite(page) || page < 1) return;
       const button = document.createElement('button');
       button.className = 'course-note-link';
@@ -2746,10 +2754,14 @@
     container.classList.toggle('hidden', !container.children.length);
   }
 
-  function pdfPageUrl(url, page = 1) {
-    const absolute = absoluteUrl(url);
-    const hash = `page=${Math.max(1, Number(page) || 1)}&zoom=page-width`;
-    return `${absolute}#${hash}`;
+  async function getPdfJs() {
+    if (!pdfJsPromise) {
+      pdfJsPromise = import('./pdfjs/pdf.mjs').then(pdfjs => {
+        pdfjs.GlobalWorkerOptions.workerSrc = './pdfjs/pdf.worker.mjs';
+        return pdfjs;
+      });
+    }
+    return pdfJsPromise;
   }
 
   function buildCourseNoteJump(docKey, selectedValue = '') {
@@ -2763,7 +2775,7 @@
     const options = ['<option value="">Jump to question or essay…</option>'];
     options.push('<optgroup label="Questions">');
     QUESTIONS.forEach(q => {
-      const page = Number(courseNoteRef('question', q.id)?.[docKey]);
+      const page = courseNotePage(courseNoteRef('question', q.id), docKey);
       if (!page) return;
       const prompt = String(q.prompt || '').replace(/\s+/g, ' ').trim();
       const short = prompt.length > 58 ? `${prompt.slice(0, 57)}…` : prompt;
@@ -2771,7 +2783,7 @@
     });
     options.push('</optgroup><optgroup label="Essays">');
     ESSAY_BANK.forEach((essay, index) => {
-      const page = Number(courseNoteRef('essay', essay.id)?.[docKey]);
+      const page = courseNotePage(courseNoteRef('essay', essay.id), docKey);
       if (!page) return;
       options.push(`<option value="essay:${escapeHtml(essay.id)}" data-page="${page}">Essay ${index + 1} · ${escapeHtml(essay.title)} · p. ${page}</option>`);
     });
@@ -2780,31 +2792,287 @@
     if (selectedValue) dom.pdfViewerJump.value = selectedValue;
   }
 
-  function setPdfViewerPage(page) {
-    if (!activePdfViewer || !dom.pdfViewerFrame) return;
-    activePdfViewer.page = Math.max(1, Number(page) || 1);
-    dom.pdfViewerFrame.src = pdfPageUrl(activePdfViewer.url, activePdfViewer.page);
+  function pdfTargetText(selection) {
+    const [kind, rawId] = String(selection || '').split(':');
+    if (kind === 'question') {
+      const q = questionById.get(Number(rawId));
+      return q ? [q.category, q.prompt, q.explanation].filter(Boolean).join(' ') : '';
+    }
+    if (kind === 'essay') {
+      const essay = ESSAY_BANK.find(item => item.id === rawId);
+      if (!essay) return '';
+      const facts = essay.facts?.flatMap(fact => [essayNameText(fact), essayPositionText(fact)]) || [];
+      return [essay.title, essay.prompt, essay.modelAnswer, ...facts].filter(Boolean).join(' ');
+    }
+    return '';
+  }
+
+  const PDF_SEARCH_STOPWORDS = new Set([
+    'the','and','that','this','with','from','into','what','which','when','where','while','there','their','then','than','they','them','will','would','should','could',
+    'course','statement','correct','matches','best','case','cases','rule','rules','according','discuss','include','including','about','after','before','later','still',
+    'first','second','same','one','two','may','can','does','not','for','are','was','were','has','have','had','but','its','his','her','your','you','how','why','who',
+    'all','each','both','true','false','select','apply','practical','position','positions','opinion','opinions','major','relevant','framework'
+  ]);
+
+  function pdfSearchTokens(value) {
+    return String(value || '')
+      .normalize('NFKD')
+      .replace(/[\u0591-\u05c7]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9\u0590-\u05ff]+/g, ' ')
+      .trim()
+      .split(/\s+/)
+      .filter(token => token && !PDF_SEARCH_STOPWORDS.has(token) && (/^[\u0590-\u05ff]+$/.test(token) ? token.length >= 2 : token.length >= 3));
+  }
+
+  function pdfTargetLabel(selection) {
+    const [kind, rawId] = String(selection || '').split(':');
+    if (kind === 'question') return `Q${rawId}`;
+    if (kind === 'essay') {
+      const index = ESSAY_BANK.findIndex(item => item.id === rawId);
+      return index >= 0 ? `Essay ${index + 1}` : 'Essay';
+    }
+    return '';
+  }
+
+  function setPdfViewerStatus(message = '') {
+    if (!dom.pdfViewerStatus) return;
+    dom.pdfViewerStatus.textContent = message;
+    dom.pdfViewerStatus.classList.toggle('hidden', !message);
+  }
+
+  function pdfPageElement(pageNumber) {
+    return dom.pdfViewerPages?.querySelector(`[data-pdf-page="${pageNumber}"]`) || null;
+  }
+
+  async function renderPdfPage(pageNumber) {
+    const viewer = activePdfViewer;
+    if (!viewer?.pdf || !dom.pdfViewerPages) return null;
+    const number = Math.max(1, Math.min(viewer.pdf.numPages, Number(pageNumber) || 1));
+    if (viewer.renderedPages.has(number)) return viewer.pageCache.get(number) || null;
+    if (viewer.renderPromises.has(number)) return viewer.renderPromises.get(number);
+
+    const promise = (async () => {
+      const page = await viewer.pdf.getPage(number);
+      if (activePdfViewer !== viewer) return null;
+      viewer.pageCache.set(number, page);
+      const holder = pdfPageElement(number);
+      if (!holder) return page;
+
+      const baseViewport = page.getViewport({ scale: 1 });
+      const available = Math.max(280, Math.min(980, (dom.pdfViewerBody?.clientWidth || window.innerWidth) - (window.innerWidth <= 780 ? 12 : 28)));
+      const cssScale = available / baseViewport.width;
+      const dpr = Math.min(2, Math.max(1, window.devicePixelRatio || 1));
+      const renderViewport = page.getViewport({ scale: cssScale * dpr });
+      const canvas = holder.querySelector('canvas');
+      if (!canvas) return page;
+      canvas.width = Math.ceil(renderViewport.width);
+      canvas.height = Math.ceil(renderViewport.height);
+      canvas.style.width = `${Math.round(baseViewport.width * cssScale)}px`;
+      canvas.style.height = `${Math.round(baseViewport.height * cssScale)}px`;
+      holder.style.aspectRatio = `${baseViewport.width} / ${baseViewport.height}`;
+
+      const context = canvas.getContext('2d', { alpha: false });
+      await page.render({ canvasContext: context, viewport: renderViewport }).promise;
+      if (activePdfViewer !== viewer) return page;
+      holder.classList.add('rendered');
+      viewer.renderedPages.add(number);
+      return page;
+    })().finally(() => viewer.renderPromises.delete(number));
+
+    viewer.renderPromises.set(number, promise);
+    return promise;
+  }
+
+  function setupPdfPageObserver(viewer) {
+    viewer.observer?.disconnect();
+    viewer.observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const pageNumber = Number(entry.target.dataset.pdfPage);
+        if (pageNumber) void renderPdfPage(pageNumber);
+      });
+    }, { root: dom.pdfViewerBody, rootMargin: '900px 0px', threshold: 0.01 });
+
+    dom.pdfViewerPages?.querySelectorAll('[data-pdf-page]').forEach(node => viewer.observer.observe(node));
+  }
+
+  async function bestPdfTargetFraction(page, selection) {
+    const query = pdfTargetText(selection);
+    const queryTokens = [...new Set(pdfSearchTokens(query))];
+    if (!queryTokens.length || !page) return 0.05;
+    const querySet = new Set(queryTokens);
+    const content = await page.getTextContent();
+    const height = Math.max(1, Number(page.view?.[3]) - Number(page.view?.[1]));
+    const lines = new Map();
+
+    (content.items || []).forEach(item => {
+      const text = String(item?.str || '').trim();
+      const y = Number(item?.transform?.[5]);
+      if (!text || !Number.isFinite(y)) return;
+      const bucket = Math.round(y / 6) * 6;
+      const row = lines.get(bucket) || [];
+      row.push(text);
+      lines.set(bucket, row);
+    });
+
+    const ordered = [...lines.entries()]
+      .map(([y, parts]) => ({ y, text: parts.join(' ') }))
+      .sort((left, right) => right.y - left.y);
+    if (!ordered.length) return 0.05;
+
+    let best = { score: -1, y: ordered[0].y };
+    for (let i = 0; i < ordered.length; i++) {
+      const windowRows = ordered.slice(i, i + 4);
+      const text = windowRows.map(row => row.text).join(' ');
+      const tokens = new Set(pdfSearchTokens(text));
+      let score = 0;
+      querySet.forEach(token => {
+        if (!tokens.has(token)) return;
+        const hebrew = /^[\u0590-\u05ff]+$/.test(token);
+        score += (hebrew ? 3.2 : 1.5) + Math.min(2.5, token.length / 6);
+      });
+      if (score > best.score) best = { score, y: windowRows[0].y };
+    }
+
+    if (best.score < 2) return 0.05;
+    const fraction = 1 - ((best.y - Number(page.view?.[1] || 0)) / height);
+    return Math.max(0.02, Math.min(0.94, fraction - 0.025));
+  }
+
+  function showPdfTargetMarker(pageNumber, fraction, selection) {
+    dom.pdfViewerPages?.querySelectorAll('.pdf-target-marker').forEach(node => node.remove());
+    const holder = pdfPageElement(pageNumber);
+    if (!holder || !selection) return;
+    const marker = document.createElement('div');
+    marker.className = 'pdf-target-marker';
+    marker.style.top = `${Math.max(1, Math.min(96, fraction * 100))}%`;
+    marker.innerHTML = `<span>${escapeHtml(pdfTargetLabel(selection))}</span>`;
+    holder.append(marker);
+    window.setTimeout(() => marker.classList.add('settled'), 1700);
+  }
+
+  async function scrollPdfViewerTo(pageNumber, selection = '') {
+    const viewer = activePdfViewer;
+    if (!viewer?.pdf || !dom.pdfViewerBody) return;
+    const page = Math.max(1, Math.min(viewer.pdf.numPages, Number(pageNumber) || 1));
+    viewer.page = page;
+    viewer.selection = selection || '';
+
+    const holder = pdfPageElement(page);
+    if (!holder) return;
+    dom.pdfViewerBody.scrollTo({ top: Math.max(0, holder.offsetTop - 8), behavior: 'auto' });
+    const pdfPage = await renderPdfPage(page);
+    if (activePdfViewer !== viewer || !pdfPage) return;
+
+    let fraction = 0.03;
+    if (selection && (viewer.docKey === 'compact' || viewer.docKey === 'full')) {
+      const cacheKey = `${page}:${selection}`;
+      if (viewer.anchorCache.has(cacheKey)) fraction = viewer.anchorCache.get(cacheKey);
+      else {
+        fraction = await bestPdfTargetFraction(pdfPage, selection);
+        viewer.anchorCache.set(cacheKey, fraction);
+      }
+    }
+
+    requestAnimationFrame(() => {
+      if (activePdfViewer !== viewer) return;
+      const currentHolder = pdfPageElement(page);
+      if (!currentHolder) return;
+      const top = currentHolder.offsetTop + (currentHolder.clientHeight * fraction) - 14;
+      dom.pdfViewerBody.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
+      showPdfTargetMarker(page, fraction, selection);
+    });
+  }
+
+  async function loadPdfViewerDocument(viewer) {
+    try {
+      setPdfViewerStatus('Loading PDF…');
+      const pdfjs = await getPdfJs();
+      if (activePdfViewer !== viewer) return;
+      const loadingTask = pdfjs.getDocument({
+        url: absoluteUrl(viewer.url),
+        disableRange: true,
+        disableStream: true,
+        disableAutoFetch: true
+      });
+      viewer.loadingTask = loadingTask;
+      const pdf = await loadingTask.promise;
+      if (activePdfViewer !== viewer) { try { await pdf.destroy(); } catch (_) {} return; }
+      viewer.pdf = pdf;
+
+      const firstPage = await pdf.getPage(1);
+      const firstViewport = firstPage.getViewport({ scale: 1 });
+      const ratio = `${firstViewport.width} / ${firstViewport.height}`;
+      if (activePdfViewer !== viewer) return;
+
+      const fragment = document.createDocumentFragment();
+      for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+        const holder = document.createElement('section');
+        holder.className = 'pdf-viewer-page';
+        holder.dataset.pdfPage = String(pageNumber);
+        holder.style.aspectRatio = ratio;
+        holder.setAttribute('aria-label', `Page ${pageNumber}`);
+        holder.innerHTML = `<canvas aria-hidden="true"></canvas><span class="pdf-page-number">${pageNumber}</span>`;
+        fragment.append(holder);
+      }
+      dom.pdfViewerPages.innerHTML = '';
+      dom.pdfViewerPages.append(fragment);
+      setPdfViewerStatus('');
+      await scrollPdfViewerTo(viewer.page, viewer.selection);
+      if (activePdfViewer !== viewer) return;
+      setupPdfPageObserver(viewer);
+      void renderPdfPage(Math.max(1, viewer.page - 1));
+      void renderPdfPage(Math.min(pdf.numPages, viewer.page + 1));
+    } catch (error) {
+      if (activePdfViewer !== viewer) return;
+      console.warn('Could not load PDF viewer:', error);
+      setPdfViewerStatus('Could not render this PDF in the app. You can still share, print, or download it.');
+    }
   }
 
   function openPdfViewer({ url, title = 'SCP Study PDF', page = 1, docKey = null, selection = '' } = {}) {
-    if (!url || !dom.pdfViewerDialog || !dom.pdfViewerFrame) return;
-    activePdfViewer = { url, title, page: Math.max(1, Number(page) || 1), docKey };
+    if (!url || !dom.pdfViewerDialog || !dom.pdfViewerPages) return;
+    closePdfViewer({ closeDialog: false });
+    const viewer = {
+      url,
+      title,
+      page: Math.max(1, Number(page) || 1),
+      docKey,
+      selection,
+      pdf: null,
+      loadingTask: null,
+      observer: null,
+      renderedPages: new Set(),
+      renderPromises: new Map(),
+      pageCache: new Map(),
+      anchorCache: new Map()
+    };
+    activePdfViewer = viewer;
     if (dom.pdfViewerTitle) dom.pdfViewerTitle.textContent = title;
     buildCourseNoteJump(docKey, selection);
-    dom.pdfViewerFrame.src = pdfPageUrl(url, activePdfViewer.page);
+    if (dom.pdfViewerPages) dom.pdfViewerPages.innerHTML = '';
+    setPdfViewerStatus('Loading PDF…');
     if (!dom.pdfViewerDialog.open) dom.pdfViewerDialog.showModal();
+    if (dom.pdfViewerBody) dom.pdfViewerBody.scrollTop = 0;
+    void loadPdfViewerDocument(viewer);
   }
 
-  function closePdfViewer() {
-    if (dom.pdfViewerDialog?.open) dom.pdfViewerDialog.close();
-    if (dom.pdfViewerFrame) dom.pdfViewerFrame.src = 'about:blank';
+  function closePdfViewer({ closeDialog = true } = {}) {
+    const viewer = activePdfViewer;
     activePdfViewer = null;
+    viewer?.observer?.disconnect();
+    try { viewer?.loadingTask?.destroy?.(); } catch (_) {}
+    try { viewer?.pdf?.destroy?.(); } catch (_) {}
+    if (dom.pdfViewerPages) dom.pdfViewerPages.innerHTML = '';
+    setPdfViewerStatus('');
+    if (closeDialog && dom.pdfViewerDialog?.open) dom.pdfViewerDialog.close();
   }
 
   function openCourseNote(docKey, kind, id) {
     const doc = courseNoteDoc(docKey);
     const ref = courseNoteRef(kind, id);
-    const page = Number(ref?.[docKey]);
+    const page = courseNotePage(ref, docKey);
     if (!doc || !page) return;
     openPdfViewer({
       url: doc.url,
@@ -3776,7 +4044,7 @@
     dom.pdfViewerJump?.addEventListener('change', e => {
       const option = e.currentTarget.selectedOptions?.[0];
       const page = Number(option?.dataset?.page);
-      if (page) setPdfViewerPage(page);
+      if (page && activePdfViewer) void scrollPdfViewerTo(page, e.currentTarget.value || '');
     });
 
     dom.statsBtn.addEventListener('click', openStats);

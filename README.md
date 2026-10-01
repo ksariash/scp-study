@@ -111,3 +111,12 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 - Wrong choices receive immediate feedback and are disabled; correct choices are immediately added to the essay buildout.
 - The next pairing appears automatically, so there is no Submit button.
 - Essay completion now records first-try accuracy and reveals Practice again, Next essay, and the model answer.
+
+
+## Release 33
+
+- Added student content feedback for multiple-choice questions, essay prompts, and individual essay pairings.
+- Feedback includes common issue reasons plus an optional 500-character detail box.
+- Reports are anonymous, explicitly submitted, and separate from the automatic anonymous-usage preference.
+- Each report stores the exact wording/content version the student saw plus relevant answer/pairing context.
+- Duplicate reports for the same unchanged content are suppressed on-device; queued reports retry when connectivity returns.

@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 45;
+  const APP_VERSION = 46;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const ANALYTICS_COHORT = "Nat Bar Nat & Stam Ye'enam - Summer 26";
@@ -1988,11 +1988,12 @@
     dom.questionNumber.classList.remove('explorer-link');
     dom.questionNumber.tabIndex = 0;
     dom.questionNumber.setAttribute('aria-disabled', 'false');
-    [dom.questionPrompt, dom.questionCategory].forEach(node => {
-      node.classList.toggle('explorer-link', !!entry.answered);
-      node.tabIndex = entry.answered ? 0 : -1;
-      node.setAttribute('aria-disabled', entry.answered ? 'false' : 'true');
-    });
+    dom.questionPrompt.classList.remove('explorer-link');
+    dom.questionPrompt.tabIndex = -1;
+    dom.questionPrompt.removeAttribute('aria-disabled');
+    dom.questionCategory.classList.toggle('explorer-link', !!entry.answered);
+    dom.questionCategory.tabIndex = entry.answered ? 0 : -1;
+    dom.questionCategory.setAttribute('aria-disabled', entry.answered ? 'false' : 'true');
 
     renderChoices(q, entry);
     renderFeedback(q, entry);
@@ -3580,14 +3581,13 @@
       if (kind === 'category') openQuestionReview(q.id, QUESTIONS.filter(x => x.category === q.category).map(x => x.id), `Category: ${q.category}`);
       else openQuestionReviewAll(q.id);
     };
-    dom.questionPrompt.addEventListener('click', () => openCurrentExplorer('question'));
     dom.questionCategory.addEventListener('click', () => openCurrentExplorer('category'));
-    [dom.questionPrompt, dom.questionCategory].forEach(node => node.addEventListener('keydown', e => {
+    dom.questionCategory.addEventListener('keydown', e => {
       if (e.key !== 'Enter' && e.key !== ' ') return;
-      if (node.getAttribute('aria-disabled') === 'true') return;
+      if (dom.questionCategory.getAttribute('aria-disabled') === 'true') return;
       e.preventDefault();
-      openCurrentExplorer(node === dom.questionCategory ? 'category' : 'question');
-    }));
+      openCurrentExplorer('category');
+    });
 
     dom.questionReportBtn?.addEventListener('click', () => {
       const q = currentQuestion();

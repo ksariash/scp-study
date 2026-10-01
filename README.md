@@ -197,3 +197,9 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 
 - Both the app icon and SCP Study title now open the App Info dialog.
 - Simplifies About copy, shows the current version beside the title, and adds a Share app action inside the dialog.
+
+
+## Release 46
+
+- Question prompt text no longer opens Question Explorer; category links continue to open the relevant category.
+- Adds feedback reasons for an incorrect notes connection and an incorrect audio connection.

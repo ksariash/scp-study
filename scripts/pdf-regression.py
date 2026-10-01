@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, base64, gzip, io, json, math, re, shutil, sys, tarfile
+import argparse, base64, gzip, io, json, math, re, shutil, subprocess, sys, tarfile
 from pathlib import Path
 
 DYNAMIC = [
@@ -30,9 +30,17 @@ def extract_bundle(out: Path) -> None:
             target = out / Path(name).name
             target.write_bytes(source.read())
             found.add(target.name)
+    if "SCP-Study-Essay-Questions-and-Sample-Answers.pdf" not in found:
+        legacy = "914cb0ee3ec5b506f0812f4824c2cb4d0039fca5:public-src/documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf"
+        target = out / "SCP-Study-Essay-Questions-and-Sample-Answers.pdf"
+        try:
+            target.write_bytes(subprocess.check_output(["git", "show", legacy]))
+            found.add(target.name)
+        except subprocess.CalledProcessError as error:
+            raise SystemExit("Could not recover legacy essay PDF from git history") from error
     missing = wanted - found
     if missing:
-        raise SystemExit("Missing reference PDFs in bundle: " + ", ".join(sorted(missing)))
+        raise SystemExit("Missing reference PDFs: " + ", ".join(sorted(missing)))
 
 def norm_text(value: str) -> str:
     return re.sub(r"\s+", " ", value or "").strip()

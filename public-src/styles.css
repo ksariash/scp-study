@@ -3036,3 +3036,65 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
   .essay-practice-main-head p{display:none}
   .question-number-jump{width:124px;max-width:124px;min-height:31px;padding-left:10px;font-size:.7rem}
 }
+
+/* v43: compact Essay-mode navigation */
+.essay-mode-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+.essay-mode-toolbar-main{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  min-width:0;
+}
+.essay-mode-toolbar-actions{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+.essay-quick-nav{
+  appearance:none;
+  -webkit-appearance:none;
+  min-height:34px;
+  width:min(330px,52vw);
+  max-width:100%;
+  padding:6px 34px 6px 12px;
+  border:1px solid #c8d7ef;
+  border-radius:999px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20'%3E%3Cpath d='M5.5 7.5 10 12l4.5-4.5' fill='none' stroke='%23234382' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 11px center / 12px 12px,
+    linear-gradient(180deg,#f5f8ff 0%,#e8f0ff 100%);
+  color:#234382;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(28,58,112,.08);
+  font:inherit;
+  font-size:.77rem;
+  font-weight:800;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  overflow:hidden;
+}
+.essay-quick-nav:focus-visible{outline:3px solid rgba(49,86,183,.22);outline-offset:2px}
+.essay-category-tags{display:flex;flex-wrap:wrap;gap:5px}
+.essay-category-tag{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:4px 9px;
+  border-radius:999px;
+  background:#f0f3f8;
+  color:#56657e;
+  font-size:.7rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+.essay-practice-main > .essay-practice-topline{margin-top:0}
+@media(max-width:780px){
+  .essay-mode-toolbar{align-items:stretch;flex-direction:column}
+  .essay-mode-toolbar-main{display:grid;grid-template-columns:minmax(0,1fr);gap:7px}
+  .essay-quick-nav{width:100%;max-width:none}
+  .essay-mode-toolbar-actions{display:grid;grid-template-columns:1fr 1fr}
+  .essay-mode-toolbar-actions button{min-height:38px;padding:8px 10px}
+  .essay-category-tags{overflow-x:auto;flex-wrap:nowrap;padding-bottom:1px;scrollbar-width:none}
+  .essay-category-tags::-webkit-scrollbar{display:none}
+}

@@ -175,3 +175,11 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 ## Release 42
 
 - Adds Essay Practice progress to the main Stats view, including facts mastered/seen, essays practiced, perfect essays, total/perfect rounds, and expandable per-essay progress.
+
+
+## Release 43
+
+- Removes the redundant Essay mode / Essay Practice header from the main Essay workspace.
+- Adds an Essay quick-jump menu, Essay Explorer button, Essay search button, and current-topic category tags.
+- Stops the temporary PDF regression GitHub Actions workflows.
+- Hardens generated PDF mixed Hebrew/English rendering by stripping invisible bidi controls and disabling problematic shaping features on Hebrew runs, preventing the direction-control/.notdef square seen in the essay PDF.

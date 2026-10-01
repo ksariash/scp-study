@@ -10,6 +10,13 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = dirname(HERE);
 const require = createRequire(import.meta.url);
 const HEBREW_RE = /[\u0590-\u05ff]/;
+const PDF_CONTROL_RE = /[\u0000\u200e\u200f\u202a-\u202e\u2066-\u2069]/g;
+function pdfSafeText(value) {
+  return String(value ?? '').replace(PDF_CONTROL_RE, '');
+}
+function pdfTextOptions(value, base = {}) {
+  return HEBREW_RE.test(String(value || '')) ? { ...base, features: [] } : base;
+}
 const LETTER = [612, 792];
 const LANDSCAPE = [792, 612];
 
@@ -54,8 +61,9 @@ function setFont(doc, text, options = {}) {
 }
 
 function wordWidth(doc, word, options = {}) {
-  setFont(doc, word, options);
-  return doc.widthOfString(word);
+  const safe = pdfSafeText(word);
+  setFont(doc, safe, options);
+  return doc.widthOfString(safe, pdfTextOptions(safe));
 }
 
 function wrapMixed(doc, text, { width, size = 10, bold = false, family = 'noto' } = {}) {
@@ -87,8 +95,9 @@ function drawMixedLine(doc, words, x, y, { size = 10, bold = false, family = 'no
   for (const word of words) {
     const tokenSize = HEBREW_RE.test(word) && family === 'noto' ? size + 1 : size;
     setFont(doc, word, { size: tokenSize, bold, family });
-    doc.fillColor(color).text(word, cursor, y, { lineBreak: false });
-    cursor += doc.widthOfString(word) + space;
+    const safeWord = pdfSafeText(word);
+    doc.fillColor(color).text(safeWord, cursor, y, pdfTextOptions(safeWord, { lineBreak: false }));
+    cursor += doc.widthOfString(safeWord, pdfTextOptions(safeWord)) + space;
   }
   return cursor;
 }
@@ -113,8 +122,9 @@ function drawRunsLine(doc, runs, x, y, size = 10, color = '#000000') {
       }
       const tokenSize = HEBREW_RE.test(word) && family === 'noto' ? size + 1 : size;
       setFont(doc, word, { size: tokenSize, bold, family });
-      doc.fillColor(color).text(word, cursor, y, { lineBreak: false });
-      cursor += doc.widthOfString(word);
+      const safeWord = pdfSafeText(word);
+      doc.fillColor(color).text(safeWord, cursor, y, pdfTextOptions(safeWord, { lineBreak: false }));
+      cursor += doc.widthOfString(safeWord, pdfTextOptions(safeWord));
     }
   }
   return cursor;
@@ -428,8 +438,9 @@ function drawEssayLine(doc,words,x,y,size,bold,color){
     const family=HEBREW_RE.test(word)?'noto':'dejavu';
     const tokenSize=HEBREW_RE.test(word)?size+.15:size;
     setFont(doc,word,{family,bold,size:tokenSize});
-    doc.fillColor(color).text(word,cursor,y,{lineBreak:false});
-    cursor+=doc.widthOfString(word)+space;
+    const safeWord=pdfSafeText(word);
+    doc.fillColor(color).text(safeWord,cursor,y,pdfTextOptions(safeWord,{lineBreak:false}));
+    cursor+=doc.widthOfString(safeWord,pdfTextOptions(safeWord))+space;
   }
 }
 function drawEssayParagraph(doc,text,x,y,width,size,bold,color,leading){

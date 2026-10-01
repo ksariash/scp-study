@@ -1,0 +1,353 @@
+const GLOSSARY_TERMS = [
+  {
+    id: 'nat-bar-nat',
+    term: 'נ״ט בר נ״ט',
+    pronunciation: 'nat bar nat — no-TEN ta-AM bar no-TEN ta-AM',
+    speech: 'noh TEN tah AHM, bar noh TEN tah AHM',
+    ipa: 'noˈten taˈam bar noˈten taˈam',
+    aliases: ['נ״ט בר נ״ט', 'נותן טעם בר נותן טעם', 'nat bar nat', 'nat barnat'],
+    definition: 'Meat or dairy taste weakened through successive transfers. In this course, the leniency is specific to בשר בחלב and does not neutralize an inherently forbidden taste.'
+  },
+  {
+    id: 'taam-keikar',
+    term: 'טעם כעיקר',
+    pronunciation: "ta-AM k'ee-KAR",
+    speech: 'tah AHM keh ee KAR',
+    ipa: 'taˈam ke.iˈkar',
+    aliases: ['טעם כעיקר', 'taam k’ikar', 'taam keikar', 'taam ki-ikar'],
+    definition: 'Transferred taste can have the halachic status of the food itself.'
+  },
+  {
+    id: 'ben-yomo',
+    term: 'בן יומו',
+    pronunciation: 'ben yo-MO',
+    speech: 'ben yoh MOH',
+    ipa: 'ben joˈmo',
+    aliases: ['בן יומו', 'ben-yomo', 'ben yomo'],
+    definition: 'A vessel used hot with that food type within the past 24 hours; its absorbed taste is still treated as effective.'
+  },
+  {
+    id: 'eino-ben-yomo',
+    term: 'אינו בן יומו',
+    pronunciation: 'eh-NO ben yo-MO',
+    speech: 'eh NOH ben yoh MOH',
+    ipa: 'eˈno ben joˈmo',
+    aliases: ['אינו בן יומו', 'eino-ben-yomo', 'eino ben yomo'],
+    definition: 'A vessel not used hot with that food type for 24 hours. Its absorbed taste is generally פגום, although the vessel can still require kashering.'
+  },
+  {
+    id: 'basar-bechalav',
+    term: 'בשר בחלב',
+    pronunciation: 'ba-SAR be-kha-LAV',
+    speech: 'bah SAR beh kha LAV',
+    ipa: 'baˈsar beχaˈlav',
+    aliases: ['בשר בחלב', 'basar b’chalav', 'basar bechalav'],
+    definition: 'The prohibition involving meat and milk together. The course’s נ״ט בר נ״ט leniency applies specifically within this area.'
+  },
+  {
+    id: 'lechatchila',
+    term: 'לכתחילה',
+    pronunciation: 'le-khat-khee-LA',
+    speech: 'leh khat khee LAH',
+    ipa: 'leχatχiˈla',
+    aliases: ['לכתחילה', 'lechatchila', 'l’chatchila', "l'chat'chila", 'lechatchilah'],
+    definition: 'The preferred rule before the act is done—what one should plan to do initially.'
+  },
+  {
+    id: 'bedieved',
+    term: 'בדיעבד',
+    pronunciation: 'be-dee-a-VAD',
+    speech: 'beh dee ah VAD',
+    ipa: 'bedi.aˈvad',
+    aliases: ['בדיעבד', 'bedieved', 'b’dieved', 'b’dievet', "b'dieved", "b'dievet"],
+    definition: 'After the fact—how the halacha treats a situation once the act already occurred.'
+  },
+  {
+    id: 'pagum',
+    term: 'פגום',
+    pronunciation: 'pa-GUM',
+    speech: 'pah GOOM',
+    ipa: 'paˈɡum',
+    aliases: ['פגום', 'pagum'],
+    definition: 'Spoiled or detrimental taste. After 24 hours, absorbed vessel taste is generally treated this way.'
+  },
+  {
+    id: 'pogem',
+    term: 'פוגם',
+    pronunciation: 'po-GEM',
+    speech: 'poh GEM',
+    ipa: 'poˈɡem',
+    aliases: ['פוגם', 'pogem'],
+    definition: 'Something that makes a taste detrimental or spoiled, such as a bad-tasting agent in wash water.'
+  },
+  {
+    id: 'noten-taam-lifgam',
+    term: 'נותן טעם לפגם',
+    pronunciation: 'no-TEN ta-AM lif-GAM',
+    speech: 'noh TEN tah AHM leef GAM',
+    ipa: 'noˈten taˈam lifˈɡam',
+    aliases: ['נותן טעם לפגם', 'noten taam lifgam', 'nosein taam lifgam'],
+    definition: 'Taste that detracts rather than improves. It can support a leniency only when the relevant taste is already spoiled before the forbidden absorption forms.'
+  },
+  {
+    id: 'davar-charif',
+    term: 'דבר חריף',
+    pronunciation: 'da-VAR kha-RIF',
+    speech: 'dah VAR kha REEF',
+    ipa: 'daˈvar χaˈrif',
+    aliases: ['דבר חריף', 'davar charif'],
+    definition: 'A sharp food that can draw out or revive absorbed taste more strongly than ordinary parve food.'
+  },
+  {
+    id: 'kli-rishon',
+    term: 'כלי ראשון',
+    pronunciation: 'klee ree-SHON',
+    speech: 'klee ree SHOHN',
+    ipa: 'kli riˈʃon',
+    aliases: ['כלי ראשון', 'kli rishon'],
+    definition: 'The primary cooking vessel or source vessel; it is treated as a stronger heat-transfer setting.'
+  },
+  {
+    id: 'kli-sheini',
+    term: 'כלי שני',
+    pronunciation: 'klee sheh-NEE',
+    speech: 'klee sheh NEE',
+    ipa: 'kli ʃeˈni',
+    aliases: ['כלי שני', 'kli sheini', 'kli sheni'],
+    definition: 'A second vessel into which hot contents were transferred; in the course it is generally a weaker transfer setting than a כלי ראשון.'
+  },
+  {
+    id: 'irui',
+    term: 'עירוי',
+    pronunciation: 'ee-RU-ee',
+    speech: 'ee ROO ee',
+    ipa: 'iˈru.i',
+    aliases: ['עירוי', 'irui'],
+    definition: 'Pouring from one vessel to another. The stream can create its own heat and taste-transfer questions.'
+  },
+  {
+    id: 'irui-kli-rishon',
+    term: 'עירוי כלי ראשון',
+    pronunciation: 'ee-RU-ee klee ree-SHON',
+    speech: 'ee ROO ee, klee ree SHOHN',
+    ipa: 'iˈru.i kli riˈʃon',
+    aliases: ['עירוי כלי ראשון', 'irui kli rishon'],
+    definition: 'A pour directly from a כלי ראשון. The course notes that it can affect at least כדי קליפה.'
+  },
+  {
+    id: 'kdei-klipa',
+    term: 'כדי קליפה',
+    pronunciation: "k'dei k'lee-PAH",
+    speech: 'keh DAY keh lee PAH',
+    ipa: 'kəˈdej kə.liˈpa',
+    aliases: ['כדי קליפה', 'kdei klipa', 'k’dei kelipah', 'kdei kelipah'],
+    definition: 'A thin surface layer—the amount described as the thickness that can be peeled away.'
+  },
+  {
+    id: 'tataah-gavar',
+    term: 'תתאה גבר',
+    pronunciation: 'ta-ta-AH ga-VAR',
+    speech: 'tah tah AH gah VAR',
+    ipa: 'tataˈa ɡaˈvar',
+    aliases: ['תתאה גבר', 'tataah gavar', 'tata’a gavar'],
+    definition: 'The lower item dominates a hot/cold contact. When the lower item is cold, the course limits the effect to a thin surface layer.'
+  },
+  {
+    id: 'shishim',
+    term: 'ששים',
+    pronunciation: 'shee-SHEEM',
+    speech: 'shee SHEEM',
+    ipa: 'ʃiˈʃim',
+    aliases: ['ששים', 'shishim'],
+    definition: 'A sixty-to-one ratio used in many bitul calculations.'
+  },
+  {
+    id: 'bitul',
+    term: 'ביטול',
+    pronunciation: 'bee-TUL',
+    speech: 'bee TOOL',
+    ipa: 'biˈtul',
+    aliases: ['ביטול', 'bitul', 'batel'],
+    definition: 'Halachic nullification of a prohibited substance or taste in a larger permitted mixture when the applicable ratio and conditions are met.'
+  },
+  {
+    id: 'ein-mevatlin',
+    term: 'אין מבטלין איסור לכתחילה',
+    pronunciation: 'ein me-vat-LEEN ee-SUR le-khat-khee-LA',
+    speech: 'ayn meh vat LEEN ee SOOR leh khat khee LAH',
+    ipa: 'en mevatˈlin iˈsur leχatχiˈla',
+    aliases: ['אין מבטלין איסור לכתחילה', 'ein mevatlin issur lechatchila', 'ein mevatlin issur l’chatchila'],
+    definition: 'One may not intentionally create the nullifying ratio for a prohibited substance לכתחילה.'
+  },
+  {
+    id: 'sakana',
+    term: 'סכנה',
+    pronunciation: 'sa-ka-NAH',
+    speech: 'sah kah NAH',
+    ipa: 'sakaˈna',
+    aliases: ['סכנה', 'sakana', 'sakanah'],
+    definition: 'Danger. The fish-and-meat unit treats this as a different category from ordinary איסור, with its own bitul discussion.'
+  },
+  {
+    id: 'safek-sfeika',
+    term: 'ספק ספיקא',
+    pronunciation: 'sa-FEK sfeh-KA',
+    speech: 'sah FEK sfeh KAH',
+    ipa: 'saˈfek sfeˈka',
+    aliases: ['ספק ספיקא', 'ספק-ספיקא', 'safek sfeika', 'safek-sfeika'],
+    definition: 'A combination of two doubts used as a leniency factor. The course applies it, for example, to an opposite-type utensil later found in the wrong drawer.'
+  },
+  {
+    id: 'yad-soledet',
+    term: 'יד סולדת בו',
+    pronunciation: 'yad so-LE-det bo',
+    speech: 'yahd soh LEH det boh',
+    ipa: 'jad soˈledet bo',
+    aliases: ['יד סולדת בו', 'yad soledet bo'],
+    definition: 'Literally, heat from which the hand recoils. It is used as a halachic heat threshold in several course discussions, though the course warns against memorizing one universal temperature.'
+  },
+  {
+    id: 'reicha',
+    term: 'ריחא',
+    pronunciation: 'reh-KHA',
+    speech: 'reh KHAH',
+    ipa: 'reˈχa',
+    aliases: ['ריחא', 'reicha', 'reicha milsa'],
+    definition: 'Aroma or smell transfer. In the fish-and-meat section it is a reason to avoid some oven situations לכתחילה even where the food is generally permitted בדיעבד absent meaningful steam transfer.'
+  },
+  {
+    id: 'issur',
+    term: 'איסור',
+    pronunciation: 'ee-SUR',
+    speech: 'ee SOOR',
+    ipa: 'iˈsur',
+    aliases: ['איסור', 'issur'],
+    definition: 'A prohibition, or a substance/status that is prohibited.'
+  },
+  {
+    id: 'heter',
+    term: 'היתר',
+    pronunciation: 'he-TER',
+    speech: 'heh TER',
+    ipa: 'heˈter',
+    aliases: ['היתר', 'heter', 'hetter'],
+    definition: 'A permitted status, permission, or leniency.'
+  },
+  {
+    id: 'parve',
+    term: 'Parve',
+    pronunciation: 'PAR-ve',
+    speech: 'PAR veh',
+    ipa: 'ˈparve',
+    aliases: ['parve', 'pareve'],
+    definition: 'Food that is neither meat nor dairy.'
+  },
+  {
+    id: 'gezeirah',
+    term: 'גזירה',
+    pronunciation: 'ge-zeh-RAH',
+    speech: 'geh zeh RAH',
+    ipa: 'ɡezeˈra',
+    aliases: ['גזירה', 'gezeirah', 'gezeira'],
+    definition: 'A rabbinic decree. The course uses the term for rules such as the separate social-drinking restrictions.'
+  },
+  {
+    id: 'yayin-nesech',
+    term: 'יין נסך',
+    pronunciation: 'YA-yin NE-sekh',
+    speech: 'YAH yin NEH sekh',
+    ipa: 'ˈjajin ˈneseχ',
+    aliases: ['יין נסך', 'yayin nesech'],
+    definition: 'Wine actually used as an idolatrous libation. The course treats it as biblically prohibited for drinking and benefit.'
+  },
+  {
+    id: 'stam-yeinam',
+    term: 'סתם יינם',
+    pronunciation: 'stam yay-NAM',
+    speech: 'stahm yay NAHM',
+    ipa: 'stam jeiˈnam',
+    aliases: ['סתם יינם', 'stam yeinam', 'stam yaynam'],
+    definition: 'Ordinary wine of a non-Jew. Under the original rabbinic decree, both drinking and benefit are prohibited.'
+  },
+  {
+    id: 'maga-akum',
+    term: 'מגע עכו״ם',
+    pronunciation: 'ma-GA a-KUM',
+    speech: 'mah GAH ah KOOM',
+    ipa: 'maˈɡa aˈkum',
+    aliases: ['מגע עכו״ם', 'maga akum', 'maga akum'],
+    definition: 'Jewish non-mevushal wine touched or handled by a non-Jew in a way that triggers the rabbinic wine-touch rules.'
+  },
+  {
+    id: 'akum',
+    term: 'עכו״ם',
+    pronunciation: 'a-KUM',
+    speech: 'ah KOOM',
+    ipa: 'aˈkum',
+    aliases: ['עכו״ם', 'akum'],
+    definition: 'Course shorthand for the classic idolater/non-Jew category used in the wine laws.'
+  },
+  {
+    id: 'mevushal',
+    term: 'מבושל',
+    pronunciation: 'me-vu-SHAL',
+    speech: 'meh voo SHAL',
+    ipa: 'mevuˈʃal',
+    aliases: ['מבושל', 'mevushal'],
+    definition: 'Cooked wine. If Jewish wine reaches the qualifying cooked-wine threshold before non-Jewish contact, the later touch decree does not apply; cooking does not purify wine that was already forbidden.'
+  },
+  {
+    id: 'hamshacha',
+    term: 'המשכה',
+    pronunciation: 'ham-sha-KHAH',
+    speech: 'hahm shah KHAH',
+    ipa: 'hamʃaˈχa',
+    aliases: ['המשכה', 'hamshacha', 'hamshachah'],
+    definition: 'Drawing or separating clear grape juice from the crushed grapes and solids. In the course this marks when the juice becomes susceptible to the ordinary wine-touch rules.'
+  },
+  {
+    id: 'nitzok',
+    term: 'נצוק',
+    pronunciation: 'nee-TZOK',
+    speech: 'nee tsohk',
+    ipa: 'niˈtsok',
+    aliases: ['נצוק', 'nitzok', 'nitzok-'],
+    definition: 'A continuous liquid stream. In the wine laws it can be treated as connecting the source bottle to prohibited wine or residue below.'
+  },
+  {
+    id: 'yotzei-venichnas',
+    term: 'יוצא ונכנס',
+    pronunciation: 'yo-TZEI ve-nikh-NAS',
+    speech: 'yoh TSAY veh neekh NAHS',
+    ipa: 'joˈtse ve niχˈnas',
+    aliases: ['יוצא ונכנס', 'yotzei venichnas', 'yotzei v’nichnas'],
+    definition: 'Literally “going out and coming in.” A Jew can return unexpectedly, creating fear of being caught and protecting unattended wine when the required conditions are met.'
+  },
+  {
+    id: 'eivah',
+    term: 'איבה',
+    pronunciation: 'eh-VAH',
+    speech: 'eh VAH',
+    ipa: 'eˈva',
+    aliases: ['איבה', 'eivah', 'aivah'],
+    definition: 'Hostility or animosity. In the course it can be a factor in some business and social-drinking applications.'
+  },
+  {
+    id: 'kiyuha',
+    term: 'קיוהא',
+    pronunciation: 'kee-yu-HAH',
+    speech: 'kee yoo HAH',
+    ipa: 'kijuˈha',
+    aliases: ['קיוהא', 'kiyuha', 'kiyuhah'],
+    definition: 'A weak or bland residual taste. The sherry-cask discussion cites Rav Moshe characterizing the remnant this way.'
+  },
+  {
+    id: 'chotam-betoch-chotam',
+    term: 'חותם בתוך חותם',
+    pronunciation: 'kho-TAM be-TOKH kho-TAM',
+    speech: 'khoh TAHM beh TOHKH khoh TAHM',
+    ipa: 'χoˈtam beˈtoχ χoˈtam',
+    aliases: ['חותם בתוך חותם', 'double seal', 'chotam betoch chotam'],
+    definition: 'A double seal or tamper-evident protection used in the unattended-wine laws.'
+  }
+];

@@ -14,10 +14,15 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 49;
+  const APP_VERSION = 50;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
-  const ANALYTICS_COHORT = "Nat Bar Nat & Stam Ye'enam - Summer 26";
+  const COHORT_SELECTION_KEY = 'scpStudy.activeCohort.v1';
+  const COHORT_REGISTRY = window.SCP_COHORT_REGISTRY || { cohorts: [] };
+  const ACTIVE_COHORT = window.SCP_COHORT_CONFIG || window.SCP_ACTIVE_COHORT || COHORT_REGISTRY.cohorts?.[0] || {};
+  const COHORT_ID = String(ACTIVE_COHORT.id || COHORT_REGISTRY.defaultCohortId || 'default');
+  const COHORT_NAME = String(ACTIVE_COHORT.name || COHORT_ID);
+  const ANALYTICS_COHORT = String(ACTIVE_COHORT.analyticsKey || COHORT_NAME);
   const ANALYTICS_SETTINGS_KEY = 'scpStudy.analytics.v1';
   const ANALYTICS_QUEUE_KEY = 'scpStudy.analyticsQueue.v1';
   const ANALYTICS_INSTALLATION_KEY = 'scpStudy.analyticsInstallation.v1';
@@ -34,22 +39,8 @@
   const questionById = new Map(QUESTIONS.map(q => [q.id, q]));
   const ESSAY_BANK = Array.isArray(window.ESSAY_PRACTICE_DATA) ? window.ESSAY_PRACTICE_DATA : [];
   const COURSE_NOTE_REFS = window.COURSE_NOTE_REFS || { docs: {}, questions: {}, essays: {} };
-  const ESSAY_CATEGORY_TAGS = {
-    'nbn-intentional-cooking': ['נ״ט בר נ״ט'],
-    'nbn-model-failures': ['נ״ט בר נ״ט'],
-    'fish-meat-bitul': ['Fish & Meat', 'סכנה'],
-    'dish-transfer': ['Dish Transfer', 'עירוי'],
-    'soap-dishwasher': ['Dishwashers', 'פוגם'],
-    'stam-benefit': ['סתם יינם', 'Benefit'],
-    'mevushal-pasteurization': ['סתם יינם', 'מבושל'],
-    'sherry-casks': ['סתם יינם', 'Bitul'],
-    'social-drinking-business': ['סתם יינם', 'Social Drinking'],
-    'social-drinking-weddings': ['סתם יינם', 'Social Drinking'],
-    'wine-touch-actors': ['Wine Contact & Touch'],
-    'wine-contact-actions': ['Wine Contact & Touch'],
-    'nitzok': ['Wine Contact & Touch', 'נצוק'],
-    'unattended-wine': ['Unattended Wine']
-  };
+  const ESSAY_CATEGORY_TAGS = ACTIVE_COHORT.essayCategoryTags && typeof ACTIVE_COHORT.essayCategoryTags === 'object'
+    ? ACTIVE_COHORT.essayCategoryTags : {};
   const ESSAY_CATEGORY_LIST = [...new Set(Object.values(ESSAY_CATEGORY_TAGS).flat())];
   const CHABURA_QUESTIONS = Array.isArray(window.SCP_CHABURA_DATA?.questions) ? window.SCP_CHABURA_DATA.questions : [];
   const CHABURA_LOCATION_QUESTION = CHABURA_QUESTIONS.find(item => item.id === 'location') || null;
@@ -57,6 +48,83 @@
   const CHABURA_LOCATIONS = Array.isArray(CHABURA_LOCATION_QUESTION?.options) ? CHABURA_LOCATION_QUESTION.options : [];
   const CHABURAS_BY_LOCATION = CHABURA_QUESTION?.optionsByLocation && typeof CHABURA_QUESTION.optionsByLocation === 'object'
     ? CHABURA_QUESTION.optionsByLocation : {};
+
+  function cohortScopedKey(base) {
+    return `${base}:${COHORT_ID}`;
+  }
+
+  function readScopedJson(base, fallback = null) {
+    const key = cohortScopedKey(base);
+    try {
+      const scoped = localStorage.getItem(key);
+      if (scoped !== null) return JSON.parse(scoped);
+      const defaultId = String(COHORT_REGISTRY.defaultCohortId || COHORT_ID);
+      if (COHORT_ID === defaultId) {
+        const legacy = localStorage.getItem(base);
+        if (legacy !== null) {
+          localStorage.setItem(key, legacy);
+          return JSON.parse(legacy);
+        }
+      }
+    } catch (_) {}
+    return fallback;
+  }
+
+  function writeScopedJson(base, value) {
+    try { localStorage.setItem(cohortScopedKey(base), JSON.stringify(value)); } catch (_) {}
+  }
+
+  function readScopedString(base, fallback = '') {
+    const key = cohortScopedKey(base);
+    try {
+      const scoped = localStorage.getItem(key);
+      if (scoped !== null) return scoped;
+      const defaultId = String(COHORT_REGISTRY.defaultCohortId || COHORT_ID);
+      if (COHORT_ID === defaultId) {
+        const legacy = localStorage.getItem(base);
+        if (legacy !== null) {
+          localStorage.setItem(key, legacy);
+          return legacy;
+        }
+      }
+    } catch (_) {}
+    return fallback;
+  }
+
+  function writeScopedString(base, value) {
+    try { localStorage.setItem(cohortScopedKey(base), String(value ?? '')); } catch (_) {}
+  }
+
+  function removeScopedValue(base) {
+    try { localStorage.removeItem(cohortScopedKey(base)); } catch (_) {}
+  }
+
+  function readMainProgressEnvelope() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return { scopeVersion: 1, cohorts: {} };
+      const parsed = JSON.parse(raw);
+      if (parsed?.scopeVersion === 1 && parsed.cohorts && typeof parsed.cohorts === 'object') return parsed;
+      const migrated = { scopeVersion: 1, cohorts: { [COHORT_ID]: parsed } };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+      return migrated;
+    } catch (_) {
+      return { scopeVersion: 1, cohorts: {} };
+    }
+  }
+
+  function readMainProgressForCohort() {
+    const envelope = readMainProgressEnvelope();
+    return envelope.cohorts?.[COHORT_ID] || null;
+  }
+
+  function writeMainProgressForCohort(value) {
+    const envelope = readMainProgressEnvelope();
+    envelope.scopeVersion = 1;
+    envelope.cohorts ||= {};
+    envelope.cohorts[COHORT_ID] = value;
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope)); } catch (_) {}
+  }
 
   function searchableQuestionText(q) {
     const refs = (typeof QUESTION_AUDIO_MAP !== 'undefined' && QUESTION_AUDIO_MAP[String(q.id)]) || [];
@@ -95,18 +163,8 @@
   const glossaryPattern = glossaryAliasPairs.length
     ? new RegExp(`(^|[^\\p{L}\\p{N}])(${glossaryAliasPairs.map(item => item.alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})(?=$|[^\\p{L}\\p{N}])`, 'giu')
     : null;
-  const GLOSSARY_CATEGORY_LINKS = {
-    'taam-keikar': ['נ״ט בר נ״ט'],
-    'noten-taam-lifgam': ['Dishes, Sinks & Dishwashers'],
-    'tataah-gavar': ['Dishes, Sinks & Dishwashers'],
-    'ein-mevatlin': ['Fish & Meat', 'Wine Processing & Products'],
-    'yad-soledet': ['Dishes, Sinks & Dishwashers', 'Wine Processing & Products'],
-    'gezeirah': ['סתם יינם — Foundations & Benefit', 'Social Drinking'],
-    'maga-akum': ['סתם יינם — Foundations & Benefit', 'Wine Contact & Touch'],
-    'akum': ['סתם יינם — Foundations & Benefit', 'Wine Contact & Touch', 'Unattended Wine'],
-    'nitzok': ['Wine Contact & Touch'],
-    'chotam-betoch-chotam': ['Unattended Wine']
-  };
+  const GLOSSARY_CATEGORY_LINKS = ACTIVE_COHORT.glossaryCategoryLinks && typeof ACTIVE_COHORT.glossaryCategoryLinks === 'object'
+    ? ACTIVE_COHORT.glossaryCategoryLinks : {};
   const glossaryCategoryCache = new Map();
   let activeGlossaryEntry = null;
 
@@ -120,7 +178,7 @@
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     questionCard: el('questionCard'), prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoriesDialogTitle: el('categoriesDialogTitle'), categoriesDialogDescription: el('categoriesDialogDescription'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
-    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
+    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
     essayPracticeMain: el('essayPracticeMain'), essayQuickNav: el('essayQuickNav'), essayCategoryTags: el('essayCategoryTags'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayNoteLinks: el('essayNoteLinks'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingAudio: el('essayPairingAudio'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
@@ -190,7 +248,7 @@
   }
 
   function loadChaburaSettings() {
-    try { return validChaburaSettings(JSON.parse(localStorage.getItem(CHABURA_SETTINGS_KEY) || 'null')); }
+    try { return validChaburaSettings(readScopedJson(CHABURA_SETTINGS_KEY, null)); }
     catch (_) { return null; }
   }
 
@@ -217,6 +275,42 @@
     if (options.includes(selected)) select.value = selected;
   }
 
+  function cohortRegistryEntries() {
+    return Array.isArray(COHORT_REGISTRY.cohorts) ? COHORT_REGISTRY.cohorts : [];
+  }
+
+  function syncCohortSettingsUi() {
+    const entries = cohortRegistryEntries();
+    if (dom.settingsCohortSelect) {
+      dom.settingsCohortSelect.innerHTML = entries.map(cohort =>
+        `<option value="${escapeHtml(cohort.id)}">${escapeHtml(cohort.name || cohort.id)}</option>`
+      ).join('');
+      if (entries.some(cohort => cohort.id === COHORT_ID)) dom.settingsCohortSelect.value = COHORT_ID;
+    }
+    const selected = dom.settingsCohortSelect?.value || COHORT_ID;
+    if (dom.switchCohortBtn) dom.switchCohortBtn.disabled = selected === COHORT_ID || mode === 'test';
+    if (dom.cohortSettingsStatus) {
+      dom.cohortSettingsStatus.textContent = entries.length > 1
+        ? `Current cohort: ${COHORT_NAME}. Progress stays separate when you switch.`
+        : `Current cohort: ${COHORT_NAME}. Additional cohorts will appear here automatically.`;
+    }
+  }
+
+  function switchStudyCohort() {
+    const id = String(dom.settingsCohortSelect?.value || '');
+    const target = cohortRegistryEntries().find(cohort => cohort.id === id);
+    if (!target || id === COHORT_ID) return;
+    if (mode === 'test' && state.activeTest) {
+      if (dom.cohortSettingsStatus) dom.cohortSettingsStatus.textContent = 'Exit the practice test before switching cohorts.';
+      return;
+    }
+    flushQuestionTime();
+    flushStudyTime();
+    try { localStorage.setItem(COHORT_SELECTION_KEY, id); } catch (_) {}
+    if (dom.cohortSettingsStatus) dom.cohortSettingsStatus.textContent = `Switching to ${target.name || id}…`;
+    window.setTimeout(() => window.location.reload(), 80);
+  }
+
   function syncChaburaSettingsUi() {
     const saved = loadChaburaSettings();
     fillChaburaLocationSelect(dom.settingsChaburaLocation, saved?.location || '');
@@ -230,9 +324,9 @@
     const next = validChaburaSettings({ location, chabura });
     if (!next) return false;
     const previous = loadChaburaSettings();
-    try { localStorage.setItem(CHABURA_SETTINGS_KEY, JSON.stringify(next)); } catch (_) {}
+    writeScopedJson(CHABURA_SETTINGS_KEY, next);
     if (!previous || previous.location !== next.location || previous.chabura !== next.chabura) {
-      try { localStorage.removeItem(CHABURA_PROFILE_SENT_KEY); } catch (_) {}
+      removeScopedValue(CHABURA_PROFILE_SENT_KEY);
     }
     syncChaburaSettingsUi();
     updateAnalyticsUi();
@@ -246,10 +340,10 @@
     if (!profile) return;
     const signature = `${profile.location}\n${profile.chabura}`;
     let sent = '';
-    try { sent = localStorage.getItem(CHABURA_PROFILE_SENT_KEY) || ''; } catch (_) {}
+    try { sent = readScopedString(CHABURA_PROFILE_SENT_KEY, ''); } catch (_) {}
     if (sent === signature) return;
     const queue = analyticsQueue();
-    if (queue.some(item => item?.kind === 'profile' && item.chabura === profile.chabura && item.chaburaRegion === profile.location)) return;
+    if (queue.some(item => item?.kind === 'profile' && item.cohort === ANALYTICS_COHORT && item.chabura === profile.chabura && item.chaburaRegion === profile.location)) return;
     queue.push({
       kind: 'profile',
       eventId: analyticsUuid('profile'),
@@ -545,7 +639,7 @@
   }
 
   function feedbackTargetKey(target) {
-    return target ? `${target.contentType}:${target.contentId}:${feedbackHash(target.wording)}` : '';
+    return target ? `${COHORT_ID}:${target.contentType}:${target.contentId}:${feedbackHash(target.wording)}` : '';
   }
 
   function questionFeedbackTarget(q, source = 'study') {
@@ -894,7 +988,7 @@
       saveAnalyticsQueue(analyticsQueue().filter(item => !ids.has(item.eventId)));
       const profile = [...batch].reverse().find(item => item?.kind === 'profile' && item.chabura && item.chaburaRegion);
       if (profile) {
-        try { localStorage.setItem(CHABURA_PROFILE_SENT_KEY, `${profile.chaburaRegion}\n${profile.chabura}`); } catch (_) {}
+        writeScopedString(CHABURA_PROFILE_SENT_KEY, `${profile.chaburaRegion}\n${profile.chabura}`);
       }
       uploaded = true;
     } catch (err) {
@@ -924,9 +1018,8 @@
 
   function loadState() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return defaultState();
-      const parsed = JSON.parse(raw);
+      const parsed = readMainProgressForCohort();
+      if (!parsed) return defaultState();
       return normalizeState(parsed);
     } catch (err) {
       console.warn('Could not load saved progress:', err);
@@ -995,7 +1088,7 @@
   }
 
   function saveState() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    try { writeMainProgressForCohort(state); }
     catch (err) { console.warn('Could not save progress:', err); }
   }
 
@@ -1031,9 +1124,8 @@
 
   function loadEssayProgress() {
     try {
-      const raw = localStorage.getItem(ESSAY_PRACTICE_KEY);
-      if (!raw) return defaultEssayProgress();
-      const parsed = JSON.parse(raw);
+      const parsed = readScopedJson(ESSAY_PRACTICE_KEY, null);
+      if (!parsed) return defaultEssayProgress();
       if (!parsed || typeof parsed !== 'object') return defaultEssayProgress();
       return {
         version: 1,
@@ -1047,7 +1139,7 @@
   }
 
   function saveEssayProgress() {
-    try { localStorage.setItem(ESSAY_PRACTICE_KEY, JSON.stringify(essayProgressState)); } catch (_) {}
+    writeScopedJson(ESSAY_PRACTICE_KEY, essayProgressState);
     updateEssayProgressUi();
   }
 
@@ -1184,7 +1276,7 @@
 
   function loadEssayCategoryFilter() {
     try {
-      const parsed = JSON.parse(localStorage.getItem(ESSAY_CATEGORY_FILTER_KEY) || 'null');
+      const parsed = readScopedJson(ESSAY_CATEGORY_FILTER_KEY, null);
       const valid = Array.isArray(parsed) ? parsed.filter(tag => ESSAY_CATEGORY_LIST.includes(tag)) : [];
       return valid.length ? valid : [...ESSAY_CATEGORY_LIST];
     } catch (_) {
@@ -1194,7 +1286,7 @@
 
   function saveEssayCategoryFilter(values) {
     const valid = [...new Set((values || []).filter(tag => ESSAY_CATEGORY_LIST.includes(tag)))];
-    try { localStorage.setItem(ESSAY_CATEGORY_FILTER_KEY, JSON.stringify(valid.length ? valid : ESSAY_CATEGORY_LIST)); } catch (_) {}
+    writeScopedJson(ESSAY_CATEGORY_FILTER_KEY, valid.length ? valid : ESSAY_CATEGORY_LIST);
   }
 
   function essayMatchesCategoryFilter(essay, selected = loadEssayCategoryFilter()) {
@@ -2582,7 +2674,7 @@
 
   function getAudioPlaybackState() {
     try {
-      const value = JSON.parse(localStorage.getItem(AUDIO_PLAYBACK_KEY) || '{}');
+      const value = readScopedJson(AUDIO_PLAYBACK_KEY, {}) || {};
       return {
         trackName: typeof value.trackName === 'string' ? value.trackName : null,
         currentTime: Math.max(0, Number(value.currentTime) || 0),
@@ -2604,7 +2696,7 @@
       currentTime: Number.isFinite(dom.audioPlayer.currentTime) ? dom.audioPlayer.currentTime : 0,
       rate: dom.audioPlayer.playbackRate || 1
     };
-    try { localStorage.setItem(AUDIO_PLAYBACK_KEY, JSON.stringify(data)); } catch (_) {}
+    writeScopedJson(AUDIO_PLAYBACK_KEY, data);
   }
 
   function setAudioRate(rate, persist = true) {
@@ -3908,7 +4000,7 @@
     essayProgressState = defaultEssayProgress();
     essayRun = null;
     essayAnalyticsSessionId = null;
-    try { localStorage.removeItem(ESSAY_PRACTICE_KEY); } catch (_) {}
+    removeScopedValue(ESSAY_PRACTICE_KEY);
     saveState();
     updateEssayProgressUi();
     if (closeStats && dom.statsDialog.open) dom.statsDialog.close();
@@ -3959,6 +4051,8 @@
       });
     });
 
+    dom.settingsCohortSelect?.addEventListener('change', syncCohortSettingsUi);
+    dom.switchCohortBtn?.addEventListener('click', switchStudyCohort);
     dom.settingsChaburaLocation?.addEventListener('change', e => {
       fillChaburaSelect(dom.settingsChaburaSelect, e.currentTarget.value, '');
       if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = 'Choose a chabura, then save.';
@@ -4509,6 +4603,7 @@
     updateBrandShareAffordance();
     updateInstallButtonVisibility();
     updateAnalyticsUi();
+    syncCohortSettingsUi();
     syncChaburaSettingsUi();
     updateEssayProgressUi();
     queueChaburaProfileAnalytics();

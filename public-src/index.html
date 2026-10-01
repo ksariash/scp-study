@@ -434,6 +434,19 @@
             </div>
           </div>
 
+      <section class="cohort-setting" aria-labelledby="cohortSettingHeading">
+        <div class="cohort-setting-copy">
+          <span class="eyebrow">Course</span>
+          <h3 id="cohortSettingHeading">Study cohort</h3>
+          <p>Questions, essays, notes, audio, categories, and saved progress are kept separate for each cohort.</p>
+        </div>
+        <div class="cohort-setting-fields">
+          <label><span>Cohort</span><select id="settingsCohortSelect" aria-label="Study cohort"></select></label>
+          <button class="secondary settings-action-btn" type="button" id="switchCohortBtn">Switch cohort</button>
+        </div>
+        <span class="analytics-status" id="cohortSettingsStatus" aria-live="polite"></span>
+      </section>
+
       <section class="analytics-preference" aria-labelledby="analyticsPreferenceHeading">
         <div class="analytics-preference-copy">
           <span class="eyebrow">Course improvement</span>
@@ -801,7 +814,7 @@
           <span class="eyebrow">About</span>
           <div class="app-info-title-row">
             <h2 id="appInfoTitle">SCP Study</h2>
-            <span class="app-info-version">v49</span>
+            <span class="app-info-version">v50</span>
           </div>
           <p>A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.</p>
         </div>
@@ -858,12 +871,8 @@
     <button class="mini-audio-btn stop" id="miniAudioStop" type="button" aria-label="Stop audio">■</button>
   </aside>
 
-  <script src="questions.js"></script>
-  <script src="chaburos.js"></script>
-  <script src="audio-reviews.js"></script>
-  <script src="glossary.js"></script>
-  <script src="essay-practice.js"></script>
-  <script src="course-notes.js"></script>
+  <script src="cohorts/index.js"></script>
+  <script src="cohort-loader.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -3395,3 +3395,27 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
   .materials-essay-card{padding:9px 10px;gap:8px}
   .materials-essay-copy strong{font-size:.74rem}
 }
+
+/* v50: cohort-aware settings */
+.cohort-setting{
+  display:grid;
+  gap:12px;
+  margin-top:14px;
+  padding:14px;
+  border:1px solid #dce6f5;
+  border-radius:14px;
+  background:#f8fbff;
+}
+.cohort-setting-copy h3{margin:2px 0 0;font-size:.92rem}
+.cohort-setting-copy p{margin:5px 0 0;color:var(--muted);font-size:.74rem;line-height:1.45}
+.cohort-setting-fields{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:end}
+.cohort-setting-fields label{display:grid;gap:5px;min-width:0}
+.cohort-setting-fields label>span{color:#718096;font-size:.66rem;font-weight:850;letter-spacing:.045em;text-transform:uppercase}
+.cohort-setting-fields select{
+  width:100%;min-width:0;min-height:38px;padding:8px 9px;border:1px solid #d7e1ef;border-radius:10px;
+  background:#fff;color:var(--text);font:inherit;font-size:.76rem
+}
+@media(max-width:780px){
+  .cohort-setting-fields{grid-template-columns:1fr}
+  .cohort-setting-fields .settings-action-btn{justify-self:start}
+}

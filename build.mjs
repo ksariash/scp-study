@@ -1,6 +1,7 @@
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { gunzipSync } from 'node:zlib';
+import { runInNewContext } from 'node:vm';
 import { generatePdfs } from './scripts/generate-pdfs.mjs';
 
 const ROOT = new URL('./', import.meta.url);
@@ -12,6 +13,41 @@ const GENERATED_PDFS = new Set([
   'documents/SCP-Study-Cumulative-Test-Answer-Key.pdf',
   'documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf',
 ]);
+
+const COHORT_REQUIRED_FILES = [
+  'cohort.js',
+  'questions.js',
+  'chaburos.js',
+  'audio-reviews.js',
+  'glossary.js',
+  'essay-practice.js',
+  'course-notes.js',
+];
+
+async function validateCohortPackages() {
+  const registrySource = await readFile(new URL('./public-src/cohorts/index.js', ROOT), 'utf8');
+  const sandbox = { window: {} };
+  runInNewContext(registrySource, sandbox);
+  const registry = sandbox.window.SCP_COHORT_REGISTRY;
+  if (!registry || !Array.isArray(registry.cohorts) || !registry.cohorts.length) {
+    throw new Error('Cohort registry must contain at least one cohort.');
+  }
+  const ids = new Set();
+  for (const cohort of registry.cohorts) {
+    const id = String(cohort?.id || '').trim();
+    if (!id || ids.has(id)) throw new Error(`Invalid or duplicate cohort ID: ${id || '(blank)'}`);
+    ids.add(id);
+    for (const file of COHORT_REQUIRED_FILES) {
+      await readFile(new URL(`./public-src/cohorts/${id}/${file}`, ROOT));
+    }
+  }
+  if (!ids.has(String(registry.defaultCohortId || ''))) {
+    throw new Error('Cohort registry defaultCohortId must identify a configured cohort.');
+  }
+  return registry;
+}
+
+const cohortRegistry = await validateCohortPackages();
 
 await rm(outputDir, { recursive: true, force: true });
 await mkdir(outputDir, { recursive: true });
@@ -78,4 +114,4 @@ await writeFile(fullNotesDestination, Buffer.from(fullNotesEncoded, 'base64'));
 
 await generatePdfs(outputDir.pathname);
 
-console.log('Built SCP Study static assets; preserved the compact/full course notes and generated question/test/essay PDFs. Short & Sweet review audio remains in R2.');
+console.log(`Built SCP Study static assets for ${cohortRegistry.cohorts.length} cohort package(s); preserved the compact/full course notes and generated question/test/essay PDFs. Short & Sweet review audio remains in R2.`);

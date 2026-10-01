@@ -152,19 +152,34 @@ async function writePdf(path, title, fonts, options, render, footer) {
   });
 }
 
-async function readQuestions() {
-  const source = await readFile(join(ROOT, 'public-src', 'questions.js'), 'utf8');
+async function readCohortRegistry() {
+  const source = await readFile(join(ROOT, 'public-src', 'cohorts', 'index.js'), 'utf8');
+  const sandbox = { window: {} };
+  runInNewContext(source, sandbox);
+  const registry = sandbox.window.SCP_COHORT_REGISTRY;
+  if (!registry || !Array.isArray(registry.cohorts) || !registry.cohorts.length) throw new Error('Could not load cohort registry');
+  return registry;
+}
+
+async function resolveCohortId(cohortId = null) {
+  if (cohortId) return String(cohortId);
+  const registry = await readCohortRegistry();
+  return String(registry.defaultCohortId || registry.cohorts[0].id);
+}
+
+async function readQuestions(cohortId) {
+  const source = await readFile(join(ROOT, 'public-src', 'cohorts', cohortId, 'questions.js'), 'utf8');
   const sandbox = {};
   runInNewContext(source + '\n;globalThis.__QUESTIONS = QUESTIONS;', sandbox);
-  if (!Array.isArray(sandbox.__QUESTIONS)) throw new Error('Could not load question bank');
+  if (!Array.isArray(sandbox.__QUESTIONS)) throw new Error('Could not load question bank for cohort ' + cohortId);
   return sandbox.__QUESTIONS;
 }
 
-async function readEssays() {
-  const source = await readFile(join(ROOT, 'public-src', 'essay-practice.js'), 'utf8');
+async function readEssays(cohortId) {
+  const source = await readFile(join(ROOT, 'public-src', 'cohorts', cohortId, 'essay-practice.js'), 'utf8');
   const sandbox = { window: {} };
   runInNewContext(source, sandbox);
-  if (!Array.isArray(sandbox.window.ESSAY_PRACTICE_DATA)) throw new Error('Could not load essay bank');
+  if (!Array.isArray(sandbox.window.ESSAY_PRACTICE_DATA)) throw new Error('Could not load essay bank for cohort ' + cohortId);
   return sandbox.window.ESSAY_PRACTICE_DATA;
 }
 
@@ -493,8 +508,9 @@ function renderEssays(doc, essays) {
   }
 }
 
-export async function generatePdfs(outputDir = join(ROOT, 'public')) {
-  const [fonts, questions, essays] = await Promise.all([loadFonts(), readQuestions(), readEssays()]);
+export async function generatePdfs(outputDir = join(ROOT, 'public'), cohortId = null) {
+  const resolvedCohortId = await resolveCohortId(cohortId);
+  const [fonts, questions, essays] = await Promise.all([loadFonts(), readQuestions(resolvedCohortId), readEssays(resolvedCohortId)]);
   const documents = join(outputDir, 'documents');
   await mkdir(documents, { recursive:true });
 

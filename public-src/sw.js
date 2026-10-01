@@ -1,16 +1,19 @@
-const APP_VERSION = 49;
-const CACHE_NAME = 'scp-study-v49';
+const APP_VERSION = 50;
+const CACHE_NAME = 'scp-study-v50';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v1';
 const APP_SHELL = [
   './',
   './index.html',
   './styles.css',
-  './questions.js',
-  './chaburos.js',
-  './audio-reviews.js',
-  './glossary.js',
-  './essay-practice.js',
-  './course-notes.js',
+  './cohorts/index.js',
+  './cohort-loader.js',
+  './cohorts/nat-bar-nat-stam-yeinam-summer-26/cohort.js',
+  './cohorts/nat-bar-nat-stam-yeinam-summer-26/questions.js',
+  './cohorts/nat-bar-nat-stam-yeinam-summer-26/chaburos.js',
+  './cohorts/nat-bar-nat-stam-yeinam-summer-26/audio-reviews.js',
+  './cohorts/nat-bar-nat-stam-yeinam-summer-26/glossary.js',
+  './cohorts/nat-bar-nat-stam-yeinam-summer-26/essay-practice.js',
+  './cohorts/nat-bar-nat-stam-yeinam-summer-26/course-notes.js',
   './pdfjs/pdf.mjs',
   './pdfjs/pdf.worker.mjs',
   './app.js',

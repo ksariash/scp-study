@@ -226,3 +226,13 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - Replaces the embedded browser PDF frame with an in-app PDF.js renderer so all pages scroll correctly in iOS/standalone mode.
 - Rebuilds the mobile PDF toolbar into fixed-width rows that cannot overflow the viewport.
 - Course-note jumps now search the mapped page for the selected question or essay and scroll to the matching text location, with a temporary on-page marker.
+
+
+## Release 50
+
+- Begins the multi-cohort migration without changing the current Summer 26 course experience.
+- Adds a cohort registry and loader. The current Nat Bar Nat & Stam Ye'enam - Summer 26 questions, essays, glossary, audio metadata/mappings, chabura roster, and note references now have a cohort-scoped package under `public-src/cohorts/nat-bar-nat-stam-yeinam-summer-26/`.
+- Adds a cohort selector under Materials → Settings. With one configured cohort it shows the current course; future registry entries will appear automatically and switching reloads the selected package.
+- Keeps `courseReviewSpacedRepetition.v1` as the main progress key while migrating its internal shape to cohort-scoped progress. Essay progress, essay category filters, audio playback position, and chabura settings are also scoped by cohort.
+- Generated question/test/essay PDFs now read the default cohort package as their canonical question and essay source.
+- Feedback deduplication includes the cohort ID so identical content IDs in future cohorts will not collide on the device.

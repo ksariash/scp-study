@@ -13,7 +13,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 32;
+  const APP_VERSION = 33;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const ANALYTICS_COHORT = 'SCP 2026 Summer';
@@ -220,7 +220,8 @@
 
   function questionFeedbackTarget(q, source = 'study') {
     if (!q) return null;
-    const entry = currentEntry();
+    const current = currentQuestion();
+    const entry = current?.id === q.id ? currentEntry() : null;
     const wording = [
       q.prompt,
       ...(q.choices || []).map((choice, i) => `${LETTERS[i]}. ${choice}`),
@@ -275,7 +276,7 @@
       context: {
         essayId: essay.id,
         pairingLabel: fact.label || '',
-        options: essayRun?.essay?.id === essay.id
+        options: essayRun?.essay?.id === essay.id && currentEssayFact()?.id === fact.id
           ? (essayRun.stepChoices || []).map(id => essay.facts.find(item => item.id === id)).filter(Boolean).map(item => essayPositionText(item))
           : []
       }

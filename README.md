@@ -236,3 +236,10 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - Keeps `courseReviewSpacedRepetition.v1` as the main progress key while migrating its internal shape to cohort-scoped progress. Essay progress, essay category filters, audio playback position, and chabura settings are also scoped by cohort.
 - Generated question/test/essay PDFs now read the default cohort package as their canonical question and essay source.
 - Feedback deduplication includes the cohort ID so identical content IDs in future cohorts will not collide on the device.
+
+
+## Release 51
+
+- Strengthens the multi-cohort package contract with build-time validation for cohort identity, question/essay IDs and counts, note coverage, audio references, glossary IDs, and cohort-scoped audio URL prefixes.
+- Namespaces Summer 26 review-audio URLs under `/audio/nat-bar-nat-stam-yeinam-summer-26/`. The Worker transparently falls back to the current legacy flat R2 objects, so the live bucket does not have to be moved before this release.
+- Adds repository-level LLM maintenance and new-cohort creation guides. These documents are part of the architecture and must be updated whenever the architecture changes.

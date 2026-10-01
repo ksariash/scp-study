@@ -3,8 +3,22 @@ window.SCP_COHORT_CONFIG = {
   name: "Nat Bar Nat & Stam Ye'enam - Summer 26",
   analyticsKey: "Nat Bar Nat & Stam Ye'enam - Summer 26",
   status: "current",
+  contentVersion: 1,
   questionCount: 58,
   essayCount: 14,
+  audio: {
+    publicUrlPrefix: "audio/nat-bar-nat-stam-yeinam-summer-26/",
+    r2ObjectPrefix: "audio/nat-bar-nat-stam-yeinam-summer-26/",
+    legacyR2ObjectPrefix: "audio/",
+    migrationMode: "legacy-fallback"
+  },
+  documents: {
+    compactReview: "documents/SCP-Study-Compact-Course-Review.pdf",
+    fullNotes: "documents/SCP-Study-Full-Course-Notes.pdf",
+    cumulativeTest: "documents/SCP-Study-Cumulative-Test.pdf",
+    cumulativeAnswerKey: "documents/SCP-Study-Cumulative-Test-Answer-Key.pdf",
+    essayQuestionsAndAnswers: "documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf"
+  },
   essayCategoryTags: {
     "nbn-intentional-cooking": ["נ״ט בר נ״ט"],
     "nbn-model-failures": ["נ״ט בר נ״ט"],

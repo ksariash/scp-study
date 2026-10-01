@@ -41,13 +41,30 @@ function returnedRange(object) {
   return { start, end: start + length - 1, length, size };
 }
 
+const DEFAULT_COHORT_AUDIO_PREFIX = 'audio/nat-bar-nat-stam-yeinam-summer-26/';
+const LEGACY_AUDIO_PREFIX = 'audio/';
+
+function candidateAudioKeys(key) {
+  const keys = [key];
+  if (key.startsWith(DEFAULT_COHORT_AUDIO_PREFIX)) {
+    const filename = key.slice(DEFAULT_COHORT_AUDIO_PREFIX.length);
+    if (filename && !filename.includes('/')) keys.push(LEGACY_AUDIO_PREFIX + filename);
+  }
+  return [...new Set(keys)];
+}
+
 async function serveAudio(request, env, key) {
+  const candidates = candidateAudioKeys(key);
+
   if (request.method === 'HEAD') {
-    const object = await env.AUDIO.head(key);
-    if (!object) return new Response('Not found', { status: 404 });
-    const headers = baseAudioHeaders(object);
-    headers.set('Content-Length', String(object.size));
-    return new Response(null, { status: 200, headers });
+    for (const candidate of candidates) {
+      const object = await env.AUDIO.head(candidate);
+      if (!object) continue;
+      const headers = baseAudioHeaders(object);
+      headers.set('Content-Length', String(object.size));
+      return new Response(null, { status: 200, headers });
+    }
+    return new Response('Not found', { status: 404 });
   }
 
   if (request.method !== 'GET') {
@@ -55,28 +72,36 @@ async function serveAudio(request, env, key) {
   }
 
   const hasRange = request.headers.has('Range');
-  let object;
-  try {
-    object = await env.AUDIO.get(key, hasRange ? { range: request.headers } : undefined);
-  } catch (_) {
+  let rangeError = false;
+  for (const candidate of candidates) {
+    let object;
+    try {
+      object = await env.AUDIO.get(candidate, hasRange ? { range: request.headers } : undefined);
+    } catch (_) {
+      rangeError = true;
+      continue;
+    }
+    if (!object) continue;
+
+    const headers = baseAudioHeaders(object);
+    const range = returnedRange(object);
+    if (hasRange && range) {
+      headers.set('Content-Range', `bytes ${range.start}-${range.end}/${range.size}`);
+      headers.set('Content-Length', String(range.length));
+      return new Response(object.body, { status: 206, headers });
+    }
+
+    headers.set('Content-Length', String(object.size));
+    return new Response(object.body, { status: 200, headers });
+  }
+
+  if (rangeError) {
     return new Response('Requested range not satisfiable', {
       status: 416,
       headers: { 'Accept-Ranges': 'bytes' }
     });
   }
-
-  if (!object) return new Response('Not found', { status: 404 });
-
-  const headers = baseAudioHeaders(object);
-  const range = returnedRange(object);
-  if (hasRange && range) {
-    headers.set('Content-Range', `bytes ${range.start}-${range.end}/${range.size}`);
-    headers.set('Content-Length', String(range.length));
-    return new Response(object.body, { status: 206, headers });
-  }
-
-  headers.set('Content-Length', String(object.size));
-  return new Response(object.body, { status: 200, headers });
+  return new Response('Not found', { status: 404 });
 }
 
 export default {

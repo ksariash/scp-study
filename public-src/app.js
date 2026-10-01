@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 50;
+  const APP_VERSION = 51;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const COHORT_SELECTION_KEY = 'scpStudy.activeCohort.v1';

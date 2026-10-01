@@ -24,25 +24,120 @@ const COHORT_REQUIRED_FILES = [
   'course-notes.js',
 ];
 
+async function loadCohortScript(id, file, expose = '') {
+  const source = await readFile(new URL(`./public-src/cohorts/${id}/${file}`, ROOT), 'utf8');
+  const sandbox = { window: {} };
+  runInNewContext(source + expose, sandbox, { filename: `cohorts/${id}/${file}` });
+  return sandbox;
+}
+
+function assertUnique(values, label) {
+  const seen = new Set();
+  for (const value of values) {
+    const key = String(value);
+    if (!key || seen.has(key)) throw new Error(`Duplicate or blank ${label}: ${key || '(blank)'}`);
+    seen.add(key);
+  }
+}
+
+function positivePage(value) {
+  const raw = value && typeof value === 'object' ? value.page : value;
+  return Number.isInteger(Number(raw)) && Number(raw) > 0;
+}
+
 async function validateCohortPackages() {
   const registrySource = await readFile(new URL('./public-src/cohorts/index.js', ROOT), 'utf8');
-  const sandbox = { window: {} };
-  runInNewContext(registrySource, sandbox);
-  const registry = sandbox.window.SCP_COHORT_REGISTRY;
+  const registrySandbox = { window: {} };
+  runInNewContext(registrySource, registrySandbox, { filename: 'cohorts/index.js' });
+  const registry = registrySandbox.window.SCP_COHORT_REGISTRY;
   if (!registry || !Array.isArray(registry.cohorts) || !registry.cohorts.length) {
     throw new Error('Cohort registry must contain at least one cohort.');
   }
-  const ids = new Set();
-  for (const cohort of registry.cohorts) {
-    const id = String(cohort?.id || '').trim();
-    if (!id || ids.has(id)) throw new Error(`Invalid or duplicate cohort ID: ${id || '(blank)'}`);
-    ids.add(id);
+
+  assertUnique(registry.cohorts.map(cohort => cohort?.id), 'cohort ID');
+  assertUnique(registry.cohorts.map(cohort => cohort?.analyticsKey), 'cohort analyticsKey');
+
+  const ids = new Set(registry.cohorts.map(cohort => String(cohort.id)));
+  if (!ids.has(String(registry.defaultCohortId || ''))) {
+    throw new Error('Cohort registry defaultCohortId must identify a configured cohort.');
+  }
+
+  for (const entry of registry.cohorts) {
+    const id = String(entry.id);
     for (const file of COHORT_REQUIRED_FILES) {
       await readFile(new URL(`./public-src/cohorts/${id}/${file}`, ROOT));
     }
-  }
-  if (!ids.has(String(registry.defaultCohortId || ''))) {
-    throw new Error('Cohort registry defaultCohortId must identify a configured cohort.');
+
+    const config = (await loadCohortScript(id, 'cohort.js')).window.SCP_COHORT_CONFIG;
+    if (!config || config.id !== id || config.analyticsKey !== entry.analyticsKey || config.name !== entry.name) {
+      throw new Error(`Cohort ${id}: cohort.js identity must match cohorts/index.js.`);
+    }
+
+    const qSandbox = await loadCohortScript(id, 'questions.js', '\nwindow.__QUESTIONS = QUESTIONS;');
+    const questions = qSandbox.window.__QUESTIONS;
+    if (!Array.isArray(questions) || questions.length !== Number(entry.questionCount)) {
+      throw new Error(`Cohort ${id}: expected ${entry.questionCount} questions, found ${questions?.length ?? 'invalid'}.`);
+    }
+    assertUnique(questions.map(question => question.id), `${id} question ID`);
+    for (const question of questions) {
+      if (!question.category || !question.prompt || !Array.isArray(question.choices) || question.choices.length < 2 || !Array.isArray(question.answer) || !question.answer.length) {
+        throw new Error(`Cohort ${id}: malformed question ${question.id}.`);
+      }
+      const valid = new Set(question.choices.map((_, index) => String.fromCharCode(65 + index)));
+      if (question.answer.some(letter => !valid.has(String(letter)))) throw new Error(`Cohort ${id}: question ${question.id} has an invalid answer letter.`);
+    }
+
+    const eSandbox = await loadCohortScript(id, 'essay-practice.js');
+    const essays = eSandbox.window.ESSAY_PRACTICE_DATA;
+    if (!Array.isArray(essays) || essays.length !== Number(entry.essayCount)) {
+      throw new Error(`Cohort ${id}: expected ${entry.essayCount} essays, found ${essays?.length ?? 'invalid'}.`);
+    }
+    assertUnique(essays.map(essay => essay.id), `${id} essay ID`);
+    const facts = essays.flatMap(essay => essay.facts || []);
+    assertUnique(facts.map(fact => fact.id), `${id} essay fact ID`);
+
+    const audioSandbox = await loadCohortScript(id, 'audio-reviews.js',
+      '\nwindow.__AUDIO = AUDIO_REVIEW_DATA; window.__QUESTION_AUDIO_MAP = QUESTION_AUDIO_MAP; window.__ESSAY_AUDIO_MAP = ESSAY_AUDIO_MAP;');
+    const reviews = audioSandbox.window.__AUDIO;
+    if (!Array.isArray(reviews) || !reviews.length) throw new Error(`Cohort ${id}: audio review catalog is empty.`);
+    assertUnique(reviews.map(review => review.id), `${id} audio review ID`);
+    const reviewIds = new Set(reviews.map(review => Number(review.id)));
+    const expectedPrefix = String(config.audio?.publicUrlPrefix || '');
+    for (const review of reviews) {
+      if (!review.src || (expectedPrefix && !String(review.src).startsWith(expectedPrefix))) {
+        throw new Error(`Cohort ${id}: audio review ${review.id} must use publicUrlPrefix ${expectedPrefix || '(configured prefix missing)'}.`);
+      }
+    }
+    const validateAudioMap = (map, label) => {
+      for (const [contentId, refs] of Object.entries(map || {})) {
+        if (!Array.isArray(refs) || !refs.length) throw new Error(`Cohort ${id}: ${label} ${contentId} has no audio references.`);
+        for (const ref of refs) {
+          if (!reviewIds.has(Number(ref.review)) || !Number.isFinite(Number(ref.start)) || Number(ref.start) < 0) {
+            throw new Error(`Cohort ${id}: ${label} ${contentId} has an invalid audio reference.`);
+          }
+        }
+      }
+    };
+    validateAudioMap(audioSandbox.window.__QUESTION_AUDIO_MAP, 'question');
+    validateAudioMap(audioSandbox.window.__ESSAY_AUDIO_MAP, 'essay fact');
+
+    const notes = (await loadCohortScript(id, 'course-notes.js')).window.COURSE_NOTE_REFS;
+    for (const docKey of ['compact', 'full']) {
+      if (!notes?.docs?.[docKey]?.url) throw new Error(`Cohort ${id}: missing ${docKey} notes document.`);
+    }
+    for (const question of questions) {
+      const ref = notes?.questions?.[String(question.id)];
+      if (!ref || !positivePage(ref.compact) || !positivePage(ref.full)) throw new Error(`Cohort ${id}: question ${question.id} needs compact and full note locations.`);
+    }
+    for (const essay of essays) {
+      const ref = notes?.essays?.[String(essay.id)];
+      if (!ref || !positivePage(ref.compact) || !positivePage(ref.full)) throw new Error(`Cohort ${id}: essay ${essay.id} needs compact and full note locations.`);
+    }
+
+    const glossarySandbox = await loadCohortScript(id, 'glossary.js', '\nwindow.__GLOSSARY = GLOSSARY_TERMS;');
+    const glossary = glossarySandbox.window.__GLOSSARY;
+    if (!Array.isArray(glossary)) throw new Error(`Cohort ${id}: glossary must be an array.`);
+    assertUnique(glossary.map(term => term.id), `${id} glossary ID`);
   }
   return registry;
 }

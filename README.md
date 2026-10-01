@@ -165,3 +165,8 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - While Essay mode is active, the top Essay button becomes M/C. Tapping it opens a short Multiple Choice explanation before returning to adaptive question study.
 - Multiple-choice question timing and keyboard shortcuts pause while the Essay workspace is active.
 - Refined the native question-number dropdown into a compact pill with a custom chevron and cleaner focus/hover treatment.
+
+
+## Release 41
+
+- Renames the analytics cohort to `Nat Bar Nat & Stam Ye'enam - Summer 26`.

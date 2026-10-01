@@ -20,18 +20,18 @@ jobs:
       - name: Install PDF comparison dependencies
         run: python -m pip install --disable-pip-version-check pymupdf pillow
       - name: Extract legacy reference PDFs
-        run: python scripts/pdf-regression.py extract --out .pdf-regression/reference
+        run: python scripts/pdf-regression.py extract --out pdf-regression/reference
       - name: Generate current PDFs
-        run: node scripts/generate-pdfs.mjs .pdf-regression/generated
+        run: node scripts/generate-pdfs.mjs pdf-regression/generated
       - name: Compare generated PDFs with legacy references
         id: compare
         continue-on-error: true
-        run: python scripts/pdf-regression.py compare --reference .pdf-regression/reference --generated .pdf-regression/generated --out .pdf-regression/report
+        run: python scripts/pdf-regression.py compare --reference pdf-regression/reference --generated pdf-regression/generated --out pdf-regression/report
       - name: Upload regression artifact
         uses: actions/upload-artifact@v4
         with:
           name: pdf-regression-${{ github.sha }}
-          path: .pdf-regression
+          path: pdf-regression
           retention-days: 7
       - name: Enforce regression
         if: steps.compare.outcome == 'failure'

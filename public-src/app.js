@@ -13,7 +13,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 41;
+  const APP_VERSION = 42;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const ANALYTICS_COHORT = "Nat Bar Nat & Stam Ye'enam - Summer 26";
@@ -3208,6 +3208,50 @@
     scrollQuestionReviewToTop();
   }
 
+  function renderEssayStudyStats() {
+    const summary = essayMasterySummary();
+    const rows = ESSAY_BANK.map(essay => {
+      const progress = essayProgressState.essays?.[essay.id] || {};
+      const attempts = Math.max(0, Number(progress.attempts) || 0);
+      const perfect = Math.max(0, Number(progress.perfect) || 0);
+      const mastered = essay.facts.filter(fact => essayFactStat(fact.id).mastery >= 2).length;
+      const seen = essay.facts.filter(fact => essayFactStat(fact.id).seen > 0).length;
+      const lastTotal = Math.max(0, Number(progress.lastTotal) || 0);
+      const lastScore = Math.max(0, Number(progress.lastScore) || 0);
+      return {
+        essay,
+        attempts,
+        perfect,
+        mastered,
+        seen,
+        last: attempts && lastTotal ? `${lastScore}/${lastTotal}` : '—'
+      };
+    });
+    const practiced = rows.filter(row => row.attempts > 0).length;
+    const perfectEssays = rows.filter(row => row.perfect > 0).length;
+    const totalRounds = rows.reduce((sum, row) => sum + row.attempts, 0);
+    const perfectRounds = rows.reduce((sum, row) => sum + row.perfect, 0);
+    const practicedRows = rows.filter(row => row.attempts > 0 || row.seen > 0).map(row =>
+      `<tr><td>${escapeHtml(row.essay.title)}</td><td>${row.seen}/${row.essay.facts.length}</td><td>${row.mastered}/${row.essay.facts.length}</td><td>${row.attempts}</td><td>${row.perfect}</td><td>${row.last}</td></tr>`
+    ).join('');
+
+    return `
+      <div class="stat-section">
+        <h3>Essay practice</h3>
+        <div class="stat-grid">
+          ${statCard('Facts mastered', `${summary.mastered}/${summary.total}`)}
+          ${statCard('Facts seen', `${summary.seen}/${summary.total}`)}
+          ${statCard('Essays practiced', `${practiced}/${ESSAY_BANK.length}`)}
+          ${statCard('Perfect essays', perfectEssays)}
+          ${statCard('Practice rounds', totalRounds)}
+          ${statCard('Perfect rounds', perfectRounds)}
+        </div>
+        ${practicedRows
+          ? `<details><summary>Per-essay progress</summary><div class="details-body table-wrap"><table><thead><tr><th>Essay</th><th>Facts seen</th><th>Mastered</th><th>Rounds</th><th>Perfect</th><th>Last score</th></tr></thead><tbody>${practicedRows}</tbody></table></div></details>`
+          : '<div class="callout"><strong>No essay practice yet</strong><p>Essay fact mastery, completed rounds, perfect rounds, and per-essay progress will appear here.</p></div>'}
+      </div>`;
+  }
+
   function renderStats() {
     const mastery = currentMasteryCounts();
     const totalAttempts = QUESTIONS.reduce((n, q) => n + state.stats[q.id].attempts, 0);
@@ -3249,6 +3293,7 @@
         ${statCard('Avg answer time', totalAttempts ? formatAnswerTime(avgTime) : '—')}
         ${statCard('Study session', formatDuration(studyElapsedNow()))}
       </div>
+      ${renderEssayStudyStats()}
       <div class="stat-section">
         <h3>Category performance</h3>
         <div class="table-wrap"><table><thead><tr><th>Category</th><th>Seen</th><th>Attempts</th><th>Attempt score</th><th>Avg time</th></tr></thead><tbody>${catRows}</tbody></table></div>

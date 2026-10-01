@@ -13,7 +13,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 38;
+  const APP_VERSION = 39;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const ANALYTICS_COHORT = 'SCP 2026 Summer';
@@ -96,7 +96,7 @@
     modeLabel: el('modeLabel'), timerLabel: el('timerLabel'), mainTimer: el('mainTimer'), timerCard: el('timerCard'), brandLogo: el('brandLogo'), brandTitle: el('brandTitle'),
     categoriesBtn: el('categoriesBtn'), materialsBtn: el('materialsBtn'), statsBtn: el('statsBtn'), essayBtn: el('essayBtn'), testBtn: el('testBtn'), questionSearchFab: el('questionSearchFab'), installBtn: el('installBtn'), installGuideDialog: el('installGuideDialog'), closeInstallGuide: el('closeInstallGuide'),
     testProgressWrap: el('testProgressWrap'), testQuestionCount: el('testQuestionCount'), testAnsweredCount: el('testAnsweredCount'), testProgressFill: el('testProgressFill'),
-    questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionJumpDialog: el('questionJumpDialog'), questionJumpForm: el('questionJumpForm'), questionJumpInput: el('questionJumpInput'), questionJumpGoBtn: el('questionJumpGoBtn'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), answerForm: el('answerForm'),
+    questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), answerForm: el('answerForm'),
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
@@ -148,7 +148,7 @@
   let contentFeedbackFlushInFlight = false;
   let appToastTimer = null;
   let updateCheckInFlight = null;
-  const dialogs = [dom.questionJumpDialog, dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.chaburaDialog].filter(Boolean);
+  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.chaburaDialog].filter(Boolean);
 
 
   function chaburaOptions(location) {
@@ -1801,9 +1801,11 @@
       dom.testQuestionCount.textContent = `${t.index + 1}/${QUESTIONS.length}`;
       dom.testAnsweredCount.textContent = `${answered} answered`;
       dom.testProgressFill.style.width = `${((t.index + 1) / QUESTIONS.length) * 100}%`;
-      dom.questionNumber.textContent = `Question ${q.id} · ${t.index + 1}/${QUESTIONS.length} ▾`;
+      dom.questionNumber.value = String(q.id);
+      dom.questionNumber.setAttribute('aria-label', `Question ${q.id}. Choose another question.`);
     } else {
-      dom.questionNumber.textContent = `Question ${q.id} ▾`;
+      dom.questionNumber.value = String(q.id);
+      dom.questionNumber.setAttribute('aria-label', `Question ${q.id}. Choose another question.`);
     }
     dom.questionCategory.textContent = q.category;
     setGlossaryText(dom.questionPrompt, q.prompt);
@@ -1908,25 +1910,25 @@
   }
 
 
-  function openQuestionJump() {
-    const q = currentQuestion();
-    if (dom.questionJumpInput) dom.questionJumpInput.value = q?.id || '';
-    if (dom.questionJumpDialog && !dom.questionJumpDialog.open) dom.questionJumpDialog.showModal();
-    window.setTimeout(() => {
-      dom.questionJumpInput?.focus();
-      dom.questionJumpInput?.select();
-    }, 0);
+
+  function populateQuestionNumberDropdown() {
+    if (!dom.questionNumber || dom.questionNumber.options.length === QUESTIONS.length) return;
+    dom.questionNumber.textContent = '';
+    QUESTIONS
+      .slice()
+      .sort((left, right) => Number(left.id) - Number(right.id))
+      .forEach(question => {
+        const option = document.createElement('option');
+        option.value = String(question.id);
+        option.textContent = `Question ${question.id}`;
+        dom.questionNumber.append(option);
+      });
   }
 
   function goToQuestionNumber(rawValue) {
     const qid = Math.trunc(Number(rawValue));
     const question = questionById.get(qid);
-    if (!question) {
-      dom.questionJumpInput?.setCustomValidity(`Enter a question number from 1 to ${QUESTIONS.length}.`);
-      dom.questionJumpInput?.reportValidity();
-      return false;
-    }
-    dom.questionJumpInput?.setCustomValidity('');
+    if (!question) return false;
     flushQuestionTime();
 
     if (mode === 'test' && state.activeTest) {
@@ -1950,7 +1952,6 @@
     }
 
     saveState();
-    dom.questionJumpDialog?.close();
     render();
     scrollToQuestionTop();
     return true;
@@ -3289,11 +3290,10 @@
 
   function bindEvents() {
     dom.submitBtn.addEventListener('click', submitCurrentAnswer);
-    dom.questionNumber?.addEventListener('click', openQuestionJump);
-    dom.questionJumpInput?.addEventListener('input', () => dom.questionJumpInput.setCustomValidity(''));
-    dom.questionJumpForm?.addEventListener('submit', event => {
-      event.preventDefault();
-      goToQuestionNumber(dom.questionJumpInput?.value);
+    dom.questionNumber?.addEventListener('change', event => {
+      const currentId = currentQuestion()?.id;
+      const nextId = Number(event.currentTarget.value);
+      if (nextId && nextId !== currentId) goToQuestionNumber(nextId);
     });
 
     [dom.brandLogo, dom.brandTitle].forEach(node => {
@@ -3759,6 +3759,7 @@
   }
 
   function init() {
+    populateQuestionNumberDropdown();
     bindEvents();
     updateAppVersionUi();
     consumeUpdateAnnouncement();

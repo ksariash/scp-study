@@ -49,7 +49,7 @@
       <article class="question-card" id="questionCard">
         <div class="question-topline">
           <div>
-            <button class="pill question-number-jump" id="questionNumber" type="button" aria-haspopup="dialog" aria-controls="questionJumpDialog" title="Go to a specific question">Question</button>
+            <select class="pill question-number-jump" id="questionNumber" aria-label="Go to question"></select>
             <span class="pill subtle" id="questionCategory">Category</span>
           </div>
           <div class="question-top-actions">
@@ -86,27 +86,6 @@
     </main>
     <footer class="app-version-footer" id="appVersionFooter">SCP Study</footer>
   </div>
-
-  <dialog id="questionJumpDialog" class="modal question-jump-dialog" aria-labelledby="questionJumpTitle">
-    <form method="dialog" class="modal-inner question-jump-inner" id="questionJumpForm">
-      <div class="modal-head">
-        <div>
-          <span class="eyebrow">Quick navigation</span>
-          <h2 id="questionJumpTitle">Go to question</h2>
-          <p>Enter a question number from 1 to 58.</p>
-        </div>
-        <button class="close-btn" value="cancel" aria-label="Close">×</button>
-      </div>
-      <label class="question-jump-field">
-        <span>Question number</span>
-        <input id="questionJumpInput" type="number" inputmode="numeric" min="1" max="58" step="1" autocomplete="off" />
-      </label>
-      <div class="modal-footer">
-        <button class="secondary" value="cancel">Cancel</button>
-        <button class="primary" type="submit" id="questionJumpGoBtn">Go</button>
-      </div>
-    </form>
-  </dialog>
 
   <dialog id="categoriesDialog" class="modal">
     <form method="dialog" class="modal-inner" id="categoriesForm">

@@ -2521,13 +2521,13 @@ body.mini-audio-visible .question-search-fab { bottom: calc(max(12px, env(safe-a
   min-width: 0;
 }
 
-.essay-built-copy strong {
+.essay-built-copy > strong {
   display: block;
   color: #24406e;
   font-size: .76rem;
 }
 
-.essay-built-copy span {
+.essay-built-copy > span {
   display: block;
   margin-top: 3px;
   color: #45546a;
@@ -2687,8 +2687,8 @@ body.mini-audio-visible .question-search-fab { bottom: calc(max(12px, env(safe-a
     font-size: .65rem;
   }
 
-  .essay-built-copy strong,
-  .essay-built-copy span {
+  .essay-built-copy > strong,
+  .essay-built-copy > span {
     font-size: .69rem;
   }
 
@@ -2950,10 +2950,6 @@ html,body{touch-action:manipulation}
 button,a,[role="button"],select,input,label{touch-action:manipulation}
 .question-number-jump{appearance:none;border:0;font:inherit;cursor:pointer}
 .question-number-jump:focus-visible{outline:3px solid rgba(49,86,183,.28);outline-offset:2px}
-.question-jump-dialog{width:min(440px,calc(100% - 24px))}
-.question-jump-field{display:grid;gap:7px;margin-top:20px}
-.question-jump-field>span{font-size:.7rem;font-weight:850;text-transform:uppercase;letter-spacing:.055em;color:var(--muted)}
-.question-jump-field input{width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--text);font:inherit;font-size:1.05rem}
 .app-version-footer{padding:0 16px calc(18px + env(safe-area-inset-bottom));text-align:center;color:var(--muted);font-size:.72rem;letter-spacing:.02em}
 .app-toast{position:fixed;z-index:90;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,12px);max-width:min(90vw,520px);padding:10px 14px;border-radius:999px;background:#172554;color:#fff;box-shadow:0 12px 34px rgba(13,26,68,.28);font-size:.82rem;font-weight:750;text-align:center;opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease}
 .app-toast.show{opacity:1;transform:translate(-50%,0)}
@@ -2966,3 +2962,23 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
   .resource-actions [data-print-pdf]{display:none}
   .resource-actions [data-save-pdf]{flex:1 1 100%}
 }
+
+/* v39: inline glossary terms in essay buildout + native question jump */
+.essay-built-copy > span .glossary-term,
+.essay-built-copy > strong .glossary-term{
+  display:inline;
+  margin-top:0;
+  font-size:inherit;
+  line-height:inherit;
+}
+.question-number-jump{
+  appearance:auto;
+  -webkit-appearance:menulist;
+  border:0;
+  cursor:pointer;
+  width:auto;
+  max-width:150px;
+  padding-right:4px;
+  background-color:var(--pill-bg,#eef3fb);
+}
+.question-number-jump:focus-visible{outline:3px solid rgba(49,86,183,.28);outline-offset:2px}

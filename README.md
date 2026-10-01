@@ -151,3 +151,9 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 - The cumulative test, answer key, and essay PDF remain generated from the same source-controlled question and essay banks as the app.
 
 PDF regression diagnostics compare generated study PDFs against the legacy reference layout during CI.
+
+
+## Release 39
+
+- Fixes Essay Buildout glossary links so matched glossary terms remain inline inside the sentence instead of being forced onto separate lines.
+- Replaces the question-number jump dialog with a native 1–58 dropdown directly in the question badge for faster navigation.

@@ -2914,3 +2914,33 @@ body.mini-audio-visible .question-search-fab { bottom: calc(max(12px, env(safe-a
 .resource-actions{flex-wrap:wrap}
 .resource-actions .resource-btn:disabled{opacity:.58;cursor:wait}
 @media(max-width:650px){.resource-actions{width:100%}.resource-actions .resource-btn{flex:1 1 auto}.essay-library-point{align-items:flex-start}.essay-library-point-actions{flex:0 0 auto}}
+
+/* v35: chabura profile, update/share affordances */
+.chabura-setting{
+  display:grid;
+  gap:12px;
+  margin-top:14px;
+  padding:14px;
+  border:1px solid #dce6f5;
+  border-radius:14px;
+  background:#f8fbff;
+}
+.chabura-setting-copy h3{margin:2px 0 0;font-size:.92rem}
+.chabura-setting-copy p{margin:5px 0 0;color:var(--muted);font-size:.74rem;line-height:1.45}
+.chabura-fields,.chabura-dialog-fields{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr) auto;gap:9px;align-items:end}
+.chabura-fields label,.chabura-dialog-fields label{display:grid;gap:5px;min-width:0}
+.chabura-fields label>span,.chabura-dialog-fields label>span{color:#718096;font-size:.66rem;font-weight:850;letter-spacing:.045em;text-transform:uppercase}
+.chabura-fields select,.chabura-dialog-fields select{
+  width:100%;min-width:0;min-height:38px;padding:8px 9px;border:1px solid #d7e1ef;border-radius:10px;
+  background:#fff;color:var(--text);font:inherit;font-size:.76rem
+}
+.chabura-dialog{width:min(680px,calc(100% - 22px))}
+.chabura-dialog-inner{overflow:visible}
+.chabura-dialog-fields{grid-template-columns:1fr;margin-top:12px}
+.brand-share-target{transition:opacity .12s ease,transform .08s ease}
+@media(max-width:780px){
+  .brand-share-target{cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .brand-share-target:active{opacity:.72;transform:scale(.98)}
+  .chabura-fields{grid-template-columns:1fr}
+  .chabura-fields .settings-action-btn{justify-self:start}
+}

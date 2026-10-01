@@ -120,3 +120,11 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 - Reports are anonymous, explicitly submitted, and separate from the automatic anonymous-usage preference.
 - Each report stores the exact wording/content version the student saw plus relevant answer/pairing context.
 - Duplicate reports for the same unchanged content are suppressed on-device; queued reports retry when connectivity returns.
+
+
+## Release 35
+
+- Checks the service worker for a newer app shell at startup and refreshes controlled clients when a new version activates.
+- Adds one-time chabura setup, saved locally and editable under Materials → Settings.
+- Anonymous analytics events now include the selected chabura when analytics are enabled.
+- On mobile, tapping the SCP Study logo or title opens the native share sheet when available.

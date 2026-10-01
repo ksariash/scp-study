@@ -1,10 +1,11 @@
-const CACHE_NAME = 'scp-study-v34';
+const CACHE_NAME = 'scp-study-v35';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v1';
 const APP_SHELL = [
   './',
   './index.html',
   './styles.css',
   './questions.js',
+  './chaburos.js',
   './audio-reviews.js',
   './glossary.js',
   './essay-practice.js',
@@ -17,6 +18,7 @@ const APP_SHELL = [
   './documents/SCP-Study-Compact-Course-Review.pdf',
   './documents/SCP-Study-Cumulative-Test.pdf',
   './documents/SCP-Study-Cumulative-Test-Answer-Key.pdf',
+  './documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf',
   './glossary-audio/glossary-nat-bar-nat.mp3',
   './glossary-audio/glossary-taam-keikar.mp3',
   './glossary-audio/glossary-ben-yomo.mp3',
@@ -84,7 +86,18 @@ self.addEventListener('activate', event => {
       await caches.delete(key);
     }
     await self.clients.claim();
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const client of windows) {
+      try {
+        client.postMessage({ type: 'SCP_APP_UPDATED', cache: CACHE_NAME });
+        if ('navigate' in client) await client.navigate(client.url);
+      } catch (_) {}
+    }
   })());
+});
+
+self.addEventListener('message', event => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 function isAudioRequest(request) {

@@ -18,9 +18,9 @@
   <div class="app-shell">
     <header class="topbar">
       <div class="brand-wrap">
-        <img class="brand-logo" src="icons/icon-192.png" alt="" aria-hidden="true" />
+        <img class="brand-logo brand-share-target" id="brandLogo" src="icons/icon-192.png" alt="" aria-hidden="true" data-share-app />
         <div>
-          <div class="brand">SCP Study</div>
+          <div class="brand brand-share-target" id="brandTitle" data-share-app>SCP Study</div>
           <div class="subbrand" id="modeLabel">Study mode</div>
         </div>
       </div>
@@ -326,7 +326,7 @@
         <div class="analytics-preference-copy">
           <span class="eyebrow">Course improvement</span>
           <h3 id="analyticsPreferenceHeading">Anonymous study statistics</h3>
-          <p>Helps instructors see which questions and topics need more review. The app shares question results, essay-practice results, timing ranges, study-aid use, which glossary terms are opened, cohort, and broad location derived by Cloudflare from the network request. It does not send your name, email, notes, searches, or precise GPS location.</p>
+          <p>Helps instructors see which questions and topics need more review. The app shares question results, essay-practice results, timing ranges, study-aid use, which glossary terms are opened, cohort, your selected chabura, and broad location derived by Cloudflare from the network request. It does not send your name, email, notes, searches, or precise GPS location.</p>
           <span class="analytics-status" id="analyticsStatus" aria-live="polite"></span>
         </div>
         <label class="analytics-switch">
@@ -335,6 +335,20 @@
           <span>Share anonymous stats</span>
         </label>
       </section>
+
+          <section class="chabura-setting" aria-labelledby="chaburaSettingHeading">
+            <div class="chabura-setting-copy">
+              <span class="eyebrow">Your chabura</span>
+              <h3 id="chaburaSettingHeading">Semichas Chaver chabura</h3>
+              <p>This stays on this device and, when anonymous statistics are enabled, is included so instructors can filter course analytics by chabura.</p>
+            </div>
+            <div class="chabura-fields">
+              <label><span>Location</span><select id="settingsChaburaLocation" aria-label="Chabura location"></select></label>
+              <label><span>Chabura</span><select id="settingsChaburaSelect" aria-label="SCP chabura"></select></label>
+              <button class="secondary settings-action-btn" type="button" id="saveChaburaSettingsBtn">Save chabura</button>
+            </div>
+            <span class="analytics-status" id="chaburaSettingsStatus" aria-live="polite"></span>
+          </section>
 
           <div class="settings-actions">
             <div class="settings-action-card">
@@ -681,6 +695,25 @@
   </dialog>
 
 
+  <dialog id="chaburaDialog" class="modal chabura-dialog" aria-labelledby="chaburaDialogTitle">
+    <div class="modal-inner chabura-dialog-inner">
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow">One-time setup</span>
+          <h2 id="chaburaDialogTitle">Which SCP chabura do you attend?</h2>
+          <p>Select your region and chabura. You can change this later in Materials → Settings.</p>
+        </div>
+      </div>
+      <div class="chabura-dialog-fields">
+        <label><span>Where is your Semichas Chaver Chabura located?</span><select id="chaburaDialogLocation"></select></label>
+        <label><span>Which SCP chabura do you attend?</span><select id="chaburaDialogSelect"></select></label>
+      </div>
+      <div class="modal-footer">
+        <button class="primary" type="button" id="saveChaburaDialogBtn" disabled>Save and continue</button>
+      </div>
+    </div>
+  </dialog>
+
   <dialog id="installGuideDialog" class="modal install-guide-modal">
     <div class="modal-inner install-guide-inner">
       <div class="modal-head">
@@ -714,6 +747,7 @@
   </aside>
 
   <script src="questions.js"></script>
+  <script src="chaburos.js"></script>
   <script src="audio-reviews.js"></script>
   <script src="glossary.js"></script>
   <script src="essay-practice.js"></script>

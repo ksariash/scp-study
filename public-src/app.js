@@ -13,13 +13,16 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 34;
+  const APP_VERSION = 35;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const ANALYTICS_COHORT = 'SCP 2026 Summer';
   const ANALYTICS_SETTINGS_KEY = 'scpStudy.analytics.v1';
   const ANALYTICS_QUEUE_KEY = 'scpStudy.analyticsQueue.v1';
   const ANALYTICS_INSTALLATION_KEY = 'scpStudy.analyticsInstallation.v1';
+  const CHABURA_SETTINGS_KEY = 'scpStudy.chabura.v1';
+  const CHABURA_PROFILE_SENT_KEY = 'scpStudy.chaburaProfileSent.v1';
+  const CHABURA_FALLBACK = 'Not listed / unsure';
   const CONTENT_FEEDBACK_QUEUE_KEY = 'scpStudy.contentFeedbackQueue.v1';
   const CONTENT_FEEDBACK_SENT_KEY = 'scpStudy.contentFeedbackSent.v1';
   const ANALYTICS_MAX_QUEUE = 500;
@@ -28,6 +31,12 @@
   const categories = [...new Set(QUESTIONS.map(q => q.category))];
   const questionById = new Map(QUESTIONS.map(q => [q.id, q]));
   const ESSAY_BANK = Array.isArray(window.ESSAY_PRACTICE_DATA) ? window.ESSAY_PRACTICE_DATA : [];
+  const CHABURA_QUESTIONS = Array.isArray(window.SCP_CHABURA_DATA?.questions) ? window.SCP_CHABURA_DATA.questions : [];
+  const CHABURA_LOCATION_QUESTION = CHABURA_QUESTIONS.find(item => item.id === 'location') || null;
+  const CHABURA_QUESTION = CHABURA_QUESTIONS.find(item => item.id === 'chabura') || null;
+  const CHABURA_LOCATIONS = Array.isArray(CHABURA_LOCATION_QUESTION?.options) ? CHABURA_LOCATION_QUESTION.options : [];
+  const CHABURAS_BY_LOCATION = CHABURA_QUESTION?.optionsByLocation && typeof CHABURA_QUESTION.optionsByLocation === 'object'
+    ? CHABURA_QUESTION.optionsByLocation : {};
 
   function searchableQuestionText(q) {
     const refs = (typeof QUESTION_AUDIO_MAP !== 'undefined' && QUESTION_AUDIO_MAP[String(q.id)]) || [];
@@ -83,14 +92,14 @@
 
   const el = id => document.getElementById(id);
   const dom = {
-    modeLabel: el('modeLabel'), timerLabel: el('timerLabel'), mainTimer: el('mainTimer'), timerCard: el('timerCard'),
+    modeLabel: el('modeLabel'), timerLabel: el('timerLabel'), mainTimer: el('mainTimer'), timerCard: el('timerCard'), brandLogo: el('brandLogo'), brandTitle: el('brandTitle'),
     categoriesBtn: el('categoriesBtn'), materialsBtn: el('materialsBtn'), statsBtn: el('statsBtn'), essayBtn: el('essayBtn'), testBtn: el('testBtn'), questionSearchFab: el('questionSearchFab'), installBtn: el('installBtn'), installGuideDialog: el('installGuideDialog'), closeInstallGuide: el('closeInstallGuide'),
     testProgressWrap: el('testProgressWrap'), testQuestionCount: el('testQuestionCount'), testAnsweredCount: el('testAnsweredCount'), testProgressFill: el('testProgressFill'),
     questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), answerForm: el('answerForm'),
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
-    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
+    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
     essayPracticeDialog: el('essayPracticeDialog'), closeEssayPractice: el('closeEssayPractice'), essayPracticeTopic: el('essayPracticeTopic'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingAudio: el('essayPairingAudio'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
@@ -100,7 +109,8 @@
     testIntroDialog: el('testIntroDialog'), closeTestIntro: el('closeTestIntro'), cancelTestStart: el('cancelTestStart'), startTestBtn: el('startTestBtn'),
     testResultDialog: el('testResultDialog'), testResultSubtitle: el('testResultSubtitle'), testResultContent: el('testResultContent'), closeTestResult: el('closeTestResult'), reviewStatsAfterTest: el('reviewStatsAfterTest'), returnToStudy: el('returnToStudy'),
     glossaryTermDialog: el('glossaryTermDialog'), closeGlossaryTerm: el('closeGlossaryTerm'), glossaryTermTitle: el('glossaryTermTitle'), glossaryTermPronunciation: el('glossaryTermPronunciation'), glossaryTermIpa: el('glossaryTermIpa'), glossaryTermDefinition: el('glossaryTermDefinition'), glossarySpeakBtn: el('glossarySpeakBtn'), glossaryTermCategoriesWrap: el('glossaryTermCategoriesWrap'), glossaryTermCategories: el('glossaryTermCategories'),
-    contentFeedbackDialog: el('contentFeedbackDialog'), closeContentFeedback: el('closeContentFeedback'), cancelContentFeedback: el('cancelContentFeedback'), submitContentFeedback: el('submitContentFeedback'), contentFeedbackType: el('contentFeedbackType'), contentFeedbackTitle: el('contentFeedbackTitle'), contentFeedbackPreview: el('contentFeedbackPreview'), contentFeedbackDetails: el('contentFeedbackDetails'), contentFeedbackCount: el('contentFeedbackCount'), contentFeedbackStatus: el('contentFeedbackStatus')
+    contentFeedbackDialog: el('contentFeedbackDialog'), closeContentFeedback: el('closeContentFeedback'), cancelContentFeedback: el('cancelContentFeedback'), submitContentFeedback: el('submitContentFeedback'), contentFeedbackType: el('contentFeedbackType'), contentFeedbackTitle: el('contentFeedbackTitle'), contentFeedbackPreview: el('contentFeedbackPreview'), contentFeedbackDetails: el('contentFeedbackDetails'), contentFeedbackCount: el('contentFeedbackCount'), contentFeedbackStatus: el('contentFeedbackStatus'),
+    chaburaDialog: el('chaburaDialog'), chaburaDialogLocation: el('chaburaDialogLocation'), chaburaDialogSelect: el('chaburaDialogSelect'), saveChaburaDialogBtn: el('saveChaburaDialogBtn')
   };
 
   let state = loadState();
@@ -134,7 +144,143 @@
   let essayAnalyticsSessionId = null;
   let activeContentFeedbackTarget = null;
   let contentFeedbackFlushInFlight = false;
-  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog].filter(Boolean);
+  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.chaburaDialog].filter(Boolean);
+
+
+  function chaburaOptions(location) {
+    const listed = Array.isArray(CHABURAS_BY_LOCATION?.[location]) ? CHABURAS_BY_LOCATION[location] : [];
+    return [...listed, CHABURA_FALLBACK];
+  }
+
+  function validChaburaSettings(value) {
+    if (!value || typeof value !== 'object') return null;
+    const location = String(value.location || '').trim();
+    const chabura = String(value.chabura || '').trim();
+    if (!CHABURA_LOCATIONS.includes(location) || !chaburaOptions(location).includes(chabura)) return null;
+    return { location, chabura };
+  }
+
+  function loadChaburaSettings() {
+    try { return validChaburaSettings(JSON.parse(localStorage.getItem(CHABURA_SETTINGS_KEY) || 'null')); }
+    catch (_) { return null; }
+  }
+
+  function analyticsProfileFields() {
+    const profile = loadChaburaSettings();
+    return { chabura: profile?.chabura || null, chaburaRegion: profile?.location || null };
+  }
+
+  function fillChaburaLocationSelect(select, selected = '') {
+    if (!select) return;
+    select.innerHTML = '<option value="">Choose a location…</option>' + CHABURA_LOCATIONS.map(location =>
+      `<option value="${escapeHtml(location)}">${escapeHtml(location)}</option>`
+    ).join('');
+    if (CHABURA_LOCATIONS.includes(selected)) select.value = selected;
+  }
+
+  function fillChaburaSelect(select, location, selected = '') {
+    if (!select) return;
+    const options = CHABURA_LOCATIONS.includes(location) ? chaburaOptions(location) : [];
+    select.innerHTML = '<option value="">Choose a chabura…</option>' + options.map(chabura =>
+      `<option value="${escapeHtml(chabura)}">${escapeHtml(chabura)}</option>`
+    ).join('');
+    select.disabled = !CHABURA_LOCATIONS.includes(location);
+    if (options.includes(selected)) select.value = selected;
+  }
+
+  function syncChaburaSettingsUi() {
+    const saved = loadChaburaSettings();
+    fillChaburaLocationSelect(dom.settingsChaburaLocation, saved?.location || '');
+    fillChaburaSelect(dom.settingsChaburaSelect, saved?.location || '', saved?.chabura || '');
+    if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = saved
+      ? `Saved: ${saved.chabura}`
+      : 'Choose your chabura to tag anonymous course analytics.';
+  }
+
+  function setChaburaProfile(location, chabura) {
+    const next = validChaburaSettings({ location, chabura });
+    if (!next) return false;
+    const previous = loadChaburaSettings();
+    try { localStorage.setItem(CHABURA_SETTINGS_KEY, JSON.stringify(next)); } catch (_) {}
+    if (!previous || previous.location !== next.location || previous.chabura !== next.chabura) {
+      try { localStorage.removeItem(CHABURA_PROFILE_SENT_KEY); } catch (_) {}
+    }
+    syncChaburaSettingsUi();
+    updateAnalyticsUi();
+    queueChaburaProfileAnalytics();
+    return true;
+  }
+
+  function queueChaburaProfileAnalytics() {
+    if (!analyticsEnabled()) return;
+    const profile = loadChaburaSettings();
+    if (!profile) return;
+    const signature = `${profile.location}\n${profile.chabura}`;
+    let sent = '';
+    try { sent = localStorage.getItem(CHABURA_PROFILE_SENT_KEY) || ''; } catch (_) {}
+    if (sent === signature) return;
+    const queue = analyticsQueue();
+    if (queue.some(item => item?.kind === 'profile' && item.chabura === profile.chabura && item.chaburaRegion === profile.location)) return;
+    queue.push({
+      kind: 'profile',
+      eventId: analyticsUuid('profile'),
+      installationId: analyticsInstallationId(),
+      cohort: ANALYTICS_COHORT,
+      appVersion: String(APP_VERSION),
+      clientTs: new Date().toISOString(),
+      chabura: profile.chabura,
+      chaburaRegion: profile.location
+    });
+    saveAnalyticsQueue(queue);
+    void flushAnalyticsQueue();
+  }
+
+  function prepareChaburaOnboarding() {
+    const saved = loadChaburaSettings();
+    if (saved || !dom.chaburaDialog) return;
+    fillChaburaLocationSelect(dom.chaburaDialogLocation, '');
+    fillChaburaSelect(dom.chaburaDialogSelect, '', '');
+    dom.saveChaburaDialogBtn.disabled = true;
+    if (!dom.chaburaDialog.open) dom.chaburaDialog.showModal();
+  }
+
+  function isMobileShareLayout() {
+    return window.matchMedia?.('(max-width: 780px), (pointer: coarse)')?.matches ?? false;
+  }
+
+  async function shareStudyApp() {
+    if (!isMobileShareLayout()) return;
+    const url = new URL('./', window.location.href).href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'SCP Study', text: 'SCP Study', url });
+        return;
+      }
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        alert('SCP Study link copied.');
+      }
+    } catch (error) {
+      if (error?.name !== 'AbortError') console.warn('Could not share app:', error);
+    }
+  }
+
+  function updateBrandShareAffordance() {
+    const mobile = isMobileShareLayout();
+    [dom.brandLogo, dom.brandTitle].forEach(node => {
+      if (!node) return;
+      node.tabIndex = mobile ? 0 : -1;
+      if (mobile) {
+        node.setAttribute('role', 'button');
+        node.setAttribute('aria-label', 'Share SCP Study');
+        node.setAttribute('title', 'Share SCP Study');
+      } else {
+        node.removeAttribute('role');
+        node.removeAttribute('aria-label');
+        node.removeAttribute('title');
+      }
+    });
+  }
 
   function analyticsSettings() {
     try {
@@ -154,6 +300,7 @@
     if (!enabled) {
       try { localStorage.removeItem(ANALYTICS_QUEUE_KEY); } catch (_) {}
     } else {
+      queueChaburaProfileAnalytics();
       void flushAnalyticsQueue();
     }
     updateAnalyticsUi();
@@ -161,9 +308,10 @@
 
   function updateAnalyticsUi() {
     const enabled = analyticsEnabled();
+    const profile = loadChaburaSettings();
     if (dom.analyticsToggle) dom.analyticsToggle.checked = enabled;
     if (dom.analyticsStatus) dom.analyticsStatus.textContent = enabled
-      ? 'On · anonymous question results, essay-practice results, glossary-term opens, and broad IP-derived location are shared.'
+      ? `On · anonymous study activity, ${profile ? 'selected chabura, ' : ''}and broad IP-derived location are shared.`
       : 'Off · future study statistics will stay on this device.';
   }
 
@@ -379,6 +527,7 @@
       eventId: crypto?.randomUUID?.() || `fb-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       installationId: analyticsInstallationId(),
       cohort: ANALYTICS_COHORT,
+      ...analyticsProfileFields(),
       appVersion: String(APP_VERSION),
       clientTs: new Date().toISOString(),
       contentType: target.contentType,
@@ -465,6 +614,7 @@
       eventId: crypto?.randomUUID?.() || `gls-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       installationId: analyticsInstallationId(),
       cohort: ANALYTICS_COHORT,
+      ...analyticsProfileFields(),
       appVersion: String(APP_VERSION),
       clientTs: new Date().toISOString(),
       termId: entry.id,
@@ -486,6 +636,7 @@
       eventId: crypto?.randomUUID?.() || `evt-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       installationId: analyticsInstallationId(),
       cohort: ANALYTICS_COHORT,
+      ...analyticsProfileFields(),
       appVersion: String(APP_VERSION),
       clientTs: new Date().toISOString(),
       questionId: q.id,
@@ -529,6 +680,7 @@
       eventId: analyticsUuid('essay'),
       installationId: analyticsInstallationId(),
       cohort: ANALYTICS_COHORT,
+      ...analyticsProfileFields(),
       appVersion: String(APP_VERSION),
       clientTs: new Date().toISOString(),
       ...payload
@@ -559,6 +711,10 @@
       if (!response.ok) throw new Error(`Analytics upload failed (${response.status})`);
       const ids = new Set(batch.map(item => item.eventId));
       saveAnalyticsQueue(analyticsQueue().filter(item => !ids.has(item.eventId)));
+      const profile = [...batch].reverse().find(item => item?.kind === 'profile' && item.chabura && item.chaburaRegion);
+      if (profile) {
+        try { localStorage.setItem(CHABURA_PROFILE_SENT_KEY, `${profile.chaburaRegion}\n${profile.chabura}`); } catch (_) {}
+      }
       uploaded = true;
     } catch (err) {
       console.warn('Anonymous analytics upload deferred:', err);
@@ -2335,7 +2491,10 @@
       setTimeout(() => syncTranscriptToAudio(true), 20);
     }
     if (next === 'questions') renderMaterialsQuestions();
-    if (next === 'settings') updateAnalyticsUi();
+    if (next === 'settings') {
+      updateAnalyticsUi();
+      syncChaburaSettingsUi();
+    }
   }
 
   function renderMaterialsQuestions() {
@@ -2963,6 +3122,42 @@
 
   function bindEvents() {
     dom.submitBtn.addEventListener('click', submitCurrentAnswer);
+
+    [dom.brandLogo, dom.brandTitle].forEach(node => {
+      node?.addEventListener('click', () => void shareStudyApp());
+      node?.addEventListener('keydown', e => {
+        if (!isMobileShareLayout() || (e.key !== 'Enter' && e.key !== ' ')) return;
+        e.preventDefault();
+        void shareStudyApp();
+      });
+    });
+    window.matchMedia?.('(max-width: 780px), (pointer: coarse)')?.addEventListener?.('change', updateBrandShareAffordance);
+
+    dom.settingsChaburaLocation?.addEventListener('change', e => {
+      fillChaburaSelect(dom.settingsChaburaSelect, e.currentTarget.value, '');
+      if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = 'Choose a chabura, then save.';
+    });
+    dom.saveChaburaSettingsBtn?.addEventListener('click', () => {
+      if (setChaburaProfile(dom.settingsChaburaLocation?.value, dom.settingsChaburaSelect?.value)) {
+        if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = 'Chabura saved.';
+      } else if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = 'Choose both a location and chabura.';
+    });
+    dom.chaburaDialogLocation?.addEventListener('change', e => {
+      fillChaburaSelect(dom.chaburaDialogSelect, e.currentTarget.value, '');
+      if (dom.saveChaburaDialogBtn) dom.saveChaburaDialogBtn.disabled = true;
+    });
+    dom.chaburaDialogSelect?.addEventListener('change', () => {
+      if (dom.saveChaburaDialogBtn) dom.saveChaburaDialogBtn.disabled = !validChaburaSettings({
+        location: dom.chaburaDialogLocation?.value,
+        chabura: dom.chaburaDialogSelect?.value
+      });
+    });
+    dom.saveChaburaDialogBtn?.addEventListener('click', () => {
+      if (!setChaburaProfile(dom.chaburaDialogLocation?.value, dom.chaburaDialogSelect?.value)) return;
+      dom.chaburaDialog?.close();
+    });
+    dom.chaburaDialog?.addEventListener('cancel', e => e.preventDefault());
+
     dom.prevBtn.addEventListener('click', goPrevious);
     dom.nextBtn.addEventListener('click', goNext);
     dom.categoriesBtn.addEventListener('click', openCategories);
@@ -3010,7 +3205,7 @@
 
     dom.statsBtn.addEventListener('click', openStats);
     dialogs.forEach(d => {
-      closeOnBackdrop(d);
+      if (d !== dom.chaburaDialog) closeOnBackdrop(d);
       d.addEventListener('close', () => {
         const anyOpen = dialogs.some(x => x.open);
         if (!anyOpen) beginQuestionTimeIfNeeded();
@@ -3381,19 +3576,28 @@
     window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; updateInstallButtonVisibility(); });
   }
 
-  function registerServiceWorker() {
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(err => console.warn('Service worker registration failed:', err)));
+  async function registerServiceWorker() {
+    if (!('serviceWorker' in navigator)) return null;
+    try {
+      const registration = await navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' });
+      await registration.update();
+      return registration;
+    } catch (err) {
+      console.warn('Service worker registration/update failed:', err);
+      return null;
     }
   }
 
   function init() {
     bindEvents();
-    registerServiceWorker();
+    void registerServiceWorker();
     setupMediaSession();
+    updateBrandShareAffordance();
     updateInstallButtonVisibility();
     updateAnalyticsUi();
+    syncChaburaSettingsUi();
     updateEssayProgressUi();
+    queueChaburaProfileAnalytics();
     void flushAnalyticsQueue();
     void flushContentFeedbackQueue();
     activeMaterialsTab = savedMaterialsTab();
@@ -3410,6 +3614,7 @@
     }
     updateTimer();
     timerInterval = setInterval(updateTimer, 1000);
+    prepareChaburaOnboarding();
   }
 
   init();

@@ -183,3 +183,11 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - Adds an Essay quick-jump menu, Essay Explorer button, Essay search button, and current-topic category tags.
 - Stops the temporary PDF regression GitHub Actions workflows.
 - Hardens generated PDF mixed Hebrew/English rendering by stripping invisible bidi controls and disabling problematic shaping features on Hebrew runs, preventing the direction-control/.notdef square seen in the essay PDF.
+
+
+## Release 44
+
+- Makes Essay quick navigation narrower, restores the floating Search button in Essay mode, and removes the inline Search / Essay Explorer buttons.
+- Makes Categories work in Essay mode by filtering both the Essay quick-jump list and adaptive Essay selection by essay-topic tags.
+- Adds an App Info popup on the top-left icon with version/creator information, mode controls, update check, and a Settings shortcut.
+- Makes service-worker updates reload from the page after controller activation instead of navigating clients from the service worker, avoiding the iOS installed-app crash seen during pull-to-update.

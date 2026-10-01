@@ -18,7 +18,7 @@
   <div class="app-shell">
     <header class="topbar">
       <div class="brand-wrap">
-        <img class="brand-logo brand-share-target" id="brandLogo" src="icons/icon-192.png" alt="" aria-hidden="true" data-share-app />
+        <img class="brand-logo brand-info-target" id="brandLogo" src="icons/icon-192.png" alt="SCP Study app information" role="button" tabindex="0" aria-label="About SCP Study" title="About SCP Study" />
         <div>
           <div class="brand brand-share-target" id="brandTitle" data-share-app>SCP Study</div>
           <div class="subbrand" id="modeLabel">Study mode</div>
@@ -87,10 +87,6 @@
         <div class="essay-mode-toolbar-main">
           <select class="essay-quick-nav" id="essayQuickNav" aria-label="Jump to essay"></select>
           <div class="essay-category-tags" id="essayCategoryTags" aria-label="Essay categories"></div>
-        </div>
-        <div class="essay-mode-toolbar-actions">
-          <button class="secondary compact" type="button" id="essayExplorerBtn">Essay explorer</button>
-          <button class="secondary compact" type="button" id="essaySearchBtn">Search</button>
         </div>
       </div>
       <div class="essay-practice-topline">
@@ -165,8 +161,8 @@
     <form method="dialog" class="modal-inner" id="categoriesForm">
       <div class="modal-head">
         <div>
-          <h2>Study categories</h2>
-          <p>Choose which categories may be selected in study mode. Test mode always uses all 58 questions.</p>
+          <h2 id="categoriesDialogTitle">Study categories</h2>
+          <p id="categoriesDialogDescription">Choose which categories may be selected in study mode. Test mode always uses all 58 questions.</p>
         </div>
         <button class="close-btn" value="cancel" aria-label="Close">×</button>
       </div>
@@ -727,6 +723,31 @@
       </div>
       <div class="modal-footer">
         <button class="primary" type="button" id="saveChaburaDialogBtn" disabled>Save and continue</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="appInfoDialog" class="modal app-info-dialog" aria-labelledby="appInfoTitle">
+    <div class="modal-inner app-info-inner">
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow">About</span>
+          <h2 id="appInfoTitle">SCP Study</h2>
+          <p>SCP Study v44. Created by KBT congregation of Los Angeles.</p>
+        </div>
+        <button class="close-btn" id="closeAppInfo" aria-label="Close">×</button>
+      </div>
+      <div class="app-info-section">
+        <span class="app-info-label">Mode</span>
+        <div class="app-info-mode-grid">
+          <button class="secondary" type="button" id="appInfoMcBtn">M/C</button>
+          <button class="secondary" type="button" id="appInfoEssayBtn">Essay</button>
+          <button class="secondary" type="button" id="appInfoTestBtn">Test</button>
+        </div>
+      </div>
+      <div class="app-info-actions">
+        <button class="secondary" type="button" id="appInfoUpdateBtn">Check for updates</button>
+        <button class="primary" type="button" id="appInfoSettingsBtn">Open settings</button>
       </div>
     </div>
   </dialog>

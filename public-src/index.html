@@ -186,7 +186,7 @@
       <div class="modal-head materials-modal-head">
         <div>
           <h2>Course materials</h2>
-          <p>Audio, questions, glossary, downloads, and app settings.</p>
+          <p>Audio, questions, essays, glossary, downloads, and app settings.</p>
         </div>
         <div class="materials-head-actions">
           <button class="close-btn" id="closeMaterials" aria-label="Close">×</button>
@@ -196,6 +196,7 @@
       <nav class="materials-tabs" id="materialsTabs" role="tablist" aria-label="Course materials sections">
         <button class="materials-tab active" type="button" role="tab" id="materialsTabAudio" data-materials-tab="audio" aria-selected="true" aria-controls="materialsPanelAudio">Audio</button>
         <button class="materials-tab" type="button" role="tab" id="materialsTabQuestions" data-materials-tab="questions" aria-selected="false" aria-controls="materialsPanelQuestions">Questions</button>
+        <button class="materials-tab" type="button" role="tab" id="materialsTabEssays" data-materials-tab="essays" aria-selected="false" aria-controls="materialsPanelEssays">Essays</button>
         <button class="materials-tab" type="button" role="tab" id="materialsTabGlossary" data-materials-tab="glossary" aria-selected="false" aria-controls="materialsPanelGlossary">Glossary</button>
         <button class="materials-tab" type="button" role="tab" id="materialsTabDownloads" data-materials-tab="downloads" aria-selected="false" aria-controls="materialsPanelDownloads">Downloads</button>
         <button class="materials-tab" type="button" role="tab" id="materialsTabSettings" data-materials-tab="settings" aria-selected="false" aria-controls="materialsPanelSettings">Settings</button>
@@ -309,6 +310,35 @@
           <div class="materials-question-category-wrap">
             <span class="materials-question-category-label">Browse by topic</span>
             <div class="materials-question-categories" id="materialsQuestionCategories"></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="materials-panel" id="materialsPanelEssays" role="tabpanel" aria-labelledby="materialsTabEssays" data-materials-panel="essays" hidden>
+        <section class="materials-essays-section" aria-labelledby="materialsEssaysHeading">
+          <div class="materials-section-head">
+            <div>
+              <span class="eyebrow">Review</span>
+              <h3 id="materialsEssaysHeading">Essay Explorer</h3>
+              <p>Search all 14 essays or open one directly.</p>
+            </div>
+            <span class="materials-question-count" id="materialsEssayCount">14 essays</span>
+          </div>
+
+          <div class="materials-question-searchbar" role="search">
+            <span class="materials-question-search-icon" aria-hidden="true">⌕</span>
+            <input id="materialsEssayInput" type="text" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Search essay titles, prompts, answers, or names" aria-label="Search course essays" />
+            <button class="glossary-search-clear hidden" type="button" id="materialsEssaySearchClear" aria-label="Clear essay search">×</button>
+          </div>
+
+          <div class="materials-question-actions">
+            <button class="secondary" type="button" id="materialsBrowseAllEssays">Open full Essay Library</button>
+          </div>
+
+          <div class="materials-essay-list" id="materialsEssayList"></div>
+          <div class="glossary-empty hidden" id="materialsEssayEmpty">
+            <strong>No essays found.</strong>
+            <p>Try a different title, topic, authority, or phrase.</p>
           </div>
         </section>
       </div>
@@ -511,8 +541,8 @@
         <label><input type="radio" name="contentFeedbackReason" value="inaccurate" /> <span>May be inaccurate</span></label>
         <label><input type="radio" name="contentFeedbackReason" value="wording" /> <span>Wording or typo</span></label>
         <label><input type="radio" name="contentFeedbackReason" value="incomplete" /> <span>Missing or incomplete</span></label>
-        <label><input type="radio" name="contentFeedbackReason" value="notes_link" /> <span>Not connected to the correct section in the notes</span></label>
-        <label><input type="radio" name="contentFeedbackReason" value="audio_link" /> <span>Not connected to the correct section in the audio</span></label>
+        <label><input type="radio" name="contentFeedbackReason" value="notes_link" /> <span>Wrong location in notes</span></label>
+        <label><input type="radio" name="contentFeedbackReason" value="audio_link" /> <span>Wrong location in audio</span></label>
         <label><input type="radio" name="contentFeedbackReason" value="other" /> <span>Other</span></label>
       </fieldset>
 

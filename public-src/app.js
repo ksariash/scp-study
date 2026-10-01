@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 47;
+  const APP_VERSION = 48;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const ANALYTICS_COHORT = "Nat Bar Nat & Stam Ye'enam - Summer 26";
@@ -120,7 +120,7 @@
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     questionCard: el('questionCard'), prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoriesDialogTitle: el('categoriesDialogTitle'), categoriesDialogDescription: el('categoriesDialogDescription'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
-    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
+    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
     essayPracticeMain: el('essayPracticeMain'), essayQuickNav: el('essayQuickNav'), essayCategoryTags: el('essayCategoryTags'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayNoteLinks: el('essayNoteLinks'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingAudio: el('essayPairingAudio'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
@@ -2906,7 +2906,7 @@
     dom.installBtn.classList.toggle('hidden', !(showIOSHelp || showNativePrompt));
   }
 
-  const MATERIALS_TABS = new Set(['audio', 'questions', 'glossary', 'downloads', 'settings']);
+  const MATERIALS_TABS = new Set(['audio', 'questions', 'essays', 'glossary', 'downloads', 'settings']);
 
   function savedMaterialsTab() {
     try {
@@ -2956,6 +2956,7 @@
       setTimeout(() => syncTranscriptToAudio(true), 20);
     }
     if (next === 'questions') renderMaterialsQuestions();
+    if (next === 'essays') renderMaterialsEssays(dom.materialsEssayInput?.value || '');
     if (next === 'settings') {
       updateAnalyticsUi();
       syncChaburaSettingsUi();
@@ -2985,6 +2986,48 @@
       fragment.append(button);
     });
     dom.materialsQuestionCategories.append(fragment);
+  }
+
+  function renderMaterialsEssays(query = '') {
+    if (!dom.materialsEssayList) return;
+    const term = String(query || '').trim().toLowerCase();
+    const rows = ESSAY_BANK
+      .map((essay, index) => ({ essay, index }))
+      .filter(({ essay }) => !term || essayLibraryHaystack(essay).includes(term));
+
+    if (dom.materialsEssayCount) dom.materialsEssayCount.textContent = `${rows.length} essay${rows.length === 1 ? '' : 's'}`;
+    dom.materialsEssayList.innerHTML = '';
+
+    rows.forEach(({ essay, index }) => {
+      const progress = essayProgressState.essays?.[essay.id] || {};
+      const mastered = essay.facts.filter(fact => essayFactStat(fact.id).mastery >= 2).length;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'materials-essay-card';
+      button.dataset.materialsEssayId = essay.id;
+      button.innerHTML = `
+        <span class="materials-essay-number">Essay ${index + 1}</span>
+        <span class="materials-essay-copy">
+          <strong>${escapeHtml(essay.title)}</strong>
+          <small>${mastered}/${essay.facts.length} facts mastered${Number(progress.attempts) ? ` · ${Number(progress.attempts)} practice round${Number(progress.attempts) === 1 ? '' : 's'}` : ''}</small>
+        </span>
+        <span class="materials-essay-chevron" aria-hidden="true">›</span>`;
+      dom.materialsEssayList.append(button);
+    });
+
+    dom.materialsEssayEmpty?.classList.toggle('hidden', rows.length > 0);
+    dom.materialsEssaySearchClear?.classList.toggle('hidden', !term);
+  }
+
+  function openMaterialsEssay(essayId) {
+    const essay = ESSAY_BANK.find(item => item.id === essayId);
+    if (!essay || mode === 'test') return;
+    if (dom.materialsDialog?.open) dom.materialsDialog.close();
+    flushQuestionTime();
+    if (dom.essayIntroDialog?.open) dom.essayIntroDialog.close();
+    if (dom.essayLibrarySearch) dom.essayLibrarySearch.value = essay.title;
+    renderEssayLibrary(essay.title);
+    if (!dom.essayLibraryDialog.open) dom.essayLibraryDialog.showModal();
   }
 
   function launchMaterialsQuestionSearch() {
@@ -3829,6 +3872,28 @@
     dom.closeMaterials.addEventListener('click', () => dom.materialsDialog.close());
     dom.doneMaterialsBtn.addEventListener('click', () => dom.materialsDialog.close());
     dom.materialsQuestionGoBtn?.addEventListener('click', launchMaterialsQuestionSearch);
+    dom.materialsEssayInput?.addEventListener('input', e => renderMaterialsEssays(e.currentTarget.value));
+    dom.materialsEssayInput?.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && e.currentTarget.value) {
+        e.preventDefault();
+        e.currentTarget.value = '';
+        renderMaterialsEssays('');
+      }
+    });
+    dom.materialsEssaySearchClear?.addEventListener('click', () => {
+      if (!dom.materialsEssayInput) return;
+      dom.materialsEssayInput.value = '';
+      dom.materialsEssayInput.focus();
+      renderMaterialsEssays('');
+    });
+    dom.materialsBrowseAllEssays?.addEventListener('click', () => {
+      if (dom.materialsDialog?.open) dom.materialsDialog.close();
+      openEssayLibrary();
+    });
+    dom.materialsEssayList?.addEventListener('click', e => {
+      const button = e.target.closest('[data-materials-essay-id]');
+      if (button) openMaterialsEssay(button.dataset.materialsEssayId);
+    });
     dom.materialsQuestionInput?.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
         e.preventDefault();

@@ -212,3 +212,10 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - Adds concise/full note references to every multiple-choice question and every essay, with buttons that open the relevant page.
 - Adds an in-app PDF viewer with Back, Share, Print, and Download controls. Course-note PDFs also include a question/essay jump menu.
 - Adds View controls to every PDF in Materials → Downloads while keeping Print hidden on mobile.
+
+
+## Release 48
+
+- Adds an Essays tab to Materials with searchable access to all 14 essays and the full Essay Library.
+- Uses a 3-by-2 Materials tab layout on mobile now that there are six sections.
+- Shortens feedback choices to “Wrong location in notes” and “Wrong location in audio.”

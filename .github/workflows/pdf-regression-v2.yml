@@ -1,0 +1,44 @@
+name: PDF regression v2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "public-src/questions.js"
+      - "public-src/essay-practice.js"
+      - "scripts/generate-pdfs.mjs"
+      - "scripts/pdf-regression.py"
+      - "build.mjs"
+      - "assets/static-binaries.tar.gz.b64.*.part"
+      - ".github/workflows/pdf-regression.yml"
+  workflow_dispatch:
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Node dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install PDF comparison dependencies
+        run: python -m pip install --disable-pip-version-check pymupdf pillow
+      - name: Extract legacy reference PDFs
+        run: python scripts/pdf-regression.py extract --out .pdf-regression/reference
+      - name: Generate current PDFs
+        run: node scripts/generate-pdfs.mjs .pdf-regression/generated
+      - name: Compare generated PDFs with legacy references
+        id: compare
+        continue-on-error: true
+        run: python scripts/pdf-regression.py compare --reference .pdf-regression/reference --generated .pdf-regression/generated --out .pdf-regression/report
+      - name: Upload regression artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf-regression-${{ github.sha }}
+          path: .pdf-regression
+          retention-days: 7
+      - name: Enforce regression
+        if: steps.compare.outcome == 'failure'
+        run: exit 1

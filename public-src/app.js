@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 46;
+  const APP_VERSION = 47;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const ANALYTICS_COHORT = "Nat Bar Nat & Stam Ye'enam - Summer 26";
@@ -33,6 +33,7 @@
   const categories = [...new Set(QUESTIONS.map(q => q.category))];
   const questionById = new Map(QUESTIONS.map(q => [q.id, q]));
   const ESSAY_BANK = Array.isArray(window.ESSAY_PRACTICE_DATA) ? window.ESSAY_PRACTICE_DATA : [];
+  const COURSE_NOTE_REFS = window.COURSE_NOTE_REFS || { docs: {}, questions: {}, essays: {} };
   const ESSAY_CATEGORY_TAGS = {
     'nbn-intentional-cooking': ['נ״ט בר נ״ט'],
     'nbn-model-failures': ['נ״ט בר נ״ט'],
@@ -115,23 +116,24 @@
     appInfoDialog: el('appInfoDialog'), closeAppInfo: el('closeAppInfo'), appInfoMcBtn: el('appInfoMcBtn'), appInfoEssayBtn: el('appInfoEssayBtn'), appInfoTestBtn: el('appInfoTestBtn'), appInfoShareBtn: el('appInfoShareBtn'), appInfoUpdateBtn: el('appInfoUpdateBtn'), appInfoSettingsBtn: el('appInfoSettingsBtn'),
     categoriesBtn: el('categoriesBtn'), materialsBtn: el('materialsBtn'), statsBtn: el('statsBtn'), essayBtn: el('essayBtn'), testBtn: el('testBtn'), questionSearchFab: el('questionSearchFab'), installBtn: el('installBtn'), installGuideDialog: el('installGuideDialog'), closeInstallGuide: el('closeInstallGuide'),
     testProgressWrap: el('testProgressWrap'), testQuestionCount: el('testQuestionCount'), testAnsweredCount: el('testAnsweredCount'), testProgressFill: el('testProgressFill'),
-    questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), answerForm: el('answerForm'),
+    questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), questionNoteLinks: el('questionNoteLinks'), answerForm: el('answerForm'),
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     questionCard: el('questionCard'), prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoriesDialogTitle: el('categoriesDialogTitle'), categoriesDialogDescription: el('categoriesDialogDescription'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
     materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
-    essayPracticeMain: el('essayPracticeMain'), essayQuickNav: el('essayQuickNav'), essayCategoryTags: el('essayCategoryTags'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingAudio: el('essayPairingAudio'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
+    essayPracticeMain: el('essayPracticeMain'), essayQuickNav: el('essayQuickNav'), essayCategoryTags: el('essayCategoryTags'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayNoteLinks: el('essayNoteLinks'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingAudio: el('essayPairingAudio'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
     audioPlayerShell: el('audioPlayerShell'), audioPlayer: el('audioPlayer'), audioTrackTitle: el('audioTrackTitle'), audioTrackCounter: el('audioTrackCounter'), audioPrevBtn: el('audioPrevBtn'), audioBack10Btn: el('audioBack10Btn'), audioForward10Btn: el('audioForward10Btn'), audioNextBtn: el('audioNextBtn'), audioEmptyState: el('audioEmptyState'), audioPlaylistWrap: el('audioPlaylistWrap'), audioPlaylistCount: el('audioPlaylistCount'), audioPlaylistToggle: el('audioPlaylistToggle'), audioPlaylist: el('audioPlaylist'), transcriptPanel: el('transcriptPanel'), transcriptToggle: el('transcriptToggle'), audioTranscript: el('audioTranscript'), transcriptClock: el('transcriptClock'), miniAudioPlayer: el('miniAudioPlayer'), miniAudioOpen: el('miniAudioOpen'), miniAudioTitle: el('miniAudioTitle'), miniAudioTime: el('miniAudioTime'), miniAudioBack10: el('miniAudioBack10'), miniAudioPlayPause: el('miniAudioPlayPause'), miniAudioStop: el('miniAudioStop'),
     statsDialog: el('statsDialog'), statsContent: el('statsContent'), closeStats: el('closeStats'), resetStatsBtn: el('resetStatsBtn'), doneStatsBtn: el('doneStatsBtn'),
-    questionReviewDialog: el('questionReviewDialog'), closeQuestionReview: el('closeQuestionReview'), reviewTitle: el('reviewTitle'), reviewContextLabel: el('reviewContextLabel'), reviewSearchInput: el('reviewSearchInput'), reviewSearchClear: el('reviewSearchClear'), reviewSearchCount: el('reviewSearchCount'), reviewSearchEmpty: el('reviewSearchEmpty'), reviewNav: el('reviewNav'), reviewBody: el('reviewBody'), reviewQuestionNumber: el('reviewQuestionNumber'), reviewCategory: el('reviewCategory'), reviewQuestionReportBtn: el('reviewQuestionReportBtn'), reviewStatsGrid: el('reviewStatsGrid'), reviewLastAnswer: el('reviewLastAnswer'), reviewPrompt: el('reviewPrompt'), reviewChoices: el('reviewChoices'), reviewExplanation: el('reviewExplanation'), reviewCorrectAnswer: el('reviewCorrectAnswer'), reviewAnswerDetails: el('reviewAnswerDetails'), reviewRevealBtn: el('reviewRevealBtn'), reviewAudio: el('reviewAudio'), reviewPrevBtn: el('reviewPrevBtn'), reviewNextBtn: el('reviewNextBtn'), reviewCounter: el('reviewCounter'),
+    questionReviewDialog: el('questionReviewDialog'), closeQuestionReview: el('closeQuestionReview'), reviewTitle: el('reviewTitle'), reviewContextLabel: el('reviewContextLabel'), reviewSearchInput: el('reviewSearchInput'), reviewSearchClear: el('reviewSearchClear'), reviewSearchCount: el('reviewSearchCount'), reviewSearchEmpty: el('reviewSearchEmpty'), reviewNav: el('reviewNav'), reviewBody: el('reviewBody'), reviewQuestionNumber: el('reviewQuestionNumber'), reviewCategory: el('reviewCategory'), reviewQuestionReportBtn: el('reviewQuestionReportBtn'), reviewStatsGrid: el('reviewStatsGrid'), reviewLastAnswer: el('reviewLastAnswer'), reviewPrompt: el('reviewPrompt'), reviewChoices: el('reviewChoices'), reviewExplanation: el('reviewExplanation'), reviewCorrectAnswer: el('reviewCorrectAnswer'), reviewAnswerDetails: el('reviewAnswerDetails'), reviewRevealBtn: el('reviewRevealBtn'), reviewAudio: el('reviewAudio'), reviewNoteLinks: el('reviewNoteLinks'), reviewPrevBtn: el('reviewPrevBtn'), reviewNextBtn: el('reviewNextBtn'), reviewCounter: el('reviewCounter'),
     mcIntroDialog: el('mcIntroDialog'), closeMcIntro: el('closeMcIntro'), cancelMcStart: el('cancelMcStart'), startMcFromIntroBtn: el('startMcFromIntroBtn'),
     testIntroDialog: el('testIntroDialog'), closeTestIntro: el('closeTestIntro'), cancelTestStart: el('cancelTestStart'), startTestBtn: el('startTestBtn'),
     testResultDialog: el('testResultDialog'), testResultSubtitle: el('testResultSubtitle'), testResultContent: el('testResultContent'), closeTestResult: el('closeTestResult'), reviewStatsAfterTest: el('reviewStatsAfterTest'), returnToStudy: el('returnToStudy'),
     glossaryTermDialog: el('glossaryTermDialog'), closeGlossaryTerm: el('closeGlossaryTerm'), glossaryTermTitle: el('glossaryTermTitle'), glossaryTermPronunciation: el('glossaryTermPronunciation'), glossaryTermIpa: el('glossaryTermIpa'), glossaryTermDefinition: el('glossaryTermDefinition'), glossarySpeakBtn: el('glossarySpeakBtn'), glossaryTermCategoriesWrap: el('glossaryTermCategoriesWrap'), glossaryTermCategories: el('glossaryTermCategories'),
     contentFeedbackDialog: el('contentFeedbackDialog'), closeContentFeedback: el('closeContentFeedback'), cancelContentFeedback: el('cancelContentFeedback'), submitContentFeedback: el('submitContentFeedback'), contentFeedbackType: el('contentFeedbackType'), contentFeedbackTitle: el('contentFeedbackTitle'), contentFeedbackPreview: el('contentFeedbackPreview'), contentFeedbackDetails: el('contentFeedbackDetails'), contentFeedbackCount: el('contentFeedbackCount'), contentFeedbackStatus: el('contentFeedbackStatus'),
     appVersionFooter: el('appVersionFooter'), appToast: el('appToast'), updatePullIndicator: el('updatePullIndicator'),
+    pdfViewerDialog: el('pdfViewerDialog'), pdfViewerBackBtn: el('pdfViewerBackBtn'), pdfViewerTitle: el('pdfViewerTitle'), pdfViewerJump: el('pdfViewerJump'), pdfViewerShareBtn: el('pdfViewerShareBtn'), pdfViewerPrintBtn: el('pdfViewerPrintBtn'), pdfViewerDownloadBtn: el('pdfViewerDownloadBtn'), pdfViewerFrame: el('pdfViewerFrame'),
     chaburaDialog: el('chaburaDialog'), chaburaDialogLocation: el('chaburaDialogLocation'), chaburaDialogSelect: el('chaburaDialogSelect'), saveChaburaDialogBtn: el('saveChaburaDialogBtn')
   };
 
@@ -169,7 +171,8 @@
   let contentFeedbackFlushInFlight = false;
   let appToastTimer = null;
   let updateCheckInFlight = null;
-  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.statsDialog, dom.questionReviewDialog, dom.appInfoDialog, dom.mcIntroDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.chaburaDialog].filter(Boolean);
+  let activePdfViewer = null;
+  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.statsDialog, dom.questionReviewDialog, dom.pdfViewerDialog, dom.appInfoDialog, dom.mcIntroDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.chaburaDialog].filter(Boolean);
 
 
   function chaburaOptions(location) {
@@ -1142,6 +1145,7 @@
           <span class="essay-library-progress">${masteredFacts}/${essay.facts.length} mastered</span>
         </div>
         <p class="essay-library-prompt"></p>
+        <div class="course-note-links essay-library-note-links" data-essay-note-links></div>
         <div class="essay-library-actions">
           <button class="secondary compact" type="button" data-essay-library-practice="${escapeHtml(essay.id)}">Practice this essay</button>
           <button class="content-report-link" type="button" data-report-essay-prompt="${escapeHtml(essay.id)}">⚑ Report question</button>
@@ -1160,6 +1164,7 @@
         <details class="essay-library-details"><summary>Model answer</summary><p class="essay-library-model"></p></details>
       `;
       setGlossaryText(card.querySelector('.essay-library-prompt'), essay.prompt);
+      renderCourseNoteLinks(card.querySelector('[data-essay-note-links]'), 'essay', essay.id);
       setGlossaryText(card.querySelector('.essay-library-model'), essay.modelAnswer);
       essay.facts.forEach(fact => {
         const point = card.querySelector(`[data-essay-library-fact="${CSS.escape(fact.id)}"] .essay-library-point-copy`);
@@ -1431,6 +1436,7 @@
     renderEssayModeControls(essay);
     if (dom.essayPracticeTitle) dom.essayPracticeTitle.textContent = essay.title;
     setGlossaryText(dom.essayPracticePrompt, essay.prompt);
+    renderCourseNoteLinks(dom.essayNoteLinks, 'essay', essay.id);
     setGlossaryText(dom.essayModelAnswer, essay.modelAnswer);
     if (dom.essayModelAnswerWrap) {
       dom.essayModelAnswerWrap.classList.toggle('hidden', !essayRun.finished);
@@ -1981,6 +1987,7 @@
     setGlossaryText(dom.questionPrompt, q.prompt);
     dom.multiNote.classList.toggle('hidden', q.type !== 'multi');
     renderRelevantAudio(q.id, dom.questionAudio, mode !== 'test' || !!entry.answered);
+    renderCourseNoteLinks(dom.questionNoteLinks, 'question', q.id);
 
     const status = entry.answered ? entry.result : 'unanswered';
     dom.questionStatus.textContent = status === 'unanswered' ? 'Unanswered' : status[0].toUpperCase() + status.slice(1);
@@ -2709,6 +2716,105 @@
     try { navigator.mediaSession.playbackState = stateValue; } catch (_) {}
   }
 
+  function courseNoteRef(kind, id) {
+    const group = kind === 'essay' ? COURSE_NOTE_REFS.essays : COURSE_NOTE_REFS.questions;
+    return group?.[String(id)] || group?.[id] || null;
+  }
+
+  function courseNoteDoc(key) {
+    return COURSE_NOTE_REFS.docs?.[key] || null;
+  }
+
+  function renderCourseNoteLinks(container, kind, id) {
+    if (!container) return;
+    const ref = courseNoteRef(kind, id);
+    container.innerHTML = '';
+    if (!ref) { container.classList.add('hidden'); return; }
+    [['compact', 'Concise notes'], ['full', 'Full notes']].forEach(([key, label]) => {
+      const doc = courseNoteDoc(key);
+      const page = Number(ref[key]);
+      if (!doc || !Number.isFinite(page) || page < 1) return;
+      const button = document.createElement('button');
+      button.className = 'course-note-link';
+      button.type = 'button';
+      button.dataset.courseNoteDoc = key;
+      button.dataset.courseNoteKind = kind;
+      button.dataset.courseNoteId = String(id);
+      button.innerHTML = `${escapeHtml(label)} <small>p. ${page}</small>`;
+      container.append(button);
+    });
+    container.classList.toggle('hidden', !container.children.length);
+  }
+
+  function pdfPageUrl(url, page = 1) {
+    const absolute = absoluteUrl(url);
+    const hash = `page=${Math.max(1, Number(page) || 1)}&zoom=page-width`;
+    return `${absolute}#${hash}`;
+  }
+
+  function buildCourseNoteJump(docKey, selectedValue = '') {
+    if (!dom.pdfViewerJump) return;
+    const isNotes = docKey === 'compact' || docKey === 'full';
+    dom.pdfViewerJump.classList.toggle('hidden', !isNotes);
+    if (!isNotes) {
+      dom.pdfViewerJump.innerHTML = '';
+      return;
+    }
+    const options = ['<option value="">Jump to question or essay…</option>'];
+    options.push('<optgroup label="Questions">');
+    QUESTIONS.forEach(q => {
+      const page = Number(courseNoteRef('question', q.id)?.[docKey]);
+      if (!page) return;
+      const prompt = String(q.prompt || '').replace(/\s+/g, ' ').trim();
+      const short = prompt.length > 58 ? `${prompt.slice(0, 57)}…` : prompt;
+      options.push(`<option value="question:${q.id}" data-page="${page}">Q${q.id} · ${escapeHtml(short)} · p. ${page}</option>`);
+    });
+    options.push('</optgroup><optgroup label="Essays">');
+    ESSAY_BANK.forEach((essay, index) => {
+      const page = Number(courseNoteRef('essay', essay.id)?.[docKey]);
+      if (!page) return;
+      options.push(`<option value="essay:${escapeHtml(essay.id)}" data-page="${page}">Essay ${index + 1} · ${escapeHtml(essay.title)} · p. ${page}</option>`);
+    });
+    options.push('</optgroup>');
+    dom.pdfViewerJump.innerHTML = options.join('');
+    if (selectedValue) dom.pdfViewerJump.value = selectedValue;
+  }
+
+  function setPdfViewerPage(page) {
+    if (!activePdfViewer || !dom.pdfViewerFrame) return;
+    activePdfViewer.page = Math.max(1, Number(page) || 1);
+    dom.pdfViewerFrame.src = pdfPageUrl(activePdfViewer.url, activePdfViewer.page);
+  }
+
+  function openPdfViewer({ url, title = 'SCP Study PDF', page = 1, docKey = null, selection = '' } = {}) {
+    if (!url || !dom.pdfViewerDialog || !dom.pdfViewerFrame) return;
+    activePdfViewer = { url, title, page: Math.max(1, Number(page) || 1), docKey };
+    if (dom.pdfViewerTitle) dom.pdfViewerTitle.textContent = title;
+    buildCourseNoteJump(docKey, selection);
+    dom.pdfViewerFrame.src = pdfPageUrl(url, activePdfViewer.page);
+    if (!dom.pdfViewerDialog.open) dom.pdfViewerDialog.showModal();
+  }
+
+  function closePdfViewer() {
+    if (dom.pdfViewerDialog?.open) dom.pdfViewerDialog.close();
+    if (dom.pdfViewerFrame) dom.pdfViewerFrame.src = 'about:blank';
+    activePdfViewer = null;
+  }
+
+  function openCourseNote(docKey, kind, id) {
+    const doc = courseNoteDoc(docKey);
+    const ref = courseNoteRef(kind, id);
+    const page = Number(ref?.[docKey]);
+    if (!doc || !page) return;
+    openPdfViewer({
+      url: doc.url,
+      title: doc.title,
+      page,
+      docKey,
+      selection: `${kind}:${id}`
+    });
+  }
+
   function printPdf(url) {
     const absolute = absoluteUrl(url);
     const win = window.open(absolute, '_blank');
@@ -3318,6 +3424,7 @@
     dom.reviewRevealBtn.disabled = !canReveal;
     dom.reviewRevealBtn.textContent = !canReveal ? 'Submit this question first' : (revealed ? 'Hide answer & explanation' : 'Show answer & explanation');
     renderRelevantAudio(q.id, dom.reviewAudio, mode !== 'test' || canReveal);
+    renderCourseNoteLinks(dom.reviewNoteLinks, 'question', q.id);
     dom.reviewCounter.textContent = `${reviewContext.index + 1}/${reviewContext.ids.length}`;
     dom.reviewPrevBtn.disabled = reviewContext.index <= 0;
     dom.reviewNextBtn.disabled = reviewContext.index >= reviewContext.ids.length - 1;
@@ -3612,6 +3719,23 @@
       if (fact) openContentFeedback(essayPairingFeedbackTarget(essayRun.essay, fact, 'essay_practice'));
     });
 
+    dom.pdfViewerBackBtn?.addEventListener('click', closePdfViewer);
+    dom.pdfViewerDialog?.addEventListener('cancel', e => { e.preventDefault(); closePdfViewer(); });
+    dom.pdfViewerShareBtn?.addEventListener('click', () => {
+      if (activePdfViewer) void withResourceButtonBusy(dom.pdfViewerShareBtn, () => sharePdf(activePdfViewer.url, activePdfViewer.title));
+    });
+    dom.pdfViewerPrintBtn?.addEventListener('click', () => {
+      if (activePdfViewer) printPdf(activePdfViewer.url);
+    });
+    dom.pdfViewerDownloadBtn?.addEventListener('click', () => {
+      if (activePdfViewer) void withResourceButtonBusy(dom.pdfViewerDownloadBtn, () => savePdf(activePdfViewer.url, activePdfViewer.title));
+    });
+    dom.pdfViewerJump?.addEventListener('change', e => {
+      const option = e.currentTarget.selectedOptions?.[0];
+      const page = Number(option?.dataset?.page);
+      if (page) setPdfViewerPage(page);
+    });
+
     dom.statsBtn.addEventListener('click', openStats);
     dom.closeAppInfo?.addEventListener('click', () => dom.appInfoDialog.close());
     dom.appInfoMcBtn?.addEventListener('click', () => chooseModeFromAppInfo('mc'));
@@ -3780,7 +3904,23 @@
       renderGlossary('');
       dom.glossarySearchInput.focus();
     });
+    document.addEventListener('click', e => {
+      const note = e.target.closest('[data-course-note-doc]');
+      if (!note) return;
+      openCourseNote(note.dataset.courseNoteDoc, note.dataset.courseNoteKind, note.dataset.courseNoteId);
+    });
+
     dom.materialsDialog.addEventListener('click', e => {
+      const view = e.target.closest('[data-view-pdf]');
+      if (view) {
+        openPdfViewer({
+          url: view.dataset.viewPdf,
+          title: view.dataset.pdfTitle || 'SCP Study PDF',
+          page: 1,
+          docKey: view.dataset.courseNotes || null
+        });
+        return;
+      }
       const print = e.target.closest('[data-print-pdf]');
       if (print) { printPdf(print.dataset.printPdf); return; }
       const save = e.target.closest('[data-save-pdf]');

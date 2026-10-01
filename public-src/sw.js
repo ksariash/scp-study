@@ -1,5 +1,5 @@
-const APP_VERSION = 46;
-const CACHE_NAME = 'scp-study-v46';
+const APP_VERSION = 47;
+const CACHE_NAME = 'scp-study-v47';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v1';
 const APP_SHELL = [
   './',
@@ -10,6 +10,7 @@ const APP_SHELL = [
   './audio-reviews.js',
   './glossary.js',
   './essay-practice.js',
+  './course-notes.js',
   './app.js',
   './manifest.webmanifest',
   './icons/icon-192.png',

@@ -62,6 +62,7 @@
         <p class="multi-note hidden" id="multiNote">Select all that apply.</p>
 
         <section class="question-audio hidden" id="questionAudio" aria-label="Relevant audio review"></section>
+        <div class="course-note-links" id="questionNoteLinks" aria-label="Course note references"></div>
 
         <form id="answerForm" class="choices" autocomplete="off"></form>
 
@@ -100,6 +101,7 @@
           <button class="content-report-btn" id="essayPromptReportBtn" type="button" aria-label="Report an issue with this essay question" title="Report an issue">⚑</button>
         </div>
         <p id="essayPracticePrompt"></p>
+        <div class="course-note-links" id="essayNoteLinks" aria-label="Course note references"></div>
       </section>
 
       <section class="essay-builder-section" aria-labelledby="essayBuilderHeading">
@@ -337,22 +339,33 @@
           <div>
             <span class="eyebrow">Downloads</span>
             <h3 id="downloadsHeading">Course PDFs</h3>
-            <p>Download or print the core review, test, and essay materials.</p>
+            <p>View, print, or download the course notes, test, and essay materials.</p>
           </div>
         </div>
         <div class="resource-list">
           <div class="resource-card">
             <span class="resource-icon" aria-hidden="true">PDF</span>
-            <span class="resource-copy"><strong>SCP Study — Compact Course Review</strong><span>Highlighted course summary and study reference.</span></span>
+            <span class="resource-copy"><strong>SCP Study — Compact Course Review</strong><span>Highlighted concise course summary and study reference.</span></span>
             <span class="resource-actions">
+              <button class="resource-btn view-pdf-btn" type="button" data-view-pdf="documents/SCP-Study-Compact-Course-Review.pdf" data-pdf-title="SCP Study — Compact Course Review" data-course-notes="compact">View</button>
               <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Compact-Course-Review.pdf">Print</button>
               <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Compact-Course-Review.pdf" data-pdf-title="SCP Study — Compact Course Review">Download</button>
             </span>
           </div>
           <div class="resource-card">
             <span class="resource-icon" aria-hidden="true">PDF</span>
+            <span class="resource-copy"><strong>SCP Study — Full Course Notes</strong><span>Full annotated course notes converted from the supplied WPS document.</span></span>
+            <span class="resource-actions">
+              <button class="resource-btn view-pdf-btn" type="button" data-view-pdf="documents/SCP-Study-Full-Course-Notes.pdf" data-pdf-title="SCP Study — Full Course Notes" data-course-notes="full">View</button>
+              <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Full-Course-Notes.pdf">Print</button>
+              <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Full-Course-Notes.pdf" data-pdf-title="SCP Study — Full Course Notes">Download</button>
+            </span>
+          </div>
+          <div class="resource-card">
+            <span class="resource-icon" aria-hidden="true">PDF</span>
             <span class="resource-copy"><strong>SCP Study — Cumulative Test</strong><span>Student version of the 58-question cumulative test.</span></span>
             <span class="resource-actions">
+              <button class="resource-btn view-pdf-btn" type="button" data-view-pdf="documents/SCP-Study-Cumulative-Test.pdf" data-pdf-title="SCP Study — Cumulative Test">View</button>
               <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Cumulative-Test.pdf">Print</button>
               <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Cumulative-Test.pdf" data-pdf-title="SCP Study — Cumulative Test">Download</button>
             </span>
@@ -361,6 +374,7 @@
             <span class="resource-icon" aria-hidden="true">PDF</span>
             <span class="resource-copy"><strong>SCP Study — Cumulative Test Answer Key</strong><span>Instructor key, explanations, coverage audit, and scope check.</span></span>
             <span class="resource-actions">
+              <button class="resource-btn view-pdf-btn" type="button" data-view-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" data-pdf-title="SCP Study — Cumulative Test Answer Key">View</button>
               <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf">Print</button>
               <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" data-pdf-title="SCP Study — Cumulative Test Answer Key">Download</button>
             </span>
@@ -369,6 +383,7 @@
             <span class="resource-icon" aria-hidden="true">PDF</span>
             <span class="resource-copy"><strong>SCP Study — Essay Questions & Sample Answers</strong><span>All essay prompts with concise sample answers for review.</span></span>
             <span class="resource-actions">
+              <button class="resource-btn view-pdf-btn" type="button" data-view-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" data-pdf-title="SCP Study — Essay Questions & Sample Answers">View</button>
               <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf">Print</button>
               <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" data-pdf-title="SCP Study — Essay Questions & Sample Answers">Download</button>
             </span>
@@ -593,6 +608,7 @@
         </section>
 
         <section class="question-audio hidden review-audio" id="reviewAudio" aria-label="Relevant audio review"></section>
+        <div class="course-note-links" id="reviewNoteLinks" aria-label="Course note references"></div>
 
       </div>
     </div>
@@ -729,6 +745,21 @@
     </div>
   </dialog>
 
+  <dialog id="pdfViewerDialog" class="pdf-viewer-dialog" aria-labelledby="pdfViewerTitle">
+    <div class="pdf-viewer-shell">
+      <nav class="pdf-viewer-nav" aria-label="PDF viewer controls">
+        <button class="pdf-viewer-btn" type="button" id="pdfViewerBackBtn">← Back</button>
+        <strong class="pdf-viewer-title" id="pdfViewerTitle">PDF</strong>
+        <select class="pdf-viewer-jump hidden" id="pdfViewerJump" aria-label="Jump to a question or essay"></select>
+        <span class="pdf-viewer-spacer"></span>
+        <button class="pdf-viewer-btn" type="button" id="pdfViewerShareBtn">Share</button>
+        <button class="pdf-viewer-btn" type="button" id="pdfViewerPrintBtn">Print</button>
+        <button class="pdf-viewer-btn primary" type="button" id="pdfViewerDownloadBtn">Download</button>
+      </nav>
+      <iframe class="pdf-viewer-frame" id="pdfViewerFrame" title="PDF viewer"></iframe>
+    </div>
+  </dialog>
+
   <dialog id="appInfoDialog" class="modal app-info-dialog" aria-labelledby="appInfoTitle">
     <div class="modal-inner app-info-inner">
       <div class="modal-head">
@@ -736,9 +767,9 @@
           <span class="eyebrow">About</span>
           <div class="app-info-title-row">
             <h2 id="appInfoTitle">SCP Study</h2>
-            <span class="app-info-version">v45</span>
+            <span class="app-info-version">v47</span>
           </div>
-          <p>A spaced repetition study aid for the Semichas Chaver Program created by KBT congregation of Los Angeles.</p>
+          <p>A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.</p>
         </div>
         <button class="close-btn" id="closeAppInfo" aria-label="Close">×</button>
       </div>
@@ -798,6 +829,7 @@
   <script src="audio-reviews.js"></script>
   <script src="glossary.js"></script>
   <script src="essay-practice.js"></script>
+  <script src="course-notes.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

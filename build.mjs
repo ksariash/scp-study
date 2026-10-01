@@ -60,6 +60,17 @@ while (offset + 512 <= tar.length) {
   offset += 512 + Math.ceil(size / 512) * 512;
 }
 
+let fullNotesEncoded = '';
+for (let i = 1; ; i++) {
+  const part = new URL(`./full-course-notes.pdf.b64.${String(i).padStart(2, '0')}.part`, assetsDir);
+  try { fullNotesEncoded += await readFile(part, 'utf8'); }
+  catch (error) { if (error?.code === 'ENOENT') break; throw error; }
+}
+if (!fullNotesEncoded) throw new Error('No full course notes PDF asset parts found.');
+const fullNotesDestination = new URL('./documents/SCP-Study-Full-Course-Notes.pdf', outputDir);
+await mkdir(dirname(fullNotesDestination.pathname), { recursive: true });
+await writeFile(fullNotesDestination, Buffer.from(fullNotesEncoded, 'base64'));
+
 await generatePdfs(outputDir.pathname);
 
-console.log('Built SCP Study static assets; generated question/test/essay PDFs and preserved the repository compact review. Short & Sweet review audio remains in R2.');
+console.log('Built SCP Study static assets; preserved the compact/full course notes and generated question/test/essay PDFs. Short & Sweet review audio remains in R2.');

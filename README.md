@@ -203,3 +203,12 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 
 - Question prompt text no longer opens Question Explorer; category links continue to open the relevant category.
 - Adds feedback reasons for an incorrect notes connection and an incorrect audio connection.
+
+
+## Release 47
+
+- Updates the About description to: “A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.”
+- Adds the converted 175-page Full Course Notes as a versioned static PDF asset alongside the Compact Course Review.
+- Adds concise/full note references to every multiple-choice question and every essay, with buttons that open the relevant page.
+- Adds an in-app PDF viewer with Back, Share, Print, and Download controls. Course-note PDFs also include a question/essay jump menu.
+- Adds View controls to every PDF in Materials → Downloads while keeping Print hidden on mobile.

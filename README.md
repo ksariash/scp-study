@@ -157,3 +157,11 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 
 - Fixes Essay Buildout glossary links so matched glossary terms remain inline inside the sentence instead of being forced onto separate lines.
 - Replaces the question-number jump dialog with a native 1–58 dropdown directly in the question badge for faster navigation.
+
+
+## Release 40
+
+- Essay Practice now takes over the app's main study area after it starts instead of running inside a modal.
+- While Essay mode is active, the top Essay button becomes M/C. Tapping it opens a short Multiple Choice explanation before returning to adaptive question study.
+- Multiple-choice question timing and keyboard shortcuts pause while the Essay workspace is active.
+- Refined the native question-number dropdown into a compact pill with a custom chevron and cleaner focus/hover treatment.

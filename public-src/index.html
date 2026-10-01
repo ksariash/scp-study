@@ -82,6 +82,80 @@
         </div>
       </article>
 
+      <article class="essay-practice-main hidden" id="essayPracticeMain">
+        <div class="essay-practice-main-head">
+          <div>
+            <span class="eyebrow">Essay mode</span>
+            <h1>Essay Practice</h1>
+            <p>Match one name and position at a time while the complete essay builds in front of you.</p>
+          </div>
+        </div>
+      <div class="essay-practice-topline">
+        <div>
+          <span class="pill" id="essayPracticeTopic">Essay practice</span>
+          <span class="pill subtle" id="essayPracticeCounter">Pairing 1 of 1</span>
+        </div>
+        <span class="essay-mastery" id="essayMasterySummary">0 facts mastered</span>
+      </div>
+
+      <section class="essay-question-card">
+        <div class="essay-question-card-head">
+          <h3 id="essayPracticeTitle">Essay question</h3>
+          <button class="content-report-btn" id="essayPromptReportBtn" type="button" aria-label="Report an issue with this essay question" title="Report an issue">⚑</button>
+        </div>
+        <p id="essayPracticePrompt"></p>
+      </section>
+
+      <section class="essay-builder-section" aria-labelledby="essayBuilderHeading">
+        <div class="essay-builder-head">
+          <div>
+            <span class="eyebrow">Essay buildout</span>
+            <h3 id="essayBuilderHeading">Your answer so far</h3>
+          </div>
+          <span class="essay-build-progress" id="essayBuildProgress">0 of 0 complete</span>
+        </div>
+        <div class="essay-answer-zone essay-built-answer" id="essayAnswerZone" aria-live="polite">
+          <span class="essay-answer-placeholder">Correct pairings will build the essay here.</span>
+        </div>
+      </section>
+
+      <section class="essay-match-section" id="essayMatchSection" aria-labelledby="essayMatchHeading">
+        <div class="essay-match-head">
+          <div>
+            <span class="eyebrow">Next pairing</span>
+            <h3 id="essayMatchHeading">Which position matches?</h3>
+          </div>
+          <div class="essay-match-actions">
+            <button class="content-report-btn" id="essayPairingReportBtn" type="button" aria-label="Report an issue with this essay pairing" title="Report an issue">⚑</button>
+            <span class="essay-match-count" id="essayMatchCount">1 of 1</span>
+          </div>
+        </div>
+
+        <section class="question-audio hidden essay-pairing-audio" id="essayPairingAudio" aria-label="Relevant audio review"></section>
+
+        <div class="essay-match-target">
+          <span class="essay-match-context" id="essayMatchContext"></span>
+          <strong id="essayMatchName"></strong>
+        </div>
+
+        <div class="essay-choice-list" id="essayChoiceList" role="group" aria-label="Choose the matching position"></div>
+        <div class="essay-choice-feedback hidden" id="essayFeedback" aria-live="polite"></div>
+      </section>
+
+      <details class="essay-model-answer hidden" id="essayModelAnswerWrap">
+        <summary>Show model answer</summary>
+        <p id="essayModelAnswer"></p>
+      </details>
+
+      <div class="modal-footer split essay-practice-footer">
+        <button class="secondary" type="button" id="essayTryAgainBtn" hidden>Practice again</button>
+        <div class="essay-footer-right">
+          <button class="primary" type="button" id="essayNextBtn" hidden>Next essay</button>
+        </div>
+      </div>
+
+      </article>
+
       <div class="save-note" id="saveNote">Progress is saved automatically on this device. Tip: use ← and → to move, number keys to choose answers, and Enter to submit.</div>
     </main>
     <footer class="app-version-footer" id="appVersionFooter">SCP Study</footer>
@@ -402,81 +476,7 @@
     </div>
   </dialog>
 
-  <dialog id="essayPracticeDialog" class="modal wide essay-practice-dialog">
-    <div class="modal-inner">
-      <div class="modal-head">
-        <div>
-          <h2>Essay Practice</h2>
-          <p>Match one name and position at a time while the complete essay builds in front of you.</p>
-        </div>
-        <button class="close-btn" id="closeEssayPractice" aria-label="Close">×</button>
-      </div>
 
-      <div class="essay-practice-topline">
-        <div>
-          <span class="pill" id="essayPracticeTopic">Essay practice</span>
-          <span class="pill subtle" id="essayPracticeCounter">Pairing 1 of 1</span>
-        </div>
-        <span class="essay-mastery" id="essayMasterySummary">0 facts mastered</span>
-      </div>
-
-      <section class="essay-question-card">
-        <div class="essay-question-card-head">
-          <h3 id="essayPracticeTitle">Essay question</h3>
-          <button class="content-report-btn" id="essayPromptReportBtn" type="button" aria-label="Report an issue with this essay question" title="Report an issue">⚑</button>
-        </div>
-        <p id="essayPracticePrompt"></p>
-      </section>
-
-      <section class="essay-builder-section" aria-labelledby="essayBuilderHeading">
-        <div class="essay-builder-head">
-          <div>
-            <span class="eyebrow">Essay buildout</span>
-            <h3 id="essayBuilderHeading">Your answer so far</h3>
-          </div>
-          <span class="essay-build-progress" id="essayBuildProgress">0 of 0 complete</span>
-        </div>
-        <div class="essay-answer-zone essay-built-answer" id="essayAnswerZone" aria-live="polite">
-          <span class="essay-answer-placeholder">Correct pairings will build the essay here.</span>
-        </div>
-      </section>
-
-      <section class="essay-match-section" id="essayMatchSection" aria-labelledby="essayMatchHeading">
-        <div class="essay-match-head">
-          <div>
-            <span class="eyebrow">Next pairing</span>
-            <h3 id="essayMatchHeading">Which position matches?</h3>
-          </div>
-          <div class="essay-match-actions">
-            <button class="content-report-btn" id="essayPairingReportBtn" type="button" aria-label="Report an issue with this essay pairing" title="Report an issue">⚑</button>
-            <span class="essay-match-count" id="essayMatchCount">1 of 1</span>
-          </div>
-        </div>
-
-        <section class="question-audio hidden essay-pairing-audio" id="essayPairingAudio" aria-label="Relevant audio review"></section>
-
-        <div class="essay-match-target">
-          <span class="essay-match-context" id="essayMatchContext"></span>
-          <strong id="essayMatchName"></strong>
-        </div>
-
-        <div class="essay-choice-list" id="essayChoiceList" role="group" aria-label="Choose the matching position"></div>
-        <div class="essay-choice-feedback hidden" id="essayFeedback" aria-live="polite"></div>
-      </section>
-
-      <details class="essay-model-answer hidden" id="essayModelAnswerWrap">
-        <summary>Show model answer</summary>
-        <p id="essayModelAnswer"></p>
-      </details>
-
-      <div class="modal-footer split essay-practice-footer">
-        <button class="secondary" type="button" id="essayTryAgainBtn" hidden>Practice again</button>
-        <div class="essay-footer-right">
-          <button class="primary" type="button" id="essayNextBtn" hidden>Next essay</button>
-        </div>
-      </div>
-    </div>
-  </dialog>
 
   <dialog id="contentFeedbackDialog" class="modal content-feedback-dialog">
     <div class="modal-inner">
@@ -626,6 +626,26 @@
         <button class="secondary" type="button" id="cancelEssayStart">Cancel</button>
         <button class="secondary" type="button" id="viewEssayLibraryBtn">View Q&amp;A</button>
         <button class="primary" type="button" id="startEssayFromIntroBtn">Start essay practice</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="mcIntroDialog" class="modal">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>Multiple choice study</h2>
+          <p>Return to the adaptive question mode for the 58 multiple-choice questions.</p>
+        </div>
+        <button class="close-btn" id="closeMcIntro" aria-label="Close">×</button>
+      </div>
+      <div class="callout">
+        <strong>How multiple choice mode works</strong>
+        <p>Answer one question at a time and submit for immediate grading and explanation. Questions you miss, take longer on, or have not seen recently are weighted to return more often. Your progress is saved on this device, and you can filter by category or jump directly to any question from the question-number menu.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="secondary" type="button" id="cancelMcStart">Stay in essay mode</button>
+        <button class="primary" type="button" id="startMcFromIntroBtn">Switch to M/C</button>
       </div>
     </div>
   </dialog>

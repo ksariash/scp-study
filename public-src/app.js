@@ -13,7 +13,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 39;
+  const APP_VERSION = 40;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const ANALYTICS_COHORT = 'SCP 2026 Summer';
@@ -98,15 +98,16 @@
     testProgressWrap: el('testProgressWrap'), testQuestionCount: el('testQuestionCount'), testAnsweredCount: el('testAnsweredCount'), testProgressFill: el('testProgressFill'),
     questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), answerForm: el('answerForm'),
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
-    prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
+    questionCard: el('questionCard'), prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
     materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
-    essayPracticeDialog: el('essayPracticeDialog'), closeEssayPractice: el('closeEssayPractice'), essayPracticeTopic: el('essayPracticeTopic'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingAudio: el('essayPairingAudio'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
+    essayPracticeMain: el('essayPracticeMain'), essayPracticeTopic: el('essayPracticeTopic'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingAudio: el('essayPairingAudio'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
     audioPlayerShell: el('audioPlayerShell'), audioPlayer: el('audioPlayer'), audioTrackTitle: el('audioTrackTitle'), audioTrackCounter: el('audioTrackCounter'), audioPrevBtn: el('audioPrevBtn'), audioBack10Btn: el('audioBack10Btn'), audioForward10Btn: el('audioForward10Btn'), audioNextBtn: el('audioNextBtn'), audioEmptyState: el('audioEmptyState'), audioPlaylistWrap: el('audioPlaylistWrap'), audioPlaylistCount: el('audioPlaylistCount'), audioPlaylistToggle: el('audioPlaylistToggle'), audioPlaylist: el('audioPlaylist'), transcriptPanel: el('transcriptPanel'), transcriptToggle: el('transcriptToggle'), audioTranscript: el('audioTranscript'), transcriptClock: el('transcriptClock'), miniAudioPlayer: el('miniAudioPlayer'), miniAudioOpen: el('miniAudioOpen'), miniAudioTitle: el('miniAudioTitle'), miniAudioTime: el('miniAudioTime'), miniAudioBack10: el('miniAudioBack10'), miniAudioPlayPause: el('miniAudioPlayPause'), miniAudioStop: el('miniAudioStop'),
     statsDialog: el('statsDialog'), statsContent: el('statsContent'), closeStats: el('closeStats'), resetStatsBtn: el('resetStatsBtn'), doneStatsBtn: el('doneStatsBtn'),
     questionReviewDialog: el('questionReviewDialog'), closeQuestionReview: el('closeQuestionReview'), reviewTitle: el('reviewTitle'), reviewContextLabel: el('reviewContextLabel'), reviewSearchInput: el('reviewSearchInput'), reviewSearchClear: el('reviewSearchClear'), reviewSearchCount: el('reviewSearchCount'), reviewSearchEmpty: el('reviewSearchEmpty'), reviewNav: el('reviewNav'), reviewBody: el('reviewBody'), reviewQuestionNumber: el('reviewQuestionNumber'), reviewCategory: el('reviewCategory'), reviewQuestionReportBtn: el('reviewQuestionReportBtn'), reviewStatsGrid: el('reviewStatsGrid'), reviewLastAnswer: el('reviewLastAnswer'), reviewPrompt: el('reviewPrompt'), reviewChoices: el('reviewChoices'), reviewExplanation: el('reviewExplanation'), reviewCorrectAnswer: el('reviewCorrectAnswer'), reviewAnswerDetails: el('reviewAnswerDetails'), reviewRevealBtn: el('reviewRevealBtn'), reviewAudio: el('reviewAudio'), reviewPrevBtn: el('reviewPrevBtn'), reviewNextBtn: el('reviewNextBtn'), reviewCounter: el('reviewCounter'),
+    mcIntroDialog: el('mcIntroDialog'), closeMcIntro: el('closeMcIntro'), cancelMcStart: el('cancelMcStart'), startMcFromIntroBtn: el('startMcFromIntroBtn'),
     testIntroDialog: el('testIntroDialog'), closeTestIntro: el('closeTestIntro'), cancelTestStart: el('cancelTestStart'), startTestBtn: el('startTestBtn'),
     testResultDialog: el('testResultDialog'), testResultSubtitle: el('testResultSubtitle'), testResultContent: el('testResultContent'), closeTestResult: el('closeTestResult'), reviewStatsAfterTest: el('reviewStatsAfterTest'), returnToStudy: el('returnToStudy'),
     glossaryTermDialog: el('glossaryTermDialog'), closeGlossaryTerm: el('closeGlossaryTerm'), glossaryTermTitle: el('glossaryTermTitle'), glossaryTermPronunciation: el('glossaryTermPronunciation'), glossaryTermIpa: el('glossaryTermIpa'), glossaryTermDefinition: el('glossaryTermDefinition'), glossarySpeakBtn: el('glossarySpeakBtn'), glossaryTermCategoriesWrap: el('glossaryTermCategoriesWrap'), glossaryTermCategories: el('glossaryTermCategories'),
@@ -142,13 +143,14 @@
   let analyticsAssist = { audioUsed: false, glossaryUsed: false };
   let essayProgressState = loadEssayProgress();
   let essayRun = null;
+  let essayModeActive = false;
   let essaySessionNumber = 0;
   let essayAnalyticsSessionId = null;
   let activeContentFeedbackTarget = null;
   let contentFeedbackFlushInFlight = false;
   let appToastTimer = null;
   let updateCheckInFlight = null;
-  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.chaburaDialog].filter(Boolean);
+  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.statsDialog, dom.questionReviewDialog, dom.mcIntroDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.chaburaDialog].filter(Boolean);
 
 
   function chaburaOptions(location) {
@@ -1022,6 +1024,24 @@
     if (dom.essayIntroPerfect) dom.essayIntroPerfect.textContent = String(perfect);
   }
 
+  function openMultipleChoiceIntro() {
+    if (!essayModeActive || mode === 'test' || !dom.mcIntroDialog) return;
+    if (!dom.mcIntroDialog.open) dom.mcIntroDialog.showModal();
+  }
+
+  function leaveEssayMode() {
+    if (!essayModeActive) return;
+    essayModeActive = false;
+    if (dom.mcIntroDialog?.open) dom.mcIntroDialog.close();
+    render();
+    scrollToQuestionTop();
+  }
+
+  function handleEssayModeButton() {
+    if (essayModeActive) openMultipleChoiceIntro();
+    else openEssayIntro();
+  }
+
   function openEssayIntro() {
     if (mode === 'test' || !ESSAY_BANK.length) return;
     flushQuestionTime();
@@ -1113,8 +1133,10 @@
     if (dom.essayIntroDialog?.open) dom.essayIntroDialog.close();
     essaySessionNumber = 0;
     essayAnalyticsSessionId = analyticsUuid('essay-session');
+    essayModeActive = true;
     beginEssayRound(essay, { source: 'library' });
-    if (!dom.essayPracticeDialog.open) dom.essayPracticeDialog.showModal();
+    render();
+    scrollToQuestionTop();
   }
 
   function essayAverageMastery(essay) {
@@ -1362,8 +1384,10 @@
     if (dom.essayIntroDialog?.open) dom.essayIntroDialog.close();
     essaySessionNumber = 0;
     essayAnalyticsSessionId = analyticsUuid('essay-session');
+    essayModeActive = true;
     beginEssayRound(chooseEssayPractice(), { source: 'adaptive' });
-    if (!dom.essayPracticeDialog.open) dom.essayPracticeDialog.showModal();
+    render();
+    scrollToQuestionTop();
   }
 
   function retryEssayPractice() {
@@ -1404,6 +1428,7 @@
   }
 
   function beginQuestionTimeIfNeeded() {
+    if (essayModeActive) return;
     const entry = currentEntry();
     if (document.visibilityState === 'visible' && entry && !entry.answered && activeQuestionTickStart == null) activeQuestionTickStart = Date.now();
   }
@@ -1784,16 +1809,32 @@
     if (!q || !entry) return;
     syncAnalyticsAssist();
 
-    dom.modeLabel.textContent = mode === 'test' ? 'Practice test' : 'Study mode';
+    const inEssayMode = essayModeActive && mode === 'study';
+    dom.modeLabel.textContent = mode === 'test' ? 'Practice test' : inEssayMode ? 'Essay mode' : 'Study mode';
     dom.timerLabel.textContent = mode === 'test' ? 'Time left' : 'Session';
-    dom.timerCard.classList.toggle('is-clickable', mode === 'study');
-    dom.timerCard.setAttribute('title', mode === 'study' ? 'Click to reset the study session timer' : 'Practice test countdown');
-    dom.timerCard.setAttribute('aria-label', mode === 'study' ? 'Study session timer. Click to reset.' : 'Practice test countdown timer');
+    dom.timerCard.classList.toggle('is-clickable', mode === 'study' && !inEssayMode);
+    dom.timerCard.setAttribute('title', mode === 'test' ? 'Practice test countdown' : inEssayMode ? 'Essay study session' : 'Click to reset the study session timer');
+    dom.timerCard.setAttribute('aria-label', mode === 'test' ? 'Practice test countdown timer' : inEssayMode ? 'Essay study session timer.' : 'Study session timer. Click to reset.');
     dom.testBtn.textContent = mode === 'test' ? 'Exit test' : 'Test';
-    dom.categoriesBtn.disabled = mode === 'test';
+    dom.categoriesBtn.disabled = mode === 'test' || inEssayMode;
     dom.statsBtn.disabled = mode === 'test';
-    if (dom.essayBtn) dom.essayBtn.disabled = mode === 'test';
+    if (dom.essayBtn) {
+      dom.essayBtn.disabled = mode === 'test';
+      dom.essayBtn.textContent = inEssayMode ? 'M/C' : 'Essay';
+      dom.essayBtn.setAttribute('aria-label', inEssayMode ? 'Switch to multiple choice mode' : 'Open essay practice');
+    }
     dom.testProgressWrap.classList.toggle('hidden', mode !== 'test');
+    dom.questionCard?.classList.toggle('hidden', inEssayMode);
+    dom.saveNote?.classList.toggle('hidden', inEssayMode);
+    dom.essayPracticeMain?.classList.toggle('hidden', !inEssayMode);
+    dom.questionSearchFab?.classList.toggle('hidden', inEssayMode);
+
+    if (inEssayMode) {
+      renderEssayPractice();
+      saveState();
+      beginStudyTimeIfNeeded();
+      return;
+    }
 
     if (mode === 'test') {
       const t = state.activeTest;
@@ -2029,6 +2070,7 @@
   function startTest() {
     flushQuestionTime();
     flushStudyTime();
+    essayModeActive = false;
     const order = shuffle(QUESTIONS.map(q => q.id));
     const items = {};
     order.forEach(id => { items[id] = { viewed: false, selected: [], answered: false, result: null, credit: 0, elapsedMs: 0 }; });
@@ -2200,7 +2242,7 @@
       return;
     }
 
-    if (otherOpen) return;
+    if (otherOpen || essayModeActive) return;
 
     if (key === 'ArrowLeft') {
       event.preventDefault();
@@ -2224,7 +2266,7 @@
   }
 
   function resetStudySessionTimer() {
-    if (mode !== 'study') return;
+    if (mode !== 'study' || essayModeActive) return;
     const msg = 'Reset the study session timer and the timer for the current question? This will not erase study history, question stats, or practice-test results.';
     if (!confirm(msg)) return;
 
@@ -3393,11 +3435,14 @@
       }
     });
 
-    dom.essayBtn?.addEventListener('click', openEssayIntro);
+    dom.essayBtn?.addEventListener('click', handleEssayModeButton);
     dom.closeEssayIntro?.addEventListener('click', () => dom.essayIntroDialog.close());
     dom.cancelEssayStart?.addEventListener('click', () => dom.essayIntroDialog.close());
     dom.startEssayFromIntroBtn?.addEventListener('click', startEssayPractice);
     dom.viewEssayLibraryBtn?.addEventListener('click', openEssayLibrary);
+    dom.closeMcIntro?.addEventListener('click', () => dom.mcIntroDialog.close());
+    dom.cancelMcStart?.addEventListener('click', () => dom.mcIntroDialog.close());
+    dom.startMcFromIntroBtn?.addEventListener('click', leaveEssayMode);
     dom.closeEssayLibrary?.addEventListener('click', () => dom.essayLibraryDialog.close());
     dom.doneEssayLibrary?.addEventListener('click', () => dom.essayLibraryDialog.close());
     dom.essayLibrarySearch?.addEventListener('input', e => renderEssayLibrary(e.currentTarget.value));
@@ -3460,7 +3505,6 @@
         e.currentTarget.value = '';
       }
     });
-    dom.closeEssayPractice?.addEventListener('click', () => dom.essayPracticeDialog.close());
     dom.essayChoiceList?.addEventListener('click', e => {
       const button = e.target.closest('[data-essay-choice]');
       if (button) handleEssayChoice(button.dataset.essayChoice);
@@ -3687,7 +3731,7 @@
       if (!term) return;
       e.preventDefault();
       e.stopPropagation();
-      openGlossaryEntry(term.dataset.glossaryId, term.closest('#glossaryList') ? 'materials' : (term.closest('#essayLibraryDialog, #essayPracticeDialog') ? 'other' : 'question'));
+      openGlossaryEntry(term.dataset.glossaryId, term.closest('#glossaryList') ? 'materials' : (term.closest('#essayLibraryDialog, #essayPracticeMain') ? 'other' : 'question'));
     }, true);
     document.addEventListener('keydown', e => {
       if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -3702,7 +3746,7 @@
       if (!term) return;
       e.preventDefault();
       e.stopPropagation();
-      openGlossaryEntry(term.dataset.glossaryId, term.closest('#glossaryList') ? 'materials' : (term.closest('#essayLibraryDialog, #essayPracticeDialog') ? 'other' : 'question'));
+      openGlossaryEntry(term.dataset.glossaryId, term.closest('#glossaryList') ? 'materials' : (term.closest('#essayLibraryDialog, #essayPracticeMain') ? 'other' : 'question'));
     }, true);
     dom.closeGlossaryTerm?.addEventListener('click', () => { stopGlossaryPronunciation({ resumeCourseAudio: true }); dom.glossaryTermDialog.close(); });
     dom.glossarySpeakBtn?.addEventListener('click', playActiveGlossaryEntry);

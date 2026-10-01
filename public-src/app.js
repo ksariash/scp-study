@@ -13,13 +13,14 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 36;
+  const APP_VERSION = 37;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const ANALYTICS_COHORT = 'SCP 2026 Summer';
   const ANALYTICS_SETTINGS_KEY = 'scpStudy.analytics.v1';
   const ANALYTICS_QUEUE_KEY = 'scpStudy.analyticsQueue.v1';
   const ANALYTICS_INSTALLATION_KEY = 'scpStudy.analyticsInstallation.v1';
+  const APP_VERSION_SEEN_KEY = 'scpStudy.appVersionSeen.v1';
   const CHABURA_SETTINGS_KEY = 'scpStudy.chabura.v1';
   const CHABURA_PROFILE_SENT_KEY = 'scpStudy.chaburaProfileSent.v1';
   const CHABURA_FALLBACK = 'Not listed / unsure';
@@ -95,7 +96,7 @@
     modeLabel: el('modeLabel'), timerLabel: el('timerLabel'), mainTimer: el('mainTimer'), timerCard: el('timerCard'), brandLogo: el('brandLogo'), brandTitle: el('brandTitle'),
     categoriesBtn: el('categoriesBtn'), materialsBtn: el('materialsBtn'), statsBtn: el('statsBtn'), essayBtn: el('essayBtn'), testBtn: el('testBtn'), questionSearchFab: el('questionSearchFab'), installBtn: el('installBtn'), installGuideDialog: el('installGuideDialog'), closeInstallGuide: el('closeInstallGuide'),
     testProgressWrap: el('testProgressWrap'), testQuestionCount: el('testQuestionCount'), testAnsweredCount: el('testAnsweredCount'), testProgressFill: el('testProgressFill'),
-    questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), answerForm: el('answerForm'),
+    questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionJumpDialog: el('questionJumpDialog'), questionJumpForm: el('questionJumpForm'), questionJumpInput: el('questionJumpInput'), questionJumpGoBtn: el('questionJumpGoBtn'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), answerForm: el('answerForm'),
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
@@ -110,6 +111,7 @@
     testResultDialog: el('testResultDialog'), testResultSubtitle: el('testResultSubtitle'), testResultContent: el('testResultContent'), closeTestResult: el('closeTestResult'), reviewStatsAfterTest: el('reviewStatsAfterTest'), returnToStudy: el('returnToStudy'),
     glossaryTermDialog: el('glossaryTermDialog'), closeGlossaryTerm: el('closeGlossaryTerm'), glossaryTermTitle: el('glossaryTermTitle'), glossaryTermPronunciation: el('glossaryTermPronunciation'), glossaryTermIpa: el('glossaryTermIpa'), glossaryTermDefinition: el('glossaryTermDefinition'), glossarySpeakBtn: el('glossarySpeakBtn'), glossaryTermCategoriesWrap: el('glossaryTermCategoriesWrap'), glossaryTermCategories: el('glossaryTermCategories'),
     contentFeedbackDialog: el('contentFeedbackDialog'), closeContentFeedback: el('closeContentFeedback'), cancelContentFeedback: el('cancelContentFeedback'), submitContentFeedback: el('submitContentFeedback'), contentFeedbackType: el('contentFeedbackType'), contentFeedbackTitle: el('contentFeedbackTitle'), contentFeedbackPreview: el('contentFeedbackPreview'), contentFeedbackDetails: el('contentFeedbackDetails'), contentFeedbackCount: el('contentFeedbackCount'), contentFeedbackStatus: el('contentFeedbackStatus'),
+    appVersionFooter: el('appVersionFooter'), appToast: el('appToast'), updatePullIndicator: el('updatePullIndicator'),
     chaburaDialog: el('chaburaDialog'), chaburaDialogLocation: el('chaburaDialogLocation'), chaburaDialogSelect: el('chaburaDialogSelect'), saveChaburaDialogBtn: el('saveChaburaDialogBtn')
   };
 
@@ -144,7 +146,9 @@
   let essayAnalyticsSessionId = null;
   let activeContentFeedbackTarget = null;
   let contentFeedbackFlushInFlight = false;
-  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.chaburaDialog].filter(Boolean);
+  let appToastTimer = null;
+  let updateCheckInFlight = null;
+  const dialogs = [dom.questionJumpDialog, dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.chaburaDialog].filter(Boolean);
 
 
   function chaburaOptions(location) {
@@ -280,6 +284,117 @@
         node.removeAttribute('title');
       }
     });
+  }
+
+
+  function showAppToast(message, duration = 3200) {
+    if (!dom.appToast || !message) return;
+    clearTimeout(appToastTimer);
+    dom.appToast.textContent = message;
+    dom.appToast.classList.remove('hidden');
+    requestAnimationFrame(() => dom.appToast.classList.add('show'));
+    appToastTimer = window.setTimeout(() => {
+      dom.appToast.classList.remove('show');
+      window.setTimeout(() => dom.appToast.classList.add('hidden'), 190);
+    }, duration);
+  }
+
+  function updateAppVersionUi() {
+    if (dom.appVersionFooter) dom.appVersionFooter.textContent = `SCP Study v${APP_VERSION}`;
+  }
+
+  function consumeUpdateAnnouncement() {
+    let previous = '';
+    try { previous = localStorage.getItem(APP_VERSION_SEEN_KEY) || ''; } catch (_) {}
+    const current = String(APP_VERSION);
+    const url = new URL(window.location.href);
+    const updated = url.searchParams.get('scp_updated');
+    try { localStorage.setItem(APP_VERSION_SEEN_KEY, current); } catch (_) {}
+
+    if (updated) {
+      url.searchParams.delete('scp_updated');
+      history.replaceState(null, '', url.pathname + (url.search ? url.search : '') + url.hash);
+      if (!previous || previous !== current) window.setTimeout(() => showAppToast(`Updated app to v${APP_VERSION}`), 280);
+      return;
+    }
+    if (previous && previous !== current) window.setTimeout(() => showAppToast(`Updated app to v${APP_VERSION}`), 280);
+  }
+
+  async function checkForAppUpdate({ manual = false } = {}) {
+    if (!('serviceWorker' in navigator)) {
+      if (manual) showAppToast('Update checks are not supported in this browser.');
+      return null;
+    }
+    if (updateCheckInFlight) return updateCheckInFlight;
+
+    updateCheckInFlight = (async () => {
+      if (manual) showAppToast('Checking for updates…', 1800);
+      try {
+        let registration = await navigator.serviceWorker.getRegistration('./');
+        if (!registration) registration = await navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' });
+
+        let updateFound = false;
+        const onUpdateFound = () => {
+          updateFound = true;
+          if (manual) showAppToast('Update found. Refreshing…', 4500);
+        };
+        registration.addEventListener('updatefound', onUpdateFound, { once: true });
+        await registration.update();
+
+        if (manual && !updateFound) {
+          window.setTimeout(() => showAppToast(`SCP Study v${APP_VERSION} is up to date.`), 220);
+        }
+        return registration;
+      } catch (err) {
+        console.warn('App update check failed:', err);
+        if (manual) showAppToast('Could not check for updates. Try again when online.');
+        return null;
+      } finally {
+        updateCheckInFlight = null;
+      }
+    })();
+
+    return updateCheckInFlight;
+  }
+
+  function setupPullToCheckUpdates() {
+    if (!('ontouchstart' in window) || !dom.updatePullIndicator) return;
+    let tracking = false;
+    let startY = 0;
+    let armed = false;
+
+    const hide = () => {
+      dom.updatePullIndicator.classList.remove('visible');
+      window.setTimeout(() => dom.updatePullIndicator.classList.add('hidden'), 140);
+    };
+
+    document.addEventListener('touchstart', event => {
+      if (event.touches.length !== 1 || window.scrollY > 0 || dialogs.some(dialog => dialog.open)) return;
+      tracking = true;
+      armed = false;
+      startY = event.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', event => {
+      if (!tracking || event.touches.length !== 1) return;
+      const distance = event.touches[0].clientY - startY;
+      if (distance < 22) return;
+      armed = distance >= 78;
+      dom.updatePullIndicator.textContent = armed ? 'Release to check for updates' : 'Pull down to check for updates';
+      dom.updatePullIndicator.classList.remove('hidden');
+      requestAnimationFrame(() => dom.updatePullIndicator.classList.add('visible'));
+    }, { passive: true });
+
+    const finish = () => {
+      if (!tracking) return;
+      const shouldCheck = armed;
+      tracking = false;
+      armed = false;
+      hide();
+      if (shouldCheck) void checkForAppUpdate({ manual: true });
+    };
+    document.addEventListener('touchend', finish, { passive: true });
+    document.addEventListener('touchcancel', finish, { passive: true });
   }
 
   function analyticsSettings() {
@@ -1686,9 +1801,9 @@
       dom.testQuestionCount.textContent = `${t.index + 1}/${QUESTIONS.length}`;
       dom.testAnsweredCount.textContent = `${answered} answered`;
       dom.testProgressFill.style.width = `${((t.index + 1) / QUESTIONS.length) * 100}%`;
-      dom.questionNumber.textContent = `Question ${t.index + 1} of ${QUESTIONS.length}`;
+      dom.questionNumber.textContent = `Question ${q.id} · ${t.index + 1}/${QUESTIONS.length} ▾`;
     } else {
-      dom.questionNumber.textContent = `Question ${q.id}`;
+      dom.questionNumber.textContent = `Question ${q.id} ▾`;
     }
     dom.questionCategory.textContent = q.category;
     setGlossaryText(dom.questionPrompt, q.prompt);
@@ -1698,7 +1813,10 @@
     const status = entry.answered ? entry.result : 'unanswered';
     dom.questionStatus.textContent = status === 'unanswered' ? 'Unanswered' : status[0].toUpperCase() + status.slice(1);
     dom.questionStatus.className = `status-chip ${status === 'unanswered' ? '' : status}`.trim();
-    [dom.questionNumber, dom.questionPrompt, dom.questionCategory].forEach(node => {
+    dom.questionNumber.classList.remove('explorer-link');
+    dom.questionNumber.tabIndex = 0;
+    dom.questionNumber.setAttribute('aria-disabled', 'false');
+    [dom.questionPrompt, dom.questionCategory].forEach(node => {
       node.classList.toggle('explorer-link', !!entry.answered);
       node.tabIndex = entry.answered ? 0 : -1;
       node.setAttribute('aria-disabled', entry.answered ? 'false' : 'true');
@@ -1787,6 +1905,55 @@
     }
     dom.submitBtn.disabled = !!entry.answered;
     dom.submitBtn.textContent = entry.answered ? 'Submitted' : 'Submit answer';
+  }
+
+
+  function openQuestionJump() {
+    const q = currentQuestion();
+    if (dom.questionJumpInput) dom.questionJumpInput.value = q?.id || '';
+    if (dom.questionJumpDialog && !dom.questionJumpDialog.open) dom.questionJumpDialog.showModal();
+    window.setTimeout(() => {
+      dom.questionJumpInput?.focus();
+      dom.questionJumpInput?.select();
+    }, 0);
+  }
+
+  function goToQuestionNumber(rawValue) {
+    const qid = Math.trunc(Number(rawValue));
+    const question = questionById.get(qid);
+    if (!question) {
+      dom.questionJumpInput?.setCustomValidity(`Enter a question number from 1 to ${QUESTIONS.length}.`);
+      dom.questionJumpInput?.reportValidity();
+      return false;
+    }
+    dom.questionJumpInput?.setCustomValidity('');
+    flushQuestionTime();
+
+    if (mode === 'test' && state.activeTest) {
+      const index = state.activeTest.order.indexOf(qid);
+      if (index < 0) return false;
+      state.activeTest.index = index;
+    } else {
+      let existingIndex = -1;
+      for (let i = state.study.history.length - 1; i >= 0; i--) {
+        if (Number(state.study.history[i]?.qid) === qid) { existingIndex = i; break; }
+      }
+      if (existingIndex >= 0) {
+        state.study.index = existingIndex;
+      } else {
+        const entry = { qid, selected: [], answered: false, result: null, credit: 0, elapsedMs: 0 };
+        const insertAt = Math.min(state.study.history.length, Math.max(0, state.study.index + 1));
+        state.study.history.splice(insertAt, 0, entry);
+        state.study.index = insertAt;
+        markQuestionShown(qid);
+      }
+    }
+
+    saveState();
+    dom.questionJumpDialog?.close();
+    render();
+    scrollToQuestionTop();
+    return true;
   }
 
   function goPrevious() {
@@ -3122,6 +3289,12 @@
 
   function bindEvents() {
     dom.submitBtn.addEventListener('click', submitCurrentAnswer);
+    dom.questionNumber?.addEventListener('click', openQuestionJump);
+    dom.questionJumpInput?.addEventListener('input', () => dom.questionJumpInput.setCustomValidity(''));
+    dom.questionJumpForm?.addEventListener('submit', event => {
+      event.preventDefault();
+      goToQuestionNumber(dom.questionJumpInput?.value);
+    });
 
     [dom.brandLogo, dom.brandTitle].forEach(node => {
       node?.addEventListener('click', () => void shareStudyApp());
@@ -3170,10 +3343,9 @@
       if (kind === 'category') openQuestionReview(q.id, QUESTIONS.filter(x => x.category === q.category).map(x => x.id), `Category: ${q.category}`);
       else openQuestionReviewAll(q.id);
     };
-    dom.questionNumber.addEventListener('click', () => openCurrentExplorer('question'));
     dom.questionPrompt.addEventListener('click', () => openCurrentExplorer('question'));
     dom.questionCategory.addEventListener('click', () => openCurrentExplorer('category'));
-    [dom.questionNumber, dom.questionPrompt, dom.questionCategory].forEach(node => node.addEventListener('keydown', e => {
+    [dom.questionPrompt, dom.questionCategory].forEach(node => node.addEventListener('keydown', e => {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       if (node.getAttribute('aria-disabled') === 'true') return;
       e.preventDefault();
@@ -3577,19 +3749,20 @@
   }
 
   async function registerServiceWorker() {
-    if (!('serviceWorker' in navigator)) return null;
-    try {
-      const registration = await navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' });
-      await registration.update();
-      return registration;
-    } catch (err) {
-      console.warn('Service worker registration/update failed:', err);
-      return null;
-    }
+    const registration = await checkForAppUpdate({ manual: false });
+    if (!registration || !('serviceWorker' in navigator)) return registration;
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data?.type !== 'SCP_APP_UPDATED') return;
+      try { sessionStorage.setItem('scpStudy.pendingUpdateVersion', String(event.data.version || '')); } catch (_) {}
+    });
+    return registration;
   }
 
   function init() {
     bindEvents();
+    updateAppVersionUi();
+    consumeUpdateAnnouncement();
+    setupPullToCheckUpdates();
     void registerServiceWorker();
     setupMediaSession();
     updateBrandShareAffordance();

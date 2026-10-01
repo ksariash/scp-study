@@ -1,4 +1,5 @@
-const CACHE_NAME = 'scp-study-v36';
+const APP_VERSION = 37;
+const CACHE_NAME = 'scp-study-v37';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v1';
 const APP_SHELL = [
   './',
@@ -89,8 +90,12 @@ self.addEventListener('activate', event => {
     const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     for (const client of windows) {
       try {
-        client.postMessage({ type: 'SCP_APP_UPDATED', cache: CACHE_NAME });
-        if ('navigate' in client) await client.navigate(client.url);
+        client.postMessage({ type: 'SCP_APP_UPDATED', version: APP_VERSION, cache: CACHE_NAME });
+        if ('navigate' in client) {
+          const target = new URL(client.url);
+          target.searchParams.set('scp_updated', String(APP_VERSION));
+          await client.navigate(target.href);
+        }
       } catch (_) {}
     }
   })());

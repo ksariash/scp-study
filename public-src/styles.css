@@ -2944,3 +2944,19 @@ body.mini-audio-visible .question-search-fab { bottom: calc(max(12px, env(safe-a
   .chabura-fields{grid-template-columns:1fr}
   .chabura-fields .settings-action-btn{justify-self:start}
 }
+
+/* v37: fast mobile taps, quick question jump, update status */
+html,body{touch-action:manipulation}
+button,a,[role="button"],select,input,label{touch-action:manipulation}
+.question-number-jump{appearance:none;border:0;font:inherit;cursor:pointer}
+.question-number-jump:focus-visible{outline:3px solid rgba(49,86,183,.28);outline-offset:2px}
+.question-jump-dialog{width:min(440px,calc(100% - 24px))}
+.question-jump-field{display:grid;gap:7px;margin-top:20px}
+.question-jump-field>span{font-size:.7rem;font-weight:850;text-transform:uppercase;letter-spacing:.055em;color:var(--muted)}
+.question-jump-field input{width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--text);font:inherit;font-size:1.05rem}
+.app-version-footer{padding:0 16px calc(18px + env(safe-area-inset-bottom));text-align:center;color:var(--muted);font-size:.72rem;letter-spacing:.02em}
+.app-toast{position:fixed;z-index:90;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,12px);max-width:min(90vw,520px);padding:10px 14px;border-radius:999px;background:#172554;color:#fff;box-shadow:0 12px 34px rgba(13,26,68,.28);font-size:.82rem;font-weight:750;text-align:center;opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease}
+.app-toast.show{opacity:1;transform:translate(-50%,0)}
+.update-pull-indicator{position:fixed;z-index:80;top:calc(8px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-8px);padding:7px 11px;border-radius:999px;background:rgba(19,33,60,.94);color:#fff;box-shadow:0 8px 24px rgba(13,26,68,.2);font-size:.72rem;font-weight:750;pointer-events:none;opacity:0;transition:opacity .12s ease,transform .12s ease}
+.update-pull-indicator.visible{opacity:1;transform:translate(-50%,0)}
+@media(max-width:780px){.question-number-jump{min-height:30px}.app-version-footer{padding-bottom:calc(84px + env(safe-area-inset-bottom))}}

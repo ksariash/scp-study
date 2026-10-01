@@ -133,3 +133,11 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 ## Release 36
 
 - Reorders Essay Practice pairing content so relevant audio appears before the authority/name, followed by the position choices. This is especially intended to make the mobile flow read naturally as audio → name → pairing choices.
+
+
+## Release 37
+
+- Adds tap-safe mobile interaction by disabling double-tap zoom while preserving normal pan/pinch gestures.
+- Makes the question-number badge a quick navigator to any question 1–58 in Study or Test mode.
+- Checks for service-worker updates on launch and when the user pulls down from the top of the app.
+- Shows a versioned update toast after a newly activated app shell reloads, and shows the current app version at the bottom of the app.

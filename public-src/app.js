@@ -2873,6 +2873,29 @@
       openCurrentExplorer(node === dom.questionCategory ? 'category' : 'question');
     }));
 
+    dom.questionReportBtn?.addEventListener('click', () => {
+      const q = currentQuestion();
+      if (q) openContentFeedback(questionFeedbackTarget(q, mode));
+    });
+    dom.reviewQuestionReportBtn?.addEventListener('click', () => {
+      if (!reviewContext?.ids?.length) return;
+      const q = questionById.get(reviewContext.ids[reviewContext.index]);
+      if (q) openContentFeedback(questionFeedbackTarget(q, 'question_review'));
+    });
+    dom.essayPromptReportBtn?.addEventListener('click', () => {
+      if (essayRun?.essay) openContentFeedback(essayPromptFeedbackTarget(essayRun.essay, 'essay_practice'));
+    });
+    dom.essayPairingReportBtn?.addEventListener('click', () => {
+      const fact = currentEssayFact();
+      if (essayRun?.essay && fact) openContentFeedback(essayPairingFeedbackTarget(essayRun.essay, fact, 'essay_practice'));
+    });
+    dom.essayAnswerZone?.addEventListener('click', e => {
+      const button = e.target.closest('[data-report-essay-pairing]');
+      if (!button || !essayRun?.essay) return;
+      const fact = essayRun.essay.facts.find(item => item.id === button.dataset.reportEssayPairing);
+      if (fact) openContentFeedback(essayPairingFeedbackTarget(essayRun.essay, fact, 'essay_practice'));
+    });
+
     dom.statsBtn.addEventListener('click', openStats);
     dialogs.forEach(d => {
       closeOnBackdrop(d);
@@ -2907,8 +2930,23 @@
       renderEssayLibrary('');
     });
     dom.essayLibraryList?.addEventListener('click', e => {
-      const button = e.target.closest('[data-essay-library-practice]');
-      if (button) startSpecificEssay(button.dataset.essayLibraryPractice);
+      const practice = e.target.closest('[data-essay-library-practice]');
+      if (practice) {
+        startSpecificEssay(practice.dataset.essayLibraryPractice);
+        return;
+      }
+      const promptReport = e.target.closest('[data-report-essay-prompt]');
+      if (promptReport) {
+        const essay = ESSAY_BANK.find(item => item.id === promptReport.dataset.reportEssayPrompt);
+        if (essay) openContentFeedback(essayPromptFeedbackTarget(essay, 'essay_library'));
+        return;
+      }
+      const pairingReport = e.target.closest('[data-report-essay-pairing]');
+      if (pairingReport) {
+        const essay = ESSAY_BANK.find(item => item.id === pairingReport.dataset.reportEssayId);
+        const fact = essay?.facts.find(item => item.id === pairingReport.dataset.reportEssayPairing);
+        if (essay && fact) openContentFeedback(essayPairingFeedbackTarget(essay, fact, 'essay_library'));
+      }
     });
 
     dom.testBtn.addEventListener('click', () => {
@@ -2942,6 +2980,17 @@
     });
     dom.essayTryAgainBtn?.addEventListener('click', retryEssayPractice);
     dom.essayNextBtn?.addEventListener('click', nextEssayPractice);
+    dom.closeContentFeedback?.addEventListener('click', () => dom.contentFeedbackDialog.close());
+    dom.cancelContentFeedback?.addEventListener('click', () => dom.contentFeedbackDialog.close());
+    dom.contentFeedbackDialog?.addEventListener('change', e => {
+      if (e.target.matches('input[name="contentFeedbackReason"]')) updateContentFeedbackSubmitState();
+    });
+    dom.contentFeedbackDetails?.addEventListener('input', e => {
+      const value = String(e.currentTarget.value || '').slice(0, 500);
+      if (value !== e.currentTarget.value) e.currentTarget.value = value;
+      if (dom.contentFeedbackCount) dom.contentFeedbackCount.textContent = `${value.length}/500`;
+    });
+    dom.submitContentFeedback?.addEventListener('click', () => void submitActiveContentFeedback());
     dom.materialsBrowseAllQuestions?.addEventListener('click', () => openQuestionSearch(''));
     dom.materialsCurrentQuestionBtn?.addEventListener('click', () => {
       const qid = currentQuestion()?.id || QUESTIONS[0]?.id;
@@ -3180,7 +3229,10 @@
     document.addEventListener('freeze', pauseActivityTimers);
     document.addEventListener('resume', resumeActivityTimers);
 
-    window.addEventListener('online', () => void flushAnalyticsQueue());
+    window.addEventListener('online', () => {
+      void flushAnalyticsQueue();
+      void flushContentFeedbackQueue();
+    });
 
     window.addEventListener('beforeinstallprompt', e => {
       e.preventDefault();
@@ -3216,6 +3268,7 @@
     updateAnalyticsUi();
     updateEssayProgressUi();
     void flushAnalyticsQueue();
+    void flushContentFeedbackQueue();
     activeMaterialsTab = savedMaterialsTab();
     setMaterialsTab(activeMaterialsTab, { remember: false });
     setTranscriptExpanded(savedTranscriptExpanded(), { remember: false });

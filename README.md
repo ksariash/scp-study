@@ -141,3 +141,11 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 - Makes the question-number badge a quick navigator to any question 1–58 in Study or Test mode.
 - Checks for service-worker updates on launch and when the user pulls down from the top of the app.
 - Shows a versioned update toast after a newly activated app shell reloads, and shows the current app version at the bottom of the app.
+
+
+## Release 38
+
+- Essay analytics use responsive performance cards instead of a wide table on small screens.
+- PDF downloads show Print + Download on desktop and Download only on mobile; on iOS Download opens the native file/share sheet.
+- The Compact Course Review is no longer generated at build time. Its original PDF stays in the versioned static asset bundle and is copied unchanged.
+- The cumulative test, answer key, and essay PDF remain generated from the same source-controlled question and essay banks as the app.

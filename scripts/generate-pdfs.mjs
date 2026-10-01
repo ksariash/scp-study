@@ -81,16 +81,6 @@ async function readEssays(){
 function essayName(fact){return fact?.tokens?.[0]?.[1]||fact?.label||''}
 function essayPosition(fact){return fact?.tokens?.[1]?.[1]||''}
 
-function renderCompact(doc,f,source){
-  heading(doc,f,'נ״ט בר נ״ט & סתם יינם - Compact Course Review',19);
-  drawWords(doc,f,'Generated at build time from the authoritative compact course-review source text.',{size:9,gap:10});
-  for(const raw of source.split(/\r?\n/)){
-    const line=raw.trim();if(!line){doc.y+=3;continue}
-    const major=/^\d+\./.test(line)||/Compact Course Review$/.test(line);
-    const sub=/^(Central question|Core rule:|Already cooked|Where the usual|Applications that train|If fish actually|Clean vessels|Kli sheini|Sink applications|Dishwasher:|Benefit applications|Social drinking|Contact and touch|Unattended wine)/i.test(line);
-    drawWords(doc,f,line,{size:major?12.2:sub?9.5:7.35,bold:major||sub,gap:major?4:sub?3:1.1,lineHeight:major?15:sub?12:9.3,color:major?'#14265c':'#17213b'});
-  }
-}
 function renderTest(doc,f,questions){
   heading(doc,f,'SCP Study - Cumulative Test',20);
   drawWords(doc,f,'58 questions. Choose the best answer unless the question says Select all that apply.',{size:10,gap:12});
@@ -122,9 +112,8 @@ function renderEssays(doc,f,essays){
   });
 }
 export async function generatePdfs(outputDir=join(ROOT,'public')){
-  const [f,questions,essays,compact]=await Promise.all([loadFonts(),readQuestions(),readEssays(),readFile(join(ROOT,'pdf-sources','compact-course-review.txt'),'utf8')]);
+  const [f,questions,essays]=await Promise.all([loadFonts(),readQuestions(),readEssays()]);
   const documents=join(outputDir,'documents');await mkdir(documents,{recursive:true});
-  await writePdf(join(documents,'SCP-Study-Compact-Course-Review.pdf'),'SCP Study - Compact Course Review',f,doc=>renderCompact(doc,f,compact));
   await writePdf(join(documents,'SCP-Study-Cumulative-Test.pdf'),'SCP Study - Cumulative Test',f,doc=>renderTest(doc,f,questions));
   await writePdf(join(documents,'SCP-Study-Cumulative-Test-Answer-Key.pdf'),'SCP Study - Cumulative Test Answer Key',f,doc=>renderKey(doc,f,questions));
   await writePdf(join(documents,'SCP-Study-Essay-Questions-and-Sample-Answers.pdf'),'SCP Study - Essay Questions & Sample Answers',f,doc=>renderEssays(doc,f,essays));

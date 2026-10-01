@@ -7,6 +7,11 @@ const ROOT = new URL('./', import.meta.url);
 const sourceDir = new URL('./public-src/', ROOT);
 const outputDir = new URL('./public/', ROOT);
 const assetsDir = new URL('./assets/', ROOT);
+const GENERATED_PDFS = new Set([
+  'documents/SCP-Study-Cumulative-Test.pdf',
+  'documents/SCP-Study-Cumulative-Test-Answer-Key.pdf',
+  'documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf',
+]);
 
 await rm(outputDir, { recursive: true, force: true });
 await mkdir(outputDir, { recursive: true });
@@ -43,9 +48,10 @@ while (offset + 512 <= tar.length) {
   if (type === '5') {
     await mkdir(destination, { recursive: true });
   } else if (type === '0' || type === '\0') {
-    // PDFs are generated from source during every build. Ignore any legacy PDF
-    // entries that may still exist inside the historical binary bundle.
-    if (!safeName.toLowerCase().endsWith('.pdf')) {
+    // Only the question/test/essay PDFs are regenerated. The compact course
+    // review is a versioned static binary in the repository and is copied
+    // unchanged from the asset bundle.
+    if (!GENERATED_PDFS.has(safeName)) {
       await mkdir(dirname(destination.pathname), { recursive: true });
       await writeFile(destination, tar.subarray(offset + 512, offset + 512 + size));
     }
@@ -56,4 +62,4 @@ while (offset + 512 <= tar.length) {
 
 await generatePdfs(outputDir.pathname);
 
-console.log('Built SCP Study static assets and generated PDF documents. Short & Sweet review audio remains in R2.');
+console.log('Built SCP Study static assets; generated question/test/essay PDFs and preserved the repository compact review. Short & Sweet review audio remains in R2.');

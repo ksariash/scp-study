@@ -1,6 +1,7 @@
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { gunzipSync } from 'node:zlib';
+import { generatePdfs } from './scripts/generate-pdfs.mjs';
 
 const ROOT = new URL('./', import.meta.url);
 const sourceDir = new URL('./public-src/', ROOT);
@@ -42,11 +43,17 @@ while (offset + 512 <= tar.length) {
   if (type === '5') {
     await mkdir(destination, { recursive: true });
   } else if (type === '0' || type === '\0') {
-    await mkdir(dirname(destination.pathname), { recursive: true });
-    await writeFile(destination, tar.subarray(offset + 512, offset + 512 + size));
+    // PDFs are generated from source during every build. Ignore any legacy PDF
+    // entries that may still exist inside the historical binary bundle.
+    if (!safeName.toLowerCase().endsWith('.pdf')) {
+      await mkdir(dirname(destination.pathname), { recursive: true });
+      await writeFile(destination, tar.subarray(offset + 512, offset + 512 + size));
+    }
   }
 
   offset += 512 + Math.ceil(size / 512) * 512;
 }
 
-console.log('Built SCP Study static assets. Short & Sweet review audio remains in R2.');
+await generatePdfs(outputDir.pathname);
+
+console.log('Built SCP Study static assets and generated PDF documents. Short & Sweet review audio remains in R2.');

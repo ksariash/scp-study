@@ -275,7 +275,8 @@
             <span class="resource-copy"><strong>SCP Study — Compact Course Review</strong><span>Highlighted course summary and study reference.</span></span>
             <span class="resource-actions">
               <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Compact-Course-Review.pdf">Print</button>
-              <a class="resource-btn primary-link" href="documents/SCP-Study-Compact-Course-Review.pdf" download>Download</a>
+              <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Compact-Course-Review.pdf" data-pdf-title="SCP Study — Compact Course Review">Save PDF</button>
+              <button class="resource-btn" type="button" data-share-pdf="documents/SCP-Study-Compact-Course-Review.pdf" data-pdf-title="SCP Study — Compact Course Review">Share</button>
             </span>
           </div>
           <div class="resource-card">
@@ -283,7 +284,8 @@
             <span class="resource-copy"><strong>SCP Study — Cumulative Test</strong><span>Student version of the 58-question cumulative test.</span></span>
             <span class="resource-actions">
               <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Cumulative-Test.pdf">Print</button>
-              <a class="resource-btn primary-link" href="documents/SCP-Study-Cumulative-Test.pdf" download>Download</a>
+              <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Cumulative-Test.pdf" data-pdf-title="SCP Study — Cumulative Test">Save PDF</button>
+              <button class="resource-btn" type="button" data-share-pdf="documents/SCP-Study-Cumulative-Test.pdf" data-pdf-title="SCP Study — Cumulative Test">Share</button>
             </span>
           </div>
           <div class="resource-card">
@@ -291,15 +293,17 @@
             <span class="resource-copy"><strong>SCP Study — Cumulative Test Answer Key</strong><span>Instructor key, explanations, coverage audit, and scope check.</span></span>
             <span class="resource-actions">
               <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf">Print</button>
-              <a class="resource-btn primary-link" href="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" download>Download</a>
+              <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" data-pdf-title="SCP Study — Cumulative Test Answer Key">Save PDF</button>
+              <button class="resource-btn" type="button" data-share-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" data-pdf-title="SCP Study — Cumulative Test Answer Key">Share</button>
             </span>
           </div>
           <div class="resource-card">
             <span class="resource-icon" aria-hidden="true">PDF</span>
-            <span class="resource-copy"><strong>SCP Study — Essay Questions &amp; Sample Answers</strong><span>All essay prompts with concise sample answers for review.</span></span>
+            <span class="resource-copy"><strong>SCP Study — Essay Questions & Sample Answers</strong><span>All essay prompts with concise sample answers for review.</span></span>
             <span class="resource-actions">
               <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf">Print</button>
-              <a class="resource-btn primary-link" href="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" download>Download</a>
+              <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" data-pdf-title="SCP Study — Essay Questions & Sample Answers">Save PDF</button>
+              <button class="resource-btn" type="button" data-share-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" data-pdf-title="SCP Study — Essay Questions & Sample Answers">Share</button>
             </span>
           </div>
         </div>
@@ -322,7 +326,7 @@
         <div class="analytics-preference-copy">
           <span class="eyebrow">Course improvement</span>
           <h3 id="analyticsPreferenceHeading">Anonymous study statistics</h3>
-          <p>Helps instructors see which questions and topics need more review. The app shares answer results, timing ranges, study-aid use, which glossary terms are opened, cohort, and broad location derived by Cloudflare from the network request. It does not send your name, email, notes, searches, or precise GPS location.</p>
+          <p>Helps instructors see which questions and topics need more review. The app shares question results, essay-practice results, timing ranges, study-aid use, which glossary terms are opened, cohort, and broad location derived by Cloudflare from the network request. It does not send your name, email, notes, searches, or precise GPS location.</p>
           <span class="analytics-status" id="analyticsStatus" aria-live="polite"></span>
         </div>
         <label class="analytics-switch">
@@ -442,6 +446,8 @@
           <span class="essay-match-context" id="essayMatchContext"></span>
           <strong id="essayMatchName"></strong>
         </div>
+
+        <section class="question-audio hidden essay-pairing-audio" id="essayPairingAudio" aria-label="Relevant audio review"></section>
 
         <div class="essay-choice-list" id="essayChoiceList" role="group" aria-label="Choose the matching position"></div>
         <div class="essay-choice-feedback hidden" id="essayFeedback" aria-live="polite"></div>

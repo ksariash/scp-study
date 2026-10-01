@@ -2906,3 +2906,11 @@ body.mini-audio-visible .question-search-fab { bottom: calc(max(12px, env(safe-a
   .content-feedback-reasons label { min-height:36px;padding:7px 9px; }
   .essay-library-point { grid-template-columns:auto minmax(0,1fr) auto; }
 }
+
+/* v34: essay study aids and PDF actions */
+.essay-pairing-audio{margin:10px 0 2px}
+.essay-library-point-actions{display:inline-flex;align-items:center;gap:5px;margin-left:auto}
+.essay-library-audio{font-size:.72rem}
+.resource-actions{flex-wrap:wrap}
+.resource-actions .resource-btn:disabled{opacity:.58;cursor:wait}
+@media(max-width:650px){.resource-actions{width:100%}.resource-actions .resource-btn{flex:1 1 auto}.essay-library-point{align-items:flex-start}.essay-library-point-actions{flex:0 0 auto}}

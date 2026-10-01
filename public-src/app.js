@@ -13,7 +13,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 33;
+  const APP_VERSION = 34;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const ANALYTICS_COHORT = 'SCP 2026 Summer';
@@ -93,7 +93,7 @@
     materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
-    essayPracticeDialog: el('essayPracticeDialog'), closeEssayPractice: el('closeEssayPractice'), essayPracticeTopic: el('essayPracticeTopic'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
+    essayPracticeDialog: el('essayPracticeDialog'), closeEssayPractice: el('closeEssayPractice'), essayPracticeTopic: el('essayPracticeTopic'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingAudio: el('essayPairingAudio'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
     audioPlayerShell: el('audioPlayerShell'), audioPlayer: el('audioPlayer'), audioTrackTitle: el('audioTrackTitle'), audioTrackCounter: el('audioTrackCounter'), audioPrevBtn: el('audioPrevBtn'), audioBack10Btn: el('audioBack10Btn'), audioForward10Btn: el('audioForward10Btn'), audioNextBtn: el('audioNextBtn'), audioEmptyState: el('audioEmptyState'), audioPlaylistWrap: el('audioPlaylistWrap'), audioPlaylistCount: el('audioPlaylistCount'), audioPlaylistToggle: el('audioPlaylistToggle'), audioPlaylist: el('audioPlaylist'), transcriptPanel: el('transcriptPanel'), transcriptToggle: el('transcriptToggle'), audioTranscript: el('audioTranscript'), transcriptClock: el('transcriptClock'), miniAudioPlayer: el('miniAudioPlayer'), miniAudioOpen: el('miniAudioOpen'), miniAudioTitle: el('miniAudioTitle'), miniAudioTime: el('miniAudioTime'), miniAudioBack10: el('miniAudioBack10'), miniAudioPlayPause: el('miniAudioPlayPause'), miniAudioStop: el('miniAudioStop'),
     statsDialog: el('statsDialog'), statsContent: el('statsContent'), closeStats: el('closeStats'), resetStatsBtn: el('resetStatsBtn'), doneStatsBtn: el('doneStatsBtn'),
     questionReviewDialog: el('questionReviewDialog'), closeQuestionReview: el('closeQuestionReview'), reviewTitle: el('reviewTitle'), reviewContextLabel: el('reviewContextLabel'), reviewSearchInput: el('reviewSearchInput'), reviewSearchClear: el('reviewSearchClear'), reviewSearchCount: el('reviewSearchCount'), reviewSearchEmpty: el('reviewSearchEmpty'), reviewNav: el('reviewNav'), reviewBody: el('reviewBody'), reviewQuestionNumber: el('reviewQuestionNumber'), reviewCategory: el('reviewCategory'), reviewQuestionReportBtn: el('reviewQuestionReportBtn'), reviewStatsGrid: el('reviewStatsGrid'), reviewLastAnswer: el('reviewLastAnswer'), reviewPrompt: el('reviewPrompt'), reviewChoices: el('reviewChoices'), reviewExplanation: el('reviewExplanation'), reviewCorrectAnswer: el('reviewCorrectAnswer'), reviewAnswerDetails: el('reviewAnswerDetails'), reviewRevealBtn: el('reviewRevealBtn'), reviewAudio: el('reviewAudio'), reviewPrevBtn: el('reviewPrevBtn'), reviewNextBtn: el('reviewNextBtn'), reviewCounter: el('reviewCounter'),
@@ -131,6 +131,7 @@
   let essayProgressState = loadEssayProgress();
   let essayRun = null;
   let essaySessionNumber = 0;
+  let essayAnalyticsSessionId = null;
   let activeContentFeedbackTarget = null;
   let contentFeedbackFlushInFlight = false;
   const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.essayPracticeDialog, dom.statsDialog, dom.questionReviewDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog].filter(Boolean);
@@ -162,7 +163,7 @@
     const enabled = analyticsEnabled();
     if (dom.analyticsToggle) dom.analyticsToggle.checked = enabled;
     if (dom.analyticsStatus) dom.analyticsStatus.textContent = enabled
-      ? 'On · anonymous question results, glossary-term opens, and broad IP-derived location are shared.'
+      ? 'On · anonymous question results, essay-practice results, glossary-term opens, and broad IP-derived location are shared.'
       : 'Off · future study statistics will stay on this device.';
   }
 
@@ -504,6 +505,40 @@
     void flushAnalyticsQueue();
   }
 
+  function analyticsUuid(prefix = 'evt') {
+    return crypto?.randomUUID?.() || `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+
+  function essayFactContentHash(fact) {
+    return feedbackHash(`${essayNameText(fact)} → ${essayPositionText(fact)}`);
+  }
+
+  function essayContentHash(essay) {
+    if (!essay) return '';
+    return feedbackHash([
+      essay.prompt || '',
+      ...(essay.facts || []).map(fact => `${essayNameText(fact)} → ${essayPositionText(fact)}`),
+      essay.modelAnswer || ''
+    ].join('\n'));
+  }
+
+  function queueEssayAnalytics(kind, payload = {}) {
+    if (!analyticsEnabled() || !payload.essayId) return;
+    const event = {
+      kind,
+      eventId: analyticsUuid('essay'),
+      installationId: analyticsInstallationId(),
+      cohort: ANALYTICS_COHORT,
+      appVersion: String(APP_VERSION),
+      clientTs: new Date().toISOString(),
+      ...payload
+    };
+    const queue = analyticsQueue();
+    queue.push(event);
+    saveAnalyticsQueue(queue);
+    void flushAnalyticsQueue();
+  }
+
   async function flushAnalyticsQueue() {
     if (!analyticsEnabled() || analyticsFlushInFlight || !navigator.onLine) return;
     const queue = analyticsQueue();
@@ -752,13 +787,10 @@
       card.className = 'essay-library-card';
       card.innerHTML = `
         <div class="essay-library-card-head">
-          <div>
-            <span class="eyebrow">Essay ${index + 1}</span>
-            <h3>${escapeHtml(essay.title)}</h3>
-          </div>
+          <div><span class="eyebrow">Essay ${index + 1}</span><h3>${escapeHtml(essay.title)}</h3></div>
           <span class="essay-library-progress">${masteredFacts}/${essay.facts.length} mastered</span>
         </div>
-        <p class="essay-library-prompt">${escapeHtml(essay.prompt)}</p>
+        <p class="essay-library-prompt"></p>
         <div class="essay-library-actions">
           <button class="secondary compact" type="button" data-essay-library-practice="${escapeHtml(essay.id)}">Practice this essay</button>
           <button class="content-report-link" type="button" data-report-essay-prompt="${escapeHtml(essay.id)}">⚑ Report question</button>
@@ -768,17 +800,20 @@
           <summary>Required points</summary>
           <div class="essay-library-points">
             ${essay.facts.map(fact => {
-              const statement = fact.tokens.map(([, text]) => text).join(' ');
               const status = essayFactMasteryLabel(fact.id);
-              return `<div class="essay-library-point"><span class="essay-library-point-status ${status.toLowerCase()}">${status}</span><span>${escapeHtml(statement)}</span><button class="content-report-btn essay-library-point-report" type="button" data-report-essay-pairing="${escapeHtml(fact.id)}" data-report-essay-id="${escapeHtml(essay.id)}" aria-label="Report an issue with this pairing" title="Report an issue">⚑</button></div>`;
+              const hasAudio = Array.isArray(ESSAY_AUDIO_MAP?.[fact.id]) && ESSAY_AUDIO_MAP[fact.id].length;
+              return `<div class="essay-library-point" data-essay-library-fact="${escapeHtml(fact.id)}"><span class="essay-library-point-status ${status.toLowerCase()}">${status}</span><span class="essay-library-point-copy"></span><span class="essay-library-point-actions">${hasAudio ? `<button class="content-report-btn essay-library-audio" type="button" data-essay-audio-fact="${escapeHtml(fact.id)}" data-essay-audio-essay="${escapeHtml(essay.id)}" aria-label="Open relevant audio for this pairing" title="Relevant audio">▶</button>` : ''}<button class="content-report-btn essay-library-point-report" type="button" data-report-essay-pairing="${escapeHtml(fact.id)}" data-report-essay-id="${escapeHtml(essay.id)}" aria-label="Report an issue with this pairing" title="Report an issue">⚑</button></span></div>`;
             }).join('')}
           </div>
         </details>
-        <details class="essay-library-details">
-          <summary>Model answer</summary>
-          <p class="essay-library-model">${escapeHtml(essay.modelAnswer)}</p>
-        </details>
+        <details class="essay-library-details"><summary>Model answer</summary><p class="essay-library-model"></p></details>
       `;
+      setGlossaryText(card.querySelector('.essay-library-prompt'), essay.prompt);
+      setGlossaryText(card.querySelector('.essay-library-model'), essay.modelAnswer);
+      essay.facts.forEach(fact => {
+        const point = card.querySelector(`[data-essay-library-fact="${CSS.escape(fact.id)}"] .essay-library-point-copy`);
+        if (point) setGlossaryText(point, `${essayNameText(fact)} → ${essayPositionText(fact)}`);
+      });
       dom.essayLibraryList.append(card);
     });
 
@@ -806,7 +841,8 @@
     if (dom.essayLibraryDialog?.open) dom.essayLibraryDialog.close();
     if (dom.essayIntroDialog?.open) dom.essayIntroDialog.close();
     essaySessionNumber = 0;
-    beginEssayRound(essay);
+    essayAnalyticsSessionId = analyticsUuid('essay-session');
+    beginEssayRound(essay, { source: 'library' });
     if (!dom.essayPracticeDialog.open) dom.essayPracticeDialog.showModal();
   }
 
@@ -879,6 +915,19 @@
     };
     essayProgressState.lastEssayId = essay.id;
     saveEssayProgress();
+    queueEssayAnalytics('essay_round_complete', {
+      roundId: essayRun.roundId,
+      sessionId: essayRun.sessionId,
+      essayId: essay.id,
+      source: essayRun.source,
+      attemptInRound: essayRun.attemptInRound + 1,
+      totalFacts: essay.facts.length,
+      firstTryCorrect: essayRun.firstTryCorrect,
+      totalWrong: essayRun.totalWrong,
+      perfect,
+      durationBucket: responseTimeBucket(Date.now() - essayRun.roundStartedAt),
+      essayContentHash: essayContentHash(essay)
+    });
   }
 
   function renderEssayBuiltAnswer() {
@@ -897,14 +946,9 @@
       if (!fact) return;
       const row = document.createElement('div');
       row.className = 'essay-built-row';
-      row.innerHTML = `
-        <span class="essay-built-check" aria-hidden="true">✓</span>
-        <div class="essay-built-copy">
-          <strong>${escapeHtml(essayNameText(fact))}</strong>
-          <span>${escapeHtml(essayPositionText(fact))}</span>
-        </div>
-        <button class="content-report-btn essay-built-report" type="button" data-report-essay-pairing="${escapeHtml(fact.id)}" aria-label="Report an issue with this pairing" title="Report an issue">⚑</button>
-      `;
+      row.innerHTML = `<span class="essay-built-check" aria-hidden="true">✓</span><div class="essay-built-copy"><strong></strong><span></span></div><button class="content-report-btn essay-built-report" type="button" data-report-essay-pairing="${escapeHtml(fact.id)}" aria-label="Report an issue with this pairing" title="Report an issue">⚑</button>`;
+      setGlossaryText(row.querySelector('strong'), essayNameText(fact));
+      setGlossaryText(row.querySelector('.essay-built-copy span'), essayPositionText(fact));
       dom.essayAnswerZone.append(row);
     });
   }
@@ -914,16 +958,15 @@
     const essay = essayRun.essay;
     const fact = currentEssayFact();
     const complete = essayRun.finished;
-
     dom.essayMatchSection.classList.toggle('complete', complete);
     if (dom.essayBuildProgress) dom.essayBuildProgress.textContent = `${essayRun.completedFactIds.length} of ${essay.facts.length} complete`;
-
     if (complete) {
       if (dom.essayPracticeCounter) dom.essayPracticeCounter.textContent = `Complete · ${essay.facts.length} pairings`;
       if (dom.essayMatchCount) dom.essayMatchCount.textContent = 'Complete';
       if (dom.essayMatchContext) dom.essayMatchContext.textContent = 'Essay complete';
       if (dom.essayMatchName) dom.essayMatchName.textContent = 'All pairings matched';
       if (dom.essayPairingReportBtn) dom.essayPairingReportBtn.disabled = true;
+      if (dom.essayPairingAudio) { dom.essayPairingAudio.innerHTML = ''; dom.essayPairingAudio.classList.add('hidden'); }
       if (dom.essayChoiceList) dom.essayChoiceList.innerHTML = '';
       if (dom.essayFeedback) {
         dom.essayFeedback.className = 'essay-choice-feedback correct';
@@ -931,14 +974,13 @@
       }
       return;
     }
-
     const step = essayRun.currentIndex + 1;
     if (dom.essayPracticeCounter) dom.essayPracticeCounter.textContent = `Pairing ${step} of ${essay.facts.length}`;
     if (dom.essayMatchCount) dom.essayMatchCount.textContent = `${step} of ${essay.facts.length}`;
-    if (dom.essayMatchContext) dom.essayMatchContext.textContent = fact.label || 'Match the position';
-    if (dom.essayMatchName) dom.essayMatchName.textContent = essayNameText(fact);
+    setGlossaryText(dom.essayMatchContext, fact.label || 'Match the position');
+    setGlossaryText(dom.essayMatchName, essayNameText(fact));
     if (dom.essayPairingReportBtn) dom.essayPairingReportBtn.disabled = false;
-
+    renderEssayRelevantAudio(fact, dom.essayPairingAudio);
     if (dom.essayChoiceList) {
       dom.essayChoiceList.innerHTML = '';
       essayRun.stepChoices.forEach(id => {
@@ -948,24 +990,15 @@
         button.type = 'button';
         button.className = 'essay-choice';
         button.dataset.essayChoice = id;
-        button.textContent = essayPositionText(optionFact);
-        if (essayRun.wrongChoiceIds.includes(id)) {
-          button.classList.add('incorrect');
-          button.disabled = true;
-        }
-        if (essayRun.transitioning) {
-          button.disabled = true;
-          if (id === fact.id) button.classList.add('correct');
-        }
+        setGlossaryText(button, essayPositionText(optionFact));
+        if (essayRun.wrongChoiceIds.includes(id)) { button.classList.add('incorrect'); button.disabled = true; }
+        if (essayRun.transitioning) { button.disabled = true; if (id === fact.id) button.classList.add('correct'); }
         dom.essayChoiceList.append(button);
       });
     }
-
     if (dom.essayFeedback) {
-      if (!essayRun.feedbackType) {
-        dom.essayFeedback.className = 'essay-choice-feedback hidden';
-        dom.essayFeedback.textContent = '';
-      } else {
+      if (!essayRun.feedbackType) { dom.essayFeedback.className = 'essay-choice-feedback hidden'; dom.essayFeedback.textContent = ''; }
+      else {
         dom.essayFeedback.className = `essay-choice-feedback ${essayRun.feedbackType}`;
         dom.essayFeedback.innerHTML = essayRun.feedbackType === 'correct'
           ? '<strong>Correct.</strong><span>That pairing was added to the essay.</span>'
@@ -979,8 +1012,8 @@
     const essay = essayRun.essay;
     if (dom.essayPracticeTopic) dom.essayPracticeTopic.textContent = essay.title;
     if (dom.essayPracticeTitle) dom.essayPracticeTitle.textContent = essay.title;
-    if (dom.essayPracticePrompt) dom.essayPracticePrompt.textContent = essay.prompt;
-    if (dom.essayModelAnswer) dom.essayModelAnswer.textContent = essay.modelAnswer;
+    setGlossaryText(dom.essayPracticePrompt, essay.prompt);
+    setGlossaryText(dom.essayModelAnswer, essay.modelAnswer);
     if (dom.essayModelAnswerWrap) {
       dom.essayModelAnswerWrap.classList.toggle('hidden', !essayRun.finished);
       if (!essayRun.finished) dom.essayModelAnswerWrap.open = false;
@@ -996,26 +1029,26 @@
     if (!essayRun || essayRun.finished || essayRun.transitioning) return;
     const fact = currentEssayFact();
     if (!fact) return;
-
     if (choiceId !== fact.id) {
-      if (!essayRun.wrongChoiceIds.includes(choiceId)) {
-        essayRun.wrongChoiceIds.push(choiceId);
-        essayRun.totalWrong += 1;
-      }
+      if (!essayRun.wrongChoiceIds.includes(choiceId)) { essayRun.wrongChoiceIds.push(choiceId); essayRun.totalWrong += 1; }
       essayRun.stepHadError = true;
       essayRun.feedbackType = 'incorrect';
       renderEssayStep();
       return;
     }
-
     const firstTry = !essayRun.stepHadError;
+    queueEssayAnalytics('essay_pairing', {
+      roundId: essayRun.roundId, sessionId: essayRun.sessionId, essayId: essayRun.essay.id, factId: fact.id,
+      stepIndex: essayRun.currentIndex + 1, firstTry, presentedChoiceIds: [...essayRun.stepChoices],
+      wrongChoiceIds: [...essayRun.wrongChoiceIds], responseTimeBucket: responseTimeBucket(Date.now() - essayRun.stepStartedAt),
+      factContentHash: essayFactContentHash(fact), audioUsed: !!essayRun.stepAudioUsed
+    });
     essayRun.transitioning = true;
     essayRun.feedbackType = 'correct';
     essayRun.completedFactIds.push(fact.id);
     if (firstTry) essayRun.firstTryCorrect += 1;
     recordEssayFactResult(fact, firstTry);
     renderEssayPractice();
-
     const essayId = essayRun.essay.id;
     window.setTimeout(() => {
       if (!essayRun || essayRun.essay.id !== essayId) return;
@@ -1024,34 +1057,30 @@
       essayRun.stepHadError = false;
       essayRun.wrongChoiceIds = [];
       essayRun.feedbackType = null;
-
-      if (essayRun.currentIndex >= essayRun.essay.facts.length) {
-        finishEssayRound();
-      } else {
-        essayRun.stepChoices = buildEssayStepChoices(essayRun.essay, essayRun.currentIndex);
-      }
+      essayRun.stepAudioUsed = false;
+      essayRun.stepStartedAt = Date.now();
+      if (essayRun.currentIndex >= essayRun.essay.facts.length) finishEssayRound();
+      else essayRun.stepChoices = buildEssayStepChoices(essayRun.essay, essayRun.currentIndex);
       renderEssayPractice();
     }, 520);
   }
 
-  function beginEssayRound(essay, { retry = false } = {}) {
+  function beginEssayRound(essay, { retry = false, source = 'adaptive' } = {}) {
     if (!essay) return;
     if (!retry) essaySessionNumber += 1;
+    if (!essayAnalyticsSessionId) essayAnalyticsSessionId = analyticsUuid('essay-session');
     const attemptInRound = retry && essayRun ? essayRun.attemptInRound + 1 : 0;
+    const now = Date.now();
     essayRun = {
-      essay,
-      currentIndex: 0,
-      completedFactIds: [],
-      stepChoices: buildEssayStepChoices(essay, 0),
-      wrongChoiceIds: [],
-      stepHadError: false,
-      feedbackType: null,
-      transitioning: false,
-      firstTryCorrect: 0,
-      totalWrong: 0,
-      finished: false,
-      attemptInRound
+      essay, currentIndex: 0, completedFactIds: [], stepChoices: buildEssayStepChoices(essay, 0), wrongChoiceIds: [],
+      stepHadError: false, feedbackType: null, transitioning: false, firstTryCorrect: 0, totalWrong: 0, finished: false,
+      attemptInRound, source, sessionId: essayAnalyticsSessionId, roundId: analyticsUuid('essay-round'),
+      roundStartedAt: now, stepStartedAt: now, stepAudioUsed: false
     };
+    queueEssayAnalytics('essay_round_start', {
+      roundId: essayRun.roundId, sessionId: essayRun.sessionId, essayId: essay.id, source,
+      attemptInRound: attemptInRound + 1, totalFacts: essay.facts.length, essayContentHash: essayContentHash(essay)
+    });
     renderEssayPractice();
   }
 
@@ -1061,17 +1090,18 @@
     if (dom.materialsDialog?.open) dom.materialsDialog.close();
     if (dom.essayIntroDialog?.open) dom.essayIntroDialog.close();
     essaySessionNumber = 0;
-    beginEssayRound(chooseEssayPractice());
+    essayAnalyticsSessionId = analyticsUuid('essay-session');
+    beginEssayRound(chooseEssayPractice(), { source: 'adaptive' });
     if (!dom.essayPracticeDialog.open) dom.essayPracticeDialog.showModal();
   }
 
   function retryEssayPractice() {
     if (!essayRun) return;
-    beginEssayRound(essayRun.essay, { retry: true });
+    beginEssayRound(essayRun.essay, { retry: true, source: 'retry' });
   }
 
   function nextEssayPractice() {
-    beginEssayRound(chooseEssayPractice());
+    beginEssayRound(chooseEssayPractice(), { source: 'next' });
   }
 
   function getStudyEntry() {
@@ -2173,6 +2203,73 @@
     catch (_) { setTimeout(trigger, 900); }
   }
 
+  function pdfFilename(url) {
+    try { return decodeURIComponent(new URL(url, window.location.href).pathname.split('/').pop() || 'SCP-Study.pdf'); }
+    catch (_) { return 'SCP-Study.pdf'; }
+  }
+
+  async function fetchPdfFile(url) {
+    const response = await fetch(absoluteUrl(url), { cache: 'no-store' });
+    if (!response.ok) throw new Error(`Could not load PDF (${response.status})`);
+    return new File([await response.blob()], pdfFilename(url), { type: 'application/pdf' });
+  }
+
+  async function sharePdf(url, title = 'SCP Study PDF') {
+    try {
+      const file = await fetchPdfFile(url);
+      if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+        await navigator.share({ title, files: [file] });
+        return;
+      }
+      if (navigator.share) { await navigator.share({ title, url: absoluteUrl(url) }); return; }
+      if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(absoluteUrl(url)); alert('PDF link copied to the clipboard.'); return; }
+      window.open(absoluteUrl(url), '_blank', 'noopener');
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+      console.warn('Could not share PDF:', error);
+      alert('Could not share this PDF. Please try again.');
+    }
+  }
+
+  async function savePdf(url, title = 'SCP Study PDF') {
+    try {
+      // A PDF navigation inside an iOS standalone PWA has no useful browser
+      // chrome. Sharing the actual File opens the native sheet, including
+      // "Save to Files".
+      if (isIOSDevice() && navigator.share) {
+        const file = await fetchPdfFile(url);
+        if (!navigator.canShare || navigator.canShare({ files: [file] })) {
+          await navigator.share({ title, files: [file] });
+          return;
+        }
+      }
+      const response = await fetch(absoluteUrl(url), { cache: 'no-store' });
+      if (!response.ok) throw new Error(`Could not load PDF (${response.status})`);
+      const objectUrl = URL.createObjectURL(await response.blob());
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = pdfFilename(url);
+      link.rel = 'noopener';
+      document.body.append(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+      console.warn('Could not save PDF:', error);
+      alert('Could not save this PDF. Please try again.');
+    }
+  }
+
+  async function withResourceButtonBusy(button, work) {
+    if (!button || button.disabled) return;
+    const prior = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Preparing…';
+    try { await work(); }
+    finally { button.disabled = false; button.textContent = prior; }
+  }
+
   function isIOSDevice() {
     return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   }
@@ -2555,6 +2652,19 @@
     container.classList.remove('hidden');
   }
 
+  function renderEssayRelevantAudio(fact, container) {
+    if (!container) return;
+    const refs = ESSAY_AUDIO_MAP?.[String(fact?.id)] || [];
+    if (!refs.length) { container.innerHTML = ''; container.classList.add('hidden'); return; }
+    const rows = refs.map(ref => {
+      const track = AUDIO_REVIEW_DATA.find(t => Number(t.id) === Number(ref.review));
+      if (!track) return '';
+      return `<div class="question-audio-row"><button class="question-audio-play" type="button" data-related-review="${ref.review}" data-related-start="${ref.start}"><span class="question-audio-playicon" aria-hidden="true">▶</span><span class="question-audio-copy"><strong>${escapeHtml(track.title)}</strong><small>${escapeHtml(ref.label || 'Relevant section')}</small></span><span class="question-audio-time">${formatAudioTime(ref.start)}</span></button><button class="question-audio-transcript" type="button" data-related-transcript="${ref.review}" data-related-start="${ref.start}" aria-label="Open transcript at ${formatAudioTime(ref.start)}">Transcript</button></div>`;
+    }).join('');
+    container.innerHTML = `<div class="question-audio-label">Relevant audio</div>${rows}`;
+    container.classList.remove('hidden');
+  }
+
   function openMaterials(tab = null) {
     flushQuestionTime();
     if (isMobileAudioLayout()) setMobilePlaylistExpanded(false);
@@ -2816,6 +2926,7 @@
     lastFinishedTest = null;
     essayProgressState = defaultEssayProgress();
     essayRun = null;
+    essayAnalyticsSessionId = null;
     try { localStorage.removeItem(ESSAY_PRACTICE_KEY); } catch (_) {}
     saveState();
     updateEssayProgressUi();
@@ -2936,6 +3047,14 @@
         startSpecificEssay(practice.dataset.essayLibraryPractice);
         return;
       }
+      const audio = e.target.closest('[data-essay-audio-fact]');
+      if (audio) {
+        const essay = ESSAY_BANK.find(item => item.id === audio.dataset.essayAudioEssay);
+        const fact = essay?.facts.find(item => item.id === audio.dataset.essayAudioFact);
+        const ref = fact ? ESSAY_AUDIO_MAP?.[fact.id]?.[0] : null;
+        if (ref) void playAudioReference(Number(ref.review), Number(ref.start), { autoplay: false, openMaterials: true });
+        return;
+      }
       const promptReport = e.target.closest('[data-report-essay-prompt]');
       if (promptReport) {
         const essay = ESSAY_BANK.find(item => item.id === promptReport.dataset.reportEssayPrompt);
@@ -3043,7 +3162,11 @@
     });
     dom.materialsDialog.addEventListener('click', e => {
       const print = e.target.closest('[data-print-pdf]');
-      if (print) printPdf(print.dataset.printPdf);
+      if (print) { printPdf(print.dataset.printPdf); return; }
+      const save = e.target.closest('[data-save-pdf]');
+      if (save) { void withResourceButtonBusy(save, () => savePdf(save.dataset.savePdf, save.dataset.pdfTitle || 'SCP Study PDF')); return; }
+      const share = e.target.closest('[data-share-pdf]');
+      if (share) void withResourceButtonBusy(share, () => sharePdf(share.dataset.sharePdf, share.dataset.pdfTitle || 'SCP Study PDF'));
     });
     dom.audioPrevBtn.addEventListener('click', () => moveAudioTrack(-1, true));
     dom.audioBack10Btn?.addEventListener('click', () => seekAudioBy(-10));
@@ -3083,17 +3206,20 @@
       syncTranscriptToAudio(true);
       updateMiniAudio();
     });
-    [dom.questionAudio, dom.reviewAudio].forEach(container => container?.addEventListener('click', e => {
+    [dom.questionAudio, dom.reviewAudio, dom.essayPairingAudio].forEach(container => container?.addEventListener('click', e => {
       const isMainQuestionAudio = container === dom.questionAudio;
+      const isEssayAudio = container === dom.essayPairingAudio;
       const play = e.target.closest('[data-related-review]');
       if (play) {
         if (isMainQuestionAudio) markAnalyticsAssist('audio');
+        if (isEssayAudio && essayRun) essayRun.stepAudioUsed = true;
         void playAudioReference(Number(play.dataset.relatedReview), Number(play.dataset.relatedStart), { autoplay: true });
         return;
       }
       const transcript = e.target.closest('[data-related-transcript]');
       if (transcript) {
         if (isMainQuestionAudio) markAnalyticsAssist('audio');
+        if (isEssayAudio && essayRun) essayRun.stepAudioUsed = true;
         void playAudioReference(Number(transcript.dataset.relatedTranscript), Number(transcript.dataset.relatedStart), { autoplay: false, openMaterials: true });
       }
     }));
@@ -3194,7 +3320,7 @@
       if (!term) return;
       e.preventDefault();
       e.stopPropagation();
-      openGlossaryEntry(term.dataset.glossaryId, term.closest('#glossaryList') ? 'materials' : 'question');
+      openGlossaryEntry(term.dataset.glossaryId, term.closest('#glossaryList') ? 'materials' : (term.closest('#essayLibraryDialog, #essayPracticeDialog') ? 'other' : 'question'));
     }, true);
     document.addEventListener('keydown', e => {
       if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -3209,7 +3335,7 @@
       if (!term) return;
       e.preventDefault();
       e.stopPropagation();
-      openGlossaryEntry(term.dataset.glossaryId, term.closest('#glossaryList') ? 'materials' : 'question');
+      openGlossaryEntry(term.dataset.glossaryId, term.closest('#glossaryList') ? 'materials' : (term.closest('#essayLibraryDialog, #essayPracticeDialog') ? 'other' : 'question'));
     }, true);
     dom.closeGlossaryTerm?.addEventListener('click', () => { stopGlossaryPronunciation({ resumeCourseAudio: true }); dom.glossaryTermDialog.close(); });
     dom.glossarySpeakBtn?.addEventListener('click', playActiveGlossaryEntry);

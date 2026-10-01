@@ -128,3 +128,8 @@ The app still refers to review files at paths such as `/audio/nat-bar-nat-founda
 - Adds one-time chabura setup, saved locally and editable under Materials → Settings.
 - Anonymous analytics events now include the selected chabura when analytics are enabled.
 - On mobile, tapping the SCP Study logo or title opens the native share sheet when available.
+
+
+## Release 36
+
+- Reorders Essay Practice pairing content so relevant audio appears before the authority/name, followed by the position choices. This is especially intended to make the mobile flow read naturally as audio → name → pairing choices.

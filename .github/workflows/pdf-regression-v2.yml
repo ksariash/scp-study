@@ -3,14 +3,6 @@ name: PDF regression v2
 on:
   push:
     branches: [main]
-    paths:
-      - "public-src/questions.js"
-      - "public-src/essay-practice.js"
-      - "scripts/generate-pdfs.mjs"
-      - "scripts/pdf-regression.py"
-      - "build.mjs"
-      - "assets/static-binaries.tar.gz.b64.*.part"
-      - ".github/workflows/pdf-regression.yml"
   workflow_dispatch:
 
 jobs:

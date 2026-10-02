@@ -945,6 +945,33 @@
     void flushAnalyticsQueue();
   }
 
+  function queueResourceAnalytics({ resourceType, resourceId, resourceLabel, resourceVariant = null, page = null, source = 'other', contextKind = 'other', contextId = null, category = null } = {}) {
+    if (!analyticsEnabled() || !['audio','notes'].includes(resourceType) || !resourceId || !resourceLabel) return;
+    const event = {
+      kind:'resource',
+      eventId: analyticsUuid('resource'),
+      installationId: analyticsInstallationId(),
+      cohort: ANALYTICS_COHORT,
+      ...analyticsProfileFields(),
+      appVersion:String(APP_VERSION),
+      clientTs:new Date().toISOString(),
+      resourceType,
+      resourceId:String(resourceId),
+      resourceLabel:String(resourceLabel),
+      resourceVariant:resourceVariant ? String(resourceVariant) : null,
+      page:Number.isInteger(Number(page)) && Number(page) > 0 ? Number(page) : null,
+      source:String(source || 'other'),
+      contextKind:String(contextKind || 'other'),
+      contextId:contextId == null ? null : String(contextId),
+      category:category ? String(category) : null,
+      mode
+    };
+    const queue=analyticsQueue();
+    queue.push(event);
+    saveAnalyticsQueue(queue);
+    void flushAnalyticsQueue();
+  }
+
   function queueAnswerAnalytics({ q, selected, result, credit, elapsedMs, attemptNumber }) {
     if (!analyticsEnabled() || !q) return;
     syncAnalyticsAssist();
@@ -2075,6 +2102,7 @@
     syncAnalyticsAssist();
 
     const inEssayMode = essayModeActive && mode === 'study';
+    document.body.classList.toggle('essay-mode-active', inEssayMode);
     dom.modeLabel.textContent = mode === 'test' ? 'Practice test' : inEssayMode ? 'Essay mode' : 'Study mode';
     dom.timerLabel.textContent = mode === 'test' ? 'Time left' : 'Session';
     dom.timerCard.classList.toggle('is-clickable', mode === 'study' && !inEssayMode);
@@ -3207,6 +3235,18 @@
     const ref = courseNoteRef(kind, id);
     const page = courseNotePage(ref, docKey);
     if (!doc || !page) return;
+    const question = kind === 'question' ? questionById.get(Number(id)) : null;
+    queueResourceAnalytics({
+      resourceType:'notes',
+      resourceId:`${docKey}:p${page}`,
+      resourceLabel:`${doc.title} · p. ${page}`,
+      resourceVariant:docKey,
+      page,
+      source:kind,
+      contextKind:kind,
+      contextId:id,
+      category:question?.category || null
+    });
     openPdfViewer({
       url: doc.url,
       title: doc.title,
@@ -4471,7 +4511,24 @@
         updateMiniAudio();
       }
     });
-    dom.audioPlayer.addEventListener('play', () => { miniAudioStopped = false; setMediaPlaybackState('playing'); updateMediaPositionState(); renderAudioPlaylist(); updateMiniAudio(); });
+    dom.audioPlayer.addEventListener('play', () => {
+      miniAudioStopped = false;
+      const track = currentAudioTrack();
+      if (track) {
+        const question = !essayModeActive ? currentQuestion() : null;
+        queueResourceAnalytics({
+          resourceType:'audio',
+          resourceId:String(track.id ?? track.src ?? track.title ?? 'audio'),
+          resourceLabel:track.title || track.name || `Audio review ${audioTrackIndex + 1}`,
+          resourceVariant:track.src || null,
+          source:essayModeActive ? 'essay' : (dom.materialsDialog?.open && activeMaterialsTab === 'audio' ? 'materials' : 'player'),
+          contextKind:essayModeActive ? 'essay' : (question ? 'question' : 'other'),
+          contextId:essayModeActive ? essayRun?.essay?.id : question?.id,
+          category:question?.category || null
+        });
+      }
+      setMediaPlaybackState('playing'); updateMediaPositionState(); renderAudioPlaylist(); updateMiniAudio();
+    });
     dom.audioPlayer.addEventListener('pause', () => { if (!dom.audioPlayer.ended) setMediaPlaybackState('paused'); saveAudioPlaybackState(true); updateMediaPositionState(); renderAudioPlaylist(); updateMiniAudio(); });
     dom.audioPlayer.addEventListener('timeupdate', () => { saveAudioPlaybackState(false); syncTranscriptToAudio(false); updateMediaPositionState(); updateMiniAudio(); });
     dom.audioPlayer.addEventListener('durationchange', updateMediaPositionState);

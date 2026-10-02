@@ -52,7 +52,7 @@ R2 object:
 
 `audio/<zman-id>/<file>`
 
-Summer 2026 currently has a transitional fallback from `audio/2026-summer/<file>` to legacy `audio/<file>`. Keep it until the 16 files are copied and production range playback is verified.
+Summer 2026 is canonical at `audio/2026-summer/<file>`. Production playback failed after the migration was declared complete, so the Worker temporarily probes the canonical key, a literal-leading-slash variant, and the legacy flat `audio/<file>` key for reads. Keep the compatibility probes until a live HEAD and Range request confirms the canonical object key, MIME type, and byte-range response in production. The Worker derives media MIME from the filename rather than trusting copied R2 metadata.
 
 ## Documents
 

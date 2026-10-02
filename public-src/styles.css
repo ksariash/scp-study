@@ -3478,3 +3478,23 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
 .settings-feature-card,.cohort-setting,.chabura-setting{min-width:0}
 .cohort-setting-fields,.chabura-fields,.cohort-setting-fields>*,
 .chabura-fields>*{min-width:0;max-width:100%;box-sizing:border-box}
+
+/* v56: timer + notification cluster and rich inbox bodies */
+.timer-actions{
+  position:relative;z-index:1;display:flex;align-items:center;justify-content:flex-end;gap:7px;flex:0 0 auto;
+}
+.timer-actions .timer-card{margin:0}
+.notification-rich-body{font-size:.75rem;line-height:1.48;color:#3f4f66;overflow-wrap:anywhere}
+.notification-rich-body p{margin:0 0 .55em}
+.notification-rich-body p:last-child{margin-bottom:0}
+.notification-rich-body ul,.notification-rich-body ol{margin:.35em 0 .55em;padding-left:1.35em}
+.notification-rich-body a{color:#31569a;text-decoration:underline;font-weight:750}
+@media(max-width:780px){
+  .timer-actions{grid-column:2;grid-row:1;justify-self:end}
+  .timer-actions .timer-card{min-width:112px}
+}
+@media(max-width:390px){
+  .timer-actions{gap:5px}
+  .timer-actions .timer-card{min-width:105px}
+  .notification-icon-btn{width:34px;height:34px;flex-basis:34px}
+}

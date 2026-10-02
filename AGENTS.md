@@ -141,3 +141,10 @@ Use familiar icons instead of text for compact utility actions when the icon is 
 All dismissible dialogs should close when the user clicks the backdrop/outside the dialog box. Keep this behavior in the shared dialog lifecycle rather than implementing one-off backdrop handlers.
 
 Responsive form controls must not overflow their cards. Grid children and inputs/selects should use `min-width: 0`, `max-width: 100%`, and `box-sizing: border-box` where intrinsic mobile control sizing can otherwise escape the container.
+
+
+## Current R2 state
+
+The Summer 2026 audio migration is complete. Review audio is canonical only at `audio/2026-summer/<filename>`; do not reintroduce fallback reads from flat `audio/<filename>` objects.
+
+The topbar treats the session timer and notification bell as one visual cluster. On compact layouts the cluster occupies the top-right cell; never place the bell as an independent grid item that can wrap beneath the main navigation.

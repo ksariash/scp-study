@@ -41,16 +41,8 @@ function returnedRange(object) {
   return { start, end: start + length - 1, length, size };
 }
 
-const DEFAULT_COHORT_AUDIO_PREFIX = 'audio/2026-summer/';
-const LEGACY_AUDIO_PREFIX = 'audio/';
-
 function candidateAudioKeys(key) {
-  const keys = [key];
-  if (key.startsWith(DEFAULT_COHORT_AUDIO_PREFIX)) {
-    const filename = key.slice(DEFAULT_COHORT_AUDIO_PREFIX.length);
-    if (filename && !filename.includes('/')) keys.push(LEGACY_AUDIO_PREFIX + filename);
-  }
-  return [...new Set(keys)];
+  return [key];
 }
 
 async function serveAudio(request, env, key) {

@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 55;
+  const APP_VERSION = 56;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -4798,6 +4798,41 @@
     return '';
   }
 
+  function sanitizeNotificationHtml(value) {
+    if (!value) return '';
+    const template = document.createElement('template');
+    template.innerHTML = String(value);
+    const allowed = new Set(['P','BR','STRONG','B','EM','I','U','UL','OL','LI','A']);
+    const out = document.createElement('div');
+    const copy = (node, parent) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        parent.appendChild(document.createTextNode(node.textContent || ''));
+        return;
+      }
+      if (node.nodeType !== Node.ELEMENT_NODE) return;
+      const tag = node.tagName.toUpperCase();
+      if (!allowed.has(tag)) {
+        [...node.childNodes].forEach(child => copy(child, parent));
+        return;
+      }
+      const clean = document.createElement(tag.toLowerCase());
+      if (tag === 'A') {
+        const href = safeNotificationUrl(node.getAttribute('href') || '');
+        if (!href) {
+          [...node.childNodes].forEach(child => copy(child, parent));
+          return;
+        }
+        clean.href = href;
+        clean.target = '_blank';
+        clean.rel = 'noopener';
+      }
+      [...node.childNodes].forEach(child => copy(child, clean));
+      parent.appendChild(clean);
+    };
+    [...template.content.childNodes].forEach(node => copy(node, out));
+    return out.innerHTML;
+  }
+
   function renderNotificationInbox(payload = {}) {
     notificationInboxCache = Array.isArray(payload.notifications) ? payload.notifications : [];
     const unread = Number(payload.unread) || 0;
@@ -4824,7 +4859,7 @@
       const kind = String(item.kind || 'notification').replaceAll('_',' ');
       return `<article class="notification-item ${read ? '' : 'unread'} ${archived ? 'archived' : ''}">
         <div class="notification-item-head"><div><span class="notification-item-kind">${escapeHtml(kind)}</span><br><strong>${escapeHtml(item.title || 'SCP Study')}</strong></div><span class="notification-item-meta">${escapeHtml(new Date(item.createdAt).toLocaleString())}</span></div>
-        <p class="notification-item-body">${escapeHtml(item.body || '')}</p>
+        <div class="notification-item-body notification-rich-body">${item.bodyHtml ? sanitizeNotificationHtml(item.bodyHtml) : escapeHtml(item.body || '')}</div>
         <div class="notification-item-actions">
           ${action}
           <button class="secondary" type="button" data-notification-read="${escapeHtml(item.id)}" data-read-value="${read ? '0' : '1'}">${read ? 'Mark unread' : 'Mark read'}</button>

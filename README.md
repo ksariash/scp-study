@@ -259,3 +259,10 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - Makes the notification inbox participate in the shared click-outside dialog behavior.
 - Removes redundant Zman, chabura, and notification explanatory copy.
 - Fixes mobile reminder-time control overflow.
+
+
+## Release 56
+
+- Keeps the notification bell immediately to the right of the session timer on compact layouts.
+- Removes the legacy flat R2 audio fallback now that Summer 2026 audio is namespaced under `audio/2026-summer/`.
+- Renders server-sanitized rich notification bodies with an additional browser-side allowlist.

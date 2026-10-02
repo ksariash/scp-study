@@ -24,14 +24,16 @@
           <div class="subbrand" id="modeLabel">Study mode</div>
         </div>
       </div>
-      <div class="timer-card" id="timerCard" aria-live="polite" role="button" tabindex="0" title="Click to reset the study session timer">
-        <span class="timer-label" id="timerLabel">Session</span>
-        <strong id="mainTimer">00:00:00</strong>
+      <div class="timer-actions">
+        <div class="timer-card" id="timerCard" aria-live="polite" role="button" tabindex="0" title="Click to reset the study session timer">
+          <span class="timer-label" id="timerLabel">Session</span>
+          <strong id="mainTimer">00:00:00</strong>
+        </div>
+        <button class="notification-icon-btn" id="notificationsBtn" type="button" aria-label="Notifications" title="Notifications">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z"/><path d="M10 21h4"/></svg>
+          <span class="notification-alert hidden" id="notificationBadge" aria-hidden="true">!</span>
+        </button>
       </div>
-      <button class="notification-icon-btn" id="notificationsBtn" type="button" aria-label="Notifications" title="Notifications">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z"/><path d="M10 21h4"/></svg>
-        <span class="notification-alert hidden" id="notificationBadge" aria-hidden="true">!</span>
-      </button>
       <div class="topbar-right">
         <button class="icon-btn" id="categoriesBtn" type="button" aria-label="Filter categories">Categories</button>
         <button class="icon-btn" id="materialsBtn" type="button">Materials</button>
@@ -906,7 +908,7 @@
           <span class="eyebrow">About</span>
           <div class="app-info-title-row">
             <h2 id="appInfoTitle">SCP Study</h2>
-            <span class="app-info-version" id="appInfoVersion">v55</span>
+            <span class="app-info-version" id="appInfoVersion">v56</span>
           </div>
           <p>A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.</p>
         </div>

@@ -3846,7 +3846,7 @@ body.essay-mode-active.mini-audio-visible .question-search-fab{
   .course-note-link.study-resource-chip{min-height:36px;padding:5px 9px 5px 7px}
   .question-audio-play.study-resource-audio-main{min-height:40px}
 }
-@media(max-width:560px){
+@media(max-width:700px){
   .essay-library-point-actions{
     flex-direction:column;
     align-items:center;

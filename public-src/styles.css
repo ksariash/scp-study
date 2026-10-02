@@ -3523,3 +3523,49 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
   #studyReminderTime,#reminderCalendarMode{font-size:16px!important}
   #studyReminderTime::-webkit-date-and-time-value{min-width:0;width:100%;text-align:center}
 }
+
+/* v58: compact reminder controls and stable Essay search FAB */
+.reminder-field #studyReminderTime,
+.reminder-field #reminderCalendarMode{
+  height:38px!important;
+  min-height:38px!important;
+  max-height:38px!important;
+  padding:6px 9px!important;
+  border-radius:10px!important;
+  font-size:.76rem!important;
+  line-height:1.2!important;
+}
+.reminder-field #studyReminderTime{
+  appearance:none;
+  -webkit-appearance:none;
+  text-align:center;
+}
+.reminder-field #studyReminderTime::-webkit-date-and-time-value{
+  min-height:0!important;
+  padding:0!important;
+  line-height:24px!important;
+  text-align:center;
+}
+body.essay-mode-active .question-search-fab,
+body.essay-mode-active.mini-audio-visible .question-search-fab{
+  position:fixed!important;
+  left:max(12px,env(safe-area-inset-left))!important;
+  bottom:max(12px,env(safe-area-inset-bottom))!important;
+  right:auto!important;
+  top:auto!important;
+  transform:none!important;
+}
+@media(max-width:520px){
+  .reminder-field #studyReminderTime,
+  .reminder-field #reminderCalendarMode{
+    height:38px!important;
+    min-height:38px!important;
+    max-height:38px!important;
+    font-size:.76rem!important;
+  }
+  body.essay-mode-active .question-search-fab,
+  body.essay-mode-active.mini-audio-visible .question-search-fab{
+    bottom:max(10px,env(safe-area-inset-bottom))!important;
+    left:max(10px,env(safe-area-inset-left))!important;
+  }
+}

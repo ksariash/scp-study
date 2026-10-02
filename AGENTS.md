@@ -145,7 +145,7 @@ Responsive form controls must not overflow their cards. Grid children and inputs
 
 ## Current R2 state
 
-The Summer 2026 audio migration is complete. Review audio is canonical only at `audio/2026-summer/<filename>`; do not reintroduce fallback reads from flat `audio/<filename>` objects.
+Summer 2026 review audio is canonical at `audio/2026-summer/<filename>`. Because production playback failed after the migration, the Worker temporarily keeps read-only compatibility probes for a literal-leading-slash key and the legacy flat `audio/<filename>` key. Remove those probes only after a live production HEAD/Range playback check confirms the canonical objects and metadata.
 
 The topbar treats the session timer and notification bell as one visual cluster. On compact layouts the cluster occupies the top-right cell; never place the bell as an independent grid item that can wrap beneath the main navigation.
 
@@ -221,3 +221,22 @@ Settings export creates a real JSON `File`. When the Web Share API can share fil
 ## Cross-app navigation
 
 Study settings should include a direct production link to SCP Announcements. Keep cross-app links explicit and easy to update when deployment domains change.
+
+
+## v60 audio delivery diagnostics
+
+For review media, do not trust copied R2 HTTP metadata for the response MIME type. Derive the audio MIME from the requested object filename and override generic metadata before returning the response. For Range requests, resolve object size first, parse one byte range explicitly, then use an R2 numeric offset/length read and return a deterministic 206 with Content-Range.
+
+When audio delivery semantics change, bump both the app and service-worker audio cache names together so stale cached media responses cannot mask the repair.
+
+## Backup import persistence
+
+The main multiple-choice/test state lives inside the Zman envelope stored at `courseReviewSpacedRepetition.v1`. During an import-triggered reload, suppress normal visibility/pagehide persistence before writing imported values. Otherwise the old in-memory state can overwrite the freshly imported envelope while essay-scoped keys survive, producing a partial restore.
+
+Import/export status belongs inside the transfer settings card, not as a detached message at the bottom of the Settings panel.
+
+## Contextual study resources
+
+Question, Question Explorer, Essay prompt, and Essay Explorer prompt resources use the same compact visual language: note chips first, then relevant audio. Essay prompt audio is derived from the essay fact audio map and grouped by review so the prompt does not repeat the same review for every pairing. Pairing-level utility icons remain compact.
+
+On narrow Essay Explorer layouts, required-point resource/report controls are vertical.

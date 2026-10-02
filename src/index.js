@@ -1,4 +1,6 @@
 const AUDIO_PREFIX = '/audio/';
+const CURRENT_AUDIO_PREFIX = 'audio/2026-summer/';
+const LEGACY_AUDIO_PREFIX = 'audio/';
 
 function audioObjectKey(pathname) {
   if (!pathname.startsWith(AUDIO_PREFIX)) return null;
@@ -10,39 +12,74 @@ function audioObjectKey(pathname) {
   return key;
 }
 
-function baseAudioHeaders(object) {
+function audioContentType(key) {
+  const lower = String(key || '').toLowerCase();
+  if (lower.endsWith('.m4a') || lower.endsWith('.mp4')) return 'audio/mp4';
+  if (lower.endsWith('.mp3')) return 'audio/mpeg';
+  if (lower.endsWith('.aac')) return 'audio/aac';
+  if (lower.endsWith('.wav')) return 'audio/wav';
+  if (lower.endsWith('.ogg')) return 'audio/ogg';
+  return 'application/octet-stream';
+}
+
+function baseAudioHeaders(object, key) {
   const headers = new Headers();
   object.writeHttpMetadata(headers);
+  // The copied R2 objects may retain generic application/octet-stream
+  // metadata. Browsers, especially Safari/iOS, need a real media MIME type.
+  headers.set('Content-Type', audioContentType(key));
+  headers.set('Content-Disposition', 'inline');
   headers.set('ETag', object.httpEtag);
   headers.set('Accept-Ranges', 'bytes');
+  headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+  headers.set('X-SCP-Audio-Route', 'r2');
+  headers.set('X-SCP-Audio-Key', key);
   if (object.uploaded) headers.set('Last-Modified', object.uploaded.toUTCString());
-  if (!headers.has('Content-Type')) headers.set('Content-Type', 'audio/mp4');
-  if (!headers.has('Cache-Control')) headers.set('Cache-Control', 'public, max-age=31536000, immutable');
   return headers;
 }
 
-function returnedRange(object) {
-  if (!object.range) return null;
-  const size = Number(object.size) || 0;
-  let start = 0;
-  let length = 0;
+function candidateAudioKeys(key) {
+  const keys = [key];
 
-  if (Number.isFinite(object.range.offset)) {
-    start = Number(object.range.offset);
-    length = Number.isFinite(object.range.length) ? Number(object.range.length) : Math.max(0, size - start);
-  } else if (Number.isFinite(object.range.suffix)) {
-    length = Math.min(size, Number(object.range.suffix));
-    start = Math.max(0, size - length);
-  } else if (Number.isFinite(object.range.length)) {
-    length = Math.min(size, Number(object.range.length));
+  // Be tolerant of an R2 object that was created with a literal leading slash.
+  keys.push('/' + key);
+
+  // Keep the pre-Zman flat key as a temporary compatibility read. It is never
+  // used for writes and can be removed after production audio is verified.
+  if (key.startsWith(CURRENT_AUDIO_PREFIX)) {
+    const filename = key.slice(CURRENT_AUDIO_PREFIX.length);
+    if (filename && !filename.includes('/')) {
+      keys.push(LEGACY_AUDIO_PREFIX + filename, '/' + LEGACY_AUDIO_PREFIX + filename);
+    }
   }
-
-  if (!length) return null;
-  return { start, end: start + length - 1, length, size };
+  return [...new Set(keys)];
 }
 
-function candidateAudioKeys(key) {
-  return [key];
+function parseByteRange(value, size) {
+  const raw = String(value || '').trim();
+  if (!raw || !Number.isFinite(size) || size <= 0) return null;
+  if (raw.includes(',')) return { invalid: true };
+  const match = /^bytes=(\d*)-(\d*)$/i.exec(raw);
+  if (!match || (!match[1] && !match[2])) return { invalid: true };
+
+  let start;
+  let end;
+  if (!match[1]) {
+    const suffix = Number(match[2]);
+    if (!Number.isInteger(suffix) || suffix <= 0) return { invalid: true };
+    const length = Math.min(size, suffix);
+    start = size - length;
+    end = size - 1;
+  } else {
+    start = Number(match[1]);
+    end = match[2] ? Number(match[2]) : size - 1;
+    if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || start >= size || end < start) {
+      return { invalid: true };
+    }
+    end = Math.min(end, size - 1);
+  }
+
+  return { start, end, length: end - start + 1 };
 }
 
 async function serveAudio(request, env, key) {
@@ -52,48 +89,57 @@ async function serveAudio(request, env, key) {
     for (const candidate of candidates) {
       const object = await env.AUDIO.head(candidate);
       if (!object) continue;
-      const headers = baseAudioHeaders(object);
+      const headers = baseAudioHeaders(object, candidate);
       headers.set('Content-Length', String(object.size));
       return new Response(null, { status: 200, headers });
     }
-    return new Response('Not found', { status: 404 });
+    return new Response('Not found', { status: 404, headers: { 'X-SCP-Audio-Requested-Key': key } });
   }
 
   if (request.method !== 'GET') {
     return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET, HEAD' } });
   }
 
-  const hasRange = request.headers.has('Range');
-  let rangeError = false;
-  for (const candidate of candidates) {
-    let object;
-    try {
-      object = await env.AUDIO.get(candidate, hasRange ? { range: request.headers } : undefined);
-    } catch (_) {
-      rangeError = true;
-      continue;
-    }
-    if (!object) continue;
+  const rangeHeader = request.headers.get('Range');
+  if (rangeHeader) {
+    for (const candidate of candidates) {
+      const metadata = await env.AUDIO.head(candidate);
+      if (!metadata) continue;
 
-    const headers = baseAudioHeaders(object);
-    const range = returnedRange(object);
-    if (hasRange && range) {
-      headers.set('Content-Range', `bytes ${range.start}-${range.end}/${range.size}`);
+      const range = parseByteRange(rangeHeader, Number(metadata.size));
+      if (!range || range.invalid) {
+        return new Response('Requested range not satisfiable', {
+          status: 416,
+          headers: {
+            'Accept-Ranges': 'bytes',
+            'Content-Range': `bytes */${metadata.size}`,
+            'X-SCP-Audio-Key': candidate
+          }
+        });
+      }
+
+      const object = await env.AUDIO.get(candidate, {
+        range: { offset: range.start, length: range.length }
+      });
+      if (!object || !('body' in object)) continue;
+
+      const headers = baseAudioHeaders(object, candidate);
+      headers.set('Content-Range', `bytes ${range.start}-${range.end}/${metadata.size}`);
       headers.set('Content-Length', String(range.length));
       return new Response(object.body, { status: 206, headers });
     }
+    return new Response('Not found', { status: 404, headers: { 'X-SCP-Audio-Requested-Key': key } });
+  }
 
+  for (const candidate of candidates) {
+    const object = await env.AUDIO.get(candidate);
+    if (!object || !('body' in object)) continue;
+    const headers = baseAudioHeaders(object, candidate);
     headers.set('Content-Length', String(object.size));
     return new Response(object.body, { status: 200, headers });
   }
 
-  if (rangeError) {
-    return new Response('Requested range not satisfiable', {
-      status: 416,
-      headers: { 'Accept-Ranges': 'bytes' }
-    });
-  }
-  return new Response('Not found', { status: 404 });
+  return new Response('Not found', { status: 404, headers: { 'X-SCP-Audio-Requested-Key': key } });
 }
 
 export default {

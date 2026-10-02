@@ -294,3 +294,16 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - Question resources are consistently ordered as prompt → notes → relevant audio in Study and Question Explorer.
 - Essay pairings use compact audio and concise/full note icons with page-number badges.
 - Adds a direct Announcements link in Study settings.
+
+
+## Release 60
+
+- Hardens R2 review-audio delivery: media MIME is derived from the filename, byte ranges are parsed explicitly and served with numeric R2 ranges, and temporary compatibility reads cover legacy/leading-slash object-key variants while production playback is re-verified.
+- Resets the offline audio cache again so a stale bad response cannot survive the audio repair.
+- Fixes backup import so pagehide/visibility persistence cannot overwrite restored multiple-choice and test statistics during reload.
+- Moves backup import/export status into its own settings card.
+- Notification time/calendar changes now save automatically; the redundant Save button is removed.
+- Removes the instructor-only Announcements link from student Study settings.
+- Unifies notes/audio presentation across Study, Question Explorer, Essay mode, and Essay Explorer, including essay-prompt audio.
+- Stacks required-point utility icons vertically on mobile in Essay Explorer.
+- Fixes generated-PDF mixed Hebrew/Latin tokens by switching fonts within a token instead of sending Latin punctuation, letters, or numbers through the Hebrew-only font subset.

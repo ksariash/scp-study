@@ -60,10 +60,42 @@ function setFont(doc, text, options = {}) {
   doc.font(fontFor(text, options)).fontSize(options.size || 10);
 }
 
+function splitPdfFontRuns(value) {
+  const safe = pdfSafeText(value);
+  if (!safe) return [];
+  const runs = [];
+  let current = '';
+  let hebrew = null;
+  for (const ch of safe) {
+    const nextHebrew = HEBREW_RE.test(ch);
+    if (current && nextHebrew !== hebrew) {
+      runs.push({ text: current, hebrew });
+      current = '';
+    }
+    current += ch;
+    hebrew = nextHebrew;
+  }
+  if (current) runs.push({ text: current, hebrew });
+  return runs;
+}
+
 function wordWidth(doc, word, options = {}) {
-  const safe = pdfSafeText(word);
-  setFont(doc, safe, options);
-  return doc.widthOfString(safe, pdfTextOptions(safe));
+  let width = 0;
+  for (const run of splitPdfFontRuns(word)) {
+    setFont(doc, run.text, options);
+    width += doc.widthOfString(run.text, pdfTextOptions(run.text));
+  }
+  return width;
+}
+
+function drawPdfToken(doc, token, x, y, options = {}, color = '#000000') {
+  let cursor = x;
+  for (const run of splitPdfFontRuns(token)) {
+    setFont(doc, run.text, options);
+    doc.fillColor(color).text(run.text, cursor, y, pdfTextOptions(run.text, { lineBreak:false }));
+    cursor += doc.widthOfString(run.text, pdfTextOptions(run.text));
+  }
+  return cursor;
 }
 
 function wrapMixed(doc, text, { width, size = 10, bold = false, family = 'noto' } = {}) {
@@ -94,10 +126,7 @@ function drawMixedLine(doc, words, x, y, { size = 10, bold = false, family = 'no
   const space = wordWidth(doc, ' ', { size, bold, family });
   for (const word of words) {
     const tokenSize = HEBREW_RE.test(word) && family === 'noto' ? size + 1 : size;
-    setFont(doc, word, { size: tokenSize, bold, family });
-    const safeWord = pdfSafeText(word);
-    doc.fillColor(color).text(safeWord, cursor, y, pdfTextOptions(safeWord, { lineBreak: false }));
-    cursor += doc.widthOfString(safeWord, pdfTextOptions(safeWord)) + space;
+    cursor = drawPdfToken(doc, word, cursor, y, { size: tokenSize, bold, family }, color) + space;
   }
   return cursor;
 }
@@ -121,10 +150,7 @@ function drawRunsLine(doc, runs, x, y, size = 10, color = '#000000') {
         continue;
       }
       const tokenSize = HEBREW_RE.test(word) && family === 'noto' ? size + 1 : size;
-      setFont(doc, word, { size: tokenSize, bold, family });
-      const safeWord = pdfSafeText(word);
-      doc.fillColor(color).text(safeWord, cursor, y, pdfTextOptions(safeWord, { lineBreak: false }));
-      cursor += doc.widthOfString(safeWord, pdfTextOptions(safeWord));
+      cursor = drawPdfToken(doc, word, cursor, y, { size: tokenSize, bold, family }, color);
     }
   }
   return cursor;
@@ -452,10 +478,7 @@ function drawEssayLine(doc,words,x,y,size,bold,color){
   for(const word of words){
     const family=HEBREW_RE.test(word)?'noto':'dejavu';
     const tokenSize=HEBREW_RE.test(word)?size+.15:size;
-    setFont(doc,word,{family,bold,size:tokenSize});
-    const safeWord=pdfSafeText(word);
-    doc.fillColor(color).text(safeWord,cursor,y,pdfTextOptions(safeWord,{lineBreak:false}));
-    cursor+=doc.widthOfString(safeWord,pdfTextOptions(safeWord))+space;
+    cursor=drawPdfToken(doc,word,cursor,y,{family,bold,size:tokenSize},color)+space;
   }
 }
 function drawEssayParagraph(doc,text,x,y,width,size,bold,color,leading){

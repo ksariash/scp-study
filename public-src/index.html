@@ -67,8 +67,10 @@
         <h1 id="questionPrompt">Loading…</h1>
         <p class="multi-note hidden" id="multiNote">Select all that apply.</p>
 
-        <div class="course-note-links" id="questionNoteLinks" aria-label="Course note references"></div>
-        <section class="question-audio hidden" id="questionAudio" aria-label="Relevant audio review"></section>
+        <div class="study-resource-cluster" aria-label="Question study resources">
+          <div class="course-note-links" id="questionNoteLinks" aria-label="Course note references"></div>
+          <section class="question-audio hidden" id="questionAudio" aria-label="Relevant audio review"></section>
+        </div>
 
         <form id="answerForm" class="choices" autocomplete="off"></form>
 
@@ -107,7 +109,10 @@
           <button class="content-report-btn" id="essayPromptReportBtn" type="button" aria-label="Report an issue with this essay question" title="Report an issue">⚑</button>
         </div>
         <p id="essayPracticePrompt"></p>
-        <div class="course-note-links" id="essayNoteLinks" aria-label="Course note references"></div>
+        <div class="study-resource-cluster essay-question-resources" aria-label="Essay study resources">
+          <div class="course-note-links" id="essayNoteLinks" aria-label="Course note references"></div>
+          <section class="question-audio hidden essay-question-audio" id="essayQuestionAudio" aria-label="Relevant audio review"></section>
+        </div>
       </section>
 
       <section class="essay-builder-section" aria-labelledby="essayBuilderHeading">
@@ -486,7 +491,6 @@
                   <option value="israel">Israel</option>
                 </select>
               </label>
-              <button class="secondary settings-action-btn" type="button" id="saveReminderSettingsBtn">Save reminder settings</button>
             </div>
             <span class="analytics-status reminder-summary" id="studyReminderStatus" aria-live="polite"></span>
           </section>
@@ -528,14 +532,7 @@
                 <button class="secondary settings-action-btn" type="button" id="importDataBtn">Import</button>
                 <input id="importDataFile" type="file" accept="application/json,.json" hidden />
               </div>
-            </div>
-
-            <div class="settings-action-card">
-              <div>
-                <strong>Announcements</strong>
-                <p>Open the instructor announcements, polls, and feedback app.</p>
-              </div>
-              <a class="secondary settings-action-btn settings-link-btn" href="https://scp-study-announcements.ksariash.workers.dev/" target="_blank" rel="noopener">Open announcements</a>
+              <span class="settings-status settings-card-status" id="settingsTransferStatus" aria-live="polite"></span>
             </div>
 
             <div class="settings-action-card danger-card">
@@ -736,8 +733,10 @@
 
         <section class="review-question">
           <h3 id="reviewPrompt"></h3>
-          <div class="course-note-links" id="reviewNoteLinks" aria-label="Course note references"></div>
-          <section class="question-audio hidden review-audio" id="reviewAudio" aria-label="Relevant audio review"></section>
+          <div class="study-resource-cluster review-resource-cluster" aria-label="Question study resources">
+            <div class="course-note-links" id="reviewNoteLinks" aria-label="Course note references"></div>
+            <section class="question-audio hidden review-audio" id="reviewAudio" aria-label="Relevant audio review"></section>
+          </div>
           <div id="reviewChoices" class="review-choices"></div>
         </section>
 
@@ -912,7 +911,7 @@
           <span class="eyebrow">About</span>
           <div class="app-info-title-row">
             <h2 id="appInfoTitle">SCP Study</h2>
-            <span class="app-info-version" id="appInfoVersion">v59</span>
+            <span class="app-info-version" id="appInfoVersion">v60</span>
           </div>
           <p>A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.</p>
         </div>

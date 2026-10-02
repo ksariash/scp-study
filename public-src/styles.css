@@ -3569,3 +3569,89 @@ body.essay-mode-active.mini-audio-visible .question-search-fab{
     left:max(10px,env(safe-area-inset-left))!important;
   }
 }
+
+
+/* v59: compact pairing resources and cross-app link */
+.pairing-resource-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+  margin:6px 0 10px;
+}
+.pairing-resource-actions.hidden{display:none}
+.pairing-resource-btn{
+  position:relative;
+  width:32px;
+  height:32px;
+  min-width:32px;
+  min-height:32px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  border:1px solid #d5deeb;
+  border-radius:10px;
+  background:#f8faff;
+  color:#536b8d;
+  cursor:pointer;
+}
+.pairing-resource-btn:hover{background:#eef4ff;border-color:#bfcde1}
+.pairing-play-glyph{font-size:14px;line-height:1;transform:translateX(1px)}
+.pairing-book-glyph{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.pairing-book-glyph svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pairing-notes-compact .pairing-book-glyph svg{width:16px;height:16px;stroke-width:1.7}
+.pairing-notes-full .pairing-book-glyph svg{width:19px;height:19px;stroke-width:2}
+.pairing-page-badge{
+  position:absolute;
+  top:-7px;
+  right:-9px;
+  min-width:15px;
+  height:15px;
+  padding:0 3px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid #d2dbe9;
+  border-radius:999px;
+  background:#fff;
+  color:#385987;
+  font-size:8px;
+  line-height:1;
+  font-weight:800;
+  box-shadow:0 1px 2px rgba(23,37,84,.08);
+}
+.essay-library-point-actions{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  flex-wrap:nowrap;
+}
+.essay-library-point-actions .pairing-resource-btn{
+  width:30px;
+  height:30px;
+  min-width:30px;
+  min-height:30px;
+  border-radius:9px;
+}
+.essay-library-point-actions .content-report-btn{
+  width:30px;
+  height:30px;
+  min-width:30px;
+  min-height:30px;
+}
+.settings-link-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  box-sizing:border-box;
+}
+.question-card > .course-note-links + .question-audio,
+#reviewNoteLinks + .review-audio{
+  margin-top:8px;
+}
+@media(max-width:560px){
+  .pairing-resource-btn{width:30px;height:30px;min-width:30px;min-height:30px}
+  .essay-library-point-actions{gap:4px}
+}

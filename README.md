@@ -169,7 +169,7 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 
 ## Release 41
 
-- Renames the analytics cohort to `Nat Bar Nat & Stam Ye'enam - Summer 26`.
+- Renames the analytics Zman to `Nat Bar Nat & Stam Ye'enam - Summer 26`.
 
 
 ## Release 42
@@ -230,16 +230,24 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 
 ## Release 50
 
-- Begins the multi-cohort migration without changing the current Summer 26 course experience.
-- Adds a cohort registry and loader. The current Nat Bar Nat & Stam Ye'enam - Summer 26 questions, essays, glossary, audio metadata/mappings, chabura roster, and note references now have a cohort-scoped package under `public-src/cohorts/nat-bar-nat-stam-yeinam-summer-26/`.
-- Adds a cohort selector under Materials → Settings. With one configured cohort it shows the current course; future registry entries will appear automatically and switching reloads the selected package.
-- Keeps `courseReviewSpacedRepetition.v1` as the main progress key while migrating its internal shape to cohort-scoped progress. Essay progress, essay category filters, audio playback position, and chabura settings are also scoped by cohort.
-- Generated question/test/essay PDFs now read the default cohort package as their canonical question and essay source.
-- Feedback deduplication includes the cohort ID so identical content IDs in future cohorts will not collide on the device.
+- Begins the multi-Zman migration without changing the current Summer 26 course experience.
+- Adds a Zman registry and loader. The current Nat Bar Nat & Stam Ye'enam - Summer 26 questions, essays, glossary, audio metadata/mappings, chabura roster, and note references now have a Zman-scoped package under `public-src/cohorts/nat-bar-nat-stam-yeinam-summer-26/`.
+- Adds a Zman selector under Materials → Settings. With one configured Zman it shows the current course; future registry entries will appear automatically and switching reloads the selected package.
+- Keeps `courseReviewSpacedRepetition.v1` as the main progress key while migrating its internal shape to Zman-scoped progress. Essay progress, essay category filters, audio playback position, and chabura settings are also scoped by Zman.
+- Generated question/test/essay PDFs now read the default Zman package as their canonical question and essay source.
+- Feedback deduplication includes the Zman ID so identical content IDs in future Zmanim will not collide on the device.
 
 
 ## Release 51
 
-- Strengthens the multi-cohort package contract with build-time validation for cohort identity, question/essay IDs and counts, note coverage, audio references, glossary IDs, and cohort-scoped audio URL prefixes.
+- Strengthens the multi-Zman package contract with build-time validation for Zman identity, question/essay IDs and counts, note coverage, audio references, glossary IDs, and Zman-scoped audio URL prefixes.
 - Namespaces Summer 26 review-audio URLs under `/audio/nat-bar-nat-stam-yeinam-summer-26/`. The Worker transparently falls back to the current legacy flat R2 objects, so the live bucket does not have to be moved before this release.
-- Adds repository-level LLM maintenance and new-cohort creation guides. These documents are part of the architecture and must be updated whenever the architecture changes.
+- Adds repository-level LLM maintenance and new-Zman creation guides. These documents are part of the architecture and must be updated whenever the architecture changes.
+
+
+## Release 54
+
+- Finalizes the Study UI terminology as Zman/Zmanim while preserving legacy internal compatibility names.
+- Makes the Progress & Stats reset action ask whether to reset the current Zman or all Zmanim.
+- Fixes push-notification feature detection in browsers without the Notifications API.
+- Rewrites the LLM operating guide and multi-Zman architecture documentation around the deployed design.

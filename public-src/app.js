@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 53;
+  const APP_VERSION = 54;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -4044,6 +4044,7 @@
     essayRun = null;
     essayAnalyticsSessionId = null;
     removeScopedValue(ESSAY_PRACTICE_KEY);
+    removeScopedValue(ESSAY_CATEGORY_FILTER_KEY);
     saveState();
     updateEssayProgressUi();
     if (closeStats && dom.statsDialog.open) dom.statsDialog.close();
@@ -4480,7 +4481,7 @@
 
     dom.closeStats.addEventListener('click', () => dom.statsDialog.close());
     dom.doneStatsBtn.addEventListener('click', () => dom.statsDialog.close());
-    dom.resetStatsBtn.addEventListener('click', resetAllProgress);
+    dom.resetStatsBtn.addEventListener('click', promptResetStatisticsScope);
 
     dom.closeQuestionReview.addEventListener('click', () => dom.questionReviewDialog.close());
     dom.reviewPrevBtn.addEventListener('click', () => moveQuestionReview(-1));
@@ -4943,13 +4944,17 @@
     keys.forEach(key => localStorage.removeItem(key));
   }
 
-  function resetStatisticsFromSettings() {
-    const scope = el('resetStatsScope')?.value || 'current';
-    const label = scope === 'all' ? 'all Zmanim' : COHORT_NAME;
-    if (!confirm(`Reset study statistics for ${label}? This cannot be undone.`)) return;
-    if (scope === 'current') {
-      if (resetAllProgress({ closeStats:false, confirm:false })) setSettingsStatus('Statistics reset for this Zman.');
-      return;
+  function resetStatisticsForScope(scope = 'current', { closeStats = false } = {}) {
+    const normalized = scope === 'all' ? 'all' : 'current';
+    const label = normalized === 'all' ? 'all Zmanim' : COHORT_NAME;
+    if (!confirm(`Reset study statistics for ${label}? This cannot be undone.`)) return false;
+    if (normalized === 'current') {
+      const reset = resetAllProgress({ closeStats, confirm:false });
+      if (reset) {
+        if (!closeStats && dom.statsDialog?.open) renderStats();
+        setSettingsStatus('Statistics reset for this Zman.');
+      }
+      return reset;
     }
     flushQuestionTime();
     flushStudyTime();
@@ -4958,6 +4963,26 @@
     removeLocalKeysByPrefix(ESSAY_CATEGORY_FILTER_KEY);
     setSettingsStatus('Statistics reset for all Zmanim. Reloading…');
     window.setTimeout(() => window.location.reload(), 350);
+    return true;
+  }
+
+  function resetStatisticsFromSettings() {
+    return resetStatisticsForScope(el('resetStatsScope')?.value || 'current', { closeStats:false });
+  }
+
+  function promptResetStatisticsScope() {
+    const choice = prompt(`Reset statistics for this Zman or all Zmanim?\nType "this" or "all".`, 'this');
+    if (choice == null) return;
+    const normalized = String(choice).trim().toLowerCase();
+    if (['this','current','zman'].includes(normalized)) {
+      resetStatisticsForScope('current', { closeStats:true });
+      return;
+    }
+    if (['all','all zmanim','zmanim'].includes(normalized)) {
+      resetStatisticsForScope('all', { closeStats:true });
+      return;
+    }
+    alert('Enter "this" for the current Zman or "all" for all Zmanim.');
   }
 
   async function deleteLocalAppData() {
@@ -5041,7 +5066,7 @@
     });
     window.addEventListener('online', () => {
       void loadNotificationInbox();
-      if (reminderSettings().pushEnabled && Notification?.permission === 'granted') void syncPushSubscription();
+      if (reminderSettings().pushEnabled && typeof Notification !== 'undefined' && Notification.permission === 'granted') void syncPushSubscription();
     });
 
     if (reminderSettings().pushEnabled && typeof Notification !== 'undefined' && Notification.permission === 'granted') {

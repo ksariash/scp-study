@@ -1,26 +1,18 @@
 # SCP Study — LLM operating guide
 
-This file is the first file an LLM should read before modifying this repository. Treat it as part of the application architecture, not optional documentation. If a code change makes any statement here inaccurate, update this file in the same commit.
+Read this file before changing the repository. It is architecture documentation and must change in the same commit when the architecture changes.
 
-## What this repository is
+## Operating authority
 
-SCP Study is a reusable PWA shell plus Zman-specific study content. The shell lives in `public-src/`; Zman content lives under `public-src/Zmans/<Zman-id>/`. The deployed Worker serves static assets and streams Short & Sweet review audio from the private R2 bucket through same-origin `/audio/*` URLs.
+A request to implement a change normally means: inspect current `main` → implement in canonical source → validate → commit to `main` → let Cloudflare Workers Builds deploy → inspect the resulting Cloudflare check. Do not stop at a branch or PR unless the user explicitly asks.
 
-The current Zman is `2026-summer`. Do not hard-code its question count, essay count, categories, names, notes, or audio into reusable app logic.
+Never claim production success from a Git commit alone. A completed successful Cloudflare Workers Builds check is the minimum deployment verification. When direct production HTTP access is available, also smoke-test the affected live path.
 
-## Read before editing
+## Canonical source
 
-1. Fetch current `main`. Never assume a prior commit or generated `public/` tree is current.
-2. Read `docs/ARCHITECTURE.md` for boundaries and invariants.
-3. For course-content work, read `docs/NEW-ZMAN-PIPELINE.md` and the active Zman package.
-4. The class source files supplied by the course owner are authoritative. Preserve their terminology and framing. Do not silently replace a course statement with outside halachic knowledge.
-5. Run `npm run build` before committing. The build validates every registered Zman.
+Never edit generated `public/` as source.
 
-## Canonical sources
-
-Never hand-edit generated `public/`.
-
-Reusable shell:
+Reusable app shell:
 - `public-src/index.html`
 - `public-src/styles.css`
 - `public-src/app.js`
@@ -29,10 +21,12 @@ Reusable shell:
 - `build.mjs`
 
 Zman registry:
-- `public-src/Zmans/index.js`
+- `public-src/cohorts/index.js`
 
-Per-Zman source:
-- `public-src/Zmans/<id>/Zman.js`
+The directory name `cohorts/` is a legacy filesystem name. Product language, documentation, new APIs, and new code concepts should say **Zman / Zmanim**.
+
+Each Zman package lives at `public-src/cohorts/<zman-id>/` and contains:
+- `cohort.js` (legacy filename; exports `SCP_ZMAN_CONFIG` and compatibility alias)
 - `questions.js`
 - `essay-practice.js`
 - `audio-reviews.js`
@@ -40,46 +34,97 @@ Per-Zman source:
 - `chaburos.js`
 - `course-notes.js`
 
-Generated PDFs are built from the default Zman's question/essay sources. Supplied compact/full notes are static source assets; do not regenerate or paraphrase them as a build product.
+The current stable Zman ID and analytics key are `2026-summer`. Its display name is `Nat Bar Nat & Stam Ye'enam - Summer 26`.
 
-## Hard invariants
+## Zman invariants
 
-- Keep the localStorage key `courseReviewSpacedRepetition.v1`. Its internal envelope is Zman-scoped.
-- Zman IDs and analytics keys are permanent identifiers once data has shipped.
-- A question/essay/fact ID only has meaning inside its Zman. Never assume IDs are globally unique across Zmans.
-- All student analytics and feedback must include the active Zman analytics key.
+- Once shipped, a Zman ID is permanent. Never reuse an old ID for different course content.
+- Question, essay, fact, glossary, and audio IDs are meaningful only inside their Zman.
+- All analytics, feedback, notifications, documents, and review-audio paths must resolve inside the active Zman.
 - Progress, essay mastery, essay-category filters, audio playback state, and chabura settings are Zman-scoped.
-- Every question and essay must have compact and full note locations.
-- Every audio mapping must point to an existing review and a valid start time.
-- Review-audio public URLs must be namespaced by Zman. Summer 26 currently uses a Worker fallback to the legacy flat R2 objects; do not remove that fallback until the objects have actually been copied into the namespaced R2 prefix and playback/range requests are verified.
-- Do not expose R2 credentials, GitHub tokens, or admin secrets to browser code.
-- Content feedback does not authorize a content change. Investigate, verify against course sources, propose the fix, and wait for explicit approval before changing substantive course content.
-- If question or essay wording changes, regenerate the corresponding derived PDFs in the same release.
+- Preserve migration reads for the legacy Summer 2026 ID `nat-bar-nat-stam-yeinam-summer-26` until intentionally retired.
+- The old storage envelope property `cohorts` is a compatibility detail; do not create new user-facing “cohort” terminology from it.
+- A newly available `latestZmanId` should prompt existing users to switch; do not silently discard their selected Zman.
 
-## Release workflow
+Read `docs/ARCHITECTURE.md` and `docs/NEW-ZMAN-PIPELINE.md` before adding another Zman.
 
-For a normal change: inspect latest main → edit canonical source → bump app/package/service-worker version when client behavior/assets change → run build and syntax checks → commit to main → report that Cloudflare should auto-deploy. Do not claim a live deployment unless independently verified.
+## Cross-repository contract
 
-For architecture changes, also update this file and the relevant document under `docs/`.
+SCP Study and `scp-study-analytics` are one deployed system with independent Workers.
 
+Before Study exposes a new Zman, Analytics must already:
+- allow that Zman ID;
+- have that Zman's question/essay/fact catalogs;
+- keep feedback identity Zman-scoped;
+- filter diagnostics and notifications to one Zman;
+- accept the payload fields Study will send.
 
-## Deployment authority
+For cross-repo protocol changes, deploy the backward-compatible Analytics receiver first, verify its Cloudflare build, then deploy Study.
 
-When the user asks to implement a change, the normal meaning is implement → validate → commit to `main` → allow Cloudflare Workers Builds to deploy → inspect the resulting Cloudflare check. Do not stop at a branch or PR unless explicitly requested.
+## R2 audio
 
-## Zman migration compatibility
+Current review-audio URLs are `/audio/2026-summer/<filename>`, mapping to R2 `audio/2026-summer/<filename>`.
 
-The stable current Zman ID and analytics key are `2026-summer`. Older installed clients may still reference the legacy ID `nat-bar-nat-stam-yeinam-summer-26`; preserve read/migration compatibility for shipped local state until that compatibility is intentionally retired.
+The Worker temporarily falls back to legacy flat R2 objects `audio/<filename>`. Do not remove that fallback until all 16 Summer 2026 review files have been copied into `audio/2026-summer/` and representative GET, HEAD, and Range requests have been verified.
 
-Current review audio should live in R2 at `audio/2026-summer/<filename>`. The Worker still falls back to flat `audio/<filename>` objects until the namespaced copies are verified in production.
+Never expose R2 credentials to browser code.
 
+## Documents and offline shell
 
-## Notifications, push, reminders, and data controls
+Zman-configured documents live under `documents/<zman-id>/`. The build currently preserves root document URLs for older installed clients and copies the current Zman's documents into its namespace.
 
-The notification inbox is filtered to the active Zman. D1 is canonical notification history; Web Push is a delivery channel. The browser stores only reminder preferences and the PushSubscription. Unknown future notification kinds must still render title/body safely, and only recognized safe actions should become links.
+Any app-shell or cached-asset change must increment all release surfaces together:
+- `package.json`
+- `APP_VERSION` in `public-src/app.js`
+- `APP_VERSION` and `CACHE_NAME` in `public-src/sw.js`
 
-Daily reminder preferences include an IANA timezone, HH:MM time, and Diaspora/Israel holiday calendar choice. The Analytics Worker suppresses reminders on Shabbat and Yom Tov.
+The About dialog version is runtime-derived; do not add a second hard-coded release number.
 
-Exports must never include the anonymous analytics installation ID, analytics/feedback upload queues, notification state, or PushSubscription keys. Server-data deletion must occur before the local installation ID is erased.
+A source fix is not complete if existing installed PWAs remain pinned to an unchanged cache name.
 
-Settings are intentionally ordered: Zman → chabura → study reminders → anonymous usage → cache → import/export → reset statistics → delete all data.
+## Notifications and reminders
+
+The Analytics Worker/D1 is the source of truth for notification history. Web Push is a delivery channel, not the inbox itself.
+
+The Study inbox:
+- is filtered to the active Zman;
+- tracks read/archive state server-side per anonymous installation ID;
+- must render unknown future notification kinds safely;
+- may render only safe same-origin or HTTPS action URLs;
+- can support future announcements, links, feedback requests, polls, or other typed actions without requiring a new inbox schema.
+
+Push permission must be requested only from a user gesture. Daily reminder settings include local HH:MM, IANA timezone, and Diaspora/Israel calendar mode. Analytics owns Shabbat/Yom Tov suppression.
+
+## Local/server data controls
+
+Exports have three selectable groups: statistics, settings, and app preferences. Never export:
+- the anonymous analytics installation ID;
+- analytics or feedback upload queues;
+- notification server state;
+- PushSubscription keys/endpoints.
+
+Reset Statistics must support either the active Zman or all Zmanim without deleting unrelated settings.
+
+Delete All Data must distinguish local-only deletion from local plus anonymous server deletion. For server deletion, call the server while the installation ID still exists; only clear local storage after the server confirms success.
+
+## Content authority and feedback
+
+Course-owner source files are authoritative for course content. Do not silently replace course wording with outside halachic knowledge.
+
+Student feedback is evidence, not authorization. For substantive question/essay/course changes: inspect the report, inspect current source, verify against authoritative course materials, propose the exact correction, and wait for explicit approval before changing the course content.
+
+If question or essay wording changes, regenerate corresponding derived PDFs in the same release.
+
+## Required validation
+
+For client/source changes:
+1. Run `npm run build`.
+2. Syntax-check modified JavaScript.
+3. Confirm Zman registry/package validation passes.
+4. Confirm app/package/service-worker/cache versions agree for an app-shell release.
+5. Check representative document and audio paths.
+6. Commit to `main`.
+7. Inspect the Cloudflare Workers Builds check.
+8. For cross-repo changes, verify Analytics first and Study second.
+
+Do not commit secrets, generated `public/`, `.wrangler/`, or local environment files.

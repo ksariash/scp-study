@@ -1,56 +1,112 @@
-# SCP Study architecture
+# Multi-Zman SCP Study architecture
 
 ## Goal
 
-One reusable application should support many independent Semichas Chaver cohorts without mixing content, progress, audio, notes, feedback, or analytics.
+One reusable PWA supports multiple independent Semichas Chaver **Zmanim** without mixing content, progress, audio, notes, feedback, analytics, or notifications.
 
-## Cohort registry
+## Registry and package loading
 
-`public-src/cohorts/index.js` lists deployable cohorts. A registry entry has a stable `id`, display `name`, stable `analyticsKey`, status, source path, and expected question/essay counts.
+`public-src/cohorts/index.js` is the Zman registry. The `cohorts/` directory and a few `SCP_COHORT_*` aliases remain only for compatibility with already-shipped clients and build code.
 
-The browser stores the selected cohort in `scpStudy.activeCohort.v1`. `cohort-loader.js` loads that cohort package before `app.js`.
+The canonical browser registry is `window.SCP_ZMAN_REGISTRY`. Each entry has:
+- stable `id`;
+- display `name`;
+- stable `analyticsKey`;
+- status/start metadata;
+- source `path`;
+- expected question/essay counts;
+- optional legacy IDs for local-state migration.
 
-## Cohort package contract
+The active selection is stored at `scpStudy.activeZman.v1`. `cohort-loader.js` is a legacy filename; it resolves the selected Zman and loads that package before `app.js`.
 
-Each cohort directory must contain `cohort.js`, `questions.js`, `essay-practice.js`, `audio-reviews.js`, `glossary.js`, `chaburos.js`, and `course-notes.js`.
+Current Zman:
+- ID / analytics key: `2026-summer`
+- display: `Nat Bar Nat & Stam Ye'enam - Summer 26`
+- package: `public-src/cohorts/2026-summer/`
 
-`build.mjs` validates identity, counts, IDs, answers, note coverage, audio references, audio namespace, and glossary IDs. A registered cohort must pass validation before deployment.
+## Zman package contract
 
-## State isolation
+Each package contains `cohort.js`, `questions.js`, `essay-practice.js`, `audio-reviews.js`, `glossary.js`, `chaburos.js`, and `course-notes.js`.
 
-The visible legacy key `courseReviewSpacedRepetition.v1` is intentionally preserved, but it stores an envelope keyed by cohort ID. Other content-specific local state is also cohort-scoped. App-wide preferences may remain global only if they truly apply to every cohort.
+`cohort.js` exports `SCP_ZMAN_CONFIG` and a temporary `SCP_COHORT_CONFIG` alias. New logic should consume the Zman form.
 
-Switching cohort reloads the page so no old cohort globals remain in memory.
+`build.mjs` validates identities, counts, IDs, answers, note coverage, audio references, namespace rules, and glossary IDs. Registered Zmanim must pass validation before deployment.
 
-## Audio
+## Browser data isolation
 
-Desired layout:
+The visible legacy key `courseReviewSpacedRepetition.v1` is retained for migration compatibility. Its internal envelope remains keyed by active Zman ID even though the legacy property is named `cohorts`.
 
-`/audio/<cohort-id>/<file>` → R2 `audio/<cohort-id>/<file>`
+Other content-specific local state is Zman-scoped. App-wide preferences may remain global only when they genuinely apply to every Zman.
 
-Summer 26 originally shipped flat `audio/<file>` objects. The Worker accepts the new namespaced URL and falls back to the flat key until the R2 objects are physically copied. Verify GET, HEAD, byte ranges, seeking, offline caching, and Download All before removing the fallback.
+Summer 2026 migrates reads from legacy ID `nat-bar-nat-stam-yeinam-summer-26` into `2026-summer`.
+
+Switching Zman reloads the page so content globals from the previous Zman cannot remain in memory.
+
+## R2 review audio
+
+Browser URL:
+
+`/audio/<zman-id>/<file>`
+
+R2 object:
+
+`audio/<zman-id>/<file>`
+
+Summer 2026 currently has a transitional fallback from `audio/2026-summer/<file>` to legacy `audio/<file>`. Keep it until the 16 files are copied and production range playback is verified.
 
 ## Documents
 
-Static course-source documents belong to the cohort. Derived PDFs (cumulative questions, answer key, essay Q&A) are generated from the same cohort source used by the app. Once more than one cohort is active, use unambiguous cohort-specific document paths.
+Configured Zman documents use:
 
-## Analytics boundary
+`documents/<zman-id>/<file>`
 
-The Study app emits the cohort `analyticsKey` with every event. The analytics repository treats cohort as mandatory. Do not enable a new Study cohort until Analytics supports its analytics key and content catalog.
+The build also preserves legacy root documents for previously installed clients. Materials UI resolves its buttons from the active Zman configuration rather than treating root paths as canonical.
 
-## IDs
+## Analytics and feedback
 
-Cohort ID, question ID, essay ID, essay fact ID, audio review ID, and glossary ID must remain stable after release. Identity is conceptually `cohort + content type + content ID`.
+Study emits the stable Zman analytics key with every analytics/feedback payload. Analytics must be deployed first for new Zmanim or protocol changes.
 
-## Build philosophy
+Identity is conceptually:
 
-Prefer deterministic validation over manual memory. New package requirements belong in `build.mjs` so the build fails loudly rather than allowing an incomplete cohort to deploy.
+`zman + content type + content ID`
 
+Question numbers, essay IDs, and fact IDs must never be interpreted outside the selected Zman.
 
-## Notification inbox and device data
+## Notification architecture
 
-The header notification control is immediately adjacent to the session timer. Inbox history is fetched from Analytics for the active Zman and anonymous installation ID; read/archive state is server-side so it survives app reloads. Push notification clicks route back to the inbox or a trusted HTTPS action URL.
+Analytics/D1 owns:
+- typed notification records;
+- per-installation read/archive state;
+- push subscriptions;
+- daily reminder preferences;
+- issue-resolution notifications.
 
-The app can export three explicitly selected groups: statistics, settings, and non-sensitive app preferences. Anonymous identifiers, queued uploads, and push credentials are intentionally excluded.
+Study always requests inbox data for the active Zman and current anonymous installation ID.
 
-Reset statistics can target the current Zman or all Zmanim. Delete All Data distinguishes local-only deletion from local plus anonymous server deletion. Server deletion is attempted before clearing the local installation ID.
+Notification records deliberately support a generic `kind` and optional action object so future link, feedback-request, poll, and similar messages do not require redesigning the inbox.
+
+Web Push carries a notification back to the PWA; the service worker opens/focuses the app and the inbox remains the durable record.
+
+## Reminder boundaries
+
+The Study client sends the browser's IANA timezone and chosen HH:MM. Analytics stores Cloudflare's broad, rounded IP-derived coordinates with the push subscription when available. Analytics uses Hebcal sunset/tzeit calculations plus the user's Diaspora/Israel setting to suppress reminders during Shabbat and Yom Tov.
+
+No GPS permission is requested.
+
+## Data lifecycle
+
+Reset Statistics:
+- active Zman only, or
+- all Zmanim.
+
+Delete All Data:
+- local-only, or
+- local plus anonymous server data tied to the installation ID.
+
+Server deletion must happen before local deletion erases that installation ID.
+
+Export/import deliberately excludes anonymous identifiers, queued uploads, notification state, and push credentials.
+
+## Adding another Zman
+
+Follow `docs/NEW-ZMAN-PIPELINE.md`. Analytics readiness is a launch gate, not post-launch cleanup.

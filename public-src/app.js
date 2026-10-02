@@ -1308,7 +1308,10 @@
           <span class="essay-library-progress">${masteredFacts}/${essay.facts.length} mastered</span>
         </div>
         <p class="essay-library-prompt"></p>
-        <div class="course-note-links essay-library-note-links" data-essay-note-links></div>
+        <div class="study-resource-cluster essay-library-resource-cluster" aria-label="Essay study resources">
+          <div class="course-note-links essay-library-note-links" data-essay-note-links></div>
+          <section class="question-audio hidden essay-question-audio" data-essay-question-audio aria-label="Relevant audio review"></section>
+        </div>
         <div class="essay-library-actions">
           <button class="secondary compact" type="button" data-essay-library-practice="${escapeHtml(essay.id)}">Practice this essay</button>
           <button class="content-report-link" type="button" data-report-essay-prompt="${escapeHtml(essay.id)}">⚑ Report question</button>
@@ -1328,6 +1331,7 @@
       `;
       setGlossaryText(card.querySelector('.essay-library-prompt'), essay.prompt);
       renderCourseNoteLinks(card.querySelector('[data-essay-note-links]'), 'essay', essay.id);
+      renderEssayQuestionAudio(essay, card.querySelector('[data-essay-question-audio]'), 'essay-library');
       setGlossaryText(card.querySelector('.essay-library-model'), essay.modelAnswer);
       essay.facts.forEach(fact => {
         const point = card.querySelector(`[data-essay-library-fact="${CSS.escape(fact.id)}"] .essay-library-point-copy`);
@@ -1603,6 +1607,7 @@
     if (dom.essayPracticeTitle) dom.essayPracticeTitle.textContent = essay.title;
     setGlossaryText(dom.essayPracticePrompt, essay.prompt);
     renderCourseNoteLinks(dom.essayNoteLinks, 'essay', essay.id);
+    renderEssayQuestionAudio(essay, dom.essayQuestionAudio, 'essay-practice');
     setGlossaryText(dom.essayModelAnswer, essay.modelAnswer);
     if (dom.essayModelAnswerWrap) {
       dom.essayModelAnswerWrap.classList.toggle('hidden', !essayRun.finished);
@@ -4531,20 +4536,20 @@
       syncTranscriptToAudio(true);
       updateMiniAudio();
     });
-    [dom.questionAudio, dom.reviewAudio].forEach(container => container?.addEventListener('click', e => {
-      const isMainQuestionAudio = container === dom.questionAudio;
-      const play = e.target.closest('[data-related-review]');
+    document.addEventListener('click', e => {
+      const play = e.target.closest?.('[data-related-review]');
+      const transcript = e.target.closest?.('[data-related-transcript]');
+      const target = play || transcript;
+      if (!target) return;
+      const context = target.dataset.resourceAudioContext || '';
+      if (target.closest('#questionAudio')) markAnalyticsAssist('audio');
+      if ((context === 'essay-practice' || context === 'essay-pairing') && essayRun) essayRun.stepAudioUsed = true;
       if (play) {
-        if (isMainQuestionAudio) markAnalyticsAssist('audio');
         void playAudioReference(Number(play.dataset.relatedReview), Number(play.dataset.relatedStart), { autoplay: true });
         return;
       }
-      const transcript = e.target.closest('[data-related-transcript]');
-      if (transcript) {
-        if (isMainQuestionAudio) markAnalyticsAssist('audio');
-        void playAudioReference(Number(transcript.dataset.relatedTranscript), Number(transcript.dataset.relatedStart), { autoplay: false, openMaterials: true });
-      }
-    }));
+      void playAudioReference(Number(transcript.dataset.relatedTranscript), Number(transcript.dataset.relatedStart), { autoplay: false, openMaterials: true });
+    });
     dom.miniAudioOpen.addEventListener('click', () => openMaterials('audio'));
     dom.miniAudioBack10?.addEventListener('click', () => seekAudioBy(-10));
     dom.miniAudioPlayPause.addEventListener('click', () => {

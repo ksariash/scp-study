@@ -45,3 +45,12 @@ Cohort ID, question ID, essay ID, essay fact ID, audio review ID, and glossary I
 ## Build philosophy
 
 Prefer deterministic validation over manual memory. New package requirements belong in `build.mjs` so the build fails loudly rather than allowing an incomplete cohort to deploy.
+
+
+## Notification inbox and device data
+
+The header notification control is immediately adjacent to the session timer. Inbox history is fetched from Analytics for the active Zman and anonymous installation ID; read/archive state is server-side so it survives app reloads. Push notification clicks route back to the inbox or a trusted HTTPS action URL.
+
+The app can export three explicitly selected groups: statistics, settings, and non-sensitive app preferences. Anonymous identifiers, queued uploads, and push credentials are intentionally excluded.
+
+Reset statistics can target the current Zman or all Zmanim. Delete All Data distinguishes local-only deletion from local plus anonymous server deletion. Server deletion is attempted before clearing the local installation ID.

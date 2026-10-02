@@ -1,5 +1,5 @@
-const APP_VERSION = 52;
-const CACHE_NAME = 'scp-study-v52';
+const APP_VERSION = 53;
+const CACHE_NAME = 'scp-study-v53';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v1';
 const APP_SHELL = [
   './',
@@ -212,4 +212,43 @@ self.addEventListener('fetch', event => {
         });
     })
   );
+});
+
+
+self.addEventListener('push', event => {
+  event.waitUntil((async () => {
+    let payload = {};
+    try { payload = event.data ? event.data.json() : {}; } catch (_) {
+      payload = { title:'SCP Study', body:event.data?.text?.() || 'You have a new notification.' };
+    }
+    const data = payload && typeof payload.data === 'object' ? payload.data : {};
+    await self.registration.showNotification(payload.title || 'SCP Study', {
+      body: payload.body || '',
+      icon: './icons/icon-192.png',
+      badge: './icons/icon-192.png',
+      tag: payload.tag || (data.notificationId ? 'scp-' + data.notificationId : undefined),
+      data
+    });
+    const windows = await self.clients.matchAll({ type:'window', includeUncontrolled:true });
+    for (const client of windows) {
+      try { client.postMessage({ type:'SCP_NOTIFICATION_RECEIVED', notificationId:data.notificationId || null }); } catch (_) {}
+    }
+  })());
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil((async () => {
+    const rawUrl = event.notification?.data?.url || '/?notifications=1';
+    const target = new URL(rawUrl, self.location.origin).href;
+    const windows = await self.clients.matchAll({ type:'window', includeUncontrolled:true });
+    for (const client of windows) {
+      if ('focus' in client) {
+        try { if ('navigate' in client) await client.navigate(target); } catch (_) {}
+        await client.focus();
+        return;
+      }
+    }
+    if (self.clients.openWindow) await self.clients.openWindow(target);
+  })());
 });

@@ -72,3 +72,14 @@ When the user asks to implement a change, the normal meaning is implement → va
 The stable current Zman ID and analytics key are `2026-summer`. Older installed clients may still reference the legacy ID `nat-bar-nat-stam-yeinam-summer-26`; preserve read/migration compatibility for shipped local state until that compatibility is intentionally retired.
 
 Current review audio should live in R2 at `audio/2026-summer/<filename>`. The Worker still falls back to flat `audio/<filename>` objects until the namespaced copies are verified in production.
+
+
+## Notifications, push, reminders, and data controls
+
+The notification inbox is filtered to the active Zman. D1 is canonical notification history; Web Push is a delivery channel. The browser stores only reminder preferences and the PushSubscription. Unknown future notification kinds must still render title/body safely, and only recognized safe actions should become links.
+
+Daily reminder preferences include an IANA timezone, HH:MM time, and Diaspora/Israel holiday calendar choice. The Analytics Worker suppresses reminders on Shabbat and Yom Tov.
+
+Exports must never include the anonymous analytics installation ID, analytics/feedback upload queues, notification state, or PushSubscription keys. Server-data deletion must occur before the local installation ID is erased.
+
+Settings are intentionally ordered: Zman → chabura → study reminders → anonymous usage → cache → import/export → reset statistics → delete all data.

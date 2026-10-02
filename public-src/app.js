@@ -14,9 +14,17 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 52;
+  const APP_VERSION = 53;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
+  const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
+  const NOTIFICATION_STATE_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications/state';
+  const PUSH_CONFIG_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/push/config';
+  const PUSH_SUBSCRIBE_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/push/subscribe';
+  const PUSH_UNSUBSCRIBE_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/push/unsubscribe';
+  const SERVER_DATA_DELETE_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/data/delete';
+  const STUDY_REMINDER_SETTINGS_KEY = 'scpStudy.studyReminders.v1';
+  const LATEST_ZMAN_PROMPT_KEY = 'scpStudy.latestZmanPrompt.v1';
   const COHORT_SELECTION_KEY = 'scpStudy.activeZman.v1';
   const ZMAN_REGISTRY = window.SCP_ZMAN_REGISTRY || { zmanim: window.SCP_COHORT_REGISTRY?.cohorts || [] };
   const COHORT_REGISTRY = { ...window.SCP_COHORT_REGISTRY, cohorts: ZMAN_REGISTRY.zmanim || [], defaultCohortId: ZMAN_REGISTRY.defaultZmanId || window.SCP_COHORT_REGISTRY?.defaultCohortId, latestZmanId: ZMAN_REGISTRY.latestZmanId || window.SCP_COHORT_REGISTRY?.latestZmanId };
@@ -318,8 +326,8 @@
     if (dom.switchCohortBtn) dom.switchCohortBtn.disabled = selected === COHORT_ID || mode === 'test';
     if (dom.cohortSettingsStatus) {
       dom.cohortSettingsStatus.textContent = entries.length > 1
-        ? `Current cohort: ${COHORT_NAME}. Progress stays separate when you switch.`
-        : `Current cohort: ${COHORT_NAME}. Additional cohorts will appear here automatically.`;
+        ? `Current Zman: ${COHORT_NAME}. Progress stays separate when you switch Zmanim.`
+        : `Current Zman: ${COHORT_NAME}. Additional Zmanim will appear here automatically.`;
     }
   }
 
@@ -328,7 +336,7 @@
     const target = cohortRegistryEntries().find(cohort => cohort.id === id);
     if (!target || id === COHORT_ID) return;
     if (mode === 'test' && state.activeTest) {
-      if (dom.cohortSettingsStatus) dom.cohortSettingsStatus.textContent = 'Exit the practice test before switching cohorts.';
+      if (dom.cohortSettingsStatus) dom.cohortSettingsStatus.textContent = 'Exit the practice test before switching Zmanim.';
       return;
     }
     flushQuestionTime();
@@ -761,8 +769,12 @@
     if (!dom.contentFeedbackDialog.open) dom.contentFeedbackDialog.showModal();
   }
 
+  function selectedContentFeedbackReasons() {
+    return [...(dom.contentFeedbackDialog?.querySelectorAll('input[name="contentFeedbackReason"]:checked') || [])].map(input => input.value);
+  }
+
   function selectedContentFeedbackReason() {
-    return dom.contentFeedbackDialog?.querySelector('input[name="contentFeedbackReason"]:checked')?.value || '';
+    return selectedContentFeedbackReasons()[0] || '';
   }
 
   function updateContentFeedbackSubmitState() {
@@ -770,7 +782,7 @@
     const target = activeContentFeedbackTarget;
     const key = feedbackTargetKey(target);
     const duplicate = !!contentFeedbackSentMap()[key] || contentFeedbackQueue().some(item => item.dedupeKey === key);
-    dom.submitContentFeedback.disabled = !target || !selectedContentFeedbackReason() || duplicate;
+    dom.submitContentFeedback.disabled = !target || !selectedContentFeedbackReasons().length || duplicate;
   }
 
   async function sendContentFeedbackEvent(event) {
@@ -816,8 +828,9 @@
 
   async function submitActiveContentFeedback() {
     const target = activeContentFeedbackTarget;
-    const reason = selectedContentFeedbackReason();
-    if (!target || !reason) return;
+    const reasons = selectedContentFeedbackReasons();
+    const reason = reasons[0] || '';
+    if (!target || !reasons.length) return;
     const details = String(dom.contentFeedbackDetails?.value || '').trim().slice(0, 500);
     const contentHash = feedbackHash(target.wording);
     const dedupeKey = feedbackTargetKey(target);
@@ -842,6 +855,7 @@
       wording: target.wording || '',
       contentHash,
       reason,
+      reasons,
       details,
       source: target.source || 'other',
       context: target.context || {}
@@ -4019,8 +4033,8 @@
 
   function resetAllProgress(options = {}) {
     const closeStats = options?.closeStats !== false;
-    const msg = 'Reset all study history, timing, category filters, and practice-test results? This cannot be undone.';
-    if (!confirm(msg)) return false;
+    const msg = 'Reset all study history, timing, category filters, and practice-test results for this Zman? This cannot be undone.';
+    if (options?.confirm !== false && !confirm(msg)) return false;
     flushQuestionTime();
     flushStudyTime();
     state = defaultState();
@@ -4325,9 +4339,7 @@
       openQuestionReviewCategory(category);
     });
     dom.clearCacheBtn?.addEventListener('click', () => void clearOfflineCache());
-    dom.settingsResetStatsBtn?.addEventListener('click', () => {
-      if (resetAllProgress({ closeStats: false })) setSettingsStatus('Study statistics reset.');
-    });
+    // v53 reset statistics is handled by resetStatisticsFromSettings(), which supports this Zman or all Zmanim.
     dom.materialsTabs?.addEventListener('click', e => {
       const tab = e.target.closest('[data-materials-tab]');
       if (tab) setMaterialsTab(tab.dataset.materialsTab);
@@ -4597,6 +4609,454 @@
     window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; updateInstallButtonVisibility(); });
   }
 
+
+  function activeZmanEntries() {
+    return Array.isArray(COHORT_REGISTRY.cohorts) ? COHORT_REGISTRY.cohorts : [];
+  }
+
+  function syncActiveZmanDocuments() {
+    const documents = ACTIVE_COHORT.documents && typeof ACTIVE_COHORT.documents === 'object' ? ACTIVE_COHORT.documents : {};
+    document.querySelectorAll('[data-document-key]').forEach(button => {
+      const url = String(documents[button.dataset.documentKey] || '');
+      if (!url) return;
+      if (button.hasAttribute('data-view-pdf')) button.dataset.viewPdf = url;
+      if (button.hasAttribute('data-print-pdf')) button.dataset.printPdf = url;
+      if (button.hasAttribute('data-save-pdf')) button.dataset.savePdf = url;
+      if (button.hasAttribute('data-share-pdf')) button.dataset.sharePdf = url;
+    });
+  }
+
+  function maybePromptLatestZman() {
+    const latestId = String(COHORT_REGISTRY.latestZmanId || '');
+    if (!latestId || latestId === COHORT_ID) return;
+    const latest = activeZmanEntries().find(item => String(item.id) === latestId);
+    if (!latest) return;
+    const promptKey = `${LATEST_ZMAN_PROMPT_KEY}:${latestId}`;
+    try { if (localStorage.getItem(promptKey)) return; } catch (_) {}
+    const shouldSwitch = confirm(`${latest.name || latestId} is now available. Switch to the new Zman?`);
+    try { localStorage.setItem(promptKey, shouldSwitch ? 'switched' : 'dismissed'); } catch (_) {}
+    if (!shouldSwitch) return;
+    try { localStorage.setItem(COHORT_SELECTION_KEY, latestId); } catch (_) {}
+    window.location.reload();
+  }
+
+  function reminderSettings() {
+    const defaults = { pushEnabled:false, dailyEnabled:false, time:'19:00', israelCalendar:false };
+    try {
+      const saved = JSON.parse(localStorage.getItem(STUDY_REMINDER_SETTINGS_KEY) || '{}');
+      return { ...defaults, ...(saved && typeof saved === 'object' ? saved : {}) };
+    } catch (_) { return defaults; }
+  }
+
+  function saveReminderSettings(value) {
+    try { localStorage.setItem(STUDY_REMINDER_SETTINGS_KEY, JSON.stringify(value)); } catch (_) {}
+  }
+
+  function setReminderStatus(message = '') {
+    const node = el('studyReminderStatus');
+    if (node) node.textContent = message;
+  }
+
+  function syncReminderSettingsUi() {
+    const settings = reminderSettings();
+    if (el('pushNotificationsToggle')) el('pushNotificationsToggle').checked = !!settings.pushEnabled;
+    if (el('dailyReminderToggle')) el('dailyReminderToggle').checked = !!settings.dailyEnabled;
+    if (el('studyReminderTime')) el('studyReminderTime').value = /^\d{2}:\d{2}$/.test(settings.time || '') ? settings.time : '19:00';
+    if (el('reminderCalendarMode')) el('reminderCalendarMode').value = settings.israelCalendar ? 'israel' : 'diaspora';
+    if (typeof Notification !== 'undefined' && Notification.permission === 'denied') setReminderStatus('Notifications are blocked in this browser. Change the browser/site permission to enable them.');
+  }
+
+  function urlBase64ToUint8Array(value) {
+    const padding = '='.repeat((4 - value.length % 4) % 4);
+    const base64 = (value + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const raw = atob(base64);
+    return Uint8Array.from([...raw].map(char => char.charCodeAt(0)));
+  }
+
+  async function postJson(url, body) {
+    const response = await fetch(url, {
+      method:'POST', mode:'cors', credentials:'omit', cache:'no-store',
+      headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+    });
+    let data = {};
+    try { data = await response.json(); } catch (_) {}
+    if (!response.ok) throw new Error(data?.error || `Request failed (${response.status})`);
+    return data;
+  }
+
+  async function currentPushSubscription() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return null;
+    const registration = await navigator.serviceWorker.ready;
+    return registration.pushManager.getSubscription();
+  }
+
+  async function syncPushSubscription() {
+    const settings = reminderSettings();
+    if (!settings.pushEnabled || typeof Notification === 'undefined' || Notification.permission !== 'granted') return null;
+    const registration = await navigator.serviceWorker.ready;
+    let subscription = await registration.pushManager.getSubscription();
+    if (!subscription) {
+      const response = await fetch(PUSH_CONFIG_ENDPOINT, { mode:'cors', credentials:'omit', cache:'no-store' });
+      const data = await response.json();
+      if (!response.ok || !data?.publicKey) throw new Error(data?.error || 'Could not load push configuration');
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly:true,
+        applicationServerKey:urlBase64ToUint8Array(data.publicKey)
+      });
+    }
+    await postJson(PUSH_SUBSCRIBE_ENDPOINT, {
+      installationId:analyticsInstallationId(),
+      zman:ANALYTICS_COHORT,
+      subscription:subscription.toJSON(),
+      timezone:Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+      reminderEnabled:!!settings.dailyEnabled,
+      reminderTime:settings.time || '19:00',
+      israelCalendar:!!settings.israelCalendar
+    });
+    return subscription;
+  }
+
+  async function enablePushNotifications({ interactive=true } = {}) {
+    if (typeof Notification === 'undefined' || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+      setReminderStatus('Push notifications are not supported in this browser.');
+      return false;
+    }
+    let permission = Notification.permission;
+    if (permission === 'default' && interactive) permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      const settings = reminderSettings();
+      settings.pushEnabled = false;
+      settings.dailyEnabled = false;
+      saveReminderSettings(settings);
+      syncReminderSettingsUi();
+      setReminderStatus(permission === 'denied' ? 'Notifications are blocked in browser settings.' : 'Notification permission was not enabled.');
+      return false;
+    }
+    const settings = reminderSettings();
+    settings.pushEnabled = true;
+    saveReminderSettings(settings);
+    syncReminderSettingsUi();
+    try {
+      await syncPushSubscription();
+      setReminderStatus('Push notifications are on.');
+      return true;
+    } catch (error) {
+      console.warn('Push setup failed:', error);
+      setReminderStatus('Could not enable push notifications: ' + error.message);
+      return false;
+    }
+  }
+
+  async function disablePushNotifications() {
+    const settings = reminderSettings();
+    settings.pushEnabled = false;
+    settings.dailyEnabled = false;
+    saveReminderSettings(settings);
+    try {
+      const subscription = await currentPushSubscription();
+      if (subscription) {
+        try { await postJson(PUSH_UNSUBSCRIBE_ENDPOINT, { installationId:analyticsInstallationId(), endpoint:subscription.endpoint }); } catch (_) {}
+        await subscription.unsubscribe();
+      }
+    } catch (error) { console.warn('Push unsubscribe failed:', error); }
+    syncReminderSettingsUi();
+    setReminderStatus('Push notifications are off.');
+  }
+
+  async function saveReminderSettingsFromUi() {
+    const dailyEnabled = !!el('dailyReminderToggle')?.checked;
+    const time = String(el('studyReminderTime')?.value || '19:00');
+    const israelCalendar = el('reminderCalendarMode')?.value === 'israel';
+    let settings = reminderSettings();
+    settings.dailyEnabled = dailyEnabled;
+    settings.time = /^\d{2}:\d{2}$/.test(time) ? time : '19:00';
+    settings.israelCalendar = israelCalendar;
+    saveReminderSettings(settings);
+    if (dailyEnabled && !settings.pushEnabled) {
+      const enabled = await enablePushNotifications({ interactive:true });
+      if (!enabled) {
+        settings = reminderSettings();
+        settings.dailyEnabled = false;
+        saveReminderSettings(settings);
+        syncReminderSettingsUi();
+        return;
+      }
+    }
+    try {
+      if (reminderSettings().pushEnabled) await syncPushSubscription();
+      setReminderStatus(dailyEnabled ? `Daily reminder saved for ${settings.time}. Shabbat and Yom Tov will be skipped.` : 'Reminder settings saved.');
+    } catch (error) {
+      setReminderStatus('Could not save reminder settings: ' + error.message);
+    }
+    syncReminderSettingsUi();
+  }
+
+  let notificationInboxCache = [];
+
+  function safeNotificationUrl(value) {
+    if (!value) return '';
+    try {
+      const url = new URL(String(value), window.location.origin);
+      if (url.origin === window.location.origin || url.protocol === 'https:') return url.href;
+    } catch (_) {}
+    return '';
+  }
+
+  function renderNotificationInbox(payload = {}) {
+    notificationInboxCache = Array.isArray(payload.notifications) ? payload.notifications : [];
+    const unread = Number(payload.unread) || 0;
+    const badge = el('notificationBadge');
+    if (badge) {
+      badge.textContent = unread > 99 ? '99+' : String(unread);
+      badge.classList.toggle('is-zero', unread === 0);
+    }
+    const subtitle = el('notificationInboxSubtitle');
+    if (subtitle) subtitle.textContent = `${COHORT_NAME} · announcements, feedback updates, and study notices.`;
+    const list = el('notificationInboxList');
+    if (!list) return;
+    if (!notificationInboxCache.length) {
+      list.innerHTML = '<div class="callout"><strong>No notifications</strong><p>Nothing is waiting for this Zman.</p></div>';
+      return;
+    }
+    list.innerHTML = notificationInboxCache.map(item => {
+      const read = !!item.readAt, archived = !!item.archivedAt;
+      const actionUrl = safeNotificationUrl(item.action?.url);
+      const action = actionUrl ? `<a href="${escapeHtml(actionUrl)}" target="_blank" rel="noopener" data-notification-open="${escapeHtml(item.id)}">${escapeHtml(item.action?.label || 'Open')}</a>` : '';
+      const kind = String(item.kind || 'notification').replaceAll('_',' ');
+      return `<article class="notification-item ${read ? '' : 'unread'} ${archived ? 'archived' : ''}">
+        <div class="notification-item-head"><div><span class="notification-item-kind">${escapeHtml(kind)}</span><br><strong>${escapeHtml(item.title || 'SCP Study')}</strong></div><span class="notification-item-meta">${escapeHtml(new Date(item.createdAt).toLocaleString())}</span></div>
+        <p class="notification-item-body">${escapeHtml(item.body || '')}</p>
+        <div class="notification-item-actions">
+          ${action}
+          <button class="secondary" type="button" data-notification-read="${escapeHtml(item.id)}" data-read-value="${read ? '0' : '1'}">${read ? 'Mark unread' : 'Mark read'}</button>
+          <button class="secondary" type="button" data-notification-archive="${escapeHtml(item.id)}" data-archive-value="${archived ? '0' : '1'}">${archived ? 'Unarchive' : 'Archive'}</button>
+        </div>
+      </article>`;
+    }).join('');
+  }
+
+  async function loadNotificationInbox({ includeArchived = !!el('notificationShowArchived')?.checked } = {}) {
+    const status = el('notificationInboxStatus');
+    if (status) status.textContent = 'Loading…';
+    try {
+      const url = new URL(NOTIFICATIONS_ENDPOINT);
+      url.searchParams.set('zman', ANALYTICS_COHORT);
+      url.searchParams.set('installationId', analyticsInstallationId());
+      if (includeArchived) url.searchParams.set('includeArchived','1');
+      const response = await fetch(url, { mode:'cors', credentials:'omit', cache:'no-store' });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error || 'Could not load notifications');
+      renderNotificationInbox(data);
+      if (status) status.textContent = '';
+      return data;
+    } catch (error) {
+      if (status) status.textContent = 'Could not load notifications: ' + error.message;
+      return null;
+    }
+  }
+
+  async function updateNotificationState(id, changes) {
+    await postJson(NOTIFICATION_STATE_ENDPOINT, { installationId:analyticsInstallationId(), id, ...changes });
+    return loadNotificationInbox();
+  }
+
+  function openNotificationInbox() {
+    const dialog = el('notificationInboxDialog');
+    if (dialog && !dialog.open) dialog.showModal();
+    void loadNotificationInbox();
+  }
+
+  function exportGroupForKey(key) {
+    if (key === STORAGE_KEY || key.startsWith(ESSAY_PRACTICE_KEY) || key.startsWith(ESSAY_CATEGORY_FILTER_KEY)) return 'stats';
+    if (key === ANALYTICS_SETTINGS_KEY || key === COHORT_SELECTION_KEY || key === STUDY_REMINDER_SETTINGS_KEY || key.startsWith(CHABURA_SETTINGS_KEY)) return 'settings';
+    if (key.startsWith(AUDIO_PLAYBACK_KEY) || key === MATERIALS_TAB_KEY || key === MATERIALS_TRANSCRIPT_KEY) return 'data';
+    return '';
+  }
+
+  function selectedTransferGroups() {
+    return {
+      stats: !!el('exportStatsCheck')?.checked,
+      settings: !!el('exportSettingsCheck')?.checked,
+      data: !!el('exportDataCheck')?.checked
+    };
+  }
+
+  function exportAppData() {
+    const selected = selectedTransferGroups();
+    const groups = { stats:{}, settings:{}, data:{} };
+    for (let index=0; index<localStorage.length; index++) {
+      const key = localStorage.key(index);
+      const group = key ? exportGroupForKey(key) : '';
+      if (!group || !selected[group]) continue;
+      groups[group][key] = localStorage.getItem(key);
+    }
+    const payload = {
+      format:'scp-study-export',
+      version:1,
+      createdAt:new Date().toISOString(),
+      activeZman:COHORT_ID,
+      groups
+    };
+    const blob = new Blob([JSON.stringify(payload,null,2)], { type:'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `scp-study-backup-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setSettingsStatus('Export created.');
+  }
+
+  async function importAppDataFile(file) {
+    if (!file) return;
+    const selected = selectedTransferGroups();
+    try {
+      const payload = JSON.parse(await file.text());
+      if (payload?.format !== 'scp-study-export' || !payload.groups || typeof payload.groups !== 'object') throw new Error('This is not an SCP Study export.');
+      let count = 0;
+      for (const group of ['stats','settings','data']) {
+        if (!selected[group]) continue;
+        const values = payload.groups[group];
+        if (!values || typeof values !== 'object') continue;
+        for (const [key,value] of Object.entries(values)) {
+          if (exportGroupForKey(key) !== group || typeof value !== 'string') continue;
+          localStorage.setItem(key,value);
+          count += 1;
+        }
+      }
+      if (!count) throw new Error('No selected data groups were found in the file.');
+      setSettingsStatus(`Imported ${count} saved values. Reloading…`);
+      window.setTimeout(() => window.location.reload(), 450);
+    } catch (error) {
+      setSettingsStatus('Import failed: ' + error.message);
+    }
+  }
+
+  function removeLocalKeysByPrefix(prefix) {
+    const keys = [];
+    for (let index=0; index<localStorage.length; index++) {
+      const key = localStorage.key(index);
+      if (key && key.startsWith(prefix)) keys.push(key);
+    }
+    keys.forEach(key => localStorage.removeItem(key));
+  }
+
+  function resetStatisticsFromSettings() {
+    const scope = el('resetStatsScope')?.value || 'current';
+    const label = scope === 'all' ? 'all Zmanim' : COHORT_NAME;
+    if (!confirm(`Reset study statistics for ${label}? This cannot be undone.`)) return;
+    if (scope === 'current') {
+      if (resetAllProgress({ closeStats:false, confirm:false })) setSettingsStatus('Statistics reset for this Zman.');
+      return;
+    }
+    flushQuestionTime();
+    flushStudyTime();
+    localStorage.removeItem(STORAGE_KEY);
+    removeLocalKeysByPrefix(ESSAY_PRACTICE_KEY);
+    removeLocalKeysByPrefix(ESSAY_CATEGORY_FILTER_KEY);
+    setSettingsStatus('Statistics reset for all Zmanim. Reloading…');
+    window.setTimeout(() => window.location.reload(), 350);
+  }
+
+  async function deleteLocalAppData() {
+    try {
+      const subscription = await currentPushSubscription();
+      if (subscription) await subscription.unsubscribe();
+    } catch (_) {}
+    localStorage.clear();
+    try {
+      await new Promise(resolve => {
+        const request = indexedDB.deleteDatabase(AUDIO_DB_NAME);
+        request.onsuccess = request.onerror = request.onblocked = () => resolve();
+      });
+    } catch (_) {}
+    if ('caches' in window) {
+      try { await Promise.all((await caches.keys()).filter(key => key.startsWith('scp-study-')).map(key => caches.delete(key))); } catch (_) {}
+    }
+  }
+
+  async function deleteAllDataFromSettings() {
+    const scope = el('deleteDataScope')?.value || 'local';
+    const includeServer = scope === 'server';
+    const message = includeServer
+      ? 'Delete all local SCP Study data AND anonymous server data tied to this device ID? This cannot be undone.'
+      : 'Delete all local SCP Study data on this device? Anonymous server analytics already sent will remain. This cannot be undone.';
+    if (!confirm(message)) return;
+    if (includeServer) {
+      setSettingsStatus('Deleting anonymous server data…');
+      try {
+        await postJson(SERVER_DATA_DELETE_ENDPOINT, { installationId:analyticsInstallationId() });
+      } catch (error) {
+        setSettingsStatus('Server deletion failed; local data was not deleted. ' + error.message);
+        return;
+      }
+    }
+    setSettingsStatus('Deleting local data…');
+    await deleteLocalAppData();
+    window.location.reload();
+  }
+
+  function syncV53SettingsUi() {
+    syncReminderSettingsUi();
+  }
+
+  function initNotificationAndSettingsFeatures() {
+    syncV53SettingsUi();
+
+    el('notificationsBtn')?.addEventListener('click', openNotificationInbox);
+    el('closeNotificationInbox')?.addEventListener('click', () => el('notificationInboxDialog')?.close());
+    el('doneNotificationInbox')?.addEventListener('click', () => el('notificationInboxDialog')?.close());
+    el('refreshNotificationInbox')?.addEventListener('click', () => void loadNotificationInbox());
+    el('notificationShowArchived')?.addEventListener('change', () => void loadNotificationInbox());
+
+    el('notificationInboxList')?.addEventListener('click', event => {
+      const read = event.target.closest('[data-notification-read]');
+      if (read) { void updateNotificationState(read.dataset.notificationRead, { read:read.dataset.readValue === '1' }); return; }
+      const archive = event.target.closest('[data-notification-archive]');
+      if (archive) { void updateNotificationState(archive.dataset.notificationArchive, { archived:archive.dataset.archiveValue === '1' }); return; }
+      const open = event.target.closest('[data-notification-open]');
+      if (open) void updateNotificationState(open.dataset.notificationOpen, { read:true });
+    });
+
+    el('pushNotificationsToggle')?.addEventListener('change', event => {
+      if (event.currentTarget.checked) void enablePushNotifications({ interactive:true });
+      else void disablePushNotifications();
+    });
+    el('saveReminderSettingsBtn')?.addEventListener('click', () => void saveReminderSettingsFromUi());
+
+    el('exportDataBtn')?.addEventListener('click', exportAppData);
+    el('importDataBtn')?.addEventListener('click', () => el('importDataFile')?.click());
+    el('importDataFile')?.addEventListener('change', event => {
+      const file = event.currentTarget.files?.[0] || null;
+      void importAppDataFile(file);
+      event.currentTarget.value = '';
+    });
+    el('settingsResetStatsBtn')?.addEventListener('click', resetStatisticsFromSettings);
+    el('deleteAllDataBtn')?.addEventListener('click', () => void deleteAllDataFromSettings());
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) void loadNotificationInbox();
+    });
+    window.addEventListener('online', () => {
+      void loadNotificationInbox();
+      if (reminderSettings().pushEnabled && Notification?.permission === 'granted') void syncPushSubscription();
+    });
+
+    if (reminderSettings().pushEnabled && typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+      void syncPushSubscription().catch(error => console.warn('Push sync failed:', error));
+    }
+    void loadNotificationInbox();
+
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('notifications') === '1') {
+      url.searchParams.delete('notifications');
+      history.replaceState(null,'',url.pathname+(url.search ? url.search : '')+url.hash);
+      window.setTimeout(openNotificationInbox, 250);
+    }
+  }
+
   async function registerServiceWorker() {
     if (!('serviceWorker' in navigator)) return null;
     const hadControllerAtStart = !!navigator.serviceWorker.controller;
@@ -4613,6 +5073,10 @@
     }, { once: true });
 
     navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data?.type === 'SCP_NOTIFICATION_RECEIVED') {
+        void loadNotificationInbox();
+        return;
+      }
       if (event.data?.type !== 'SCP_APP_UPDATED') return;
       if (event.data?.version) showAppToast(`Updated app shell to v${event.data.version}. Reloading…`, 1800);
     });
@@ -4624,6 +5088,9 @@
     populateQuestionNumberDropdown();
     populateEssayQuickNav();
     bindEvents();
+    syncActiveZmanDocuments();
+    initNotificationAndSettingsFeatures();
+    maybePromptLatestZman();
     updateAppVersionUi();
     consumeUpdateAnnouncement();
     setupPullToCheckUpdates();

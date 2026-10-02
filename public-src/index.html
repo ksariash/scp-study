@@ -28,6 +28,10 @@
         <span class="timer-label" id="timerLabel">Session</span>
         <strong id="mainTimer">00:00:00</strong>
       </div>
+      <button class="notification-card" id="notificationsBtn" type="button" aria-label="Open notifications">
+        <span class="notification-label">Notifications</span>
+        <strong class="notification-count" id="notificationBadge">0</strong>
+      </button>
       <div class="topbar-right">
         <button class="icon-btn" id="categoriesBtn" type="button" aria-label="Filter categories">Categories</button>
         <button class="icon-btn" id="materialsBtn" type="button">Materials</button>
@@ -377,45 +381,45 @@
             <span class="resource-icon" aria-hidden="true">PDF</span>
             <span class="resource-copy"><strong>SCP Study — Compact Course Review</strong><span>Highlighted concise course summary and study reference.</span></span>
             <span class="resource-actions">
-              <button class="resource-btn view-pdf-btn" type="button" data-view-pdf="documents/SCP-Study-Compact-Course-Review.pdf" data-pdf-title="SCP Study — Compact Course Review" data-course-notes="compact">View</button>
-              <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Compact-Course-Review.pdf">Print</button>
-              <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Compact-Course-Review.pdf" data-pdf-title="SCP Study — Compact Course Review">Download</button>
+              <button class="resource-btn view-pdf-btn" type="button" data-document-key="compactReview" data-view-pdf="documents/SCP-Study-Compact-Course-Review.pdf" data-pdf-title="SCP Study — Compact Course Review" data-course-notes="compact">View</button>
+              <button class="resource-btn" type="button" data-document-key="compactReview" data-print-pdf="documents/SCP-Study-Compact-Course-Review.pdf">Print</button>
+              <button class="resource-btn primary-link" type="button" data-document-key="compactReview" data-save-pdf="documents/SCP-Study-Compact-Course-Review.pdf" data-pdf-title="SCP Study — Compact Course Review">Download</button>
             </span>
           </div>
           <div class="resource-card">
             <span class="resource-icon" aria-hidden="true">PDF</span>
             <span class="resource-copy"><strong>SCP Study — Full Course Notes</strong><span>Full annotated course notes converted from the supplied WPS document.</span></span>
             <span class="resource-actions">
-              <button class="resource-btn view-pdf-btn" type="button" data-view-pdf="documents/SCP-Study-Full-Course-Notes.pdf" data-pdf-title="SCP Study — Full Course Notes" data-course-notes="full">View</button>
-              <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Full-Course-Notes.pdf">Print</button>
-              <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Full-Course-Notes.pdf" data-pdf-title="SCP Study — Full Course Notes">Download</button>
+              <button class="resource-btn view-pdf-btn" type="button" data-document-key="fullNotes" data-view-pdf="documents/SCP-Study-Full-Course-Notes.pdf" data-pdf-title="SCP Study — Full Course Notes" data-course-notes="full">View</button>
+              <button class="resource-btn" type="button" data-document-key="fullNotes" data-print-pdf="documents/SCP-Study-Full-Course-Notes.pdf">Print</button>
+              <button class="resource-btn primary-link" type="button" data-document-key="fullNotes" data-save-pdf="documents/SCP-Study-Full-Course-Notes.pdf" data-pdf-title="SCP Study — Full Course Notes">Download</button>
             </span>
           </div>
           <div class="resource-card">
             <span class="resource-icon" aria-hidden="true">PDF</span>
             <span class="resource-copy"><strong>SCP Study — Cumulative Test</strong><span>Student version of the 58-question cumulative test.</span></span>
             <span class="resource-actions">
-              <button class="resource-btn view-pdf-btn" type="button" data-view-pdf="documents/SCP-Study-Cumulative-Test.pdf" data-pdf-title="SCP Study — Cumulative Test">View</button>
-              <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Cumulative-Test.pdf">Print</button>
-              <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Cumulative-Test.pdf" data-pdf-title="SCP Study — Cumulative Test">Download</button>
+              <button class="resource-btn view-pdf-btn" type="button" data-document-key="cumulativeTest" data-view-pdf="documents/SCP-Study-Cumulative-Test.pdf" data-pdf-title="SCP Study — Cumulative Test">View</button>
+              <button class="resource-btn" type="button" data-document-key="cumulativeTest" data-print-pdf="documents/SCP-Study-Cumulative-Test.pdf">Print</button>
+              <button class="resource-btn primary-link" type="button" data-document-key="cumulativeTest" data-save-pdf="documents/SCP-Study-Cumulative-Test.pdf" data-pdf-title="SCP Study — Cumulative Test">Download</button>
             </span>
           </div>
           <div class="resource-card">
             <span class="resource-icon" aria-hidden="true">PDF</span>
             <span class="resource-copy"><strong>SCP Study — Cumulative Test Answer Key</strong><span>Instructor key, explanations, coverage audit, and scope check.</span></span>
             <span class="resource-actions">
-              <button class="resource-btn view-pdf-btn" type="button" data-view-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" data-pdf-title="SCP Study — Cumulative Test Answer Key">View</button>
-              <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf">Print</button>
-              <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" data-pdf-title="SCP Study — Cumulative Test Answer Key">Download</button>
+              <button class="resource-btn view-pdf-btn" type="button" data-document-key="cumulativeAnswerKey" data-view-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" data-pdf-title="SCP Study — Cumulative Test Answer Key">View</button>
+              <button class="resource-btn" type="button" data-document-key="cumulativeAnswerKey" data-print-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf">Print</button>
+              <button class="resource-btn primary-link" type="button" data-document-key="cumulativeAnswerKey" data-save-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" data-pdf-title="SCP Study — Cumulative Test Answer Key">Download</button>
             </span>
           </div>
           <div class="resource-card">
             <span class="resource-icon" aria-hidden="true">PDF</span>
             <span class="resource-copy"><strong>SCP Study — Essay Questions & Sample Answers</strong><span>All essay prompts with concise sample answers for review.</span></span>
             <span class="resource-actions">
-              <button class="resource-btn view-pdf-btn" type="button" data-view-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" data-pdf-title="SCP Study — Essay Questions & Sample Answers">View</button>
-              <button class="resource-btn" type="button" data-print-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf">Print</button>
-              <button class="resource-btn primary-link" type="button" data-save-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" data-pdf-title="SCP Study — Essay Questions & Sample Answers">Download</button>
+              <button class="resource-btn view-pdf-btn" type="button" data-document-key="essayQuestionsAndAnswers" data-view-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" data-pdf-title="SCP Study — Essay Questions & Sample Answers">View</button>
+              <button class="resource-btn" type="button" data-document-key="essayQuestionsAndAnswers" data-print-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf">Print</button>
+              <button class="resource-btn primary-link" type="button" data-document-key="essayQuestionsAndAnswers" data-save-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" data-pdf-title="SCP Study — Essay Questions & Sample Answers">Download</button>
             </span>
           </div>
         </div>
@@ -430,42 +434,28 @@
             <div>
               <span class="eyebrow">Settings</span>
               <h3 id="settingsHeading">App settings</h3>
-              <p>Privacy, offline storage, and study statistics for this device.</p>
+              <p>Zman, reminders, privacy, storage, and study data for this device.</p>
             </div>
           </div>
 
-      <section class="cohort-setting" aria-labelledby="cohortSettingHeading">
-        <div class="cohort-setting-copy">
-          <span class="eyebrow">Course</span>
-          <h3 id="cohortSettingHeading">Study cohort</h3>
-          <p>Questions, essays, notes, audio, categories, and saved progress are kept separate for each cohort.</p>
-        </div>
-        <div class="cohort-setting-fields">
-          <label><span>Cohort</span><select id="settingsCohortSelect" aria-label="Study cohort"></select></label>
-          <button class="secondary settings-action-btn" type="button" id="switchCohortBtn">Switch cohort</button>
-        </div>
-        <span class="analytics-status" id="cohortSettingsStatus" aria-live="polite"></span>
-      </section>
+          <section class="cohort-setting settings-ordered-section" aria-labelledby="cohortSettingHeading">
+            <div class="cohort-setting-copy">
+              <span class="eyebrow">1 · Zman</span>
+              <h3 id="cohortSettingHeading">Study Zman</h3>
+              <p>Questions, essays, notes, audio, categories, and saved progress stay separate for each Zman.</p>
+            </div>
+            <div class="cohort-setting-fields">
+              <label><span>Zman</span><select id="settingsCohortSelect" aria-label="Study Zman"></select></label>
+              <button class="secondary settings-action-btn" type="button" id="switchCohortBtn">Switch Zman</button>
+            </div>
+            <span class="analytics-status" id="cohortSettingsStatus" aria-live="polite"></span>
+          </section>
 
-      <section class="analytics-preference" aria-labelledby="analyticsPreferenceHeading">
-        <div class="analytics-preference-copy">
-          <span class="eyebrow">Course improvement</span>
-          <h3 id="analyticsPreferenceHeading">Anonymous study statistics</h3>
-          <p>Helps instructors see which questions and topics need more review. The app shares question results, essay-practice results, timing ranges, study-aid use, which glossary terms are opened, cohort, your selected chabura, and broad location derived by Cloudflare from the network request. It does not send your name, email, notes, searches, or precise GPS location.</p>
-          <span class="analytics-status" id="analyticsStatus" aria-live="polite"></span>
-        </div>
-        <label class="analytics-switch">
-          <input id="analyticsToggle" type="checkbox" checked />
-          <span class="analytics-switch-track" aria-hidden="true"><span></span></span>
-          <span>Share anonymous stats</span>
-        </label>
-      </section>
-
-          <section class="chabura-setting" aria-labelledby="chaburaSettingHeading">
+          <section class="chabura-setting settings-ordered-section" aria-labelledby="chaburaSettingHeading">
             <div class="chabura-setting-copy">
-              <span class="eyebrow">Your chabura</span>
+              <span class="eyebrow">2 · Your chabura</span>
               <h3 id="chaburaSettingHeading">Semichas Chaver chabura</h3>
-              <p>This stays on this device and, when anonymous statistics are enabled, is included so instructors can filter course analytics by chabura.</p>
+              <p>This selection is saved separately for the current Zman and can be included with anonymous course analytics.</p>
             </div>
             <div class="chabura-fields">
               <label><span>Location</span><select id="settingsChaburaLocation" aria-label="Chabura location"></select></label>
@@ -475,21 +465,105 @@
             <span class="analytics-status" id="chaburaSettingsStatus" aria-live="polite"></span>
           </section>
 
-          <div class="settings-actions">
+          <section class="settings-feature-card settings-ordered-section" aria-labelledby="studyReminderHeading">
+            <div class="settings-feature-copy">
+              <span class="eyebrow">3 · Study reminders</span>
+              <h3 id="studyReminderHeading">Notifications &amp; daily reminder</h3>
+              <p>Enable push notifications for announcements and issue updates. An optional daily reminder skips Shabbat and Yom Tov.</p>
+            </div>
+            <div class="reminder-controls">
+              <label class="analytics-switch reminder-switch">
+                <input id="pushNotificationsToggle" type="checkbox" />
+                <span class="analytics-switch-track" aria-hidden="true"><span></span></span>
+                <span>Allow push notifications</span>
+              </label>
+              <label class="analytics-switch reminder-switch">
+                <input id="dailyReminderToggle" type="checkbox" />
+                <span class="analytics-switch-track" aria-hidden="true"><span></span></span>
+                <span>Daily study reminder</span>
+              </label>
+              <label><span>Reminder time</span><input id="studyReminderTime" type="time" value="19:00" /></label>
+              <label><span>Yom Tov calendar</span>
+                <select id="reminderCalendarMode">
+                  <option value="diaspora">Diaspora</option>
+                  <option value="israel">Israel</option>
+                </select>
+              </label>
+              <button class="secondary settings-action-btn" type="button" id="saveReminderSettingsBtn">Save reminder settings</button>
+            </div>
+            <span class="analytics-status" id="studyReminderStatus" aria-live="polite"></span>
+          </section>
+
+          <section class="analytics-preference settings-ordered-section" aria-labelledby="analyticsPreferenceHeading">
+            <div class="analytics-preference-copy">
+              <span class="eyebrow">4 · Course improvement</span>
+              <h3 id="analyticsPreferenceHeading">Anonymous usage</h3>
+              <p>Shares anonymous study results, timing ranges, study-aid use, current Zman, selected chabura, and broad IP-derived location. It does not send your name, email, notes, searches, or precise GPS location.</p>
+              <span class="analytics-status" id="analyticsStatus" aria-live="polite"></span>
+            </div>
+            <label class="analytics-switch">
+              <input id="analyticsToggle" type="checkbox" checked />
+              <span class="analytics-switch-track" aria-hidden="true"><span></span></span>
+              <span>Share anonymous usage</span>
+            </label>
+          </section>
+
+          <div class="settings-actions settings-actions-ordered">
             <div class="settings-action-card">
               <div>
-                <strong>Offline cache</strong>
-                <p>Remove downloaded audio and cached app files. Your study statistics and settings are kept.</p>
+                <span class="eyebrow">5 · Storage</span>
+                <strong>Delete cache</strong>
+                <p>Remove downloaded audio and cached app files. Study statistics and settings are kept.</p>
               </div>
-              <button class="secondary settings-action-btn" type="button" id="clearCacheBtn">Clear cache</button>
+              <button class="secondary settings-action-btn" type="button" id="clearCacheBtn">Delete cache</button>
+            </div>
+
+            <div class="settings-action-card settings-transfer-card">
+              <div>
+                <span class="eyebrow">6 · Backup</span>
+                <strong>Import / export stats, settings &amp; data</strong>
+                <p>Choose which groups to include. Anonymous installation IDs, upload queues, and notification state are never exported.</p>
+                <div class="settings-checkbox-row">
+                  <label><input id="exportStatsCheck" type="checkbox" checked /> Stats</label>
+                  <label><input id="exportSettingsCheck" type="checkbox" checked /> Settings</label>
+                  <label><input id="exportDataCheck" type="checkbox" checked /> App data</label>
+                </div>
+              </div>
+              <div class="settings-transfer-actions">
+                <button class="secondary settings-action-btn" type="button" id="exportDataBtn">Export</button>
+                <button class="secondary settings-action-btn" type="button" id="importDataBtn">Import</button>
+                <input id="importDataFile" type="file" accept="application/json,.json" hidden />
+              </div>
             </div>
 
             <div class="settings-action-card danger-card">
               <div>
-                <strong>Study statistics</strong>
-                <p>Reset question history, response timing, category filters, and practice-test results on this device.</p>
+                <span class="eyebrow">7 · Statistics</span>
+                <strong>Reset statistics</strong>
+                <p>Reset question history, timing, category filters, essay progress, and practice-test results.</p>
+                <label class="settings-inline-select"><span>Scope</span>
+                  <select id="resetStatsScope">
+                    <option value="current">This Zman only</option>
+                    <option value="all">All Zmanim</option>
+                  </select>
+                </label>
               </div>
               <button class="danger settings-action-btn" type="button" id="settingsResetStatsBtn">Reset statistics</button>
+            </div>
+
+            <div class="settings-action-card danger-card delete-all-card">
+              <div>
+                <span class="eyebrow">8 · Delete</span>
+                <strong>Delete all data</strong>
+                <p>Erase this device. You can also request deletion of anonymous server data tied to this device's anonymous installation ID.</p>
+                <label class="settings-inline-select"><span>Delete</span>
+                  <select id="deleteDataScope">
+                    <option value="local">Local data only</option>
+                    <option value="server">Local + anonymous server data</option>
+                  </select>
+                </label>
+              </div>
+              <button class="danger settings-action-btn" type="button" id="deleteAllDataBtn">Delete all data</button>
             </div>
           </div>
           <span class="settings-status" id="settingsStatus" aria-live="polite"></span>
@@ -532,6 +606,29 @@
 
 
 
+  <dialog id="notificationInboxDialog" class="modal wide notification-inbox-dialog" aria-labelledby="notificationInboxTitle">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow">Current Zman</span>
+          <h2 id="notificationInboxTitle">Notifications</h2>
+          <p id="notificationInboxSubtitle">Announcements, feedback updates, and study notices.</p>
+        </div>
+        <button class="close-btn" id="closeNotificationInbox" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="notification-inbox-toolbar">
+        <label><input id="notificationShowArchived" type="checkbox" /> Show archived</label>
+        <button class="secondary" id="refreshNotificationInbox" type="button">Refresh</button>
+      </div>
+      <div class="notification-inbox-status" id="notificationInboxStatus" aria-live="polite"></div>
+      <div class="notification-inbox-list" id="notificationInboxList"></div>
+      <div class="modal-footer">
+        <button class="primary" id="doneNotificationInbox" type="button">Done</button>
+      </div>
+    </div>
+  </dialog>
+
+
   <dialog id="contentFeedbackDialog" class="modal content-feedback-dialog">
     <div class="modal-inner">
       <div class="modal-head">
@@ -550,13 +647,13 @@
 
       <fieldset class="content-feedback-reasons">
         <legend>What is the issue?</legend>
-        <label><input type="radio" name="contentFeedbackReason" value="confusing" /> <span>Confusing</span></label>
-        <label><input type="radio" name="contentFeedbackReason" value="inaccurate" /> <span>May be inaccurate</span></label>
-        <label><input type="radio" name="contentFeedbackReason" value="wording" /> <span>Wording or typo</span></label>
-        <label><input type="radio" name="contentFeedbackReason" value="incomplete" /> <span>Missing or incomplete</span></label>
-        <label><input type="radio" name="contentFeedbackReason" value="notes_link" /> <span>Wrong location in notes</span></label>
-        <label><input type="radio" name="contentFeedbackReason" value="audio_link" /> <span>Wrong location in audio</span></label>
-        <label><input type="radio" name="contentFeedbackReason" value="other" /> <span>Other</span></label>
+        <label><input type="checkbox" name="contentFeedbackReason" value="inaccurate" /> <span>Inaccurate</span></label>
+        <label><input type="checkbox" name="contentFeedbackReason" value="incomplete" /> <span>Incomplete</span></label>
+        <label><input type="checkbox" name="contentFeedbackReason" value="confusing" /> <span>Confusing</span></label>
+        <label><input type="checkbox" name="contentFeedbackReason" value="typo" /> <span>Typo</span></label>
+        <label><input type="checkbox" name="contentFeedbackReason" value="audio_link" /> <span>Wrong audio</span></label>
+        <label><input type="checkbox" name="contentFeedbackReason" value="notes_link" /> <span>Wrong notes</span></label>
+        <label><input type="checkbox" name="contentFeedbackReason" value="other" /> <span>Other</span></label>
       </fieldset>
 
       <label class="content-feedback-details">
@@ -814,7 +911,7 @@
           <span class="eyebrow">About</span>
           <div class="app-info-title-row">
             <h2 id="appInfoTitle">SCP Study</h2>
-            <span class="app-info-version" id="appInfoVersion">v52</span>
+            <span class="app-info-version" id="appInfoVersion">v53</span>
           </div>
           <p>A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.</p>
         </div>

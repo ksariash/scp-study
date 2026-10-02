@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 58;
+  const APP_VERSION = 59;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -218,7 +218,7 @@
     materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
-    essayPracticeMain: el('essayPracticeMain'), essayQuickNav: el('essayQuickNav'), essayCategoryTags: el('essayCategoryTags'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayNoteLinks: el('essayNoteLinks'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingAudio: el('essayPairingAudio'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
+    essayPracticeMain: el('essayPracticeMain'), essayQuickNav: el('essayQuickNav'), essayCategoryTags: el('essayCategoryTags'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayNoteLinks: el('essayNoteLinks'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingResources: el('essayPairingResources'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
     audioPlayerShell: el('audioPlayerShell'), audioPlayer: el('audioPlayer'), audioTrackTitle: el('audioTrackTitle'), audioTrackCounter: el('audioTrackCounter'), audioPrevBtn: el('audioPrevBtn'), audioBack10Btn: el('audioBack10Btn'), audioForward10Btn: el('audioForward10Btn'), audioNextBtn: el('audioNextBtn'), audioEmptyState: el('audioEmptyState'), audioPlaylistWrap: el('audioPlaylistWrap'), audioPlaylistCount: el('audioPlaylistCount'), audioPlaylistToggle: el('audioPlaylistToggle'), audioPlaylist: el('audioPlaylist'), transcriptPanel: el('transcriptPanel'), transcriptToggle: el('transcriptToggle'), audioTranscript: el('audioTranscript'), transcriptClock: el('transcriptClock'), miniAudioPlayer: el('miniAudioPlayer'), miniAudioOpen: el('miniAudioOpen'), miniAudioTitle: el('miniAudioTitle'), miniAudioTime: el('miniAudioTime'), miniAudioBack10: el('miniAudioBack10'), miniAudioPlayPause: el('miniAudioPlayPause'), miniAudioStop: el('miniAudioStop'),
     statsDialog: el('statsDialog'), statsContent: el('statsContent'), closeStats: el('closeStats'), resetStatsBtn: el('resetStatsBtn'), doneStatsBtn: el('doneStatsBtn'),
     questionReviewDialog: el('questionReviewDialog'), closeQuestionReview: el('closeQuestionReview'), reviewTitle: el('reviewTitle'), reviewContextLabel: el('reviewContextLabel'), reviewSearchInput: el('reviewSearchInput'), reviewSearchClear: el('reviewSearchClear'), reviewSearchCount: el('reviewSearchCount'), reviewSearchEmpty: el('reviewSearchEmpty'), reviewNav: el('reviewNav'), reviewBody: el('reviewBody'), reviewQuestionNumber: el('reviewQuestionNumber'), reviewCategory: el('reviewCategory'), reviewQuestionReportBtn: el('reviewQuestionReportBtn'), reviewStatsGrid: el('reviewStatsGrid'), reviewLastAnswer: el('reviewLastAnswer'), reviewPrompt: el('reviewPrompt'), reviewChoices: el('reviewChoices'), reviewExplanation: el('reviewExplanation'), reviewCorrectAnswer: el('reviewCorrectAnswer'), reviewAnswerDetails: el('reviewAnswerDetails'), reviewRevealBtn: el('reviewRevealBtn'), reviewAudio: el('reviewAudio'), reviewNoteLinks: el('reviewNoteLinks'), reviewPrevBtn: el('reviewPrevBtn'), reviewNextBtn: el('reviewNextBtn'), reviewCounter: el('reviewCounter'),
@@ -1317,8 +1317,8 @@
           <div class="essay-library-points">
             ${essay.facts.map(fact => {
               const status = essayFactMasteryLabel(fact.id);
-              const hasAudio = Array.isArray(ESSAY_AUDIO_MAP?.[fact.id]) && ESSAY_AUDIO_MAP[fact.id].length;
-              return `<div class="essay-library-point" data-essay-library-fact="${escapeHtml(fact.id)}"><span class="essay-library-point-status ${status.toLowerCase()}">${status}</span><span class="essay-library-point-copy"></span><span class="essay-library-point-actions">${hasAudio ? `<button class="content-report-btn essay-library-audio" type="button" data-essay-audio-fact="${escapeHtml(fact.id)}" data-essay-audio-essay="${escapeHtml(essay.id)}" aria-label="Open relevant audio for this pairing" title="Relevant audio">▶</button>` : ''}<button class="content-report-btn essay-library-point-report" type="button" data-report-essay-pairing="${escapeHtml(fact.id)}" data-report-essay-id="${escapeHtml(essay.id)}" aria-label="Report an issue with this pairing" title="Report an issue">⚑</button></span></div>`;
+              const resources = pairingResourceActionsHtml(essay, fact, { context:'library' });
+              return `<div class="essay-library-point" data-essay-library-fact="${escapeHtml(fact.id)}"><span class="essay-library-point-status ${status.toLowerCase()}">${status}</span><span class="essay-library-point-copy"></span><span class="essay-library-point-actions">${resources}<button class="content-report-btn essay-library-point-report" type="button" data-report-essay-pairing="${escapeHtml(fact.id)}" data-report-essay-id="${escapeHtml(essay.id)}" aria-label="Report an issue with this pairing" title="Report an issue">⚑</button></span></div>`;
             }).join('')}
           </div>
         </details>
@@ -1550,7 +1550,7 @@
       if (dom.essayMatchContext) dom.essayMatchContext.textContent = 'Essay complete';
       if (dom.essayMatchName) dom.essayMatchName.textContent = 'All pairings matched';
       if (dom.essayPairingReportBtn) dom.essayPairingReportBtn.disabled = true;
-      if (dom.essayPairingAudio) { dom.essayPairingAudio.innerHTML = ''; dom.essayPairingAudio.classList.add('hidden'); }
+      if (dom.essayPairingResources) { dom.essayPairingResources.innerHTML = ''; dom.essayPairingResources.classList.add('hidden'); }
       if (dom.essayChoiceList) dom.essayChoiceList.innerHTML = '';
       if (dom.essayFeedback) {
         dom.essayFeedback.className = 'essay-choice-feedback correct';
@@ -1564,7 +1564,10 @@
     setGlossaryText(dom.essayMatchContext, fact.label || 'Match the position');
     setGlossaryText(dom.essayMatchName, essayNameText(fact));
     if (dom.essayPairingReportBtn) dom.essayPairingReportBtn.disabled = false;
-    renderEssayRelevantAudio(fact, dom.essayPairingAudio);
+    if (dom.essayPairingResources) {
+      dom.essayPairingResources.innerHTML = pairingResourceActionsHtml(essay, fact, { context:'practice' });
+      dom.essayPairingResources.classList.toggle('hidden', !dom.essayPairingResources.children.length);
+    }
     if (dom.essayChoiceList) {
       dom.essayChoiceList.innerHTML = '';
       essayRun.stepChoices.forEach(id => {
@@ -2913,6 +2916,27 @@
       container.append(button);
     });
     container.classList.toggle('hidden', !container.children.length);
+  }
+
+  function pairingResourceActionsHtml(essay, fact, { context = 'library' } = {}) {
+    if (!essay || !fact) return '';
+    const items = [];
+    const audioRef = ESSAY_AUDIO_MAP?.[String(fact.id)]?.[0] || null;
+    if (audioRef) {
+      items.push(`<button class="pairing-resource-btn pairing-audio-btn" type="button" data-pairing-audio-fact="${escapeHtml(fact.id)}" data-pairing-audio-essay="${escapeHtml(essay.id)}" data-pairing-audio-context="${escapeHtml(context)}" aria-label="Play relevant audio for this pairing" title="Relevant audio"><span class="pairing-play-glyph" aria-hidden="true">▶</span></button>`);
+    }
+
+    const noteRef = courseNoteRef('essay', essay.id);
+    [['compact','Concise notes','compact'],['full','Full notes','full']].forEach(([docKey,label,variant]) => {
+      const doc = courseNoteDoc(docKey);
+      const page = courseNotePage(noteRef, docKey);
+      if (!doc || !page) return;
+      const bookSvg = variant === 'compact'
+        ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 6.5c3-1 5.1-.5 7.5 1v11c-2.4-1.5-4.5-2-7.5-1v-11Zm15 0c-3-1-5.1-.5-7.5 1v11c2.4-1.5 4.5-2 7.5-1v-11Z"/></svg>'
+        : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5.5c3.4-1.2 6-.7 8.5 1.2v12.1c-2.5-1.9-5.1-2.4-8.5-1.2V5.5Zm17 0c-3.4-1.2-6-.7-8.5 1.2v12.1c2.5-1.9 5.1-2.4 8.5-1.2V5.5Z"/><path d="M12 6.7v12.1"/></svg>';
+      items.push(`<button class="pairing-resource-btn pairing-notes-btn pairing-notes-${variant}" type="button" data-course-note-doc="${docKey}" data-course-note-kind="essay" data-course-note-id="${escapeHtml(essay.id)}" aria-label="${escapeHtml(label)} page ${page}" title="${escapeHtml(label)} · p. ${page}"><span class="pairing-book-glyph" aria-hidden="true">${bookSvg}<span class="pairing-page-badge">${page}</span></span></button>`);
+    });
+    return items.join('');
   }
 
   async function getPdfJs() {
@@ -4279,14 +4303,6 @@
         startSpecificEssay(practice.dataset.essayLibraryPractice);
         return;
       }
-      const audio = e.target.closest('[data-essay-audio-fact]');
-      if (audio) {
-        const essay = ESSAY_BANK.find(item => item.id === audio.dataset.essayAudioEssay);
-        const fact = essay?.facts.find(item => item.id === audio.dataset.essayAudioFact);
-        const ref = fact ? ESSAY_AUDIO_MAP?.[fact.id]?.[0] : null;
-        if (ref) void playAudioReference(Number(ref.review), Number(ref.start), { autoplay: false, openMaterials: true });
-        return;
-      }
       const promptReport = e.target.closest('[data-report-essay-prompt]');
       if (promptReport) {
         const essay = ESSAY_BANK.find(item => item.id === promptReport.dataset.reportEssayPrompt);
@@ -4417,6 +4433,21 @@
       openCourseNote(note.dataset.courseNoteDoc, note.dataset.courseNoteKind, note.dataset.courseNoteId);
     });
 
+    document.addEventListener('click', e => {
+      const audio = e.target.closest('[data-pairing-audio-fact]');
+      if (!audio) return;
+      const essay = ESSAY_BANK.find(item => item.id === audio.dataset.pairingAudioEssay);
+      const fact = essay?.facts.find(item => item.id === audio.dataset.pairingAudioFact);
+      const ref = fact ? ESSAY_AUDIO_MAP?.[fact.id]?.[0] : null;
+      if (!ref) return;
+      const context = audio.dataset.pairingAudioContext || 'library';
+      if (context === 'practice' && essayRun?.essay?.id === essay?.id) essayRun.stepAudioUsed = true;
+      void playAudioReference(Number(ref.review), Number(ref.start), {
+        autoplay: context === 'practice',
+        openMaterials: context !== 'practice'
+      });
+    });
+
     dom.materialsDialog.addEventListener('click', e => {
       const view = e.target.closest('[data-view-pdf]');
       if (view) {
@@ -4473,20 +4504,17 @@
       syncTranscriptToAudio(true);
       updateMiniAudio();
     });
-    [dom.questionAudio, dom.reviewAudio, dom.essayPairingAudio].forEach(container => container?.addEventListener('click', e => {
+    [dom.questionAudio, dom.reviewAudio].forEach(container => container?.addEventListener('click', e => {
       const isMainQuestionAudio = container === dom.questionAudio;
-      const isEssayAudio = container === dom.essayPairingAudio;
       const play = e.target.closest('[data-related-review]');
       if (play) {
         if (isMainQuestionAudio) markAnalyticsAssist('audio');
-        if (isEssayAudio && essayRun) essayRun.stepAudioUsed = true;
         void playAudioReference(Number(play.dataset.relatedReview), Number(play.dataset.relatedStart), { autoplay: true });
         return;
       }
       const transcript = e.target.closest('[data-related-transcript]');
       if (transcript) {
         if (isMainQuestionAudio) markAnalyticsAssist('audio');
-        if (isEssayAudio && essayRun) essayRun.stepAudioUsed = true;
         void playAudioReference(Number(transcript.dataset.relatedTranscript), Number(transcript.dataset.relatedStart), { autoplay: false, openMaterials: true });
       }
     }));
@@ -5065,7 +5093,7 @@
     };
   }
 
-  function exportAppData() {
+  async function exportAppData() {
     const selected = selectedTransferGroups();
     const groups = { stats:{}, settings:{}, data:{} };
     for (let index=0; index<localStorage.length; index++) {
@@ -5081,15 +5109,32 @@
       activeZman:COHORT_ID,
       groups
     };
-    const blob = new Blob([JSON.stringify(payload,null,2)], { type:'application/json' });
-    const url = URL.createObjectURL(blob);
+    const filename = `scp-study-backup-${new Date().toISOString().slice(0,10)}.json`;
+    const json = JSON.stringify(payload,null,2);
+    const file = new File([json], filename, { type:'application/json' });
+
+    if (navigator.share && (!navigator.canShare || navigator.canShare({ files:[file] }))) {
+      try {
+        await navigator.share({ title:'SCP Study backup', files:[file] });
+        setSettingsStatus('Export shared.');
+        return;
+      } catch (error) {
+        if (error?.name === 'AbortError') {
+          setSettingsStatus('Export canceled.');
+          return;
+        }
+        console.warn('Could not share export; falling back to download:', error);
+      }
+    }
+
+    const url = URL.createObjectURL(file);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `scp-study-backup-${new Date().toISOString().slice(0,10)}.json`;
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     link.remove();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     setSettingsStatus('Export created.');
   }
 
@@ -5238,7 +5283,7 @@
     });
     el('saveReminderSettingsBtn')?.addEventListener('click', () => void saveReminderSettingsFromUi());
 
-    el('exportDataBtn')?.addEventListener('click', exportAppData);
+    el('exportDataBtn')?.addEventListener('click', () => void exportAppData());
     el('importDataBtn')?.addEventListener('click', () => el('importDataFile')?.click());
     el('importDataFile')?.addEventListener('change', event => {
       const file = event.currentTarget.files?.[0] || null;

@@ -9,7 +9,7 @@
   const MATERIALS_TRANSCRIPT_KEY = 'scpStudy.materialsTranscript.v1';
   const ESSAY_PRACTICE_KEY = 'scpStudy.essayPractice.v1';
   const ESSAY_CATEGORY_FILTER_KEY = 'scpStudy.essayCategoryFilter.v1';
-  const AUDIO_CACHE_NAME = 'scp-study-audio-v1';
+  const AUDIO_CACHE_NAME = 'scp-study-audio-v2';
   const BUNDLED_AUDIO_REVIEWS = AUDIO_REVIEW_DATA.map(track => ({
     ...track,
     name: track.title

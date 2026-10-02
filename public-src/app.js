@@ -2899,6 +2899,12 @@
     return Number.isFinite(page) && page >= 1 ? Math.floor(page) : 0;
   }
 
+  function resourceBookSvg(variant = 'compact') {
+    return variant === 'compact'
+      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 6.5c3-1 5.1-.5 7.5 1v11c-2.4-1.5-4.5-2-7.5-1v-11Zm15 0c-3-1-5.1-.5-7.5 1v11c2.4-1.5 4.5-2 7.5-1v-11Z"/></svg>'
+      : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5.5c3.4-1.2 6-.7 8.5 1.2v12.1c-2.5-1.9-5.1-2.4-8.5-1.2V5.5Zm17 0c-3.4-1.2-6-.7-8.5 1.2v12.1c2.5-1.9 5.1-2.4 8.5-1.2V5.5Z"/><path d="M12 6.7v12.1"/></svg>';
+  }
+
   function renderCourseNoteLinks(container, kind, id) {
     if (!container) return;
     const ref = courseNoteRef(kind, id);
@@ -2909,12 +2915,14 @@
       const page = courseNotePage(ref, key);
       if (!doc || !Number.isFinite(page) || page < 1) return;
       const button = document.createElement('button');
-      button.className = 'course-note-link';
+      button.className = `course-note-link study-resource-chip course-note-${key}`;
       button.type = 'button';
       button.dataset.courseNoteDoc = key;
       button.dataset.courseNoteKind = kind;
       button.dataset.courseNoteId = String(id);
-      button.innerHTML = `${escapeHtml(label)} <small>p. ${page}</small>`;
+      button.setAttribute('aria-label', `${label}, page ${page}`);
+      button.title = `${label} · p. ${page}`;
+      button.innerHTML = `<span class="study-resource-book" aria-hidden="true">${resourceBookSvg(key)}<span class="study-resource-page">${page}</span></span><span class="study-resource-chip-label">${escapeHtml(label)}</span>`;
       container.append(button);
     });
     container.classList.toggle('hidden', !container.children.length);
@@ -2933,9 +2941,7 @@
       const doc = courseNoteDoc(docKey);
       const page = courseNotePage(noteRef, docKey);
       if (!doc || !page) return;
-      const bookSvg = variant === 'compact'
-        ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 6.5c3-1 5.1-.5 7.5 1v11c-2.4-1.5-4.5-2-7.5-1v-11Zm15 0c-3-1-5.1-.5-7.5 1v11c2.4-1.5 4.5-2 7.5-1v-11Z"/></svg>'
-        : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5.5c3.4-1.2 6-.7 8.5 1.2v12.1c-2.5-1.9-5.1-2.4-8.5-1.2V5.5Zm17 0c-3.4-1.2-6-.7-8.5 1.2v12.1c2.5-1.9 5.1-2.4 8.5-1.2V5.5Z"/><path d="M12 6.7v12.1"/></svg>';
+      const bookSvg = resourceBookSvg(variant);
       items.push(`<button class="pairing-resource-btn pairing-notes-btn pairing-notes-${variant}" type="button" data-course-note-doc="${docKey}" data-course-note-kind="essay" data-course-note-id="${escapeHtml(essay.id)}" aria-label="${escapeHtml(label)} page ${page}" title="${escapeHtml(label)} · p. ${page}"><span class="pairing-book-glyph" aria-hidden="true">${bookSvg}<span class="pairing-page-badge">${page}</span></span></button>`);
     });
     return items.join('');
@@ -3762,41 +3768,60 @@
     updateMiniAudio();
   }
 
-  function renderRelevantAudio(questionId, container, allowBeforeAnswer = true) {
+  function renderAudioReferences(refs, container, { context = 'question' } = {}) {
     if (!container) return;
-    const refs = QUESTION_AUDIO_MAP[String(questionId)] || [];
-    if (!refs.length || !allowBeforeAnswer) {
+    const valid = (Array.isArray(refs) ? refs : []).map(ref => {
+      const track = AUDIO_REVIEW_DATA.find(t => Number(t.id) === Number(ref.review));
+      return track ? { ref, track } : null;
+    }).filter(Boolean);
+
+    if (!valid.length) {
       container.innerHTML = '';
       container.classList.add('hidden');
       return;
     }
-    const rows = refs.map((ref, idx) => {
-      const track = AUDIO_REVIEW_DATA.find(t => Number(t.id) === Number(ref.review));
-      if (!track) return '';
-      return `<div class="question-audio-row">
-        <button class="question-audio-play" type="button" data-related-review="${ref.review}" data-related-start="${ref.start}">
-          <span class="question-audio-playicon" aria-hidden="true">▶</span>
-          <span class="question-audio-copy"><strong>${escapeHtml(track.title)}</strong><small>${escapeHtml(ref.label || 'Relevant section')}</small></span>
-          <span class="question-audio-time">${formatAudioTime(ref.start)}</span>
+
+    container.innerHTML = valid.map(({ ref, track }) => {
+      const time = formatAudioTime(ref.start);
+      return `<div class="question-audio-row study-resource-audio-row">
+        <button class="question-audio-play study-resource-audio-main" type="button" data-related-review="${ref.review}" data-related-start="${ref.start}" data-resource-audio-context="${escapeHtml(context)}">
+          <span class="question-audio-playicon study-resource-playicon" aria-hidden="true">▶</span>
+          <span class="question-audio-copy"><strong>${escapeHtml(track.title)}</strong><small>${escapeHtml(ref.label || 'Relevant section')} · ${time}</small></span>
         </button>
-        <button class="question-audio-transcript" type="button" data-related-transcript="${ref.review}" data-related-start="${ref.start}" aria-label="Open transcript at ${formatAudioTime(ref.start)}">Transcript</button>
+        <button class="question-audio-transcript study-resource-transcript" type="button" data-related-transcript="${ref.review}" data-related-start="${ref.start}" data-resource-audio-context="${escapeHtml(context)}" aria-label="Open transcript at ${time}" title="Transcript">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5h14v13H5z"/><path d="M8 9h8M8 12h8M8 15h5"/></svg>
+        </button>
       </div>`;
     }).join('');
-    container.innerHTML = `<div class="question-audio-label">Relevant audio</div>${rows}`;
     container.classList.remove('hidden');
   }
 
+  function renderRelevantAudio(questionId, container, allowBeforeAnswer = true) {
+    const refs = allowBeforeAnswer ? (QUESTION_AUDIO_MAP[String(questionId)] || []) : [];
+    renderAudioReferences(refs, container, { context:'question' });
+  }
+
+  function essayQuestionAudioRefs(essay) {
+    if (!essay?.facts?.length) return [];
+    const byReview = new Map();
+    essay.facts.forEach(fact => {
+      (ESSAY_AUDIO_MAP?.[String(fact.id)] || []).forEach(ref => {
+        const key = Number(ref.review);
+        const current = byReview.get(key);
+        if (!current || Number(ref.start) < Number(current.start)) {
+          byReview.set(key, { ...ref });
+        }
+      });
+    });
+    return [...byReview.values()].sort((a,b) => Number(a.review) - Number(b.review) || Number(a.start) - Number(b.start));
+  }
+
+  function renderEssayQuestionAudio(essay, container, context = 'essay') {
+    renderAudioReferences(essayQuestionAudioRefs(essay), container, { context });
+  }
+
   function renderEssayRelevantAudio(fact, container) {
-    if (!container) return;
-    const refs = ESSAY_AUDIO_MAP?.[String(fact?.id)] || [];
-    if (!refs.length) { container.innerHTML = ''; container.classList.add('hidden'); return; }
-    const rows = refs.map(ref => {
-      const track = AUDIO_REVIEW_DATA.find(t => Number(t.id) === Number(ref.review));
-      if (!track) return '';
-      return `<div class="question-audio-row"><button class="question-audio-play" type="button" data-related-review="${ref.review}" data-related-start="${ref.start}"><span class="question-audio-playicon" aria-hidden="true">▶</span><span class="question-audio-copy"><strong>${escapeHtml(track.title)}</strong><small>${escapeHtml(ref.label || 'Relevant section')}</small></span><span class="question-audio-time">${formatAudioTime(ref.start)}</span></button><button class="question-audio-transcript" type="button" data-related-transcript="${ref.review}" data-related-start="${ref.start}" aria-label="Open transcript at ${formatAudioTime(ref.start)}">Transcript</button></div>`;
-    }).join('');
-    container.innerHTML = `<div class="question-audio-label">Relevant audio</div>${rows}`;
-    container.classList.remove('hidden');
+    renderAudioReferences(ESSAY_AUDIO_MAP?.[String(fact?.id)] || [], container, { context:'essay-pairing' });
   }
 
   function openMaterials(tab = null) {

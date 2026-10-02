@@ -1,5 +1,5 @@
-const APP_VERSION = 51;
-const CACHE_NAME = 'scp-study-v51';
+const APP_VERSION = 52;
+const CACHE_NAME = 'scp-study-v52';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v1';
 const APP_SHELL = [
   './',
@@ -7,13 +7,13 @@ const APP_SHELL = [
   './styles.css',
   './cohorts/index.js',
   './cohort-loader.js',
-  './cohorts/nat-bar-nat-stam-yeinam-summer-26/cohort.js',
-  './cohorts/nat-bar-nat-stam-yeinam-summer-26/questions.js',
-  './cohorts/nat-bar-nat-stam-yeinam-summer-26/chaburos.js',
-  './cohorts/nat-bar-nat-stam-yeinam-summer-26/audio-reviews.js',
-  './cohorts/nat-bar-nat-stam-yeinam-summer-26/glossary.js',
-  './cohorts/nat-bar-nat-stam-yeinam-summer-26/essay-practice.js',
-  './cohorts/nat-bar-nat-stam-yeinam-summer-26/course-notes.js',
+  './cohorts/2026-summer/cohort.js',
+  './cohorts/2026-summer/questions.js',
+  './cohorts/2026-summer/chaburos.js',
+  './cohorts/2026-summer/audio-reviews.js',
+  './cohorts/2026-summer/glossary.js',
+  './cohorts/2026-summer/essay-practice.js',
+  './cohorts/2026-summer/course-notes.js',
   './pdfjs/pdf.mjs',
   './pdfjs/pdf.worker.mjs',
   './app.js',
@@ -22,10 +22,10 @@ const APP_SHELL = [
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
   './images/install-scp-study-ios.png',
-  './documents/SCP-Study-Compact-Course-Review.pdf',
-  './documents/SCP-Study-Cumulative-Test.pdf',
-  './documents/SCP-Study-Cumulative-Test-Answer-Key.pdf',
-  './documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf',
+  './documents/2026-summer/SCP-Study-Compact-Course-Review.pdf',
+  './documents/2026-summer/SCP-Study-Cumulative-Test.pdf',
+  './documents/2026-summer/SCP-Study-Cumulative-Test-Answer-Key.pdf',
+  './documents/2026-summer/SCP-Study-Essay-Questions-and-Sample-Answers.pdf',
   './glossary-audio/glossary-nat-bar-nat.mp3',
   './glossary-audio/glossary-taam-keikar.mp3',
   './glossary-audio/glossary-ben-yomo.mp3',

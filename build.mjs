@@ -209,4 +209,17 @@ await writeFile(fullNotesDestination, Buffer.from(fullNotesEncoded, 'base64'));
 
 await generatePdfs(outputDir.pathname);
 
-console.log(`Built SCP Study static assets for ${cohortRegistry.cohorts.length} cohort package(s); preserved the compact/full course notes and generated question/test/essay PDFs. Short & Sweet review audio remains in R2.`);
+const defaultZmanId = String(cohortRegistry.defaultCohortId || '2026-summer');
+const defaultDocumentsDir = new URL(`./documents/${defaultZmanId}/`, outputDir);
+await mkdir(defaultDocumentsDir, { recursive: true });
+for (const filename of [
+  'SCP-Study-Compact-Course-Review.pdf',
+  'SCP-Study-Full-Course-Notes.pdf',
+  'SCP-Study-Cumulative-Test.pdf',
+  'SCP-Study-Cumulative-Test-Answer-Key.pdf',
+  'SCP-Study-Essay-Questions-and-Sample-Answers.pdf'
+]) {
+  await cp(new URL(`./documents/${filename}`, outputDir), new URL(`./documents/${defaultZmanId}/${filename}`, outputDir));
+}
+
+console.log(`Built SCP Study static assets for ${cohortRegistry.cohorts.length} Zman package(s); preserved legacy document URLs and generated namespaced documents. Short & Sweet review audio remains in R2.`);

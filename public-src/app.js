@@ -14,15 +14,17 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 51;
+  const APP_VERSION = 52;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
-  const COHORT_SELECTION_KEY = 'scpStudy.activeCohort.v1';
-  const COHORT_REGISTRY = window.SCP_COHORT_REGISTRY || { cohorts: [] };
-  const ACTIVE_COHORT = window.SCP_COHORT_CONFIG || window.SCP_ACTIVE_COHORT || COHORT_REGISTRY.cohorts?.[0] || {};
+  const COHORT_SELECTION_KEY = 'scpStudy.activeZman.v1';
+  const ZMAN_REGISTRY = window.SCP_ZMAN_REGISTRY || { zmanim: window.SCP_COHORT_REGISTRY?.cohorts || [] };
+  const COHORT_REGISTRY = { ...window.SCP_COHORT_REGISTRY, cohorts: ZMAN_REGISTRY.zmanim || [], defaultCohortId: ZMAN_REGISTRY.defaultZmanId || window.SCP_COHORT_REGISTRY?.defaultCohortId, latestZmanId: ZMAN_REGISTRY.latestZmanId || window.SCP_COHORT_REGISTRY?.latestZmanId };
+  const ACTIVE_COHORT = window.SCP_ZMAN_CONFIG || window.SCP_COHORT_CONFIG || window.SCP_ACTIVE_ZMAN || window.SCP_ACTIVE_COHORT || COHORT_REGISTRY.cohorts?.[0] || {};
   const COHORT_ID = String(ACTIVE_COHORT.id || COHORT_REGISTRY.defaultCohortId || 'default');
   const COHORT_NAME = String(ACTIVE_COHORT.name || COHORT_ID);
-  const ANALYTICS_COHORT = String(ACTIVE_COHORT.analyticsKey || COHORT_NAME);
+  const ANALYTICS_COHORT = String(ACTIVE_COHORT.analyticsKey || COHORT_ID);
+  const LEGACY_ZMAN_IDS = Array.isArray(ACTIVE_COHORT.legacyIds) ? ACTIVE_COHORT.legacyIds.map(String) : [];
   const ANALYTICS_SETTINGS_KEY = 'scpStudy.analytics.v1';
   const ANALYTICS_QUEUE_KEY = 'scpStudy.analyticsQueue.v1';
   const ANALYTICS_INSTALLATION_KEY = 'scpStudy.analyticsInstallation.v1';
@@ -58,6 +60,13 @@
     try {
       const scoped = localStorage.getItem(key);
       if (scoped !== null) return JSON.parse(scoped);
+      for (const legacyId of LEGACY_ZMAN_IDS) {
+        const legacyScoped = localStorage.getItem(`${base}:${legacyId}`);
+        if (legacyScoped !== null) {
+          localStorage.setItem(key, legacyScoped);
+          return JSON.parse(legacyScoped);
+        }
+      }
       const defaultId = String(COHORT_REGISTRY.defaultCohortId || COHORT_ID);
       if (COHORT_ID === defaultId) {
         const legacy = localStorage.getItem(base);
@@ -79,6 +88,13 @@
     try {
       const scoped = localStorage.getItem(key);
       if (scoped !== null) return scoped;
+      for (const legacyId of LEGACY_ZMAN_IDS) {
+        const legacyScoped = localStorage.getItem(`${base}:${legacyId}`);
+        if (legacyScoped !== null) {
+          localStorage.setItem(key, legacyScoped);
+          return legacyScoped;
+        }
+      }
       const defaultId = String(COHORT_REGISTRY.defaultCohortId || COHORT_ID);
       if (COHORT_ID === defaultId) {
         const legacy = localStorage.getItem(base);
@@ -104,7 +120,18 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return { scopeVersion: 1, cohorts: {} };
       const parsed = JSON.parse(raw);
-      if (parsed?.scopeVersion === 1 && parsed.cohorts && typeof parsed.cohorts === 'object') return parsed;
+      if (parsed?.scopeVersion === 1 && parsed.cohorts && typeof parsed.cohorts === 'object') {
+        if (!parsed.cohorts[COHORT_ID]) {
+          for (const legacyId of LEGACY_ZMAN_IDS) {
+            if (parsed.cohorts[legacyId]) {
+              parsed.cohorts[COHORT_ID] = parsed.cohorts[legacyId];
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+              break;
+            }
+          }
+        }
+        return parsed;
+      }
       const migrated = { scopeVersion: 1, cohorts: { [COHORT_ID]: parsed } };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
       return migrated;
@@ -461,6 +488,8 @@
 
   function updateAppVersionUi() {
     if (dom.appVersionFooter) dom.appVersionFooter.textContent = `SCP Study v${APP_VERSION}`;
+    const aboutVersion = document.getElementById('appInfoVersion');
+    if (aboutVersion) aboutVersion.textContent = `v${APP_VERSION}`;
   }
 
   function consumeUpdateAnnouncement() {

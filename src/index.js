@@ -41,7 +41,7 @@ function returnedRange(object) {
   return { start, end: start + length - 1, length, size };
 }
 
-const DEFAULT_COHORT_AUDIO_PREFIX = 'audio/nat-bar-nat-stam-yeinam-summer-26/';
+const DEFAULT_COHORT_AUDIO_PREFIX = 'audio/2026-summer/';
 const LEGACY_AUDIO_PREFIX = 'audio/';
 
 function candidateAudioKeys(key) {

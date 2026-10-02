@@ -67,8 +67,8 @@
         <h1 id="questionPrompt">Loading…</h1>
         <p class="multi-note hidden" id="multiNote">Select all that apply.</p>
 
-        <section class="question-audio hidden" id="questionAudio" aria-label="Relevant audio review"></section>
         <div class="course-note-links" id="questionNoteLinks" aria-label="Course note references"></div>
+        <section class="question-audio hidden" id="questionAudio" aria-label="Relevant audio review"></section>
 
         <form id="answerForm" class="choices" autocomplete="off"></form>
 
@@ -135,7 +135,7 @@
           </div>
         </div>
 
-        <section class="question-audio hidden essay-pairing-audio" id="essayPairingAudio" aria-label="Relevant audio review"></section>
+        <div class="pairing-resource-actions hidden" id="essayPairingResources" aria-label="Relevant pairing resources"></div>
 
         <div class="essay-match-target">
           <span class="essay-match-context" id="essayMatchContext"></span>
@@ -530,6 +530,14 @@
               </div>
             </div>
 
+            <div class="settings-action-card">
+              <div>
+                <strong>Announcements</strong>
+                <p>Open the instructor announcements, polls, and feedback app.</p>
+              </div>
+              <a class="secondary settings-action-btn settings-link-btn" href="https://scp-study-announcements.ksariash.workers.dev/" target="_blank" rel="noopener">Open announcements</a>
+            </div>
+
             <div class="settings-action-card danger-card">
               <div>
                 <strong>Reset statistics</strong>
@@ -728,6 +736,8 @@
 
         <section class="review-question">
           <h3 id="reviewPrompt"></h3>
+          <div class="course-note-links" id="reviewNoteLinks" aria-label="Course note references"></div>
+          <section class="question-audio hidden review-audio" id="reviewAudio" aria-label="Relevant audio review"></section>
           <div id="reviewChoices" class="review-choices"></div>
         </section>
 
@@ -740,9 +750,6 @@
           <p id="reviewExplanation"></p>
           <p class="correct-answer" id="reviewCorrectAnswer"></p>
         </section>
-
-        <section class="question-audio hidden review-audio" id="reviewAudio" aria-label="Relevant audio review"></section>
-        <div class="course-note-links" id="reviewNoteLinks" aria-label="Course note references"></div>
 
       </div>
     </div>
@@ -905,7 +912,7 @@
           <span class="eyebrow">About</span>
           <div class="app-info-title-row">
             <h2 id="appInfoTitle">SCP Study</h2>
-            <span class="app-info-version" id="appInfoVersion">v58</span>
+            <span class="app-info-version" id="appInfoVersion">v59</span>
           </div>
           <p>A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.</p>
         </div>

@@ -285,3 +285,12 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - Sizes the reminder time/calendar controls to match adjacent settings fields.
 - Emits explicit anonymous audio-play and note-page-open analytics for the Analytics Study aid usage dashboard.
 - Keeps the Essay search button fixed to its bottom-left viewport anchor.
+
+
+## Release 59
+
+- Repairs Summer audio playback by using root-absolute `/audio/2026-summer/` URLs, delegating uncached media Range requests to the R2 Worker, and resetting the audio cache version.
+- Mobile backup export now opens the native file share sheet when supported, with browser download as fallback.
+- Question resources are consistently ordered as prompt → notes → relevant audio in Study and Question Explorer.
+- Essay pairings use compact audio and concise/full note icons with page-number badges.
+- Adds a direct Announcements link in Study settings.

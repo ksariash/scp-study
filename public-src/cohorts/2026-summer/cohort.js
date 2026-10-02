@@ -8,7 +8,7 @@ window.SCP_ZMAN_CONFIG = {
   questionCount: 58,
   essayCount: 14,
   audio: {
-    publicUrlPrefix: "audio/2026-summer/",
+    publicUrlPrefix: "/audio/2026-summer/",
     r2ObjectPrefix: "audio/2026-summer/",
     legacyR2ObjectPrefix: "audio/",
     migrationMode: "legacy-fallback"

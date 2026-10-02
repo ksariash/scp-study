@@ -198,3 +198,26 @@ The Essay-mode search FAB has a fixed semantic anchor: bottom-left of the viewpo
 ## Native settings controls
 
 A mobile native form control should visually match adjacent app controls in both width and height. When WebKit intrinsic sizing causes drift, constrain `height`, `min-height`, `max-height`, padding, and the native date/time value box together. Do not solve overflow by leaving an oversized control inside the card.
+
+
+## Audio delivery and Range requests
+
+Summer review audio is served from the R2-backed Worker path `/audio/2026-summer/...`. Catalog URLs must be root-absolute so playback does not depend on the current document path.
+
+Do not make the service worker fetch an entire media file merely to answer an uncached HTTP Range request. For uncached media ranges, pass the original Range request through to the Worker/R2 layer, which returns the proper 206 response. A full cached object may be sliced locally for offline playback.
+
+The app and service worker must use the same audio cache version. When changing Range/cache semantics, bump that cache version so an old partial or malformed cached response cannot poison playback.
+
+## Resource ordering
+
+Question resource order is a UI invariant: question prompt, course-note links, then relevant audio, then answer choices. Use the same order in the question explorer/review UI. Do not independently reorder these surfaces.
+
+Essay pairing resource actions should stay compact. Audio uses a small play control. Concise and full course notes use visually distinct book/note glyphs with the referenced page number overlaid on the glyph. Use the same resource-action renderer in Essay practice and the Essay explorer so the controls do not drift.
+
+## Mobile export
+
+Settings export creates a real JSON `File`. When the Web Share API can share files, invoke the native share sheet first so mobile users can send the backup or save it to Files/Downloads. Fall back to a normal browser download when file sharing is unavailable. Treat a user-cancelled share sheet as a cancellation, not as an error that triggers an unwanted download.
+
+## Cross-app navigation
+
+Study settings should include a direct production link to SCP Announcements. Keep cross-app links explicit and easy to update when deployment domains change.

@@ -1,7 +1,7 @@
 {
   "name": "scp-study",
   "private": true,
-  "version": "58.0.0",
+  "version": "59.0.0",
   "description": "SCP Study PWA with Cloudflare Workers Static Assets and R2-hosted review audio.",
   "scripts": {
     "build": "node build.mjs",

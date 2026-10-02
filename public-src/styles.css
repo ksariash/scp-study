@@ -3422,14 +3422,16 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
 
 
 /* v53: Zman notifications, reminders, and ordered data settings */
-.notification-card{
-  min-width:116px;padding:7px 11px;border-radius:10px;background:rgba(255,255,255,.12);
-  color:#fff;border:1px solid rgba(255,255,255,.18);text-align:center;display:grid;gap:2px;
+.notification-icon-btn{
+  position:relative;display:inline-grid;place-items:center;flex:0 0 36px;width:36px;height:36px;padding:0;
+  border-radius:10px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.18);
 }
-.notification-card:hover{background:rgba(255,255,255,.18)}
-.notification-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;opacity:.82}
-.notification-count{font-size:1rem;line-height:1.15;font-variant-numeric:tabular-nums}
-.notification-count.is-zero{opacity:.55}
+.notification-icon-btn:hover{background:rgba(255,255,255,.18)}
+.notification-icon-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.notification-alert{
+  position:absolute;right:-3px;top:-4px;display:grid;place-items:center;width:16px;height:16px;border-radius:999px;
+  background:#d83b4b;color:#fff;border:2px solid #172554;font-size:.62rem;font-weight:950;line-height:1;
+}
 .notification-inbox-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
 .notification-inbox-toolbar label{font-size:.72rem;color:var(--muted);font-weight:750}
 .notification-inbox-status{min-height:20px;color:var(--muted);font-size:.72rem}
@@ -3463,8 +3465,16 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
 .settings-transfer-actions{display:flex;gap:7px;flex-wrap:wrap}
 .delete-all-card{border-color:#e8c9ce;background:#fff8f9}
 @media(max-width:780px){
-  .notification-card{min-width:104px;order:-1}
+  .notification-icon-btn{flex:0 0 36px}
   .reminder-controls{grid-template-columns:1fr}
   .settings-transfer-card{flex-direction:column}
   .settings-transfer-actions{width:100%}
 }
+
+.reminder-controls,.reminder-controls>*{min-width:0;max-width:100%}
+.reminder-controls input[type="time"],.reminder-controls select{
+  display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;
+}
+.settings-feature-card,.cohort-setting,.chabura-setting{min-width:0}
+.cohort-setting-fields,.chabura-fields,.cohort-setting-fields>*,
+.chabura-fields>*{min-width:0;max-width:100%;box-sizing:border-box}

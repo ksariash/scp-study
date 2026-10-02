@@ -128,3 +128,16 @@ For client/source changes:
 8. For cross-repo changes, verify Analytics first and Study second.
 
 Do not commit secrets, generated `public/`, `.wrangler/`, or local environment files.
+
+
+## UI design rules
+
+Prefer the interface itself over explanatory prose. If a heading, label, selected value, toggle, or visual grouping already communicates purpose, do not add a paragraph that restates it.
+
+Settings should be concise. In particular, Zman and chabura controls do not need prose explaining that they select a Zman/chabura. Reserve status text for a real state change, warning, error, or confirmation.
+
+Use familiar icons instead of text for compact utility actions when the icon is conventional and unambiguous. Icon-only buttons must have an accessible `aria-label` and a useful `title`. The notification control is a small bell adjacent to the session timer; unread state is a compact alert mark, not a large labeled card.
+
+All dismissible dialogs should close when the user clicks the backdrop/outside the dialog box. Keep this behavior in the shared dialog lifecycle rather than implementing one-off backdrop handlers.
+
+Responsive form controls must not overflow their cards. Grid children and inputs/selects should use `min-width: 0`, `max-width: 100%`, and `box-sizing: border-box` where intrinsic mobile control sizing can otherwise escape the container.

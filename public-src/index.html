@@ -28,9 +28,9 @@
         <span class="timer-label" id="timerLabel">Session</span>
         <strong id="mainTimer">00:00:00</strong>
       </div>
-      <button class="notification-card" id="notificationsBtn" type="button" aria-label="Open notifications">
-        <span class="notification-label">Notifications</span>
-        <strong class="notification-count" id="notificationBadge">0</strong>
+      <button class="notification-icon-btn" id="notificationsBtn" type="button" aria-label="Notifications" title="Notifications">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z"/><path d="M10 21h4"/></svg>
+        <span class="notification-alert hidden" id="notificationBadge" aria-hidden="true">!</span>
       </button>
       <div class="topbar-right">
         <button class="icon-btn" id="categoriesBtn" type="button" aria-label="Filter categories">Categories</button>
@@ -440,9 +440,8 @@
 
           <section class="cohort-setting settings-ordered-section" aria-labelledby="cohortSettingHeading">
             <div class="cohort-setting-copy">
-              <span class="eyebrow">1 · Zman</span>
-              <h3 id="cohortSettingHeading">Study Zman</h3>
-              <p>Questions, essays, notes, audio, categories, and saved progress stay separate for each Zman.</p>
+              <span class="eyebrow">1</span>
+              <h3 id="cohortSettingHeading">Zman</h3>
             </div>
             <div class="cohort-setting-fields">
               <label><span>Zman</span><select id="settingsCohortSelect" aria-label="Study Zman"></select></label>
@@ -453,9 +452,8 @@
 
           <section class="chabura-setting settings-ordered-section" aria-labelledby="chaburaSettingHeading">
             <div class="chabura-setting-copy">
-              <span class="eyebrow">2 · Your chabura</span>
-              <h3 id="chaburaSettingHeading">Semichas Chaver chabura</h3>
-              <p>This selection is saved separately for the current Zman and can be included with anonymous course analytics.</p>
+              <span class="eyebrow">2</span>
+              <h3 id="chaburaSettingHeading">Chabura</h3>
             </div>
             <div class="chabura-fields">
               <label><span>Location</span><select id="settingsChaburaLocation" aria-label="Chabura location"></select></label>
@@ -467,9 +465,8 @@
 
           <section class="settings-feature-card settings-ordered-section" aria-labelledby="studyReminderHeading">
             <div class="settings-feature-copy">
-              <span class="eyebrow">3 · Study reminders</span>
-              <h3 id="studyReminderHeading">Notifications &amp; daily reminder</h3>
-              <p>Enable push notifications for announcements and issue updates. An optional daily reminder skips Shabbat and Yom Tov.</p>
+              <span class="eyebrow">3</span>
+              <h3 id="studyReminderHeading">Study reminders</h3>
             </div>
             <div class="reminder-controls">
               <label class="analytics-switch reminder-switch">
@@ -610,9 +607,7 @@
     <div class="modal-inner">
       <div class="modal-head">
         <div>
-          <span class="eyebrow">Current Zman</span>
           <h2 id="notificationInboxTitle">Notifications</h2>
-          <p id="notificationInboxSubtitle">Announcements, feedback updates, and study notices.</p>
         </div>
         <button class="close-btn" id="closeNotificationInbox" type="button" aria-label="Close">×</button>
       </div>
@@ -911,7 +906,7 @@
           <span class="eyebrow">About</span>
           <div class="app-info-title-row">
             <h2 id="appInfoTitle">SCP Study</h2>
-            <span class="app-info-version" id="appInfoVersion">v54</span>
+            <span class="app-info-version" id="appInfoVersion">v55</span>
           </div>
           <p>A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.</p>
         </div>

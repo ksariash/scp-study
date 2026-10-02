@@ -251,3 +251,11 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - Makes the Progress & Stats reset action ask whether to reset the current Zman or all Zmanim.
 - Fixes push-notification feature detection in browsers without the Notifications API.
 - Rewrites the LLM operating guide and multi-Zman architecture documentation around the deployed design.
+
+
+## Release 55
+
+- Replaces the labeled notification card with a compact bell and unread alert mark.
+- Makes the notification inbox participate in the shared click-outside dialog behavior.
+- Removes redundant Zman, chabura, and notification explanatory copy.
+- Fixes mobile reminder-time control overflow.

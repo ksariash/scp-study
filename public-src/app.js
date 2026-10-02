@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 54;
+  const APP_VERSION = 55;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -207,6 +207,7 @@
   const dom = {
     modeLabel: el('modeLabel'), timerLabel: el('timerLabel'), mainTimer: el('mainTimer'), timerCard: el('timerCard'), brandLogo: el('brandLogo'), brandTitle: el('brandTitle'),
     appInfoDialog: el('appInfoDialog'), closeAppInfo: el('closeAppInfo'), appInfoMcBtn: el('appInfoMcBtn'), appInfoEssayBtn: el('appInfoEssayBtn'), appInfoTestBtn: el('appInfoTestBtn'), appInfoShareBtn: el('appInfoShareBtn'), appInfoUpdateBtn: el('appInfoUpdateBtn'), appInfoSettingsBtn: el('appInfoSettingsBtn'),
+    notificationInboxDialog: el('notificationInboxDialog'),
     categoriesBtn: el('categoriesBtn'), materialsBtn: el('materialsBtn'), statsBtn: el('statsBtn'), essayBtn: el('essayBtn'), testBtn: el('testBtn'), questionSearchFab: el('questionSearchFab'), installBtn: el('installBtn'), installGuideDialog: el('installGuideDialog'), closeInstallGuide: el('closeInstallGuide'),
     testProgressWrap: el('testProgressWrap'), testQuestionCount: el('testQuestionCount'), testAnsweredCount: el('testAnsweredCount'), testProgressFill: el('testProgressFill'),
     questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), questionNoteLinks: el('questionNoteLinks'), answerForm: el('answerForm'),
@@ -266,7 +267,7 @@
   let updateCheckInFlight = null;
   let activePdfViewer = null;
   let pdfJsPromise = null;
-  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.statsDialog, dom.questionReviewDialog, dom.pdfViewerDialog, dom.appInfoDialog, dom.mcIntroDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.chaburaDialog].filter(Boolean);
+  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.statsDialog, dom.questionReviewDialog, dom.pdfViewerDialog, dom.appInfoDialog, dom.mcIntroDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.notificationInboxDialog, dom.chaburaDialog].filter(Boolean);
 
 
   function chaburaOptions(location) {
@@ -324,11 +325,7 @@
     }
     const selected = dom.settingsCohortSelect?.value || COHORT_ID;
     if (dom.switchCohortBtn) dom.switchCohortBtn.disabled = selected === COHORT_ID || mode === 'test';
-    if (dom.cohortSettingsStatus) {
-      dom.cohortSettingsStatus.textContent = entries.length > 1
-        ? `Current Zman: ${COHORT_NAME}. Progress stays separate when you switch Zmanim.`
-        : `Current Zman: ${COHORT_NAME}. Additional Zmanim will appear here automatically.`;
-    }
+    if (dom.cohortSettingsStatus) dom.cohortSettingsStatus.textContent = '';
   }
 
   function switchStudyCohort() {
@@ -350,9 +347,7 @@
     const saved = loadChaburaSettings();
     fillChaburaLocationSelect(dom.settingsChaburaLocation, saved?.location || '');
     fillChaburaSelect(dom.settingsChaburaSelect, saved?.location || '', saved?.chabura || '');
-    if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = saved
-      ? `Saved: ${saved.chabura}`
-      : 'Choose your chabura to tag anonymous course analytics.';
+    if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = '';
   }
 
   function setChaburaProfile(location, chabura) {
@@ -4103,7 +4098,7 @@
     });
     dom.saveChaburaSettingsBtn?.addEventListener('click', () => {
       if (setChaburaProfile(dom.settingsChaburaLocation?.value, dom.settingsChaburaSelect?.value)) {
-        if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = 'Chabura saved.';
+        if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = 'Saved.';
       } else if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = 'Choose both a location and chabura.';
     });
     dom.chaburaDialogLocation?.addEventListener('change', e => {
@@ -4197,7 +4192,7 @@
     });
     dom.appInfoSettingsBtn?.addEventListener('click', openSettingsFromAppInfo);
     dialogs.forEach(d => {
-      if (d !== dom.chaburaDialog) closeOnBackdrop(d);
+      closeOnBackdrop(d);
       d.addEventListener('close', () => {
         const anyOpen = dialogs.some(x => x.open);
         if (!anyOpen) beginQuestionTimeIfNeeded();
@@ -4785,7 +4780,7 @@
     }
     try {
       if (reminderSettings().pushEnabled) await syncPushSubscription();
-      setReminderStatus(dailyEnabled ? `Daily reminder saved for ${settings.time}. Shabbat and Yom Tov will be skipped.` : 'Reminder settings saved.');
+      setReminderStatus('Saved.');
     } catch (error) {
       setReminderStatus('Could not save reminder settings: ' + error.message);
     }
@@ -4808,11 +4803,14 @@
     const unread = Number(payload.unread) || 0;
     const badge = el('notificationBadge');
     if (badge) {
-      badge.textContent = unread > 99 ? '99+' : String(unread);
-      badge.classList.toggle('is-zero', unread === 0);
+      badge.textContent = unread ? '!' : '';
+      badge.classList.toggle('hidden', unread === 0);
     }
-    const subtitle = el('notificationInboxSubtitle');
-    if (subtitle) subtitle.textContent = `${COHORT_NAME} · announcements, feedback updates, and study notices.`;
+    const notificationButton = el('notificationsBtn');
+    if (notificationButton) {
+      notificationButton.setAttribute('aria-label', unread ? `Notifications, ${unread} unread` : 'Notifications');
+      notificationButton.title = unread ? `${unread} unread notification${unread === 1 ? '' : 's'}` : 'Notifications';
+    }
     const list = el('notificationInboxList');
     if (!list) return;
     if (!notificationInboxCache.length) {

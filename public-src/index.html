@@ -442,33 +442,31 @@
 
           <section class="cohort-setting settings-ordered-section" aria-labelledby="cohortSettingHeading">
             <div class="cohort-setting-copy">
-              <span class="eyebrow">1</span>
               <h3 id="cohortSettingHeading">Zman</h3>
             </div>
             <div class="cohort-setting-fields">
-              <label><span>Zman</span><select id="settingsCohortSelect" aria-label="Study Zman"></select></label>
+              <select id="settingsCohortSelect" aria-label="Study Zman"></select>
               <button class="secondary settings-action-btn" type="button" id="switchCohortBtn">Switch Zman</button>
             </div>
-            <span class="analytics-status" id="cohortSettingsStatus" aria-live="polite"></span>
+            <span class="analytics-status setting-current-value" id="cohortSettingsStatus" aria-live="polite"></span>
           </section>
 
           <section class="chabura-setting settings-ordered-section" aria-labelledby="chaburaSettingHeading">
             <div class="chabura-setting-copy">
-              <span class="eyebrow">2</span>
               <h3 id="chaburaSettingHeading">Chabura</h3>
             </div>
             <div class="chabura-fields">
-              <label><span>Location</span><select id="settingsChaburaLocation" aria-label="Chabura location"></select></label>
-              <label><span>Chabura</span><select id="settingsChaburaSelect" aria-label="SCP chabura"></select></label>
+              <select id="settingsChaburaLocation" aria-label="Chabura location"></select>
+              <select id="settingsChaburaSelect" aria-label="SCP chabura"></select>
               <button class="secondary settings-action-btn" type="button" id="saveChaburaSettingsBtn">Save chabura</button>
             </div>
-            <span class="analytics-status" id="chaburaSettingsStatus" aria-live="polite"></span>
+            <span class="analytics-status setting-current-value" id="chaburaSettingsStatus" aria-live="polite"></span>
           </section>
 
           <section class="settings-feature-card settings-ordered-section" aria-labelledby="studyReminderHeading">
             <div class="settings-feature-copy">
-              <span class="eyebrow">3</span>
-              <h3 id="studyReminderHeading">Study reminders</h3>
+              <h3 id="studyReminderHeading">Notification Settings</h3>
+              <p>Get notified on important announcements and daily study reminders (excluding Shabbat and Yom Tov).</p>
             </div>
             <div class="reminder-controls">
               <label class="analytics-switch reminder-switch">
@@ -481,8 +479,8 @@
                 <span class="analytics-switch-track" aria-hidden="true"><span></span></span>
                 <span>Daily study reminder</span>
               </label>
-              <label><span>Reminder time</span><input id="studyReminderTime" type="time" value="19:00" /></label>
-              <label><span>Yom Tov calendar</span>
+              <label class="reminder-field"><span>Reminder time</span><input id="studyReminderTime" type="time" value="19:00" /></label>
+              <label class="reminder-field"><span>Yom Tov calendar</span>
                 <select id="reminderCalendarMode">
                   <option value="diaspora">Diaspora</option>
                   <option value="israel">Israel</option>
@@ -490,12 +488,11 @@
               </label>
               <button class="secondary settings-action-btn" type="button" id="saveReminderSettingsBtn">Save reminder settings</button>
             </div>
-            <span class="analytics-status" id="studyReminderStatus" aria-live="polite"></span>
+            <span class="analytics-status reminder-summary" id="studyReminderStatus" aria-live="polite"></span>
           </section>
 
           <section class="analytics-preference settings-ordered-section" aria-labelledby="analyticsPreferenceHeading">
             <div class="analytics-preference-copy">
-              <span class="eyebrow">4 · Course improvement</span>
               <h3 id="analyticsPreferenceHeading">Anonymous usage</h3>
               <p>Shares anonymous study results, timing ranges, study-aid use, current Zman, selected chabura, and broad IP-derived location. It does not send your name, email, notes, searches, or precise GPS location.</p>
               <span class="analytics-status" id="analyticsStatus" aria-live="polite"></span>
@@ -510,7 +507,6 @@
           <div class="settings-actions settings-actions-ordered">
             <div class="settings-action-card">
               <div>
-                <span class="eyebrow">5 · Storage</span>
                 <strong>Delete cache</strong>
                 <p>Remove downloaded audio and cached app files. Study statistics and settings are kept.</p>
               </div>
@@ -519,7 +515,6 @@
 
             <div class="settings-action-card settings-transfer-card">
               <div>
-                <span class="eyebrow">6 · Backup</span>
                 <strong>Import / export stats, settings &amp; data</strong>
                 <p>Choose which groups to include. Anonymous installation IDs, upload queues, and notification state are never exported.</p>
                 <div class="settings-checkbox-row">
@@ -537,7 +532,6 @@
 
             <div class="settings-action-card danger-card">
               <div>
-                <span class="eyebrow">7 · Statistics</span>
                 <strong>Reset statistics</strong>
                 <p>Reset question history, timing, category filters, essay progress, and practice-test results.</p>
                 <label class="settings-inline-select"><span>Scope</span>
@@ -552,7 +546,6 @@
 
             <div class="settings-action-card danger-card delete-all-card">
               <div>
-                <span class="eyebrow">8 · Delete</span>
                 <strong>Delete all data</strong>
                 <p>Erase this device. You can also request deletion of anonymous server data tied to this device's anonymous installation ID.</p>
                 <label class="settings-inline-select"><span>Delete</span>
@@ -617,6 +610,10 @@
         <label><input id="notificationShowArchived" type="checkbox" /> Show archived</label>
         <button class="secondary" id="refreshNotificationInbox" type="button">Refresh</button>
       </div>
+      <button class="notification-permission-nag hidden" id="notificationPermissionNag" type="button">
+        <span class="notification-permission-icon" aria-hidden="true">🔔</span>
+        <span id="notificationPermissionNagText">Push notifications are off. Tap to enable them.</span>
+      </button>
       <div class="notification-inbox-status" id="notificationInboxStatus" aria-live="polite"></div>
       <div class="notification-inbox-list" id="notificationInboxList"></div>
       <div class="modal-footer">
@@ -908,7 +905,7 @@
           <span class="eyebrow">About</span>
           <div class="app-info-title-row">
             <h2 id="appInfoTitle">SCP Study</h2>
-            <span class="app-info-version" id="appInfoVersion">v56</span>
+            <span class="app-info-version" id="appInfoVersion">v57</span>
           </div>
           <p>A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.</p>
         </div>

@@ -148,3 +148,20 @@ Responsive form controls must not overflow their cards. Grid children and inputs
 The Summer 2026 audio migration is complete. Review audio is canonical only at `audio/2026-summer/<filename>`; do not reintroduce fallback reads from flat `audio/<filename>` objects.
 
 The topbar treats the session timer and notification bell as one visual cluster. On compact layouts the cluster occupies the top-right cell; never place the bell as an independent grid item that can wrap beneath the main navigation.
+
+
+## Notification permission UX
+
+The first time a user opens the notification bell while browser permission is still `default`, request Push permission from that click gesture before opening the inbox. If Push is not enabled, the inbox shows a gentle enable reminder.
+
+Browsers generally cannot re-open the native permission prompt after the user has explicitly blocked notifications. The inbox action should retry when possible and otherwise explain that browser/site settings must be changed; never claim the app can override a browser denial.
+
+## Settings presentation
+
+Settings use one primary section title, not a numeric eyebrow plus a duplicate label. Zman and Chabura show their currently saved value at the bottom of their cards.
+
+Notification Settings uses the concise description: “Get notified on important announcements and daily study reminders (excluding Shabbat and Yom Tov).”
+
+The bottom reminder summary comes from Analytics `/api/reminders/next`, not duplicated holiday calculations in the browser. It should say disabled, today, tomorrow, after Shabbat, or after Yom Tov as appropriate.
+
+Mobile time/select controls must remain within their card even when WebKit gives native controls a large intrinsic width.

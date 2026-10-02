@@ -3498,3 +3498,28 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
   .timer-actions .timer-card{min-width:105px}
   .notification-icon-btn{width:34px;height:34px;flex-basis:34px}
 }
+
+/* v57: concise settings, permission nag, and intrinsic-size-safe reminder controls */
+.setting-current-value{display:block;margin-top:2px;color:#66758b;font-size:.72rem;font-weight:700;line-height:1.4}
+.cohort-setting-fields>select,.chabura-fields>select{width:100%;min-width:0;max-width:100%;min-height:38px;padding:8px 9px;border:1px solid #d7e1ef;border-radius:10px;background:#fff;color:var(--text);font:inherit;font-size:.76rem;box-sizing:border-box}
+.settings-feature-card{overflow:hidden}
+.reminder-controls{width:100%;max-width:100%;min-width:0;overflow:hidden}
+.reminder-controls>*{min-width:0;max-width:100%;box-sizing:border-box}
+.reminder-field{display:grid!important;grid-template-columns:minmax(0,1fr);gap:5px;width:100%;max-width:100%;min-width:0;overflow:hidden}
+#studyReminderTime,#reminderCalendarMode{
+  display:block!important;inline-size:100%!important;width:100%!important;min-inline-size:0!important;min-width:0!important;
+  max-inline-size:100%!important;max-width:100%!important;box-sizing:border-box!important;
+}
+#studyReminderTime{-webkit-box-sizing:border-box!important}
+.notification-permission-nag{
+  width:100%;display:flex;align-items:center;gap:9px;margin:0 0 10px;padding:10px 11px;border:1px solid #d8e3f4;
+  border-radius:11px;background:#f6f9ff;color:#355486;text-align:left;font:inherit;font-size:.72rem;font-weight:750;line-height:1.4;
+}
+.notification-permission-nag:hover{background:#eef4ff}
+.notification-permission-icon{flex:0 0 auto;font-size:.9rem}
+.reminder-summary{display:block;margin-top:2px;color:#52647d;font-size:.72rem;font-weight:740;line-height:1.4}
+@media(max-width:780px){
+  .cohort-setting-fields,.chabura-fields,.reminder-controls{width:100%;max-width:100%;min-width:0;overflow:hidden}
+  #studyReminderTime,#reminderCalendarMode{font-size:16px!important}
+  #studyReminderTime::-webkit-date-and-time-value{min-width:0;width:100%;text-align:center}
+}

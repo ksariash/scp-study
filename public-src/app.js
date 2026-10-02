@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 56;
+  const APP_VERSION = 57;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -22,6 +22,7 @@
   const PUSH_CONFIG_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/push/config';
   const PUSH_SUBSCRIBE_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/push/subscribe';
   const PUSH_UNSUBSCRIBE_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/push/unsubscribe';
+  const NEXT_REMINDER_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/reminders/next';
   const SERVER_DATA_DELETE_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/data/delete';
   const STUDY_REMINDER_SETTINGS_KEY = 'scpStudy.studyReminders.v1';
   const LATEST_ZMAN_PROMPT_KEY = 'scpStudy.latestZmanPrompt.v1';
@@ -325,7 +326,7 @@
     }
     const selected = dom.settingsCohortSelect?.value || COHORT_ID;
     if (dom.switchCohortBtn) dom.switchCohortBtn.disabled = selected === COHORT_ID || mode === 'test';
-    if (dom.cohortSettingsStatus) dom.cohortSettingsStatus.textContent = '';
+    if (dom.cohortSettingsStatus) dom.cohortSettingsStatus.textContent = `Current: ${COHORT_NAME}`;
   }
 
   function switchStudyCohort() {
@@ -347,7 +348,9 @@
     const saved = loadChaburaSettings();
     fillChaburaLocationSelect(dom.settingsChaburaLocation, saved?.location || '');
     fillChaburaSelect(dom.settingsChaburaSelect, saved?.location || '', saved?.chabura || '');
-    if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = '';
+    if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = saved
+      ? `Current: ${saved.chabura} · ${saved.location}`
+      : 'Current: Not selected';
   }
 
   function setChaburaProfile(location, chabura) {
@@ -4653,13 +4656,63 @@
     if (node) node.textContent = message;
   }
 
+  function conciseReminderTime(value) {
+    const match=/^(\d{2}):(\d{2})$/.exec(String(value||''));if(!match)return value||'';
+    const hour=Number(match[1]),minute=Number(match[2]),suffix=hour>=12?'pm':'am',h=hour%12||12;
+    return `${h}${minute?':'+String(minute).padStart(2,'0'):''}${suffix}`;
+  }
+
+  async function refreshReminderSummary() {
+    const settings=reminderSettings(),time=conciseReminderTime(settings.time||'19:00');
+    if(!settings.dailyEnabled){
+      setReminderStatus('Study reminders are disabled');
+      return;
+    }
+    if(!settings.pushEnabled||typeof Notification==='undefined'||Notification.permission!=='granted'){
+      setReminderStatus('Study reminders are disabled');
+      return;
+    }
+    try{
+      const url=new URL(NEXT_REMINDER_ENDPOINT);
+      url.searchParams.set('installationId',analyticsInstallationId());
+      url.searchParams.set('zman',ANALYTICS_COHORT);
+      const response=await fetch(url,{mode:'cors',credentials:'omit',cache:'no-store'});
+      const data=await response.json();
+      if(!response.ok)throw new Error(data?.error||'Could not load reminder schedule');
+      if(!data.enabled){setReminderStatus('Study reminders are disabled');return}
+      if(data.reason==='today')setReminderStatus(`You'll get a study reminder at ${time} today`);
+      else if(data.reason==='after_yom_tov')setReminderStatus(`You'll get a study reminder at ${time} after Yom Tov`);
+      else if(data.reason==='after_shabbat')setReminderStatus(`You'll get a study reminder at ${time} after Shabbat`);
+      else if(data.reason==='tomorrow')setReminderStatus(`You'll get a study reminder at ${time} tomorrow`);
+      else setReminderStatus(`Your next study reminder is at ${time}`);
+    }catch(error){
+      console.warn('Could not load next reminder:',error);
+      setReminderStatus(`Daily reminder is on for ${time}`);
+    }
+  }
+
+  function syncNotificationPermissionNag() {
+    const nag=el('notificationPermissionNag'),copy=el('notificationPermissionNagText');
+    if(!nag||!copy)return;
+    if(typeof Notification==='undefined'||!('serviceWorker' in navigator)||!('PushManager' in window)){
+      nag.classList.add('hidden');return;
+    }
+    const settings=reminderSettings(),enabled=Notification.permission==='granted'&&settings.pushEnabled;
+    nag.classList.toggle('hidden',enabled);
+    if(enabled)return;
+    copy.textContent=Notification.permission==='denied'
+      ? 'Push notifications are blocked in your browser. Tap to try again or enable them in site settings.'
+      : 'Push notifications are off. Tap to enable them.';
+  }
+
   function syncReminderSettingsUi() {
     const settings = reminderSettings();
     if (el('pushNotificationsToggle')) el('pushNotificationsToggle').checked = !!settings.pushEnabled;
     if (el('dailyReminderToggle')) el('dailyReminderToggle').checked = !!settings.dailyEnabled;
     if (el('studyReminderTime')) el('studyReminderTime').value = /^\d{2}:\d{2}$/.test(settings.time || '') ? settings.time : '19:00';
     if (el('reminderCalendarMode')) el('reminderCalendarMode').value = settings.israelCalendar ? 'israel' : 'diaspora';
-    if (typeof Notification !== 'undefined' && Notification.permission === 'denied') setReminderStatus('Notifications are blocked in this browser. Change the browser/site permission to enable them.');
+    syncNotificationPermissionNag();
+    void refreshReminderSummary();
   }
 
   function urlBase64ToUint8Array(value) {
@@ -4714,7 +4767,7 @@
 
   async function enablePushNotifications({ interactive=true } = {}) {
     if (typeof Notification === 'undefined' || !('serviceWorker' in navigator) || !('PushManager' in window)) {
-      setReminderStatus('Push notifications are not supported in this browser.');
+      showAppToast('Push notifications are not supported in this browser.');
       return false;
     }
     let permission = Notification.permission;
@@ -4725,7 +4778,9 @@
       settings.dailyEnabled = false;
       saveReminderSettings(settings);
       syncReminderSettingsUi();
-      setReminderStatus(permission === 'denied' ? 'Notifications are blocked in browser settings.' : 'Notification permission was not enabled.');
+      showAppToast(permission === 'denied' ? 'Notifications are blocked in browser settings.' : 'Notification permission was not enabled.');
+      syncNotificationPermissionNag();
+      void refreshReminderSummary();
       return false;
     }
     const settings = reminderSettings();
@@ -4734,11 +4789,13 @@
     syncReminderSettingsUi();
     try {
       await syncPushSubscription();
-      setReminderStatus('Push notifications are on.');
+      syncNotificationPermissionNag();
+      void refreshReminderSummary();
       return true;
     } catch (error) {
       console.warn('Push setup failed:', error);
-      setReminderStatus('Could not enable push notifications: ' + error.message);
+      showAppToast('Could not enable push notifications: ' + error.message);
+      syncNotificationPermissionNag();
       return false;
     }
   }
@@ -4756,7 +4813,8 @@
       }
     } catch (error) { console.warn('Push unsubscribe failed:', error); }
     syncReminderSettingsUi();
-    setReminderStatus('Push notifications are off.');
+    syncNotificationPermissionNag();
+    void refreshReminderSummary();
   }
 
   async function saveReminderSettingsFromUi() {
@@ -4780,9 +4838,10 @@
     }
     try {
       if (reminderSettings().pushEnabled) await syncPushSubscription();
-      setReminderStatus('Saved.');
+      await refreshReminderSummary();
     } catch (error) {
-      setReminderStatus('Could not save reminder settings: ' + error.message);
+      showAppToast('Could not save reminder settings: ' + error.message);
+      await refreshReminderSummary();
     }
     syncReminderSettingsUi();
   }
@@ -4881,6 +4940,7 @@
       const data = await response.json();
       if (!response.ok) throw new Error(data?.error || 'Could not load notifications');
       renderNotificationInbox(data);
+      syncNotificationPermissionNag();
       if (status) status.textContent = '';
       return data;
     } catch (error) {
@@ -4898,6 +4958,22 @@
     const dialog = el('notificationInboxDialog');
     if (dialog && !dialog.open) dialog.showModal();
     void loadNotificationInbox();
+  }
+
+  async function handleNotificationBellClick() {
+    if(typeof Notification!=='undefined'&&Notification.permission==='default'&&!reminderSettings().pushEnabled){
+      await enablePushNotifications({interactive:true});
+    }
+    openNotificationInbox();
+    syncNotificationPermissionNag();
+  }
+
+  async function handleInboxPushNag() {
+    const enabled=await enablePushNotifications({interactive:true});
+    if(!enabled&&typeof Notification!=='undefined'&&Notification.permission==='denied'){
+      showAppToast('Push notifications are blocked in browser settings.');
+    }
+    syncNotificationPermissionNag();
   }
 
   function exportGroupForKey(key) {
@@ -5063,11 +5139,12 @@
   function initNotificationAndSettingsFeatures() {
     syncV53SettingsUi();
 
-    el('notificationsBtn')?.addEventListener('click', openNotificationInbox);
+    el('notificationsBtn')?.addEventListener('click', () => void handleNotificationBellClick());
     el('closeNotificationInbox')?.addEventListener('click', () => el('notificationInboxDialog')?.close());
     el('doneNotificationInbox')?.addEventListener('click', () => el('notificationInboxDialog')?.close());
     el('refreshNotificationInbox')?.addEventListener('click', () => void loadNotificationInbox());
     el('notificationShowArchived')?.addEventListener('change', () => void loadNotificationInbox());
+    el('notificationPermissionNag')?.addEventListener('click', () => void handleInboxPushNag());
 
     el('notificationInboxList')?.addEventListener('click', event => {
       const read = event.target.closest('[data-notification-read]');
@@ -5099,7 +5176,7 @@
     });
     window.addEventListener('online', () => {
       void loadNotificationInbox();
-      if (reminderSettings().pushEnabled && typeof Notification !== 'undefined' && Notification.permission === 'granted') void syncPushSubscription();
+      if (reminderSettings().pushEnabled && typeof Notification !== 'undefined' && Notification.permission === 'granted') void syncPushSubscription().then(() => refreshReminderSummary());
     });
 
     if (reminderSettings().pushEnabled && typeof Notification !== 'undefined' && Notification.permission === 'granted') {

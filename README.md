@@ -266,3 +266,13 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - Keeps the notification bell immediately to the right of the session timer on compact layouts.
 - Removes the legacy flat R2 audio fallback now that Summer 2026 audio is namespaced under `audio/2026-summer/`.
 - Renders server-sanitized rich notification bodies with an additional browser-side allowlist.
+
+
+## Release 57
+
+- Prompts for Push permission the first time the notification bell is opened.
+- Shows a gentle inbox reminder whenever Push notifications are disabled.
+- Redesigns Zman, Chabura, and Notification Settings around one clear section label.
+- Shows the currently selected Zman and Chabura at the bottom of their cards.
+- Uses Analytics' next-reminder endpoint for “today / after Shabbat / after Yom Tov / disabled” status text.
+- Adds stronger mobile intrinsic-size constraints for the reminder-time field.

@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 57;
+  const APP_VERSION = 58;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -4640,10 +4640,13 @@
   }
 
   function reminderSettings() {
-    const defaults = { pushEnabled:false, dailyEnabled:false, time:'19:00', israelCalendar:false };
+    const defaults = { pushEnabled:false, dailyEnabled:false, dailyRequested:false, time:'19:00', israelCalendar:false };
     try {
       const saved = JSON.parse(localStorage.getItem(STUDY_REMINDER_SETTINGS_KEY) || '{}');
-      return { ...defaults, ...(saved && typeof saved === 'object' ? saved : {}) };
+      const value = { ...defaults, ...(saved && typeof saved === 'object' ? saved : {}) };
+      if (!Object.prototype.hasOwnProperty.call(saved || {}, 'dailyRequested')) value.dailyRequested = !!value.dailyEnabled;
+      if (!value.pushEnabled) value.dailyEnabled = false;
+      return value;
     } catch (_) { return defaults; }
   }
 
@@ -4785,6 +4788,7 @@
     }
     const settings = reminderSettings();
     settings.pushEnabled = true;
+    settings.dailyEnabled = !!settings.dailyRequested;
     saveReminderSettings(settings);
     syncReminderSettingsUi();
     try {
@@ -4802,6 +4806,7 @@
 
   async function disablePushNotifications() {
     const settings = reminderSettings();
+    if (!Object.prototype.hasOwnProperty.call(settings, 'dailyRequested')) settings.dailyRequested = !!settings.dailyEnabled;
     settings.pushEnabled = false;
     settings.dailyEnabled = false;
     saveReminderSettings(settings);
@@ -4817,27 +4822,39 @@
     void refreshReminderSummary();
   }
 
+  async function applyDailyReminderToggle(enabled) {
+    let settings = reminderSettings();
+    settings.dailyRequested = !!enabled;
+    settings.dailyEnabled = !!enabled && !!settings.pushEnabled;
+    saveReminderSettings(settings);
+    syncReminderSettingsUi();
+
+    if (enabled && !settings.pushEnabled) {
+      await enablePushNotifications({ interactive:true });
+      settings = reminderSettings();
+      settings.dailyEnabled = !!settings.pushEnabled && !!settings.dailyRequested;
+      saveReminderSettings(settings);
+    }
+
+    try {
+      if (reminderSettings().pushEnabled) await syncPushSubscription();
+    } catch (error) {
+      console.warn('Could not update daily reminder:', error);
+      showAppToast('Could not update the daily reminder: ' + error.message);
+    }
+    syncReminderSettingsUi();
+    await refreshReminderSummary();
+  }
+
   async function saveReminderSettingsFromUi() {
-    const dailyEnabled = !!el('dailyReminderToggle')?.checked;
     const time = String(el('studyReminderTime')?.value || '19:00');
     const israelCalendar = el('reminderCalendarMode')?.value === 'israel';
-    let settings = reminderSettings();
-    settings.dailyEnabled = dailyEnabled;
+    const settings = reminderSettings();
     settings.time = /^\d{2}:\d{2}$/.test(time) ? time : '19:00';
     settings.israelCalendar = israelCalendar;
     saveReminderSettings(settings);
-    if (dailyEnabled && !settings.pushEnabled) {
-      const enabled = await enablePushNotifications({ interactive:true });
-      if (!enabled) {
-        settings = reminderSettings();
-        settings.dailyEnabled = false;
-        saveReminderSettings(settings);
-        syncReminderSettingsUi();
-        return;
-      }
-    }
     try {
-      if (reminderSettings().pushEnabled) await syncPushSubscription();
+      if (settings.pushEnabled) await syncPushSubscription();
       await refreshReminderSummary();
     } catch (error) {
       showAppToast('Could not save reminder settings: ' + error.message);
@@ -5158,6 +5175,9 @@
     el('pushNotificationsToggle')?.addEventListener('change', event => {
       if (event.currentTarget.checked) void enablePushNotifications({ interactive:true });
       else void disablePushNotifications();
+    });
+    el('dailyReminderToggle')?.addEventListener('change', event => {
+      void applyDailyReminderToggle(event.currentTarget.checked);
     });
     el('saveReminderSettingsBtn')?.addEventListener('click', () => void saveReminderSettingsFromUi());
 

@@ -276,3 +276,12 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - Shows the currently selected Zman and Chabura at the bottom of their cards.
 - Uses Analytics' next-reminder endpoint for “today / after Shabbat / after Yom Tov / disabled” status text.
 - Adds stronger mobile intrinsic-size constraints for the reminder-time field.
+
+
+## Release 58
+
+- Makes the Daily study reminder toggle apply immediately.
+- Remembers daily-reminder intent when Push is turned off and restores it when Push is re-enabled.
+- Sizes the reminder time/calendar controls to match adjacent settings fields.
+- Emits explicit anonymous audio-play and note-page-open analytics for the Analytics Study aid usage dashboard.
+- Keeps the Essay search button fixed to its bottom-left viewport anchor.

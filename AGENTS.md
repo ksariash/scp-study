@@ -165,3 +165,36 @@ Notification Settings uses the concise description: “Get notified on important
 The bottom reminder summary comes from Analytics `/api/reminders/next`, not duplicated holiday calculations in the browser. It should say disabled, today, tomorrow, after Shabbat, or after Yom Tov as appropriate.
 
 Mobile time/select controls must remain within their card even when WebKit gives native controls a large intrinsic width.
+
+
+## Reminder preference model
+
+Push delivery and daily-reminder intent are separate state.
+
+- `pushEnabled` reflects whether this app currently uses Web Push.
+- `dailyRequested` remembers whether the user wants daily reminders, even while Push is temporarily disabled.
+- `dailyEnabled` is the effective server-delivery state and must be false while Push is off.
+
+Turning Push off must preserve `dailyRequested`. Turning Push back on must restore `dailyEnabled` from `dailyRequested`.
+
+The Daily study reminder toggle is an immediate setting. Its change handler saves state and syncs the Push subscription without requiring the Save button. The Save button is for reminder time/calendar changes.
+
+When changing settings state, distinguish remembered user intent from temporary capability state instead of destroying one when the other is disabled.
+
+## Study-aid analytics
+
+With anonymous usage enabled, emit explicit resource events when:
+- an audio review actually fires the media element's `play` event;
+- a concise/full course-note page is opened.
+
+Use stable Zman-scoped resource IDs and human-readable labels. Do not infer file/page popularity from answer events. Glossary interactions keep using their dedicated glossary event.
+
+Deploy the backward-compatible Analytics receiver for a new event kind before deploying Study code that emits it.
+
+## Floating utility controls
+
+The Essay-mode search FAB has a fixed semantic anchor: bottom-left of the viewport, including when the mini audio player is visible. Transient UI must not silently reposition a fixed utility action. Use an explicit body/state class for mode-specific positioning rather than inline coordinates.
+
+## Native settings controls
+
+A mobile native form control should visually match adjacent app controls in both width and height. When WebKit intrinsic sizing causes drift, constrain `height`, `min-height`, `max-height`, padding, and the native date/time value box together. Do not solve overflow by leaving an oversized control inside the card.

@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 57;
+  const APP_VERSION = 58;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -940,6 +940,33 @@
       mode
     };
     const queue = analyticsQueue();
+    queue.push(event);
+    saveAnalyticsQueue(queue);
+    void flushAnalyticsQueue();
+  }
+
+  function queueResourceAnalytics({ resourceType, resourceId, resourceLabel, resourceVariant = null, page = null, source = 'other', contextKind = 'other', contextId = null, category = null } = {}) {
+    if (!analyticsEnabled() || !['audio','notes'].includes(resourceType) || !resourceId || !resourceLabel) return;
+    const event = {
+      kind:'resource',
+      eventId: analyticsUuid('resource'),
+      installationId: analyticsInstallationId(),
+      cohort: ANALYTICS_COHORT,
+      ...analyticsProfileFields(),
+      appVersion:String(APP_VERSION),
+      clientTs:new Date().toISOString(),
+      resourceType,
+      resourceId:String(resourceId),
+      resourceLabel:String(resourceLabel),
+      resourceVariant:resourceVariant ? String(resourceVariant) : null,
+      page:Number.isInteger(Number(page)) && Number(page) > 0 ? Number(page) : null,
+      source:String(source || 'other'),
+      contextKind:String(contextKind || 'other'),
+      contextId:contextId == null ? null : String(contextId),
+      category:category ? String(category) : null,
+      mode
+    };
+    const queue=analyticsQueue();
     queue.push(event);
     saveAnalyticsQueue(queue);
     void flushAnalyticsQueue();
@@ -2075,6 +2102,7 @@
     syncAnalyticsAssist();
 
     const inEssayMode = essayModeActive && mode === 'study';
+    document.body.classList.toggle('essay-mode-active', inEssayMode);
     dom.modeLabel.textContent = mode === 'test' ? 'Practice test' : inEssayMode ? 'Essay mode' : 'Study mode';
     dom.timerLabel.textContent = mode === 'test' ? 'Time left' : 'Session';
     dom.timerCard.classList.toggle('is-clickable', mode === 'study' && !inEssayMode);
@@ -3207,6 +3235,18 @@
     const ref = courseNoteRef(kind, id);
     const page = courseNotePage(ref, docKey);
     if (!doc || !page) return;
+    const question = kind === 'question' ? questionById.get(Number(id)) : null;
+    queueResourceAnalytics({
+      resourceType:'notes',
+      resourceId:`${docKey}:p${page}`,
+      resourceLabel:`${doc.title} · p. ${page}`,
+      resourceVariant:docKey,
+      page,
+      source:kind,
+      contextKind:kind,
+      contextId:id,
+      category:question?.category || null
+    });
     openPdfViewer({
       url: doc.url,
       title: doc.title,
@@ -4471,7 +4511,24 @@
         updateMiniAudio();
       }
     });
-    dom.audioPlayer.addEventListener('play', () => { miniAudioStopped = false; setMediaPlaybackState('playing'); updateMediaPositionState(); renderAudioPlaylist(); updateMiniAudio(); });
+    dom.audioPlayer.addEventListener('play', () => {
+      miniAudioStopped = false;
+      const track = currentAudioTrack();
+      if (track) {
+        const question = !essayModeActive ? currentQuestion() : null;
+        queueResourceAnalytics({
+          resourceType:'audio',
+          resourceId:String(track.id ?? track.src ?? track.title ?? 'audio'),
+          resourceLabel:track.title || track.name || `Audio review ${audioTrackIndex + 1}`,
+          resourceVariant:track.src || null,
+          source:essayModeActive ? 'essay' : (dom.materialsDialog?.open && activeMaterialsTab === 'audio' ? 'materials' : 'player'),
+          contextKind:essayModeActive ? 'essay' : (question ? 'question' : 'other'),
+          contextId:essayModeActive ? essayRun?.essay?.id : question?.id,
+          category:question?.category || null
+        });
+      }
+      setMediaPlaybackState('playing'); updateMediaPositionState(); renderAudioPlaylist(); updateMiniAudio();
+    });
     dom.audioPlayer.addEventListener('pause', () => { if (!dom.audioPlayer.ended) setMediaPlaybackState('paused'); saveAudioPlaybackState(true); updateMediaPositionState(); renderAudioPlaylist(); updateMiniAudio(); });
     dom.audioPlayer.addEventListener('timeupdate', () => { saveAudioPlaybackState(false); syncTranscriptToAudio(false); updateMediaPositionState(); updateMiniAudio(); });
     dom.audioPlayer.addEventListener('durationchange', updateMediaPositionState);
@@ -4640,10 +4697,13 @@
   }
 
   function reminderSettings() {
-    const defaults = { pushEnabled:false, dailyEnabled:false, time:'19:00', israelCalendar:false };
+    const defaults = { pushEnabled:false, dailyEnabled:false, dailyRequested:false, time:'19:00', israelCalendar:false };
     try {
       const saved = JSON.parse(localStorage.getItem(STUDY_REMINDER_SETTINGS_KEY) || '{}');
-      return { ...defaults, ...(saved && typeof saved === 'object' ? saved : {}) };
+      const value = { ...defaults, ...(saved && typeof saved === 'object' ? saved : {}) };
+      if (!Object.prototype.hasOwnProperty.call(saved || {}, 'dailyRequested')) value.dailyRequested = !!value.dailyEnabled;
+      if (!value.pushEnabled) value.dailyEnabled = false;
+      return value;
     } catch (_) { return defaults; }
   }
 
@@ -4785,6 +4845,7 @@
     }
     const settings = reminderSettings();
     settings.pushEnabled = true;
+    settings.dailyEnabled = !!settings.dailyRequested;
     saveReminderSettings(settings);
     syncReminderSettingsUi();
     try {
@@ -4802,6 +4863,7 @@
 
   async function disablePushNotifications() {
     const settings = reminderSettings();
+    if (!Object.prototype.hasOwnProperty.call(settings, 'dailyRequested')) settings.dailyRequested = !!settings.dailyEnabled;
     settings.pushEnabled = false;
     settings.dailyEnabled = false;
     saveReminderSettings(settings);
@@ -4817,27 +4879,39 @@
     void refreshReminderSummary();
   }
 
+  async function applyDailyReminderToggle(enabled) {
+    let settings = reminderSettings();
+    settings.dailyRequested = !!enabled;
+    settings.dailyEnabled = !!enabled && !!settings.pushEnabled;
+    saveReminderSettings(settings);
+    syncReminderSettingsUi();
+
+    if (enabled && !settings.pushEnabled) {
+      await enablePushNotifications({ interactive:true });
+      settings = reminderSettings();
+      settings.dailyEnabled = !!settings.pushEnabled && !!settings.dailyRequested;
+      saveReminderSettings(settings);
+    }
+
+    try {
+      if (reminderSettings().pushEnabled) await syncPushSubscription();
+    } catch (error) {
+      console.warn('Could not update daily reminder:', error);
+      showAppToast('Could not update the daily reminder: ' + error.message);
+    }
+    syncReminderSettingsUi();
+    await refreshReminderSummary();
+  }
+
   async function saveReminderSettingsFromUi() {
-    const dailyEnabled = !!el('dailyReminderToggle')?.checked;
     const time = String(el('studyReminderTime')?.value || '19:00');
     const israelCalendar = el('reminderCalendarMode')?.value === 'israel';
-    let settings = reminderSettings();
-    settings.dailyEnabled = dailyEnabled;
+    const settings = reminderSettings();
     settings.time = /^\d{2}:\d{2}$/.test(time) ? time : '19:00';
     settings.israelCalendar = israelCalendar;
     saveReminderSettings(settings);
-    if (dailyEnabled && !settings.pushEnabled) {
-      const enabled = await enablePushNotifications({ interactive:true });
-      if (!enabled) {
-        settings = reminderSettings();
-        settings.dailyEnabled = false;
-        saveReminderSettings(settings);
-        syncReminderSettingsUi();
-        return;
-      }
-    }
     try {
-      if (reminderSettings().pushEnabled) await syncPushSubscription();
+      if (settings.pushEnabled) await syncPushSubscription();
       await refreshReminderSummary();
     } catch (error) {
       showAppToast('Could not save reminder settings: ' + error.message);
@@ -5158,6 +5232,9 @@
     el('pushNotificationsToggle')?.addEventListener('change', event => {
       if (event.currentTarget.checked) void enablePushNotifications({ interactive:true });
       else void disablePushNotifications();
+    });
+    el('dailyReminderToggle')?.addEventListener('change', event => {
+      void applyDailyReminderToggle(event.currentTarget.checked);
     });
     el('saveReminderSettingsBtn')?.addEventListener('click', () => void saveReminderSettingsFromUi());
 

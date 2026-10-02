@@ -3516,6 +3516,10 @@
     if (dom.settingsStatus) dom.settingsStatus.textContent = message;
   }
 
+  function setTransferStatus(message = '') {
+    if (dom.settingsTransferStatus) dom.settingsTransferStatus.textContent = message;
+  }
+
   async function clearOfflineCache() {
     const msg = 'Clear downloaded audio and cached app files? Your study statistics and settings will not be erased.';
     if (!confirm(msg)) return;
@@ -5148,11 +5152,11 @@
     if (navigator.share && (!navigator.canShare || navigator.canShare({ files:[file] }))) {
       try {
         await navigator.share({ title:'SCP Study backup', files:[file] });
-        setSettingsStatus('Export shared.');
+        setTransferStatus('Export shared.');
         return;
       } catch (error) {
         if (error?.name === 'AbortError') {
-          setSettingsStatus('Export canceled.');
+          setTransferStatus('Export canceled.');
           return;
         }
         console.warn('Could not share export; falling back to download:', error);
@@ -5167,31 +5171,43 @@
     link.click();
     link.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setSettingsStatus('Export created.');
+    setTransferStatus('Export created.');
   }
 
   async function importAppDataFile(file) {
     if (!file) return;
     const selected = selectedTransferGroups();
+    setTransferStatus('Reading backup…');
     try {
       const payload = JSON.parse(await file.text());
       if (payload?.format !== 'scp-study-export' || !payload.groups || typeof payload.groups !== 'object') throw new Error('This is not an SCP Study export.');
-      let count = 0;
+
+      const staged = [];
       for (const group of ['stats','settings','data']) {
         if (!selected[group]) continue;
         const values = payload.groups[group];
         if (!values || typeof values !== 'object') continue;
         for (const [key,value] of Object.entries(values)) {
           if (exportGroupForKey(key) !== group || typeof value !== 'string') continue;
-          localStorage.setItem(key,value);
-          count += 1;
+          staged.push([key,value]);
         }
       }
-      if (!count) throw new Error('No selected data groups were found in the file.');
-      setSettingsStatus(`Imported ${count} saved values. Reloading…`);
-      window.setTimeout(() => window.location.reload(), 450);
+      if (!staged.length) throw new Error('No selected data groups were found in the file.');
+
+      // Once imported progress is written, normal visibility/pagehide handlers
+      // must not flush the pre-import in-memory state back over STORAGE_KEY.
+      importReloadPending = true;
+      try {
+        staged.forEach(([key,value]) => localStorage.setItem(key,value));
+      } catch (error) {
+        importReloadPending = false;
+        throw error;
+      }
+
+      setTransferStatus(`Imported ${staged.length} saved values. Reloading…`);
+      window.setTimeout(() => window.location.reload(), 80);
     } catch (error) {
-      setSettingsStatus('Import failed: ' + error.message);
+      if (!importReloadPending) setTransferStatus('Import failed: ' + error.message);
     }
   }
 
@@ -5313,9 +5329,10 @@
     el('dailyReminderToggle')?.addEventListener('change', event => {
       void applyDailyReminderToggle(event.currentTarget.checked);
     });
-    el('saveReminderSettingsBtn')?.addEventListener('click', () => void saveReminderSettingsFromUi());
+    el('studyReminderTime')?.addEventListener('change', () => void saveReminderSettingsFromUi());
+    el('reminderCalendarMode')?.addEventListener('change', () => void saveReminderSettingsFromUi());
 
-    el('exportDataBtn')?.addEventListener('click', () => void exportAppData());
+    el('exportDataBtn')?.addEventListener('click', () => { setTransferStatus('Preparing export…'); void exportAppData(); });
     el('importDataBtn')?.addEventListener('click', () => el('importDataFile')?.click());
     el('importDataFile')?.addEventListener('change', event => {
       const file = event.currentTarget.files?.[0] || null;

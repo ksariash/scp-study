@@ -1,6 +1,6 @@
-const APP_VERSION = 58;
-const CACHE_NAME = 'scp-study-v58';
-const AUDIO_CACHE_NAME = 'scp-study-audio-v1';
+const APP_VERSION = 59;
+const CACHE_NAME = 'scp-study-v59';
+const AUDIO_CACHE_NAME = 'scp-study-audio-v2';
 const APP_SHELL = [
   './',
   './index.html',
@@ -80,16 +80,8 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    const audioCache = await caches.open(AUDIO_CACHE_NAME);
     for (const key of keys) {
       if (key === CACHE_NAME || key === AUDIO_CACHE_NAME) continue;
-      const oldCache = await caches.open(key);
-      const requests = await oldCache.keys();
-      for (const request of requests) {
-        if (!AUDIO_PATH_RE.test(new URL(request.url).pathname)) continue;
-        const response = await oldCache.match(request);
-        if (response) await audioCache.put(request.url, response.clone());
-      }
       await caches.delete(key);
     }
     await self.clients.claim();
@@ -134,37 +126,16 @@ function parseSingleRange(rangeHeader, size) {
   return { start, end };
 }
 
-async function getFullAudioResponse(request) {
-  const cached = await caches.match(request.url);
-  if (cached) return cached;
-
-  const headers = new Headers(request.headers);
-  headers.delete('range');
-  const fullRequest = new Request(request.url, {
-    method: 'GET',
-    headers,
-    mode: request.mode,
-    credentials: request.credentials,
-    cache: 'no-store',
-    redirect: request.redirect,
-    referrer: request.referrer,
-    referrerPolicy: request.referrerPolicy
-  });
-
-  const response = await fetch(fullRequest);
-  if (response && response.ok && request.url.startsWith(self.location.origin)) {
-    const audioCache = await caches.open(AUDIO_CACHE_NAME);
-    await audioCache.put(request.url, response.clone());
-  }
-  return response;
-}
-
 async function handleAudioRangeRequest(request) {
   const rangeHeader = request.headers.get('range');
-  const fullResponse = await getFullAudioResponse(request);
-  if (!fullResponse) return fetch(request);
+  const audioCache = await caches.open(AUDIO_CACHE_NAME);
+  const cached = await audioCache.match(request.url);
 
-  const body = await fullResponse.arrayBuffer();
+  // Let the origin/R2 Worker satisfy uncached Range requests directly. This
+  // avoids downloading the entire M4A just to answer a small media probe.
+  if (!cached || cached.status === 206) return fetch(request);
+
+  const body = await cached.arrayBuffer();
   const size = body.byteLength;
   const range = parseSingleRange(rangeHeader, size);
   if (!range) {
@@ -177,12 +148,11 @@ async function handleAudioRangeRequest(request) {
 
   const { start, end } = range;
   const sliced = body.slice(start, end + 1);
-  const headers = new Headers(fullResponse.headers);
+  const headers = new Headers(cached.headers);
   headers.set('Accept-Ranges', 'bytes');
   headers.set('Content-Range', `bytes ${start}-${end}/${size}`);
   headers.set('Content-Length', String(sliced.byteLength));
   headers.delete('Content-Encoding');
-
   return new Response(sliced, { status: 206, statusText: 'Partial Content', headers });
 }
 

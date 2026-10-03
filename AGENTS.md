@@ -218,9 +218,27 @@ Essay pairing resource actions should stay compact. Audio uses a small play cont
 
 Settings export creates a real JSON `File`. When the Web Share API can share files, invoke the native share sheet first so mobile users can send the backup or save it to Files/Downloads. Fall back to a normal browser download when file sharing is unavailable. Treat a user-cancelled share sheet as a cancellation, not as an error that triggers an unwanted download.
 
-## Cross-app navigation
+## Cross-app navigation and references
 
-Study settings should include a direct production link to SCP Announcements. Keep cross-app links explicit and easy to update when deployment domains change.
+Study is the learner-facing app. Do not expose instructor-only Dashboard or Announcements navigation in learner settings. Instructor tools may link into Study using the production origin and the stable reference query contract below.
+
+Supported incoming references:
+- `?zman=<id>&question=<question-id>` opens that question in Question Explorer.
+- `?zman=<id>&audio=<review-id>&time=<seconds>` opens the audio/transcript view at that review and timestamp without autoplay.
+- `?zman=<id>&pdf=<compact|full>&page=<page>` opens the in-app notes viewer at that page. Stable aliases also exist for cumulative-test, answer-key, and essays documents.
+
+When the referenced Zman differs from the active Zman, switch to the referenced Zman before resolving the content. Keep these links backward-compatible because Analytics and Announcements may publish them.
+
+## Shared SCP suite design contract
+
+Study, Analytics Dashboard, and Announcements should read as one product family even though their audiences differ.
+
+- Use the same restrained navy/blue visual language, white surfaces, subtle cool-gray borders, modest shadows, and compact rounded controls. Avoid introducing a one-off visual system in one app.
+- Utility/navigation actions should use familiar icons when the meaning is unambiguous. Every icon-only control needs an accessible `aria-label` and `title`.
+- A header or toolbar must have one flexible text/content region with `min-width:0` and a non-wrapping utility/action region. On mobile, utility actions stay in the top-right rather than falling below the title.
+- Flex/grid children that can contain user/content text must be shrink-safe. Use `min-width:0`; form controls use `width:100%`, `max-width:100%`, and `box-sizing:border-box`. Long text should wrap or truncate intentionally, never widen the page/container.
+- When UI text names a question, audio review, or document page and a destination exists, make the reference actionable rather than leaving it as inert text.
+- Before release, inspect both desktop and narrow-mobile layouts, long labels, dialogs, and generated/final HTML—not only source syntax.
 
 
 ## v60 audio delivery diagnostics

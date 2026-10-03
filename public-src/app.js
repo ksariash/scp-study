@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 60;
+  const APP_VERSION = 61;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -233,6 +233,7 @@
   };
 
   let importReloadPending = false;
+  let externalReferenceActive = false;
   let state = loadState();
   let mode = state.activeTest ? 'test' : 'study';
   let activeQuestionTickStart = null;
@@ -4746,7 +4747,78 @@
     });
   }
 
+  function externalPdfTarget(rawKey) {
+    const key = String(rawKey || '').trim().toLowerCase();
+    if (key === 'compact' || key === 'concise' || key === 'compact-review') {
+      const doc = courseNoteDoc('compact');
+      return doc ? { ...doc, docKey:'compact' } : null;
+    }
+    if (key === 'full' || key === 'full-notes') {
+      const doc = courseNoteDoc('full');
+      return doc ? { ...doc, docKey:'full' } : null;
+    }
+
+    const documents = ACTIVE_COHORT.documents && typeof ACTIVE_COHORT.documents === 'object' ? ACTIVE_COHORT.documents : {};
+    const aliases = {
+      'cumulative-test': ['cumulativeTest', 'Cumulative Test'],
+      'test': ['cumulativeTest', 'Cumulative Test'],
+      'answer-key': ['cumulativeAnswerKey', 'Cumulative Test Answer Key'],
+      'cumulative-answer-key': ['cumulativeAnswerKey', 'Cumulative Test Answer Key'],
+      'essays': ['essayQuestionsAndAnswers', 'Essay Questions & Sample Answers'],
+      'essay-questions': ['essayQuestionsAndAnswers', 'Essay Questions & Sample Answers']
+    };
+    const entry = aliases[key];
+    if (!entry || !documents[entry[0]]) return null;
+    return { url:String(documents[entry[0]]), title:entry[1], docKey:null };
+  }
+
+  function consumeExternalReference() {
+    const url = new URL(window.location.href);
+    const question = url.searchParams.get('question');
+    const audio = url.searchParams.get('audio');
+    const pdf = url.searchParams.get('pdf');
+    if (!question && !audio && !pdf) return false;
+
+    externalReferenceActive = true;
+    const requestedZman = String(url.searchParams.get('zman') || '').trim();
+    if (requestedZman && requestedZman !== COHORT_ID) {
+      const target = activeZmanEntries().find(item => String(item.id) === requestedZman || (Array.isArray(item.legacyIds) && item.legacyIds.includes(requestedZman)));
+      if (target) {
+        try { localStorage.setItem(COHORT_SELECTION_KEY, String(target.id)); } catch (_) {}
+        window.location.reload();
+        return true;
+      }
+    }
+
+    const time = Math.max(0, Number(url.searchParams.get('time')) || 0);
+    const page = Math.max(1, Math.floor(Number(url.searchParams.get('page')) || 1));
+    ['zman','question','audio','time','pdf','page'].forEach(key => url.searchParams.delete(key));
+    history.replaceState(null, '', url.pathname + (url.search ? url.search : '') + url.hash);
+
+    window.setTimeout(() => {
+      if (question) {
+        const qid = Number(question);
+        if (Number.isInteger(qid) && questionById.has(qid)) openQuestionReviewAll(qid);
+        else showAppToast('That question reference is not available in this Zman.');
+        return;
+      }
+      if (audio) {
+        const reviewId = Number(audio);
+        if (Number.isFinite(reviewId)) void playAudioReference(reviewId, time, { autoplay:false, openMaterials:true });
+        else showAppToast('That audio reference is not available in this Zman.');
+        return;
+      }
+      if (pdf) {
+        const target = externalPdfTarget(pdf);
+        if (target) openPdfViewer({ url:target.url, title:target.title, page, docKey:target.docKey });
+        else showAppToast('That PDF reference is not available in this Zman.');
+      }
+    }, 260);
+    return true;
+  }
+
   function maybePromptLatestZman() {
+    if (externalReferenceActive) return;
     const latestId = String(COHORT_REGISTRY.latestZmanId || '');
     if (!latestId || latestId === COHORT_ID) return;
     const latest = activeZmanEntries().find(item => String(item.id) === latestId);
@@ -5395,6 +5467,7 @@
     populateEssayQuickNav();
     bindEvents();
     syncActiveZmanDocuments();
+    consumeExternalReference();
     initNotificationAndSettingsFeatures();
     maybePromptLatestZman();
     updateAppVersionUi();

@@ -307,3 +307,10 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 - Unifies notes/audio presentation across Study, Question Explorer, Essay mode, and Essay Explorer, including essay-prompt audio.
 - Stacks required-point utility icons vertically on mobile in Essay Explorer.
 - Fixes generated-PDF mixed Hebrew/Latin tokens by switching fonts within a token instead of sending Latin punctuation, letters, or numbers through the Hebrew-only font subset.
+
+
+## Release 61
+
+- Adds stable incoming Study references for questions, review audio/timestamps, and PDF pages so instructor tools can link directly to the cited material.
+- Reference links are Zman-aware and switch to the requested Zman before opening the target.
+- Keeps instructor-only cross-app navigation out of the learner Settings UI while formalizing a shared visual/design contract across the SCP app suite.

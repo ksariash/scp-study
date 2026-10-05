@@ -128,6 +128,8 @@ Question/essay/test progress sync is Zman-scoped, offline-first, operation-based
 
 Queued study operations normally trigger a sync immediately (short debounce) while the linked device is online and Anonymous Usage + Sync are both enabled. Sync also flushes on app startup, reconnect, and return to the visible app. The Settings status includes a compact `Sync now` action for an explicit push/pull. A sync pass must acknowledge/remove only the operation IDs it actually sent; never replace the persisted queue with a stale in-memory remainder, because new operations may be appended while a request is in flight. If a successful pass finishes with newly queued operations, schedule another pass.
 
+After `Sync now` completes its local study and notification-state push/pull, it asks Analytics to send a short-lived `sync_request` Web Push to the other linked devices that currently have Push enabled. Treat this as a best-effort wake-up hint, never as sync state or authorization: an active/background client may sync immediately, while a fully closed client still reconciles on its normal launch/resume. The service worker must consume `sync_request` as a control message rather than showing it as an inbox notification, and it must never receive or persist a raw device credential in the push payload.
+
 Notification read/archive state is intentionally shared through the anonymous learner ID only while both Anonymous Usage and device Sync are on. If either is paused on a linked device, read/archive changes stay in a device-local pending overlay and must not adopt read/archive mutations from another device; flush the pending state when both controls are on again. Push subscriptions and reminder delivery remain per device. Synced inbox/push/reminder access must require a valid linked-device credential once a sync account exists.
 
 ## Adaptive study selection
@@ -169,6 +171,8 @@ Settings should be concise. In particular, Zman and chabura controls do not need
 
 Use familiar icons instead of text for compact utility actions when the icon is conventional and unambiguous. Icon-only buttons must have an accessible `aria-label` and a useful `title`. On desktop, the notification control is the last topbar action immediately to the right of Test, while the session timer is centered independently in the app header. On compact/mobile layouts, the timer and bell remain a top-right cluster. Unread state is a compact alert mark, not a large labeled card.
 
+Mobile modal surfaces must have one intentional scrolling container. Keep the native `<dialog>` shell non-scrolling when its inner pane owns scrolling, contain overscroll at that pane, and avoid a scripted smooth-scroll animation fighting coarse-pointer momentum at the top/bottom boundaries.
+
 All dismissible dialogs should close when the user clicks the backdrop/outside the dialog box. Keep this behavior in the shared dialog lifecycle rather than implementing one-off backdrop handlers.
 
 Backdrop dismissal must require the pointer gesture to start and end on the actual `<dialog>` backdrop target. Do not infer backdrop clicks from pointer coordinates alone: Firefox native `<select>` popups can report option-click coordinates outside the dialog and must not close Settings when a selection is made.
@@ -182,7 +186,7 @@ Small text must keep normal-text contrast, active icon controls must remain dist
 
 Summer 2026 review audio is canonical at `audio/2026-summer/<filename>`. Because production playback failed after the migration, the Worker temporarily keeps read-only compatibility probes for a literal-leading-slash key and the legacy flat `audio/<filename>` key. Remove those probes only after a live production HEAD/Range playback check confirms the canonical objects and metadata.
 
-The topbar separates desktop and compact placement. On desktop the session timer is centered relative to the full app header, and the notification bell follows Test at the far right. On compact layouts the timer and bell form one top-right visual cluster; never let the bell wrap beneath the main navigation.
+The topbar separates desktop and compact placement. On desktop the session timer is centered relative to the full app header, and the notification bell follows Test at the far right. On compact layouts the timer and bell form one top-right visual cluster; vertically center the bell against the timer and never let it wrap beneath the main navigation.
 
 
 ## Notification permission UX

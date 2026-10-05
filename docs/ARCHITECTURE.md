@@ -88,6 +88,8 @@ Every browser/PWA has a separate random `deviceId`. A linked device also has a h
 
 Progress sync is offline-first and operation-based. Zman-scoped question/essay/test mutations are assigned stable operation IDs and retried idempotently. Reset operations advance a per-learner/per-Zman generation so an offline device cannot resurrect progress from before a reset. Active practice-test state remains device-local.
 
+The explicit Sync now action performs the current device's normal push/pull first, then asks Analytics to send a short-TTL `sync_request` Web Push to other linked devices with Push enabled. That message contains no learner credential and is only a best-effort wake-up hint: a service worker forwards it to an active/background Study client, while a fully closed app reconciles through the normal launch/resume sync path.
+
 Existing local progress is seeded as baseline operations when sync is first enabled or a device is linked. Import while linked is an explicit merge and warns against importing a duplicate of history that is already synced. Sync credentials, queues, cursors, and anonymous IDs are never included in normal export.
 
 ## Notification architecture
@@ -103,7 +105,7 @@ Study always requests inbox data for the active Zman and current anonymous learn
 
 Notification records deliberately support a generic `kind` and optional action object so future link, feedback-request, poll, and similar messages do not require redesigning the inbox.
 
-Web Push carries a notification back to the PWA; the service worker opens/focuses the app and the inbox remains the durable record.
+Web Push carries user notifications back to the PWA; the service worker opens/focuses the app and the inbox remains the durable record. The separate `sync_request` control payload is consumed silently by an active client and never becomes an inbox record.
 
 ## Reminder boundaries
 

@@ -1,5 +1,5 @@
-const APP_VERSION = 69;
-const CACHE_NAME = 'scp-study-v69';
+const APP_VERSION = 70;
+const CACHE_NAME = 'scp-study-v70';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v3';
 const DOCUMENT_CACHE_NAME = 'scp-study-documents-v2';
 const APP_SHELL = [
@@ -205,6 +205,13 @@ self.addEventListener('push', event => {
       payload = { title:'SCP Study', body:event.data?.text?.() || 'You have a new notification.' };
     }
     const data = payload && typeof payload.data === 'object' ? payload.data : {};
+    if (data.type === 'sync_request') {
+      const windows = await self.clients.matchAll({ type:'window', includeUncontrolled:true });
+      for (const client of windows) {
+        try { client.postMessage({ type:'SCP_SYNC_REQUEST' }); } catch (_) {}
+      }
+      return;
+    }
     await self.registration.showNotification(payload.title || 'SCP Study', {
       body: payload.body || '',
       icon: './icons/icon-192.png',

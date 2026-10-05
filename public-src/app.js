@@ -15,7 +15,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 69;
+  const APP_VERSION = 70;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -889,7 +889,15 @@
     if(syncFlushInFlight)return;
     const synced=await flushSync();
     const notificationsSynced=synced?await flushPendingNotificationState():false;
-    if(synced&&notificationsSynced)showAppToast('Sync complete.');
+    if(synced&&notificationsSynced){
+      try{
+        const nudge=await syncRequest('/nudge',{method:'POST',body:{}}),notified=Math.max(0,Number(nudge?.notifiedDevices)||0);
+        showAppToast(notified?`Sync complete. Asked ${notified} other device${notified===1?'':'s'} to sync.`:'Sync complete.');
+      }catch(error){
+        console.warn('Other-device sync nudge failed:',error);
+        showAppToast('This device synced, but other devices could not be notified.');
+      }
+    }
     else if(syncConfigured())showAppToast('Some changes are still waiting. Sync will retry automatically.');
   }
 
@@ -2432,7 +2440,8 @@
     const scroller = dom.questionReviewDialog?.querySelector('.modal-inner');
     if (!scroller) return;
     const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-    requestAnimationFrame(() => scroller.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }));
+    const coarsePointer = window.matchMedia?.('(pointer: coarse)')?.matches;
+    requestAnimationFrame(() => scroller.scrollTo({ top: 0, behavior: reduceMotion || coarsePointer ? 'auto' : 'smooth' }));
   }
 
   function submitCurrentAnswer() {
@@ -6246,6 +6255,14 @@
     navigator.serviceWorker.addEventListener('message', event => {
       if (event.data?.type === 'SCP_NOTIFICATION_RECEIVED') {
         void loadNotificationInbox();
+        return;
+      }
+      if (event.data?.type === 'SCP_SYNC_REQUEST') {
+        if (syncConfigured() && analyticsEnabled()) void (async () => {
+          const synced=await flushSync();
+          if(synced)await flushPendingNotificationState();
+          if(dom.notificationInboxDialog?.open)void loadNotificationInbox();
+        })();
         return;
       }
       if (event.data?.type !== 'SCP_APP_UPDATED') return;

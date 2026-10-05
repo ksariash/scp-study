@@ -62,6 +62,10 @@ Configured Zman documents use:
 
 The build also preserves legacy root documents for previously installed clients. Materials UI resolves its buttons from the active Zman configuration rather than treating root paths as canonical.
 
+Learner-facing study documents are offline-first. The current service-worker app shell precaches the compact review, full course notes, cumulative test, answer key, and essay Q&A PDF so installed clients can open them without a prior online view. A cache-membership change must use a new cache name so existing PWAs receive the new file set.
+
+Generated study PDFs use an LTR page layout with embedded RTL Hebrew phrases. The generator keeps source strings in logical reading order and performs visual word/run ordering only at draw time. Adjacent Hebrew words and punctuation must therefore be handled as RTL runs; source content must not be manually reversed to compensate for the renderer.
+
 ## Analytics and feedback
 
 Study emits the stable Zman analytics key with every analytics/feedback payload. Analytics must be deployed first for new Zmanim or protocol changes.

@@ -111,6 +111,18 @@ Reset Statistics must support either the active Zman or all Zmanim without delet
 
 Delete All Data must distinguish local-only deletion from local plus anonymous server deletion. For server deletion, call the server while the installation ID still exists; only clear local storage after the server confirms success.
 
+## Anonymous learner sync
+
+Sync is subordinate to Anonymous Usage: it may be configured only when anonymous usage is enabled, and progress transfer pauses while anonymous usage is off. Linked devices share the historical analytics `installationId`, which now represents an anonymous learner identity for synced users. Never treat that ID as a credential or expose it as a pairing secret.
+
+Each browser/PWA has a separate `deviceId` and, when linked, a separate high-entropy device token. Analytics stores only the token hash. Device tokens are independently revocable; revoking another device must not delete its local study data and must remove only that device's push endpoint from the shared learner.
+
+Question/essay/test progress sync is Zman-scoped, offline-first, operation-based, and idempotent. Do not replace it with whole-localStorage last-write-wins uploads. Resets advance a per-Zman generation so stale offline operations cannot resurrect deleted progress. Active practice-test state remains device-local.
+
+Notification read/archive state is intentionally shared through the anonymous learner ID. Push subscriptions and reminder delivery remain per device. Synced inbox/push/reminder access must require a valid linked-device credential once a sync account exists.
+
+Sync credentials, pairing material, cursors, and queues are local implementation state and must never be exported. Import while linked is an explicit merge operation and must warn about duplicate already-synced history.
+
 ## Content authority and feedback
 
 Course-owner source files are authoritative for course content. Do not silently replace course wording with outside halachic knowledge.

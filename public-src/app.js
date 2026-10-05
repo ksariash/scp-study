@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 61;
+  const APP_VERSION = 62;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -24,6 +24,9 @@
   const PUSH_UNSUBSCRIBE_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/push/unsubscribe';
   const NEXT_REMINDER_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/reminders/next';
   const SERVER_DATA_DELETE_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/data/delete';
+  const SYNC_API_BASE = 'https://scp-study-analytics.ksariash.workers.dev/api/sync';
+  const SYNC_SETTINGS_KEY = 'scpStudy.sync.v1';
+  const SYNC_QUEUE_KEY = 'scpStudy.syncQueue.v1';
   const STUDY_REMINDER_SETTINGS_KEY = 'scpStudy.studyReminders.v1';
   const LATEST_ZMAN_PROMPT_KEY = 'scpStudy.latestZmanPrompt.v1';
   const COHORT_SELECTION_KEY = 'scpStudy.activeZman.v1';
@@ -215,7 +218,7 @@
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     questionCard: el('questionCard'), prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoriesDialogTitle: el('categoriesDialogTitle'), categoriesDialogDescription: el('categoriesDialogDescription'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
-    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'), settingsTransferStatus: el('settingsTransferStatus'),
+    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), syncToggle: el('syncToggle'), syncStatus: el('syncStatus'), syncActions: el('syncActions'), joinSyncBtn: el('joinSyncBtn'), linkDeviceBtn: el('linkDeviceBtn'), manageDevicesBtn: el('manageDevicesBtn'), syncDevicesDialog: el('syncDevicesDialog'), closeSyncDevices: el('closeSyncDevices'), syncDeviceList: el('syncDeviceList'), syncDevicesStatus: el('syncDevicesStatus'), unlinkThisDeviceBtn: el('unlinkThisDeviceBtn'), unlinkOtherDevicesBtn: el('unlinkOtherDevicesBtn'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'), settingsTransferStatus: el('settingsTransferStatus'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
     essayPracticeMain: el('essayPracticeMain'), essayQuickNav: el('essayQuickNav'), essayCategoryTags: el('essayCategoryTags'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayNoteLinks: el('essayNoteLinks'), essayQuestionAudio: el('essayQuestionAudio'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingResources: el('essayPairingResources'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
@@ -257,6 +260,8 @@
   let glossaryPronunciationAudio = null;
   let resumeCourseAudioAfterGlossary = false;
   let analyticsFlushInFlight = false;
+  let syncFlushInFlight = false;
+  let applyingSyncOps = false;
   let analyticsAssistKey = null;
   let analyticsAssist = { audioUsed: false, glossaryUsed: false };
   let essayProgressState = loadEssayProgress();
@@ -270,7 +275,7 @@
   let updateCheckInFlight = null;
   let activePdfViewer = null;
   let pdfJsPromise = null;
-  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.statsDialog, dom.questionReviewDialog, dom.pdfViewerDialog, dom.appInfoDialog, dom.mcIntroDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.notificationInboxDialog, dom.chaburaDialog].filter(Boolean);
+  const dialogs = [dom.categoriesDialog, dom.materialsDialog, dom.essayIntroDialog, dom.essayLibraryDialog, dom.statsDialog, dom.questionReviewDialog, dom.pdfViewerDialog, dom.appInfoDialog, dom.mcIntroDialog, dom.testIntroDialog, dom.testResultDialog, dom.installGuideDialog, dom.glossaryTermDialog, dom.contentFeedbackDialog, dom.notificationInboxDialog, dom.chaburaDialog, dom.syncDevicesDialog].filter(Boolean);
 
 
   function chaburaOptions(location) {
@@ -362,6 +367,7 @@
     writeScopedJson(CHABURA_SETTINGS_KEY, next);
     if (!previous || previous.location !== next.location || previous.chabura !== next.chabura) {
       removeScopedValue(CHABURA_PROFILE_SENT_KEY);
+      queueSyncOp('chabura', { ...next, at:Date.now() });
     }
     syncChaburaSettingsUi();
     updateAnalyticsUi();
@@ -614,8 +620,10 @@
     } else {
       queueChaburaProfileAnalytics();
       void flushAnalyticsQueue();
+      void flushSync();
     }
     updateAnalyticsUi();
+    updateSyncUi();
   }
 
   function updateAnalyticsUi() {
@@ -631,9 +639,286 @@
     let id = '';
     try { id = localStorage.getItem(ANALYTICS_INSTALLATION_KEY) || ''; } catch (_) {}
     if (id) return id;
-    id = (crypto?.randomUUID?.() || `anon-${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`);
+    id = newAnonymousId();
     try { localStorage.setItem(ANALYTICS_INSTALLATION_KEY, id); } catch (_) {}
     return id;
+  }
+
+  function newAnonymousId() {
+    return crypto?.randomUUID?.() || `anon-${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+  }
+
+  function defaultSyncConfig() {
+    return { enabled:false, deviceId:'', deviceToken:'', cursor:0, generations:{}, lastSyncAt:null };
+  }
+
+  function syncConfig() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(SYNC_SETTINGS_KEY) || '{}');
+      return {
+        ...defaultSyncConfig(),
+        ...(saved && typeof saved === 'object' ? saved : {}),
+        generations: saved?.generations && typeof saved.generations === 'object' ? saved.generations : {}
+      };
+    } catch (_) { return defaultSyncConfig(); }
+  }
+
+  function saveSyncConfig(value) {
+    try { localStorage.setItem(SYNC_SETTINGS_KEY, JSON.stringify(value)); } catch (_) {}
+  }
+
+  function syncDeviceId() {
+    const config = syncConfig();
+    if (config.deviceId) return config.deviceId;
+    config.deviceId = newAnonymousId();
+    saveSyncConfig(config);
+    return config.deviceId;
+  }
+
+  function syncDeviceName() {
+    const ua = String(navigator.userAgent || '');
+    if (/iPad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'iPad';
+    if (/iPhone/i.test(ua)) return 'iPhone';
+    if (/Android/i.test(ua)) return 'Android device';
+    if (/Mac/i.test(navigator.platform || ua)) return 'Mac';
+    if (/Win/i.test(navigator.platform || ua)) return 'Windows PC';
+    return 'Desktop browser';
+  }
+
+  function syncConfigured() {
+    const config = syncConfig();
+    return !!(config.enabled && config.deviceToken && config.deviceId);
+  }
+
+  function syncAuthHeaders() {
+    const token = syncConfig().deviceToken;
+    return token ? { Authorization:`Bearer ${token}` } : {};
+  }
+
+  function syncQueue() {
+    try {
+      const queue = JSON.parse(localStorage.getItem(SYNC_QUEUE_KEY) || '[]');
+      return Array.isArray(queue) ? queue.slice(-1500) : [];
+    } catch (_) { return []; }
+  }
+
+  function saveSyncQueue(queue) {
+    try { localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify((queue || []).slice(-1500))); } catch (_) {}
+  }
+
+  function queueSyncOp(kind, payload = {}, { zman = ANALYTICS_COHORT } = {}) {
+    if (applyingSyncOps) return;
+    const config = syncConfig();
+    if (!config.enabled || !config.deviceToken) return;
+    const queue = syncQueue();
+    queue.push({
+      opId:newAnonymousId(),
+      zman:String(zman || ANALYTICS_COHORT),
+      generation:Math.max(0, Number(config.generations?.[String(zman || ANALYTICS_COHORT)]) || 0),
+      kind,
+      payload,
+      clientTs:new Date().toISOString()
+    });
+    saveSyncQueue(queue);
+    updateSyncUi();
+    if (analyticsEnabled() && navigator.onLine) window.setTimeout(() => void flushSync(), 40);
+  }
+
+  function queueSyncReset(zman = ANALYTICS_COHORT) {
+    if (applyingSyncOps) return;
+    const config=syncConfig();if(!config.enabled||!config.deviceToken)return;
+    const key=String(zman||ANALYTICS_COHORT),generation=Math.max(0,Number(config.generations?.[key])||0),queue=syncQueue();
+    queue.push({opId:newAnonymousId(),zman:key,generation,kind:'reset',payload:{at:Date.now()},clientTs:new Date().toISOString()});saveSyncQueue(queue);
+    config.generations={...config.generations,[key]:generation+1};saveSyncConfig(config);updateSyncUi();
+    if(analyticsEnabled()&&navigator.onLine)window.setTimeout(()=>void flushSync(),40);
+  }
+
+  function initialSyncOps() {
+    const ops = [];
+    const add = (kind, payload) => ops.push({ kind, payload });
+    for (const q of QUESTIONS) {
+      const s = state.stats?.[q.id] || {};
+      if (Number(s.shown)||Number(s.attempts)||Number(s.totalTimeMs)) add('question_baseline',{ qid:q.id, stats:{ shown:Number(s.shown)||0, attempts:Number(s.attempts)||0, correct:Number(s.correct)||0, partial:Number(s.partial)||0, incorrect:Number(s.incorrect)||0, pointsEarned:Number(s.pointsEarned)||0, totalTimeMs:Number(s.totalTimeMs)||0, lastResult:s.lastResult||null, lastSeen:Number(s.lastSeen)||null, lastAnswered:Number(s.lastAnswered)||null } });
+    }
+    for (const [factId, raw] of Object.entries(essayProgressState.facts || {})) {
+      if (Number(raw?.seen)||Number(raw?.correct)) add('essay_fact_baseline',{ factId, seen:Number(raw.seen)||0, correct:Number(raw.correct)||0, mastery:Number(raw.mastery)||0, lastSeen:Number(raw.lastSeen)||0 });
+    }
+    for (const [essayId, raw] of Object.entries(essayProgressState.essays || {})) {
+      if (Number(raw?.attempts)) add('essay_round_baseline',{ essayId, attempts:Number(raw.attempts)||0, perfect:Number(raw.perfect)||0, lastScore:Number(raw.lastScore)||0, lastTotal:Number(raw.lastTotal)||0, lastAttempt:Number(raw.lastAttempt)||0 });
+    }
+    (state.tests || []).forEach(test => add('test_complete',{ test }));
+    const profile=loadChaburaSettings();if(profile)add('chabura',{ ...profile, at:Date.now() });
+    add('category_filters',{ values:[...(state.filters || [])], at:Date.now() });
+    add('essay_filters',{ values:readScopedJson(ESSAY_CATEGORY_FILTER_KEY, ESSAY_CATEGORY_LIST), at:Date.now() });
+    add('audio_state',{ value:getAudioPlaybackState(), at:Date.now() });
+    return ops;
+  }
+
+  function enqueueInitialSyncBaseline() {
+    initialSyncOps().forEach(op => queueSyncOp(op.kind, op.payload));
+  }
+
+  async function syncRequest(path, { method='GET', body=null, auth=true } = {}) {
+    const headers = auth ? syncAuthHeaders() : {};
+    if (body !== null) headers['Content-Type'] = 'application/json';
+    const response = await fetch(`${SYNC_API_BASE}${path}`, { method, mode:'cors', credentials:'omit', cache:'no-store', headers, body:body === null ? undefined : JSON.stringify(body) });
+    let data={};try{data=await response.json()}catch(_){}
+    if (!response.ok) {
+      const error = new Error(data?.error || `Sync request failed (${response.status})`);
+      error.status = response.status;
+      throw error;
+    }
+    return data;
+  }
+
+  function applyRemoteSyncOp(op) {
+    if (!op) return;
+    const ownDevice=op.deviceId===syncDeviceId();
+    if(ownDevice&&['question_baseline','question_shown','question_answer','essay_fact_baseline','essay_fact','essay_round_baseline','essay_round','reset'].includes(op.kind))return;
+    const currentZman = String(op.zman || '') === ANALYTICS_COHORT;
+    if (!currentZman) return;
+    const p = op.payload || {};
+    applyingSyncOps = true;
+    try {
+      if (op.kind === 'question_baseline') {
+        const s=state.stats?.[p.qid],r=p.stats||{};if(!s)return;
+        for(const key of ['shown','attempts','correct','partial','incorrect','pointsEarned','totalTimeMs'])s[key]=(Number(s[key])||0)+(Number(r[key])||0);
+        s.lastSeen=Math.max(Number(s.lastSeen)||0,Number(r.lastSeen)||0)||null;
+        if((Number(r.lastAnswered)||0)>=(Number(s.lastAnswered)||0)){s.lastAnswered=Number(r.lastAnswered)||null;s.lastResult=r.lastResult||s.lastResult;}
+        saveState();
+      } else if (op.kind === 'question_shown') {
+        const s=state.stats?.[p.qid];if(!s)return;s.shown+=1;s.lastSeen=Math.max(Number(s.lastSeen)||0,Number(p.at)||0)||Date.now();saveState();
+      } else if (op.kind === 'question_answer') {
+        const s=state.stats?.[p.qid];if(!s)return;s.attempts+=1;if(['correct','partial','incorrect'].includes(p.result))s[p.result]+=1;s.pointsEarned+=(Number(p.credit)||0);s.totalTimeMs+=(Number(p.elapsedMs)||0);if((Number(p.at)||0)>=(Number(s.lastAnswered)||0)){s.lastAnswered=Number(p.at)||Date.now();s.lastResult=p.result||s.lastResult;}saveState();
+      } else if (op.kind === 'test_complete') {
+        const test=p.test;if(test?.id&&!state.tests.some(item=>item.id===test.id)){state.tests.push(test);state.tests=state.tests.slice(-30);saveState();}
+      } else if (op.kind === 'essay_fact_baseline') {
+        const prior=essayFactStat(p.factId),remoteAt=Number(p.lastSeen)||0;essayProgressState.facts[p.factId]={seen:prior.seen+(Number(p.seen)||0),correct:prior.correct+(Number(p.correct)||0),mastery:remoteAt>=(Number(prior.lastSeen)||0)?Math.max(0,Math.min(3,Number(p.mastery)||0)):prior.mastery,lastSeen:Math.max(Number(prior.lastSeen)||0,remoteAt)};saveEssayProgress();
+      } else if (op.kind === 'essay_fact') {
+        const prior=essayFactStat(p.factId),remoteAt=Number(p.at)||0;essayProgressState.facts[p.factId]={seen:prior.seen+1,correct:prior.correct+1,mastery:remoteAt>=(Number(prior.lastSeen)||0)?Math.max(0,Math.min(3,Number(p.masteryAfter)||0)):prior.mastery,lastSeen:Math.max(Number(prior.lastSeen)||0,remoteAt)};saveEssayProgress();
+      } else if (op.kind === 'essay_round_baseline' || op.kind === 'essay_round') {
+        const prior=essayProgressState.essays[p.essayId]||{attempts:0,perfect:0,lastAttempt:0},isBaseline=op.kind==='essay_round_baseline',attempts=isBaseline?(Number(p.attempts)||0):1,perfect=isBaseline?(Number(p.perfect)||0):(p.perfect?1:0),remoteAt=Number(p.lastAttempt||p.at)||0;
+        essayProgressState.essays[p.essayId]={attempts:(Number(prior.attempts)||0)+attempts,perfect:(Number(prior.perfect)||0)+perfect,lastScore:remoteAt>=(Number(prior.lastAttempt)||0)?Number(p.lastScore)||0:Number(prior.lastScore)||0,lastTotal:remoteAt>=(Number(prior.lastAttempt)||0)?Number(p.lastTotal)||0:Number(prior.lastTotal)||0,lastAttempt:Math.max(Number(prior.lastAttempt)||0,remoteAt)};if(remoteAt>=(Number(prior.lastAttempt)||0))essayProgressState.lastEssayId=p.essayId;saveEssayProgress();
+      } else if (op.kind === 'chabura') {
+        const value=validChaburaSettings(p);if(value){writeScopedJson(CHABURA_SETTINGS_KEY,value);removeScopedValue(CHABURA_PROFILE_SENT_KEY);syncChaburaSettingsUi();queueChaburaProfileAnalytics();}
+      } else if (op.kind === 'category_filters') {
+        const values=Array.isArray(p.values)?p.values.filter(value=>categories.includes(value)):[];state.filters=values.length?values:[...categories];saveState();
+      } else if (op.kind === 'essay_filters') {
+        const values=Array.isArray(p.values)?p.values.filter(value=>ESSAY_CATEGORY_LIST.includes(value)):[];writeScopedJson(ESSAY_CATEGORY_FILTER_KEY,values.length?values:ESSAY_CATEGORY_LIST);
+      } else if (op.kind === 'audio_state') {
+        if(p.value&&typeof p.value==='object')writeScopedJson(AUDIO_PLAYBACK_KEY,p.value);
+      } else if (op.kind === 'reset') {
+        state=defaultState();essayProgressState=defaultEssayProgress();writeMainProgressForCohort(state);removeScopedValue(ESSAY_PRACTICE_KEY);removeScopedValue(ESSAY_CATEGORY_FILTER_KEY);updateEssayProgressUi();setTimeout(()=>render(),0);
+      }
+    } finally { applyingSyncOps = false; }
+  }
+
+  async function flushSync() {
+    const config = syncConfig();
+    if (syncFlushInFlight || !config.enabled || !config.deviceToken || !analyticsEnabled() || !navigator.onLine) return;
+    syncFlushInFlight = true;
+    try {
+      let queue=syncQueue();
+      while(queue.length){
+        const batch=queue.slice(0,500),result=await syncRequest('/ops',{method:'POST',body:{ops:batch}});
+        queue=queue.slice(batch.length);saveSyncQueue(queue);
+        if(result?.generations&&typeof result.generations==='object'){const latest=syncConfig();latest.generations={...latest.generations,...result.generations};saveSyncConfig(latest);}
+      }
+      let hasMore=true;
+      while(hasMore){
+        const latest=syncConfig(),result=await syncRequest(`/ops?cursor=${encodeURIComponent(latest.cursor||0)}`);
+        (result.ops||[]).forEach(applyRemoteSyncOp);
+        latest.cursor=Math.max(Number(latest.cursor)||0,Number(result.cursor)||0);latest.generations={...latest.generations,...(result.generations||{})};latest.lastSyncAt=new Date().toISOString();saveSyncConfig(latest);hasMore=!!result.hasMore;
+      }
+      updateSyncUi();
+    } catch (error) {
+      if (error?.status === 401) await handleRevokedSyncDevice();
+      else console.warn('Study sync deferred:',error);
+    } finally { syncFlushInFlight=false; }
+  }
+
+  async function enableStudySync() {
+    if (!analyticsEnabled()) { showAppToast('Turn on anonymous usage before enabling sync.'); updateSyncUi(); return false; }
+    let config=syncConfig();
+    if(config.deviceToken){config.enabled=true;saveSyncConfig(config);updateSyncUi();void flushSync();return true;}
+    try{
+      const deviceId=syncDeviceId(),result=await syncRequest('/create',{method:'POST',auth:false,body:{learnerId:analyticsInstallationId(),deviceId,deviceName:syncDeviceName()}});
+      config=syncConfig();config.enabled=true;config.deviceId=deviceId;config.deviceToken=result.deviceToken;config.cursor=0;config.generations={};saveSyncConfig(config);enqueueInitialSyncBaseline();updateSyncUi();await flushSync();showAppToast('Device sync is on.');return true;
+    }catch(error){showAppToast('Could not enable sync: '+error.message);updateSyncUi();return false;}
+  }
+
+  function pauseStudySync() {
+    const config=syncConfig();config.enabled=false;saveSyncConfig(config);updateSyncUi();
+  }
+
+  async function joinExistingSync() {
+    if(!analyticsEnabled()){showAppToast('Turn on anonymous usage before linking a device.');return;}
+    const code=prompt('Enter the link code shown on your other device.');if(!code)return;
+    const oldLearnerId=analyticsInstallationId(),deviceId=syncDeviceId();
+    try{
+      const result=await syncRequest('/pair/finish',{method:'POST',auth:false,body:{code,deviceId,deviceName:syncDeviceName()}});
+      const config=syncConfig();config.enabled=true;config.deviceId=deviceId;config.deviceToken=result.deviceToken;config.cursor=0;config.generations={};saveSyncConfig(config);
+      localStorage.setItem(ANALYTICS_INSTALLATION_KEY,result.learnerId);localStorage.removeItem(ANALYTICS_QUEUE_KEY);
+      enqueueInitialSyncBaseline();updateAnalyticsUi();updateSyncUi();await flushSync();
+      if(oldLearnerId!==result.learnerId&&reminderSettings().pushEnabled)void syncPushSubscription();
+      showAppToast('This device is linked.');
+    }catch(error){showAppToast('Could not link device: '+error.message);}
+  }
+
+  async function createLinkCode() {
+    try{const result=await syncRequest('/pair/start',{method:'POST',body:{}});prompt('On the other device, open Settings → Anonymous usage → Link to existing sync, then enter this code. It expires in 10 minutes.',result.code);}catch(error){showAppToast('Could not create a link code: '+error.message);}
+  }
+
+  function formatDeviceSeen(value) {
+    const time=Date.parse(value||'');if(!Number.isFinite(time))return '';
+    const delta=Math.max(0,Date.now()-time);if(delta<60000)return 'Active now';if(delta<3600000)return `Last synced ${Math.max(1,Math.round(delta/60000))}m ago`;if(delta<86400000)return `Last synced ${Math.round(delta/3600000)}h ago`;return `Last synced ${new Date(time).toLocaleDateString()}`;
+  }
+
+  async function loadSyncDevices() {
+    if(!dom.syncDeviceList)return;
+    dom.syncDeviceList.innerHTML='';if(dom.syncDevicesStatus)dom.syncDevicesStatus.textContent='Loading…';
+    try{
+      const result=await syncRequest('/devices');
+      dom.syncDeviceList.innerHTML=(result.devices||[]).map(device=>`<div class="sync-device-row"><div class="sync-device-copy"><strong>${escapeHtml(device.name||'Linked device')}${device.current?' · This device':''}</strong><span>${escapeHtml(formatDeviceSeen(device.lastSeenAt))}</span></div>${device.current?'':`<button class="secondary settings-action-btn" type="button" data-unlink-device="${escapeHtml(device.deviceId)}">Unlink</button>`}</div>`).join('')||'<div class="empty-state">No linked devices found.</div>';
+      if(dom.unlinkOtherDevicesBtn)dom.unlinkOtherDevicesBtn.disabled=(result.devices||[]).length<=1;
+      if(dom.syncDevicesStatus)dom.syncDevicesStatus.textContent=`${(result.devices||[]).length} linked device${(result.devices||[]).length===1?'':'s'}`;
+    }catch(error){if(dom.syncDevicesStatus)dom.syncDevicesStatus.textContent='Could not load devices: '+error.message;}
+  }
+
+  async function revokeSyncDevice(deviceId) {
+    if(!confirm('Unlink this device? It will keep its local study data but will stop syncing until linked again.'))return;
+    try{await syncRequest('/devices/revoke',{method:'POST',body:{deviceId}});await loadSyncDevices();showAppToast('Device unlinked.');}catch(error){showAppToast('Could not unlink device: '+error.message);}
+  }
+
+  async function revokeOtherSyncDevices() {
+    if(!confirm('Unlink every other device? They will keep their local study data but will stop syncing until linked again.'))return;
+    try{const result=await syncRequest('/devices/revoke-others',{method:'POST',body:{}});await loadSyncDevices();showAppToast(`Unlinked ${Number(result.revoked)||0} other device${Number(result.revoked)===1?'':'s'}.`);}catch(error){showAppToast('Could not unlink other devices: '+error.message);}
+  }
+
+  async function unlinkCurrentSyncDevice() {
+    if(!confirm('Unlink this device? Local study data will stay here, but studying and notification status will stop syncing.'))return;
+    try{await syncRequest('/unlink',{method:'POST',body:{}});}catch(error){if(error?.status!==401){showAppToast('Could not unlink this device: '+error.message);return;}}
+    await detachLocalSyncIdentity();showAppToast('This device is unlinked.');if(dom.syncDevicesDialog?.open)dom.syncDevicesDialog.close();
+  }
+
+  async function detachLocalSyncIdentity() {
+    const config=syncConfig();config.enabled=false;config.deviceToken='';config.cursor=0;config.generations={};config.lastSyncAt=null;saveSyncConfig(config);saveSyncQueue([]);localStorage.setItem(ANALYTICS_INSTALLATION_KEY,newAnonymousId());localStorage.removeItem(ANALYTICS_QUEUE_KEY);updateAnalyticsUi();updateSyncUi();
+    if(reminderSettings().pushEnabled)try{await syncPushSubscription();}catch(_){}
+  }
+
+  async function handleRevokedSyncDevice() {
+    if(!syncConfig().deviceToken)return;
+    await detachLocalSyncIdentity();showAppToast('This device was unlinked from sync. Local study data is still available.');
+  }
+
+  function updateSyncUi() {
+    const config=syncConfig(),hasCredential=!!config.deviceToken,enabled=!!config.enabled&&hasCredential,analytics=analyticsEnabled(),queued=syncQueue().length;
+    if(dom.syncToggle){dom.syncToggle.checked=enabled;dom.syncToggle.disabled=!analytics;}
+    dom.joinSyncBtn?.classList.toggle('hidden',!analytics||hasCredential);
+    dom.syncActions?.classList.toggle('hidden',!enabled);
+    if(dom.syncStatus)dom.syncStatus.textContent=!analytics?(hasCredential?'Paused · anonymous usage is off.':'Requires anonymous usage to be on.'):
+      enabled?(queued?`On · ${queued} change${queued===1?'':'s'} waiting to sync.`:(config.lastSyncAt?`On · last synced ${new Date(config.lastSyncAt).toLocaleString()}.`:'On · ready to sync.')):
+      hasCredential?'Off · this device remains linked.':'Off';
   }
 
   function feedbackHash(value) {
@@ -1362,6 +1647,7 @@
   function saveEssayCategoryFilter(values) {
     const valid = [...new Set((values || []).filter(tag => ESSAY_CATEGORY_LIST.includes(tag)))];
     writeScopedJson(ESSAY_CATEGORY_FILTER_KEY, valid.length ? valid : ESSAY_CATEGORY_LIST);
+    queueSyncOp('essay_filters', { values:valid.length ? valid : ESSAY_CATEGORY_LIST, at:Date.now() });
   }
 
   function essayMatchesCategoryFilter(essay, selected = loadEssayCategoryFilter()) {
@@ -1489,6 +1775,7 @@
       lastSeen: Date.now()
     };
     saveEssayProgress();
+    queueSyncOp('essay_fact', { factId:fact.id, firstTry:!!firstTry, masteryAfter:essayProgressState.facts[fact.id].mastery, at:essayProgressState.facts[fact.id].lastSeen });
   }
 
   function finishEssayRound() {
@@ -1506,6 +1793,7 @@
     };
     essayProgressState.lastEssayId = essay.id;
     saveEssayProgress();
+    queueSyncOp('essay_round', { essayId:essay.id, perfect, lastScore:essayRun.firstTryCorrect, lastTotal:essay.facts.length, at:essayProgressState.essays[essay.id].lastAttempt });
     queueEssayAnalytics('essay_round_complete', {
       roundId: essayRun.roundId,
       sessionId: essayRun.sessionId,
@@ -1809,6 +2097,7 @@
     const s = state.stats[qid];
     s.shown += 1;
     s.lastSeen = Date.now();
+    queueSyncOp('question_shown', { qid, at:s.lastSeen });
   }
 
   function ensureCurrentQuestion() {
@@ -1846,6 +2135,7 @@
     s.totalTimeMs += elapsedMs;
     s.lastResult = result;
     s.lastAnswered = Date.now();
+    queueSyncOp('question_answer', { qid, result, credit, elapsedMs, at:s.lastAnswered });
   }
 
   function selectedFromForm() {
@@ -2393,6 +2683,7 @@
     }
     state.filters = selected;
     saveState();
+    queueSyncOp('category_filters', { values:[...selected], at:Date.now() });
     dom.categoriesDialog.close();
   }
 
@@ -2463,6 +2754,7 @@
     const result = buildTestResult(state.activeTest, reason);
     state.tests.push(result);
     state.tests = state.tests.slice(-30);
+    queueSyncOp('test_complete', { test:result });
     state.activeTest = null;
     mode = 'study';
     lastFinishedTest = result;
@@ -2777,6 +3069,7 @@
       rate: dom.audioPlayer.playbackRate || 1
     };
     writeScopedJson(AUDIO_PLAYBACK_KEY, data);
+    if (force) queueSyncOp('audio_state', { value:data, at:now });
   }
 
   function setAudioRate(rate, persist = true) {
@@ -4450,6 +4743,14 @@
       setMaterialsTab(buttons[next].dataset.materialsTab, { focus: true });
     });
     dom.analyticsToggle?.addEventListener('change', e => setAnalyticsEnabled(e.currentTarget.checked));
+    dom.syncToggle?.addEventListener('change', e => { if(e.currentTarget.checked)void enableStudySync();else pauseStudySync(); });
+    dom.joinSyncBtn?.addEventListener('click', () => void joinExistingSync());
+    dom.linkDeviceBtn?.addEventListener('click', () => void createLinkCode());
+    dom.manageDevicesBtn?.addEventListener('click', () => { if(dom.syncDevicesDialog&&!dom.syncDevicesDialog.open)dom.syncDevicesDialog.showModal();void loadSyncDevices(); });
+    dom.closeSyncDevices?.addEventListener('click', () => dom.syncDevicesDialog?.close());
+    dom.syncDeviceList?.addEventListener('click', event => { const button=event.target.closest('[data-unlink-device]');if(button)void revokeSyncDevice(button.dataset.unlinkDevice); });
+    dom.unlinkThisDeviceBtn?.addEventListener('click', () => void unlinkCurrentSyncDevice());
+    dom.unlinkOtherDevicesBtn?.addEventListener('click', () => void revokeOtherSyncDevices());
     dom.glossarySearchInput?.addEventListener('input', e => renderGlossary(e.target.value));
     dom.glossarySearchInput?.addEventListener('keydown', e => {
       if (e.key === 'Escape' && e.currentTarget.value) {
@@ -4708,6 +5009,7 @@
     window.addEventListener('online', () => {
       void flushAnalyticsQueue();
       void flushContentFeedbackQueue();
+      void flushSync();
     });
 
     window.addEventListener('beforeinstallprompt', e => {
@@ -4872,9 +5174,9 @@
       const url=new URL(NEXT_REMINDER_ENDPOINT);
       url.searchParams.set('installationId',analyticsInstallationId());
       url.searchParams.set('zman',ANALYTICS_COHORT);
-      const response=await fetch(url,{mode:'cors',credentials:'omit',cache:'no-store'});
+      const response=await fetch(url,{mode:'cors',credentials:'omit',cache:'no-store',headers:syncAuthHeaders()});
       const data=await response.json();
-      if(!response.ok)throw new Error(data?.error||'Could not load reminder schedule');
+      if(!response.ok){if(response.status===401&&syncConfig().deviceToken)void handleRevokedSyncDevice();throw new Error(data?.error||'Could not load reminder schedule');}
       if(!data.enabled){setReminderStatus('Study reminders are disabled');return}
       if(data.reason==='today')setReminderStatus(`You'll get a study reminder at ${time} today`);
       else if(data.reason==='after_yom_tov')setReminderStatus(`You'll get a study reminder at ${time} after Yom Tov`);
@@ -4921,11 +5223,11 @@
   async function postJson(url, body) {
     const response = await fetch(url, {
       method:'POST', mode:'cors', credentials:'omit', cache:'no-store',
-      headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+      headers:{'Content-Type':'application/json',...syncAuthHeaders()}, body:JSON.stringify(body)
     });
     let data = {};
     try { data = await response.json(); } catch (_) {}
-    if (!response.ok) throw new Error(data?.error || `Request failed (${response.status})`);
+    if (!response.ok) { if(response.status===401&&syncConfig().deviceToken)void handleRevokedSyncDevice(); throw new Error(data?.error || `Request failed (${response.status})`); }
     return data;
   }
 
@@ -4951,6 +5253,7 @@
     }
     await postJson(PUSH_SUBSCRIBE_ENDPOINT, {
       installationId:analyticsInstallationId(),
+      deviceId:syncDeviceId(),
       zman:ANALYTICS_COHORT,
       subscription:subscription.toJSON(),
       timezone:Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
@@ -5146,9 +5449,9 @@
       url.searchParams.set('zman', ANALYTICS_COHORT);
       url.searchParams.set('installationId', analyticsInstallationId());
       if (includeArchived) url.searchParams.set('includeArchived','1');
-      const response = await fetch(url, { mode:'cors', credentials:'omit', cache:'no-store' });
+      const response = await fetch(url, { mode:'cors', credentials:'omit', cache:'no-store', headers:syncAuthHeaders() });
       const data = await response.json();
-      if (!response.ok) throw new Error(data?.error || 'Could not load notifications');
+      if (!response.ok) { if(response.status===401&&syncConfig().deviceToken)void handleRevokedSyncDevice(); throw new Error(data?.error || 'Could not load notifications'); }
       renderNotificationInbox(data);
       syncNotificationPermissionNag();
       if (status) status.textContent = '';
@@ -5265,12 +5568,15 @@
         }
       }
       if (!staged.length) throw new Error('No selected data groups were found in the file.');
+      const linkedSync=syncConfigured();
+      if(linkedSync&&!confirm('This device is synced. Imported progress will be merged into the shared history. Continue only if this backup is not a duplicate of progress already synced.')){setTransferStatus('Import canceled.');return;}
 
       // Once imported progress is written, normal visibility/pagehide handlers
       // must not flush the pre-import in-memory state back over STORAGE_KEY.
       importReloadPending = true;
       try {
         staged.forEach(([key,value]) => localStorage.setItem(key,value));
+        if(linkedSync){const config=syncConfig();config.pendingImportedBaseline=true;saveSyncConfig(config);}
       } catch (error) {
         importReloadPending = false;
         throw error;
@@ -5297,6 +5603,7 @@
     const label = normalized === 'all' ? 'all Zmanim' : COHORT_NAME;
     if (!confirm(`Reset study statistics for ${label}? This cannot be undone.`)) return false;
     if (normalized === 'current') {
+      queueSyncReset(ANALYTICS_COHORT);
       const reset = resetAllProgress({ closeStats, confirm:false });
       if (reset) {
         if (!closeStats && dom.statsDialog?.open) renderStats();
@@ -5306,6 +5613,7 @@
     }
     flushQuestionTime();
     flushStudyTime();
+    cohortRegistryEntries().forEach(entry => queueSyncReset(String(entry.analyticsKey || entry.id)));
     localStorage.removeItem(STORAGE_KEY);
     removeLocalKeysByPrefix(ESSAY_PRACTICE_KEY);
     removeLocalKeysByPrefix(ESSAY_CATEGORY_FILTER_KEY);
@@ -5365,6 +5673,9 @@
         setSettingsStatus('Server deletion failed; local data was not deleted. ' + error.message);
         return;
       }
+    } else if (syncConfig().deviceToken) {
+      try { await syncRequest('/unlink',{method:'POST',body:{}}); }
+      catch (error) { console.warn('Could not unlink sync device before local deletion:',error); }
     }
     setSettingsStatus('Deleting local data…');
     await deleteLocalAppData();
@@ -5415,7 +5726,7 @@
     el('deleteAllDataBtn')?.addEventListener('click', () => void deleteAllDataFromSettings());
 
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) void loadNotificationInbox();
+      if (!document.hidden) { void flushSync(); void loadNotificationInbox(); }
     });
     window.addEventListener('online', () => {
       void loadNotificationInbox();
@@ -5478,12 +5789,16 @@
     updateBrandShareAffordance();
     updateInstallButtonVisibility();
     updateAnalyticsUi();
+    updateSyncUi();
     syncCohortSettingsUi();
     syncChaburaSettingsUi();
     updateEssayProgressUi();
+    const importedSyncConfig=syncConfig();
+    if(importedSyncConfig.pendingImportedBaseline&&importedSyncConfig.deviceToken){importedSyncConfig.pendingImportedBaseline=false;saveSyncConfig(importedSyncConfig);enqueueInitialSyncBaseline();}
     queueChaburaProfileAnalytics();
     void flushAnalyticsQueue();
     void flushContentFeedbackQueue();
+    void flushSync();
     activeMaterialsTab = savedMaterialsTab();
     setMaterialsTab(activeMaterialsTab, { remember: false });
     setTranscriptExpanded(savedTranscriptExpanded(), { remember: false });

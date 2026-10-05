@@ -501,11 +501,24 @@
               <p>Shares anonymous study results, timing ranges, study-aid use, current Zman, selected chabura, and broad IP-derived location. It does not send your name, email, notes, searches, or precise GPS location.</p>
               <span class="analytics-status" id="analyticsStatus" aria-live="polite"></span>
             </div>
-            <label class="analytics-switch">
-              <input id="analyticsToggle" type="checkbox" checked />
-              <span class="analytics-switch-track" aria-hidden="true"><span></span></span>
-              <span>Share anonymous usage</span>
-            </label>
+            <div class="anonymous-usage-controls">
+              <label class="analytics-switch">
+                <input id="analyticsToggle" type="checkbox" checked />
+                <span class="analytics-switch-track" aria-hidden="true"><span></span></span>
+                <span>Share anonymous usage</span>
+              </label>
+              <label class="analytics-switch">
+                <input id="syncToggle" type="checkbox" />
+                <span class="analytics-switch-track" aria-hidden="true"><span></span></span>
+                <span>Sync across devices</span>
+              </label>
+              <span class="analytics-status" id="syncStatus" aria-live="polite"></span>
+              <button class="secondary settings-action-btn" type="button" id="joinSyncBtn">Link to existing sync</button>
+              <div class="sync-actions hidden" id="syncActions">
+                <button class="secondary settings-action-btn" type="button" id="linkDeviceBtn">Link another device</button>
+                <button class="secondary settings-action-btn" type="button" id="manageDevicesBtn">Manage devices</button>
+              </div>
+            </div>
           </section>
 
           <div class="settings-actions settings-actions-ordered">
@@ -552,7 +565,7 @@
             <div class="settings-action-card danger-card delete-all-card">
               <div>
                 <strong>Delete all data</strong>
-                <p>Erase this device. You can also request deletion of anonymous server data tied to this device's anonymous installation ID.</p>
+                <p>Erase this device. You can also delete anonymous server data; when sync is enabled, that removes the shared anonymous learner data for every linked device.</p>
                 <label class="settings-inline-select"><span>Delete</span>
                   <select id="deleteDataScope">
                     <option value="local">Local data only</option>
@@ -569,6 +582,21 @@
 
       <div class="modal-footer materials-footer">
         <button class="primary" type="button" id="doneMaterialsBtn">Done</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="syncDevicesDialog" class="modal sync-devices-dialog" aria-labelledby="syncDevicesTitle">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div><h2 id="syncDevicesTitle">Synced devices</h2></div>
+        <button class="close-btn" id="closeSyncDevices" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="sync-device-list" id="syncDeviceList"></div>
+      <div class="notification-inbox-status" id="syncDevicesStatus" aria-live="polite"></div>
+      <div class="modal-footer sync-device-footer">
+        <button class="secondary" id="unlinkThisDeviceBtn" type="button">Unlink this device</button>
+        <button class="danger" id="unlinkOtherDevicesBtn" type="button">Unlink other devices</button>
       </div>
     </div>
   </dialog>
@@ -911,7 +939,7 @@
           <span class="eyebrow">About</span>
           <div class="app-info-title-row">
             <h2 id="appInfoTitle">SCP Study</h2>
-            <span class="app-info-version" id="appInfoVersion">v61</span>
+            <span class="app-info-version" id="appInfoVersion">v62</span>
           </div>
           <p>A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.</p>
         </div>

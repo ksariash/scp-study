@@ -62,7 +62,7 @@ Configured Zman documents use:
 
 The build also preserves legacy root documents for previously installed clients. Materials UI resolves its buttons from the active Zman configuration rather than treating root paths as canonical.
 
-Learner-facing study documents are offline-first. The current service-worker app shell precaches the compact review, full course notes, cumulative test, answer key, and essay Q&A PDF so installed clients can open them without a prior online view. A cache-membership change must use a new cache name so existing PWAs receive the new file set. The current cache-only document revision is `scp-study-v61-docs2`.
+Learner-facing study documents are offline-first. The current service-worker app shell precaches the compact review, full course notes, cumulative test, answer key, and essay Q&A PDF so installed clients can open them without a prior online view. A cache-membership change must use a new cache name so existing PWAs receive the new file set. The current application cache is `scp-study-v62`.
 
 Generated study PDFs use an LTR page layout with embedded RTL Hebrew phrases. The generator keeps source strings in logical reading order and performs visual word/run ordering only at draw time. Adjacent Hebrew words and punctuation must therefore be handled as RTL runs; source content must not be manually reversed to compensate for the renderer.
 
@@ -76,16 +76,26 @@ Identity is conceptually:
 
 Question numbers, essay IDs, and fact IDs must never be interpreted outside the selected Zman.
 
+## Anonymous learner identity and device sync
+
+Device sync is opt-in and available only while anonymous usage is enabled. The historical Analytics field/database name `installation_id` is retained for compatibility, but once sync is enabled its value is the shared anonymous learner ID across linked devices. It is an identifier, never an authentication secret.
+
+Every browser/PWA has a separate random `deviceId`. A linked device also has a high-entropy device token; only its hash is stored by Analytics/D1. Device credentials are independently revocable. “Unlink other devices” revokes all credentials except the current device and removes only those devices' push endpoints.
+
+Progress sync is offline-first and operation-based. Zman-scoped question/essay/test mutations are assigned stable operation IDs and retried idempotently. Reset operations advance a per-learner/per-Zman generation so an offline device cannot resurrect progress from before a reset. Active practice-test state remains device-local.
+
+Existing local progress is seeded as baseline operations when sync is first enabled or a device is linked. Import while linked is an explicit merge and warns against importing a duplicate of history that is already synced. Sync credentials, queues, cursors, and anonymous IDs are never included in normal export.
+
 ## Notification architecture
 
 Analytics/D1 owns:
 - typed notification records;
-- per-installation read/archive state;
+- per-anonymous-learner read/archive state (the legacy column name remains `installation_id`);
 - push subscriptions;
 - daily reminder preferences;
 - issue-resolution notifications.
 
-Study always requests inbox data for the active Zman and current anonymous installation ID.
+Study always requests inbox data for the active Zman and current anonymous learner ID. For a learner with sync enabled, inbox/push/reminder mutations require the current linked device credential; revoked devices cannot continue using the shared inbox identity.
 
 Notification records deliberately support a generic `kind` and optional action object so future link, feedback-request, poll, and similar messages do not require redesigning the inbox.
 
@@ -105,11 +115,11 @@ Reset Statistics:
 
 Delete All Data:
 - local-only, or
-- local plus anonymous server data tied to the installation ID.
+- local plus anonymous server data tied to the anonymous learner ID. When sync is enabled, server deletion applies to the shared learner across linked devices.
 
 Server deletion must happen before local deletion erases that installation ID.
 
-Export/import deliberately excludes anonymous identifiers, queued uploads, notification state, and push credentials.
+Export deliberately excludes anonymous identifiers, analytics/sync queues, sync credentials/cursors, notification state, and push credentials.
 
 ## Adding another Zman
 

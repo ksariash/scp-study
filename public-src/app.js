@@ -15,7 +15,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 70;
+  const APP_VERSION = 71;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -2436,6 +2436,10 @@
     requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: reduceMotion ? 'auto' : 'smooth' }));
   }
 
+  function focusCurrentQuestionHeading() {
+    requestAnimationFrame(() => dom.questionPrompt?.focus({ preventScroll: true }));
+  }
+
   function scrollQuestionReviewToTop() {
     const scroller = dom.questionReviewDialog?.querySelector('.modal-inner');
     if (!scroller) return;
@@ -2711,6 +2715,7 @@
     saveState();
     render();
     scrollToQuestionTop();
+    focusCurrentQuestionHeading();
     return true;
   }
 
@@ -2723,6 +2728,7 @@
     }
     saveState();
     render();
+    focusCurrentQuestionHeading();
   }
 
   function goNext() {
@@ -2732,6 +2738,7 @@
       else appendStudyQuestion();
       render();
       scrollToQuestionTop();
+      focusCurrentQuestionHeading();
       return;
     }
 
@@ -2751,6 +2758,7 @@
     saveState();
     render();
     scrollToQuestionTop();
+    focusCurrentQuestionHeading();
   }
 
   function openCategories() {
@@ -2973,17 +2981,19 @@
 
   function handleGlobalKeydown(event) {
     if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
-    if (event.target?.closest?.('button, a, select, textarea, [contenteditable=\"true\"]')) return;
     const key = event.key;
     const reviewOpen = !!dom.questionReviewDialog?.open;
     const otherOpen = !!getOpenDialog([dom.questionReviewDialog]);
 
     if (reviewOpen) {
+      if (event.target?.closest?.('input, textarea, select, [contenteditable=\"true\"]')) return;
       if (key === 'ArrowLeft') { event.preventDefault(); moveQuestionReview(-1); }
       else if (key === 'ArrowRight') { event.preventDefault(); moveQuestionReview(1); }
+      else if (key === '+') { event.preventDefault(); setReviewReveal(!reviewContext?.revealed); }
       return;
     }
 
+    if (event.target?.closest?.('button, a, select, textarea, [contenteditable=\"true\"]')) return;
     if (otherOpen || essayModeActive) return;
 
     if (key === 'ArrowLeft') {
@@ -4357,6 +4367,23 @@
     }
   }
 
+  async function openAudioTranscriptReference(reviewId, start = 0) {
+    if (!audioLibraryLoaded) await loadAudioLibrary({ preserveCurrent: true });
+    const index = audioLibrary.findIndex(track => Number(track.id || track.number) === Number(reviewId));
+    if (index < 0) return;
+    const sameTrackPlaying = index === audioTrackIndex
+      && !!dom.audioPlayer.getAttribute('src')
+      && !dom.audioPlayer.paused;
+    if (sameTrackPlaying) {
+      openMaterials('audio');
+      setTranscriptExpanded(true, { remember: false });
+      updateMiniAudio();
+      setTimeout(() => syncTranscriptToAudio(true), 30);
+      return;
+    }
+    await playAudioReference(reviewId, start, { autoplay: false, openMaterials: true });
+  }
+
   function stopAudio() {
     if (!dom.audioPlayer) return;
     dom.audioPlayer.pause();
@@ -4460,7 +4487,6 @@
     reviewContext.ids = reviewContext.baseIds.filter(id => questionMatchesReviewSearch(id, query));
     const preservedIndex = reviewContext.ids.indexOf(currentQid);
     reviewContext.index = preservedIndex >= 0 ? preservedIndex : 0;
-    reviewContext.revealed = false;
     renderQuestionReview();
   }
 
@@ -4596,7 +4622,6 @@
     const next = reviewContext.index + delta;
     if (next < 0 || next >= reviewContext.ids.length) return;
     reviewContext.index = next;
-    reviewContext.revealed = false;
     renderQuestionReview();
     scrollQuestionReviewToTop();
   }
@@ -5237,7 +5262,7 @@
         void playAudioReference(Number(play.dataset.relatedReview), Number(play.dataset.relatedStart), { autoplay: true });
         return;
       }
-      void playAudioReference(Number(transcript.dataset.relatedTranscript), Number(transcript.dataset.relatedStart), { autoplay: false, openMaterials: true });
+      void openAudioTranscriptReference(Number(transcript.dataset.relatedTranscript), Number(transcript.dataset.relatedStart));
     });
     dom.miniAudioOpen.addEventListener('click', () => openMaterials('audio'));
     dom.miniAudioBack10?.addEventListener('click', () => seekAudioBy(-10));
@@ -5288,6 +5313,9 @@
     dom.resetStatsBtn.addEventListener('click', promptResetStatisticsScope);
 
     dom.closeQuestionReview.addEventListener('click', () => dom.questionReviewDialog.close());
+    dom.questionReviewDialog.addEventListener('close', () => {
+      if (reviewContext) reviewContext.revealed = false;
+    });
     dom.reviewPrevBtn.addEventListener('click', () => moveQuestionReview(-1));
     dom.reviewNextBtn.addEventListener('click', () => moveQuestionReview(1));
     dom.reviewRevealBtn.addEventListener('click', () => setReviewReveal(!reviewContext?.revealed));

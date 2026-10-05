@@ -171,6 +171,8 @@ Settings should be concise. In particular, Zman and chabura controls do not need
 
 Use familiar icons instead of text for compact utility actions when the icon is conventional and unambiguous. Icon-only buttons must have an accessible `aria-label` and a useful `title`. On desktop, the notification control is the last topbar action immediately to the right of Test, while the session timer is centered independently in the app header. On compact/mobile layouts, the timer and bell remain a top-right cluster. Unread state is a compact alert mark, not a large labeled card.
 
+Keep native keyboard semantics for intentionally focused controls. After main-question navigation changes the displayed question, move focus to the new question heading rather than globally overriding Enter on focused buttons; this lets Enter submit from question context while preserving Tab/Shift+Tab and native button activation. In Question Explorer, answer reveal is a dialog-session preference: preserve it while moving/searching between questions, reset it when the dialog closes, and keep Explorer navigation/reveal shortcuts out of text-entry controls.
+
 Mobile modal surfaces must have one intentional scrolling container. Keep the native `<dialog>` shell non-scrolling when its inner pane owns scrolling, contain overscroll at that pane, and avoid a scripted smooth-scroll animation fighting coarse-pointer momentum at the top/bottom boundaries.
 
 All dismissible dialogs should close when the user clicks the backdrop/outside the dialog box. Keep this behavior in the shared dialog lifecycle rather than implementing one-off backdrop handlers.
@@ -262,6 +264,8 @@ Question resource order is a UI invariant: question prompt, course-note links, t
 Essay pairing resource actions should stay compact. Audio uses a small play control. Concise and full course notes use visually distinct book/note glyphs with the referenced page number overlaid on the glyph. Use the same resource-action renderer in Essay practice and the Essay explorer so the controls do not drift.
 
 Contextual audio play controls must not navigate away from their current study/explorer surface. Pairing audio in Essay practice and Essay Explorer uses the same `playAudioReference(..., { autoplay:true })` mini-player behavior as other contextual audio. Only an explicit transcript/open-player action should open Materials → Audio.
+
+When an explicit transcript action targets the review that is already playing, open Materials → Audio with the transcript synchronized to the player's current time without seeking, pausing, or otherwise interrupting playback. If the transcript action targets a different review (or the matching review is not currently playing), honor the clicked reference timestamp and leave playback paused until the learner explicitly starts it.
 
 ## Mobile export
 

@@ -1081,6 +1081,32 @@ body.mini-audio-visible { padding-bottom: 86px; }
 
 .review-reveal-row { display: flex; justify-content: flex-start; margin-top: 16px; }
 .review-reveal-btn { min-width: 210px; }
+.review-shortcuts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-top: 16px;
+  padding: 10px 4px 2px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .68rem;
+  line-height: 1.35;
+}
+.review-shortcuts span { display: inline-flex; align-items: center; gap: 4px; }
+.review-shortcuts kbd {
+  min-width: 20px;
+  padding: 1px 5px;
+  border: 1px solid #d5deeb;
+  border-radius: 5px;
+  background: #f7f9fc;
+  color: #53647f;
+  font: inherit;
+  font-weight: 800;
+  text-align: center;
+  box-shadow: 0 1px 0 rgba(18,33,63,.06);
+}
 
 .audio-review-head { align-items: center; }
 .audio-library-actions { display: flex; align-items: center; gap: 9px; }

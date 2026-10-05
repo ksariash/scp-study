@@ -15,7 +15,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 72;
+  const APP_VERSION = 73;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -772,7 +772,7 @@
     const add = (kind, payload) => ops.push({ kind, payload });
     for (const q of QUESTIONS) {
       const s = state.stats?.[q.id] || {};
-      if (Number(s.shown)||Number(s.attempts)||Number(s.totalTimeMs)) add('question_baseline',{ qid:q.id, stats:{ shown:Number(s.shown)||0, attempts:Number(s.attempts)||0, correct:Number(s.correct)||0, partial:Number(s.partial)||0, incorrect:Number(s.incorrect)||0, pointsEarned:Number(s.pointsEarned)||0, totalTimeMs:Number(s.totalTimeMs)||0, lastResult:s.lastResult||null, lastStudyAidUsed:!!s.lastStudyAidUsed, lastSeen:Number(s.lastSeen)||null, lastAnswered:Number(s.lastAnswered)||null } });
+      if (Number(s.shown)||Number(s.attempts)||Number(s.totalTimeMs)) add('question_baseline',{ qid:q.id, stats:{ shown:Number(s.shown)||0, attempts:Number(s.attempts)||0, correct:Number(s.correct)||0, partial:Number(s.partial)||0, incorrect:Number(s.incorrect)||0, pointsEarned:Number(s.pointsEarned)||0, totalTimeMs:Number(s.totalTimeMs)||0, recentResponseTimeMs:Number(s.recentResponseTimeMs)||0, unassistedCorrectStreak:Number(s.unassistedCorrectStreak)||0, lastResult:s.lastResult||null, lastStudyAidUsed:!!s.lastStudyAidUsed, lastSeen:Number(s.lastSeen)||null, lastAnswered:Number(s.lastAnswered)||null } });
     }
     for (const [factId, raw] of Object.entries(essayProgressState.facts || {})) {
       if (Number(raw?.seen)||Number(raw?.correct)) add('essay_fact_baseline',{ factId, seen:Number(raw.seen)||0, correct:Number(raw.correct)||0, mastery:Number(raw.mastery)||0, lastSeen:Number(raw.lastSeen)||0 });
@@ -818,12 +818,12 @@
         const s=state.stats?.[p.qid],r=p.stats||{};if(!s)return;
         for(const key of ['shown','attempts','correct','partial','incorrect','pointsEarned','totalTimeMs'])s[key]=(Number(s[key])||0)+(Number(r[key])||0);
         s.lastSeen=Math.max(Number(s.lastSeen)||0,Number(r.lastSeen)||0)||null;
-        if((Number(r.lastAnswered)||0)>=(Number(s.lastAnswered)||0)){s.lastAnswered=Number(r.lastAnswered)||null;s.lastResult=r.lastResult||s.lastResult;s.lastStudyAidUsed=!!r.lastStudyAidUsed;}
+        if((Number(r.lastAnswered)||0)>=(Number(s.lastAnswered)||0)){s.lastAnswered=Number(r.lastAnswered)||null;s.lastResult=r.lastResult||s.lastResult;s.lastStudyAidUsed=!!r.lastStudyAidUsed;if(Number(r.recentResponseTimeMs)>0)s.recentResponseTimeMs=Number(r.recentResponseTimeMs);if(Number.isFinite(Number(r.unassistedCorrectStreak)))s.unassistedCorrectStreak=Math.max(0,Number(r.unassistedCorrectStreak)||0);}
         saveState();
       } else if (op.kind === 'question_shown') {
         const s=state.stats?.[p.qid];if(!s)return;s.shown+=1;s.lastSeen=Math.max(Number(s.lastSeen)||0,Number(p.at)||0)||Date.now();saveState();
       } else if (op.kind === 'question_answer') {
-        const s=state.stats?.[p.qid];if(!s)return;s.attempts+=1;if(['correct','partial','incorrect'].includes(p.result))s[p.result]+=1;s.pointsEarned+=(Number(p.credit)||0);s.totalTimeMs+=(Number(p.elapsedMs)||0);if((Number(p.at)||0)>=(Number(s.lastAnswered)||0)){s.lastAnswered=Number(p.at)||Date.now();s.lastResult=p.result||s.lastResult;s.lastStudyAidUsed=!!p.studyAidUsed;}saveState();
+        const s=state.stats?.[p.qid];if(!s)return;s.attempts+=1;if(['correct','partial','incorrect'].includes(p.result))s[p.result]+=1;s.pointsEarned+=(Number(p.credit)||0);s.totalTimeMs+=(Number(p.elapsedMs)||0);if((Number(p.at)||0)>=(Number(s.lastAnswered)||0)){s.lastAnswered=Number(p.at)||Date.now();s.lastResult=p.result||s.lastResult;s.lastStudyAidUsed=!!p.studyAidUsed;s.recentResponseTimeMs=Number(p.recentResponseTimeMsAfter)>0?Number(p.recentResponseTimeMsAfter):nextRecentResponseTimeMs(s.recentResponseTimeMs,p.elapsedMs);s.unassistedCorrectStreak=Number.isFinite(Number(p.unassistedCorrectStreakAfter))?Math.max(0,Number(p.unassistedCorrectStreakAfter)||0):(p.result==='correct'&&!p.studyAidUsed?Math.max(0,Number(s.unassistedCorrectStreak)||0)+1:0);}saveState();
       } else if (op.kind === 'test_complete') {
         const test=p.test;if(test?.id&&!state.tests.some(item=>item.id===test.id)){state.tests.push(test);state.tests=state.tests.slice(-30);saveState();}
       } else if (op.kind === 'essay_fact_baseline') {
@@ -1434,7 +1434,7 @@
   }
 
   function defaultQuestionStats() {
-    return { shown: 0, attempts: 0, correct: 0, partial: 0, incorrect: 0, pointsEarned: 0, totalTimeMs: 0, lastResult: null, lastStudyAidUsed: false, lastSeen: null, lastAnswered: null };
+    return { shown: 0, attempts: 0, correct: 0, partial: 0, incorrect: 0, pointsEarned: 0, totalTimeMs: 0, recentResponseTimeMs: 0, unassistedCorrectStreak: 0, lastResult: null, lastStudyAidUsed: false, lastSeen: null, lastAnswered: null };
   }
 
   function defaultState() {
@@ -1485,6 +1485,8 @@
         incorrect: Math.max(0, Number(s.incorrect) || 0),
         pointsEarned: Math.max(0, Number(s.pointsEarned) || 0),
         totalTimeMs: Math.max(0, Number(s.totalTimeMs) || 0),
+        recentResponseTimeMs: Math.max(0, Number(s.recentResponseTimeMs) || 0),
+        unassistedCorrectStreak: Math.max(0, Number(s.unassistedCorrectStreak) || 0),
         lastResult: ['correct','partial','incorrect'].includes(s.lastResult) ? s.lastResult : null,
         lastStudyAidUsed: !!s.lastStudyAidUsed,
         lastSeen: Number(s.lastSeen) || null,
@@ -2120,6 +2122,37 @@
     return state.study.sessionElapsedMs + (studyTickStart == null ? 0 : Date.now() - studyTickStart);
   }
 
+  function nextRecentResponseTimeMs(previousMs, elapsedMs) {
+    const previous = Math.max(0, Number(previousMs) || 0);
+    const elapsed = Math.max(0, Number(elapsedMs) || 0);
+    if (!elapsed) return previous;
+    if (!previous) return elapsed;
+    return Math.round((previous * 0.6) + (elapsed * 0.4));
+  }
+
+  function reviewAgeMultiplier(ageMin) {
+    const age = Math.max(0, Number(ageMin) || 0);
+    const anchors = [
+      [0, 0.12],
+      [3, 0.16],
+      [15, 0.32],
+      [60, 0.55],
+      [360, 0.85],
+      [1440, 1.2],
+      [4320, 1.45],
+      [10080, 1.65],
+    ];
+    for (let i = 1; i < anchors.length; i++) {
+      const [rightAge, rightWeight] = anchors[i];
+      if (age > rightAge) continue;
+      const [leftAge, leftWeight] = anchors[i - 1];
+      const span = Math.log1p(rightAge) - Math.log1p(leftAge);
+      const progress = span > 0 ? (Math.log1p(age) - Math.log1p(leftAge)) / span : 1;
+      return leftWeight + ((rightWeight - leftWeight) * progress);
+    }
+    return anchors[anchors.length - 1][1];
+  }
+
   function weightedPick() {
     const eligible = QUESTIONS.filter(q => state.filters.includes(q.category));
     const pool = eligible.length ? eligible : QUESTIONS;
@@ -2133,7 +2166,10 @@
       else if (s.lastResult === 'partial') w = 4.8;
       else w = 1.8;
 
-      const avgSec = s.attempts ? (s.totalTimeMs / s.attempts) / 1000 : 30;
+      const recentMs = Number(s.recentResponseTimeMs) > 0
+        ? Number(s.recentResponseTimeMs)
+        : (s.attempts ? (s.totalTimeMs / s.attempts) : 30000);
+      const avgSec = recentMs / 1000;
       if (s.lastResult === 'correct') {
         if (avgSec <= 12) w *= 0.38;
         else if (avgSec <= 25) w *= 0.7;
@@ -2147,15 +2183,12 @@
 
       if (s.lastAnswered) {
         const ageMin = (now - s.lastAnswered) / 60000;
-        if (ageMin < 3) w *= 0.12;
-        else if (ageMin < 15) w *= 0.28;
-        else if (ageMin < 60) w *= 0.55;
-        else if (ageMin > 3 * 24 * 60) w *= 1.45;
-        else if (ageMin > 24 * 60) w *= 1.2;
+        w *= reviewAgeMultiplier(ageMin);
       }
       const recentIndex = recentIds.lastIndexOf(q.id);
       if (recentIndex >= 0) w *= [0.65, 0.45, 0.28, 0.18][recentIndex] || 0.5;
-      if (s.lastResult === 'correct' && s.correct >= 3) w /= Math.sqrt(Math.min(s.correct, 9));
+      const unassistedStreak = Math.max(0, Number(s.unassistedCorrectStreak) || 0);
+      if (s.lastResult === 'correct' && unassistedStreak >= 3) w /= Math.sqrt(Math.min(unassistedStreak, 9));
       return { q, w: Math.max(0.03, w) };
     });
     const total = weighted.reduce((sum, x) => sum + x.w, 0);
@@ -2216,10 +2249,23 @@
     s[result] += 1;
     s.pointsEarned += credit;
     s.totalTimeMs += elapsedMs;
+    s.recentResponseTimeMs = nextRecentResponseTimeMs(s.recentResponseTimeMs, elapsedMs);
+    s.unassistedCorrectStreak = result === 'correct' && !studyAidUsed
+      ? Math.max(0, Number(s.unassistedCorrectStreak) || 0) + 1
+      : 0;
     s.lastResult = result;
     s.lastStudyAidUsed = !!studyAidUsed;
     s.lastAnswered = Date.now();
-    queueSyncOp('question_answer', { qid, result, credit, elapsedMs, studyAidUsed:!!studyAidUsed, at:s.lastAnswered });
+    queueSyncOp('question_answer', {
+      qid,
+      result,
+      credit,
+      elapsedMs,
+      studyAidUsed:!!studyAidUsed,
+      recentResponseTimeMsAfter:s.recentResponseTimeMs,
+      unassistedCorrectStreakAfter:s.unassistedCorrectStreak,
+      at:s.lastAnswered,
+    });
   }
 
   function selectedFromForm() {

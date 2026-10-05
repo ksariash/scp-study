@@ -140,7 +140,32 @@ The recent-question penalty is ordered oldest-to-newest across the last four stu
 
 Weighted review treats study-aid use as weaker evidence of independent recall without changing the learner's visible score. If the most recent answer used relevant audio, an inline glossary definition, or the question's course-note link before submission, multiply the next review weight by `1.6` after a correct result or `1.25` after a partial/incorrect result. Persist `lastStudyAidUsed` with question stats and carry it in sync baselines/answer operations so linked devices schedule consistently. Do not count aid browsing in Question Explorer, Materials, or Essay surfaces against the unrelated current multiple-choice question.
 
+Mastery is based on consecutive **unassisted** correct answers, not lifetime correct count. `unassistedCorrectStreak` increments only for a correct answer with no study aid and resets to zero on an aided correct, partial, or incorrect answer. Once the streak reaches 3, divide review weight by `sqrt(min(streak, 9))`. Persist and sync the streak.
+
+Response-speed weighting uses a recent EWMA rather than lifetime average: each new answered attempt contributes 40% and the previous `recentResponseTimeMs` contributes 60%. Legacy state with no EWMA may fall back to lifetime average until the learner answers again. Persist and sync `recentResponseTimeMs`.
+
+Time-spacing must be continuous rather than threshold buckets. Interpolate in log-time between these age-in-minutes → multiplier anchors: `0→0.12`, `3→0.16`, `15→0.32`, `60→0.55`, `360→0.85`, `1440→1.20`, `4320→1.45`, `10080→1.65`, and cap older answers at `1.65`. Avoid reintroducing discontinuities at bucket boundaries.
+
 Sync credentials, pairing material, cursors, and queues are local implementation state and must never be exported. Import while linked is an explicit merge operation and must warn about duplicate already-synced history.
+
+## Planned one-time wider-production cutover
+
+The owner plans one exceptional clean cutover for the rewritten test when the new custom domains are live. This section is a runbook, **not authorization to erase data**. Do not reset D1 until the owner explicitly gives a same-turn go-ahead after confirming the new content and domains are ready. This exception does not weaken the normal no-destructive-migrations rule after launch.
+
+Target public origins are `https://scp-study.com`, `https://dashboard.scp-study.com`, and `https://announcements.scp-study.com`. Treat a custom-domain move as an origin change: browser local storage, service-worker caches, Push subscriptions, and other origin-scoped state do not transfer automatically. Do not silently copy anonymous installation/device/sync credentials across origins. Expect users to relink Sync, re-enable Push where needed, and install the new-origin PWA.
+
+The rewritten question/essay set must receive a **new permanent Zman ID** even though D1 will be reset. Never reuse `2026-summer` for materially different content; old/offline clients and delayed sync operations may still exist. The owner must approve the final new ID during the cutover. Follow `docs/NEW-ZMAN-PIPELINE.md`, regenerate every derived PDF affected by the rewritten content, and deploy the backward-compatible Analytics catalog/API support before exposing the new Zman in Study.
+
+Cutover order:
+
+1. Freeze and validate the rewritten canonical Study content and choose the new permanent Zman ID.
+2. Update Analytics catalogs/allowlists and Announcements current-Zman/chabura configuration for that ID; update cross-app links, API origins, CORS, and VAPID subject/origin configuration for the three target domains.
+3. Verify all three custom domains/TLS routes reach the intended Workers before any destructive step. Decide explicitly whether the old `workers.dev` origins get a temporary compatibility path or are retired; do not assume redirects preserve origin-scoped PWA state.
+4. Fence retired-Zman writes so an old installed client cannot repopulate the freshly reset production database with stale question/sync data.
+5. Immediately before the reset, export a recoverable backup of the exact shared Analytics/Announcements D1 database and record the deployed Worker versions/configuration. Do not wipe R2 as part of the D1 reset.
+6. Only after the owner's explicit go-ahead, reset the exact intended D1 database once, recreate/verify schema with the normal runtime migrations, and verify first-request initialization. Remember that this shared reset removes analytics, feedback, notification/sync state, Announcements accounts/sessions/messages/polls/push state, and R2 media metadata links; R2 objects themselves remain unless separately and explicitly deleted.
+7. Re-bootstrap Announcements administration through its documented bootstrap flow, then release the new Study Zman and perform end-to-end checks: answer→analytics, feedback→dashboard→resolved notification, announcement→inbox/push, multi-device sync, PDFs/audio, Home Screen icons, and all cross-app navigation.
+8. Keep the D1 backup and known-good Git/Cloudflare versions until the new release is accepted. After this cutover, return to data-preserving migrations only; do not treat this runbook as permission for a future reset.
 
 ## Content authority and feedback
 

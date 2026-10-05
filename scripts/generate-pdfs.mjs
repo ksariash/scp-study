@@ -11,6 +11,7 @@ const ROOT = dirname(HERE);
 const require = createRequire(import.meta.url);
 const HEBREW_RE = /[\u0590-\u05ff]/;
 const STRONG_LTR_RE = /[\p{L}\p{N}]/u;
+const RTL_TRAILING_PUNCTUATION_RE = /^(.+?)([.,!?;:…]+)$/u;
 const PDF_CONTROL_RE = /[\u0000\u200e\u200f\u202a-\u202e\u2066-\u2069]/g;
 function pdfSafeText(value) {
   return String(value ?? '').replace(PDF_CONTROL_RE, '');
@@ -98,7 +99,13 @@ function reorderRtlWordGroups(words) {
     }
     let end = index + 1;
     while (end < words.length && pdfStrongDirection(words[end]) === 'rtl') end += 1;
-    for (let cursor = end - 1; cursor >= index; cursor -= 1) visual.push(words[cursor]);
+    const group = words.slice(index, end);
+    const trailing = group[group.length - 1].match(RTL_TRAILING_PUNCTUATION_RE);
+    if (trailing && HEBREW_RE.test(trailing[1])) {
+      group[group.length - 1] = trailing[1];
+      group[0] += trailing[2];
+    }
+    for (let cursor = group.length - 1; cursor >= 0; cursor -= 1) visual.push(group[cursor]);
     index = end;
   }
   return visual;
@@ -127,7 +134,8 @@ function drawPdfToken(doc, token, x, y, options = {}, color = '#000000') {
     return doc.widthOfString(run.text, pdfTextOptions(run.text));
   });
 
-  if (pdfStrongDirection(token) === 'rtl' && runs.length > 1) {
+  const neutralSuffixOnly = runs[0]?.hebrew && runs.slice(1).every(run => pdfStrongDirection(run.text) === 'neutral');
+  if (pdfStrongDirection(token) === 'rtl' && runs.length > 1 && !neutralSuffixOnly) {
     const total = widths.reduce((sum, width) => sum + width, 0);
     let right = x + total;
     runs.forEach((run, index) => {

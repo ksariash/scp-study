@@ -14,7 +14,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 62;
+  const APP_VERSION = 63;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -41,6 +41,7 @@
   const ANALYTICS_QUEUE_KEY = 'scpStudy.analyticsQueue.v1';
   const ANALYTICS_INSTALLATION_KEY = 'scpStudy.analyticsInstallation.v1';
   const APP_VERSION_SEEN_KEY = 'scpStudy.appVersionSeen.v1';
+  const FONT_SCALE_KEY = 'scpStudy.fontScale.v1';
   const CHABURA_SETTINGS_KEY = 'scpStudy.chabura.v1';
   const CHABURA_PROFILE_SENT_KEY = 'scpStudy.chaburaProfileSent.v1';
   const CHABURA_FALLBACK = 'Not listed / unsure';
@@ -218,7 +219,7 @@
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     questionCard: el('questionCard'), prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoriesDialogTitle: el('categoriesDialogTitle'), categoriesDialogDescription: el('categoriesDialogDescription'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
-    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), syncToggle: el('syncToggle'), syncStatus: el('syncStatus'), syncActions: el('syncActions'), joinSyncBtn: el('joinSyncBtn'), linkDeviceBtn: el('linkDeviceBtn'), manageDevicesBtn: el('manageDevicesBtn'), syncDevicesDialog: el('syncDevicesDialog'), closeSyncDevices: el('closeSyncDevices'), syncDeviceList: el('syncDeviceList'), syncDevicesStatus: el('syncDevicesStatus'), unlinkThisDeviceBtn: el('unlinkThisDeviceBtn'), unlinkOtherDevicesBtn: el('unlinkOtherDevicesBtn'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'), settingsTransferStatus: el('settingsTransferStatus'),
+    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), fontSizeSelect: el('fontSizeSelect'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), syncToggle: el('syncToggle'), syncStatus: el('syncStatus'), syncActions: el('syncActions'), joinSyncBtn: el('joinSyncBtn'), linkDeviceBtn: el('linkDeviceBtn'), manageDevicesBtn: el('manageDevicesBtn'), syncDevicesDialog: el('syncDevicesDialog'), closeSyncDevices: el('closeSyncDevices'), syncDeviceList: el('syncDeviceList'), syncDevicesStatus: el('syncDevicesStatus'), unlinkThisDeviceBtn: el('unlinkThisDeviceBtn'), unlinkOtherDevicesBtn: el('unlinkOtherDevicesBtn'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'), settingsTransferStatus: el('settingsTransferStatus'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
     essayPracticeMain: el('essayPracticeMain'), essayQuickNav: el('essayQuickNav'), essayCategoryTags: el('essayCategoryTags'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayNoteLinks: el('essayNoteLinks'), essayQuestionAudio: el('essayQuestionAudio'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingResources: el('essayPairingResources'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
@@ -611,6 +612,29 @@
 
   function analyticsEnabled() {
     return analyticsSettings().enabled;
+  }
+
+  const FONT_SCALE_VALUES = new Set(['100','115','130','150']);
+
+  function savedFontScale() {
+    try {
+      const value = String(localStorage.getItem(FONT_SCALE_KEY) || '100');
+      return FONT_SCALE_VALUES.has(value) ? value : '100';
+    } catch (_) {
+      return '100';
+    }
+  }
+
+  function applyFontScale(value) {
+    const scale = FONT_SCALE_VALUES.has(String(value)) ? String(value) : '100';
+    document.documentElement.style.fontSize = scale + '%';
+    if (dom.fontSizeSelect) dom.fontSizeSelect.value = scale;
+    return scale;
+  }
+
+  function setFontScale(value) {
+    const scale = applyFontScale(value);
+    try { localStorage.setItem(FONT_SCALE_KEY, scale); } catch (_) {}
   }
 
   function setAnalyticsEnabled(enabled) {
@@ -1030,7 +1054,7 @@
   }
 
   function resetContentFeedbackForm() {
-    dom.contentFeedbackDialog?.querySelectorAll('input[name="contentFeedbackReason"]').forEach(input => { input.checked = false; });
+    dom.contentFeedbackDialog?.querySelectorAll('[data-feedback-reason]').forEach(button => button.setAttribute('aria-pressed', 'false'));
     if (dom.contentFeedbackDetails) dom.contentFeedbackDetails.value = '';
     if (dom.contentFeedbackCount) dom.contentFeedbackCount.textContent = '0/500';
     if (dom.contentFeedbackStatus) dom.contentFeedbackStatus.textContent = '';
@@ -1055,7 +1079,7 @@
   }
 
   function selectedContentFeedbackReasons() {
-    return [...(dom.contentFeedbackDialog?.querySelectorAll('input[name="contentFeedbackReason"]:checked') || [])].map(input => input.value);
+    return [...(dom.contentFeedbackDialog?.querySelectorAll('[data-feedback-reason][aria-pressed="true"]') || [])].map(button => button.dataset.feedbackReason).filter(Boolean);
   }
 
   function selectedContentFeedbackReason() {
@@ -4701,8 +4725,11 @@
     dom.essayNextBtn?.addEventListener('click', nextEssayPractice);
     dom.closeContentFeedback?.addEventListener('click', () => dom.contentFeedbackDialog.close());
     dom.cancelContentFeedback?.addEventListener('click', () => dom.contentFeedbackDialog.close());
-    dom.contentFeedbackDialog?.addEventListener('change', e => {
-      if (e.target.matches('input[name="contentFeedbackReason"]')) updateContentFeedbackSubmitState();
+    dom.contentFeedbackDialog?.addEventListener('click', e => {
+      const button = e.target.closest('[data-feedback-reason]');
+      if (!button) return;
+      button.setAttribute('aria-pressed', button.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+      updateContentFeedbackSubmitState();
     });
     dom.contentFeedbackDetails?.addEventListener('input', e => {
       const value = String(e.currentTarget.value || '').slice(0, 500);
@@ -5491,7 +5518,7 @@
 
   function exportGroupForKey(key) {
     if (key === STORAGE_KEY || key.startsWith(ESSAY_PRACTICE_KEY) || key.startsWith(ESSAY_CATEGORY_FILTER_KEY)) return 'stats';
-    if (key === ANALYTICS_SETTINGS_KEY || key === COHORT_SELECTION_KEY || key === STUDY_REMINDER_SETTINGS_KEY || key.startsWith(CHABURA_SETTINGS_KEY)) return 'settings';
+    if (key === ANALYTICS_SETTINGS_KEY || key === FONT_SCALE_KEY || key === COHORT_SELECTION_KEY || key === STUDY_REMINDER_SETTINGS_KEY || key.startsWith(CHABURA_SETTINGS_KEY)) return 'settings';
     if (key.startsWith(AUDIO_PLAYBACK_KEY) || key === MATERIALS_TAB_KEY || key === MATERIALS_TRANSCRIPT_KEY) return 'data';
     return '';
   }
@@ -5689,6 +5716,7 @@
   function initNotificationAndSettingsFeatures() {
     syncV53SettingsUi();
 
+    dom.fontSizeSelect?.addEventListener('change', event => setFontScale(event.currentTarget.value));
     el('notificationsBtn')?.addEventListener('click', () => void handleNotificationBellClick());
     el('closeNotificationInbox')?.addEventListener('click', () => el('notificationInboxDialog')?.close());
     el('doneNotificationInbox')?.addEventListener('click', () => el('notificationInboxDialog')?.close());
@@ -5774,6 +5802,7 @@
   }
 
   function init() {
+    applyFontScale(savedFontScale());
     populateQuestionNumberDropdown();
     populateEssayQuickNav();
     bindEvents();

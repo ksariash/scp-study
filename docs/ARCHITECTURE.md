@@ -62,9 +62,11 @@ Configured Zman documents use:
 
 The build also preserves legacy root documents for previously installed clients. Materials UI resolves its buttons from the active Zman configuration rather than treating root paths as canonical.
 
-Learner-facing study documents are offline-first. The current service-worker app shell precaches the compact review, full course notes, cumulative test, answer key, and essay Q&A PDF so installed clients can open them without a prior online view. A cache-membership change must use a new cache name so existing PWAs receive the new file set. The current application cache is `scp-study-v62`.
+Learner-facing study documents are offline-first. The current service-worker app shell precaches the compact review, full course notes, cumulative test, answer key, and essay Q&A PDF so installed clients can open them without a prior online view. A cache-membership change must use a new cache name so existing PWAs receive the new file set. The current application cache is `scp-study-v63`.
 
-Generated study PDFs use an LTR page layout with embedded RTL Hebrew phrases. The generator keeps source strings in logical reading order and performs visual word/run ordering only at draw time. Adjacent Hebrew words and punctuation must therefore be handled as RTL runs; source content must not be manually reversed to compensate for the renderer.
+Generated study PDFs use an LTR page layout with embedded RTL Hebrew phrases. The generator keeps source strings in logical reading order and performs visual word/run ordering only at draw time. Adjacent Hebrew words are ordered as a group; neutral trailing punctuation in an LTR sentence stays on the browser-equivalent visual side of that RTL group. Source content must not be manually reversed to compensate for the renderer.
+
+Font size is an app-wide, device-local accessibility preference stored independently of Zman progress. It scales the root font percentage so rem-based UI follows the preference while retaining the browser's own default-font and zoom behavior. It belongs to the Settings export group but is not synchronized across devices because different screens may need different text sizes.
 
 ## Analytics and feedback
 

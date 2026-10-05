@@ -441,9 +441,23 @@
             <div>
               <span class="eyebrow">Settings</span>
               <h3 id="settingsHeading">App settings</h3>
-              <p>Zman, reminders, privacy, storage, and study data for this device.</p>
+              <p>Display, Zman, reminders, privacy, storage, and study data for this device.</p>
             </div>
           </div>
+
+          <section class="font-size-setting settings-ordered-section" aria-labelledby="fontSizeSettingHeading">
+            <div class="font-size-setting-copy">
+              <h3 id="fontSizeSettingHeading">Font size</h3>
+            </div>
+            <label class="font-size-setting-field">
+              <select id="fontSizeSelect" aria-label="App font size">
+                <option value="100">Default</option>
+                <option value="115">Large</option>
+                <option value="130">Extra large</option>
+                <option value="150">Largest</option>
+              </select>
+            </label>
+          </section>
 
           <section class="cohort-setting settings-ordered-section" aria-labelledby="cohortSettingHeading">
             <div class="cohort-setting-copy">
@@ -674,13 +688,13 @@
 
       <fieldset class="content-feedback-reasons">
         <legend>What is the issue? <small>Select all that apply.</small></legend>
-        <label><input type="checkbox" name="contentFeedbackReason" value="inaccurate" /> <span>Inaccurate</span></label>
-        <label><input type="checkbox" name="contentFeedbackReason" value="incomplete" /> <span>Incomplete</span></label>
-        <label><input type="checkbox" name="contentFeedbackReason" value="confusing" /> <span>Confusing</span></label>
-        <label><input type="checkbox" name="contentFeedbackReason" value="typo" /> <span>Typo</span></label>
-        <label><input type="checkbox" name="contentFeedbackReason" value="audio_link" /> <span>Wrong audio</span></label>
-        <label><input type="checkbox" name="contentFeedbackReason" value="notes_link" /> <span>Wrong notes</span></label>
-        <label><input type="checkbox" name="contentFeedbackReason" value="other" /> <span>Other</span></label>
+        <button type="button" class="content-feedback-reason" data-feedback-reason="inaccurate" aria-pressed="false">Inaccurate</button>
+        <button type="button" class="content-feedback-reason" data-feedback-reason="incomplete" aria-pressed="false">Incomplete</button>
+        <button type="button" class="content-feedback-reason" data-feedback-reason="confusing" aria-pressed="false">Confusing</button>
+        <button type="button" class="content-feedback-reason" data-feedback-reason="typo" aria-pressed="false">Typo</button>
+        <button type="button" class="content-feedback-reason" data-feedback-reason="audio_link" aria-pressed="false">Wrong audio</button>
+        <button type="button" class="content-feedback-reason" data-feedback-reason="notes_link" aria-pressed="false">Wrong notes</button>
+        <button type="button" class="content-feedback-reason" data-feedback-reason="other" aria-pressed="false">Other</button>
       </fieldset>
 
       <label class="content-feedback-details">
@@ -939,7 +953,7 @@
           <span class="eyebrow">About</span>
           <div class="app-info-title-row">
             <h2 id="appInfoTitle">SCP Study</h2>
-            <span class="app-info-version" id="appInfoVersion">v62</span>
+            <span class="app-info-version" id="appInfoVersion">v63</span>
           </div>
           <p>A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.</p>
         </div>

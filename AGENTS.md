@@ -86,6 +86,8 @@ A source fix is not complete if existing installed PWAs remain pinned to an unch
 
 Generated PDFs are mixed-direction documents: English layout is LTR while Hebrew phrases are RTL. Preserve the logical source wording and handle direction in the PDF renderer. Contiguous Hebrew words must keep their reading order (for example, logical `כלי שני` must render visually as `כלי שני`, not `שני כלי`), and punctuation adjacent to Hebrew must use a font/direction-safe run rather than producing missing-glyph/null boxes.
 
+For Hebrew embedded in an English/LTR sentence, neutral trailing punctuation must be visually compared with the browser rendering. Do not assume punctuation belongs on the RTL-leading edge merely because the preceding word is Hebrew; regression-check a mixed phrase such as question 23's `כלי שני.` in the rendered cumulative-test PDF.
+
 ## Notifications and reminders
 
 The Analytics Worker/D1 is the source of truth for notification history. Web Push is a delivery channel, not the inbox itself.
@@ -177,6 +179,8 @@ Browsers generally cannot re-open the native permission prompt after the user ha
 ## Settings presentation
 
 Settings use one primary section title, not a numeric eyebrow plus a duplicate label. Zman and Chabura show their currently saved value at the bottom of their cards.
+
+Font size is the first setting. Keep it device-local, apply it immediately, preserve the browser's own default font/zoom behavior, and include it in Settings import/export. Large text must reflow without making controls overflow their cards.
 
 Notification Settings uses the concise description: “Get notified on important announcements and daily study reminders (excluding Shabbat and Yom Tov).”
 

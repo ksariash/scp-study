@@ -73,7 +73,9 @@ Never expose R2 credentials to browser code.
 
 Zman-configured documents live under `documents/<zman-id>/`. The build currently preserves root document URLs for older installed clients and copies the current Zman's documents into its namespace.
 
-Any app-shell or cached-asset change must increment all release surfaces together:
+Student-facing study files are offline-first. The preferred default for a configured file that learners may need while studying is to include it in the service worker `APP_SHELL`, so it is cached during install/update rather than only after the user opens it once. For the current Zman this includes the compact review, full course notes, cumulative test, answer key, and essay Q&A PDF. If a learner-facing file is intentionally not precached because of size, volatility, or access restrictions, document that exception explicitly.
+
+A cache-membership-only maintenance change may keep the existing product `APP_VERSION`/package version, but it must change `CACHE_NAME` so already-installed PWAs actually install the new asset set. When the product release number itself changes, increment all release surfaces together:
 - `package.json`
 - `APP_VERSION` in `public-src/app.js`
 - `APP_VERSION` and `CACHE_NAME` in `public-src/sw.js`
@@ -81,6 +83,8 @@ Any app-shell or cached-asset change must increment all release surfaces togethe
 The About dialog version is runtime-derived; do not add a second hard-coded release number.
 
 A source fix is not complete if existing installed PWAs remain pinned to an unchanged cache name.
+
+Generated PDFs are mixed-direction documents: English layout is LTR while Hebrew phrases are RTL. Preserve the logical source wording and handle direction in the PDF renderer. Contiguous Hebrew words must keep their reading order (for example, logical `כלי שני` must render visually as `כלי שני`, not `שני כלי`), and punctuation adjacent to Hebrew must use a font/direction-safe run rather than producing missing-glyph/null boxes.
 
 ## Notifications and reminders
 
@@ -121,11 +125,13 @@ For client/source changes:
 1. Run `npm run build`.
 2. Syntax-check modified JavaScript.
 3. Confirm Zman registry/package validation passes.
-4. Confirm app/package/service-worker/cache versions agree for an app-shell release.
+4. Confirm app/package/service-worker/cache versions agree for a numbered app release, or confirm a cache-only revision changed `CACHE_NAME`.
 5. Check representative document and audio paths.
 6. Commit to `main`.
 7. Inspect the Cloudflare Workers Builds check.
 8. For cross-repo changes, verify Analytics first and Study second.
+
+For generated-PDF changes, additionally inspect the rendered PDF rather than relying only on extracted text. Mixed Hebrew/English text must be visually checked in at least one representative question and one representative title/table when those paths changed.
 
 Do not commit secrets, generated `public/`, `.wrangler/`, or local environment files.
 
@@ -177,7 +183,7 @@ Push delivery and daily-reminder intent are separate state.
 
 Turning Push off must preserve `dailyRequested`. Turning Push back on must restore `dailyEnabled` from `dailyRequested`.
 
-The Daily study reminder toggle is an immediate setting. Its change handler saves state and syncs the Push subscription without requiring the Save button. The Save button is for reminder time/calendar changes.
+Notification preferences are immediate settings. The Push toggle, Daily study reminder toggle, reminder time, and Diaspora/Israel calendar all save/sync on change; do not reintroduce a separate Save button.
 
 When changing settings state, distinguish remembered user intent from temporary capability state instead of destroying one when the other is disabled.
 

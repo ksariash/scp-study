@@ -62,7 +62,7 @@ Configured Zman documents use:
 
 The build also preserves legacy root documents for previously installed clients. Materials UI resolves its buttons from the active Zman configuration rather than treating root paths as canonical.
 
-Learner-facing study documents use explicit offline caching. PDFs are excluded from the service-worker app shell and are stored only when the learner uses a per-document download action or `Download all`. The dedicated `scp-study-documents-v1` cache survives normal app-cache upgrades; PDF requests consult it first but ordinary viewing does not silently add to it. This keeps offline storage intentional while still letting a cached document open, print, share, or save without network access. The current application cache is `scp-study-v64`.
+Learner-facing study documents use explicit offline caching. PDFs are excluded from the service-worker app shell and are stored only when the learner uses a per-document download action or `Download all`. The dedicated `scp-study-documents-v2` cache survives normal app-cache upgrades; PDF requests consult it first but ordinary viewing does not silently add to it. Configured document requests include the Zman's `contentVersion` in their cache identity, so replacing a PDF at the same path requires incrementing that content version and cannot leave an old explicit download pinned forever. The current application cache is `scp-study-v65`.
 
 The glossary PDF is generated from the active Zman's `glossary.js` alongside the cumulative test, answer key, and essay Q&A. It is not an independent source of course terminology.
 
@@ -82,7 +82,7 @@ Question numbers, essay IDs, and fact IDs must never be interpreted outside the 
 
 ## Anonymous learner identity and device sync
 
-Device sync is opt-in and available only while anonymous usage is enabled. The historical Analytics field/database name `installation_id` is retained for compatibility, but once sync is enabled its value is the shared anonymous learner ID across linked devices. It is an identifier, never an authentication secret.
+Device sync is opt-in and available only while anonymous usage is enabled. The historical Analytics field/database name `installation_id` is retained for compatibility, but once sync is enabled its value is the shared anonymous learner ID across linked devices. It is an identifier, never an authentication secret. Turning Anonymous Usage or Sync off pauses shared read/archive state as well as study-progress transfer without unlinking the device.
 
 Every browser/PWA has a separate random `deviceId`. A linked device also has a high-entropy device token; only its hash is stored by Analytics/D1. Device credentials are independently revocable. “Unlink other devices” revokes all credentials except the current device and removes only those devices' push endpoints.
 
@@ -99,7 +99,7 @@ Analytics/D1 owns:
 - daily reminder preferences;
 - issue-resolution notifications.
 
-Study always requests inbox data for the active Zman and current anonymous learner ID. For a learner with sync enabled, inbox/push/reminder mutations require the current linked device credential; revoked devices cannot continue using the shared inbox identity.
+Study always requests inbox data for the active Zman and current anonymous learner ID. For a learner with sync enabled, inbox/push/reminder mutations require the current linked device credential; revoked devices cannot continue using the shared inbox identity. While shared sync is paused, the client overlays read/archive state locally and queues those mutations until Anonymous Usage and Sync are both on again.
 
 Notification records deliberately support a generic `kind` and optional action object so future link, feedback-request, poll, and similar messages do not require redesigning the inbox.
 

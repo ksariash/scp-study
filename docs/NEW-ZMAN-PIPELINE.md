@@ -44,6 +44,8 @@ Create `public-src/cohorts/<zman-id>/`. The directory name `cohorts` is a legacy
 
 Give the Zman a permanent ID and analytics key. Do not recycle an earlier ID for revised material.
 
+Set `contentVersion` deliberately. Increment it whenever a configured PDF is replaced at the same path so explicit offline document caches receive the new bytes. Legacy Zman IDs belong in `legacyIds` for migration; do not duplicate the canonical package under a legacy directory.
+
 Populate all required package files described in `docs/ARCHITECTURE.md`.
 
 ## 8. Analytics readiness gate

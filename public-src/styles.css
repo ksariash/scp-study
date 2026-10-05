@@ -1711,7 +1711,7 @@ body.mini-audio-visible .question-search-fab { bottom: calc(max(12px, env(safe-a
 .materials-question-category-label {
   display: block;
   margin-bottom: 7px;
-  color: #718096;
+  color: var(--muted);
   font-size: .66rem;
   font-weight: 850;
   letter-spacing: .045em;
@@ -2284,7 +2284,7 @@ body.mini-audio-visible .question-search-fab { bottom: calc(max(12px, env(safe-a
   border: 1px solid #d8e2ef;
   border-radius: 12px;
   background: #f9fbfe;
-  color: #75839a;
+  color: var(--muted);
 }
 .essay-library-search input {
   width: 100%;
@@ -2894,7 +2894,7 @@ body.mini-audio-visible .question-search-fab { bottom: calc(max(12px, env(safe-a
   font-weight:850;
 }
 .content-feedback-details small {
-  color:#8290a3;
+  color:var(--muted);
   font-weight:700;
 }
 .content-feedback-details textarea {
@@ -2919,7 +2919,7 @@ body.mini-audio-visible .question-search-fab { bottom: calc(max(12px, env(safe-a
 .content-feedback-count {
   display:block;
   margin-top:4px;
-  color:#8793a4;
+  color:var(--muted);
   font-size:.63rem;
   font-weight:760;
   text-align:right;
@@ -2939,13 +2939,12 @@ body.mini-audio-visible .question-search-fab { bottom: calc(max(12px, env(safe-a
   .essay-library-point { grid-template-columns:auto minmax(0,1fr) auto; }
 }
 
-/* v34: essay study aids and PDF actions */
+/* Essay study aids */
 .essay-pairing-audio{margin:10px 0 2px}
 .essay-library-point-actions{display:inline-flex;align-items:center;gap:5px;margin-left:auto}
 .essay-library-audio{font-size:.72rem}
-.resource-actions{flex-wrap:wrap}
 .resource-actions .resource-btn:disabled{opacity:.58;cursor:wait}
-@media(max-width:650px){.resource-actions{width:100%}.resource-actions .resource-btn{flex:1 1 auto}.essay-library-point{align-items:flex-start}.essay-library-point-actions{flex:0 0 auto}}
+@media(max-width:650px){.essay-library-point{align-items:flex-start}.essay-library-point-actions{flex:0 0 auto}}
 
 /* v35: chabura profile, update/share affordances */
 .chabura-setting{
@@ -2961,7 +2960,7 @@ body.mini-audio-visible .question-search-fab { bottom: calc(max(12px, env(safe-a
 .chabura-setting-copy p{margin:5px 0 0;color:var(--muted);font-size:.74rem;line-height:1.45}
 .chabura-fields,.chabura-dialog-fields{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr) auto;gap:9px;align-items:end}
 .chabura-fields label,.chabura-dialog-fields label{display:grid;gap:5px;min-width:0}
-.chabura-fields label>span,.chabura-dialog-fields label>span{color:#718096;font-size:.66rem;font-weight:850;letter-spacing:.045em;text-transform:uppercase}
+.chabura-fields label>span,.chabura-dialog-fields label>span{color:var(--muted);font-size:.66rem;font-weight:850;letter-spacing:.045em;text-transform:uppercase}
 .chabura-fields select,.chabura-dialog-fields select{
   width:100%;min-width:0;min-height:38px;padding:8px 9px;border:1px solid #d7e1ef;border-radius:10px;
   background:#fff;color:var(--text);font:inherit;font-size:.76rem
@@ -2988,12 +2987,6 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
 .update-pull-indicator{position:fixed;z-index:80;top:calc(8px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-8px);padding:7px 11px;border-radius:999px;background:rgba(19,33,60,.94);color:#fff;box-shadow:0 8px 24px rgba(13,26,68,.2);font-size:.72rem;font-weight:750;pointer-events:none;opacity:0;transition:opacity .12s ease,transform .12s ease}
 .update-pull-indicator.visible{opacity:1;transform:translate(-50%,0)}
 @media(max-width:780px){.question-number-jump{min-height:30px}.app-version-footer{padding-bottom:calc(84px + env(safe-area-inset-bottom))}}
-
-/* v38: PDF controls */
-@media(max-width:780px){
-  .resource-actions [data-print-pdf]{display:none}
-  .resource-actions [data-save-pdf]{flex:1 1 100%}
-}
 
 /* v39: inline glossary terms in essay buildout + native question jump */
 .essay-built-copy > span .glossary-term,
@@ -3299,7 +3292,7 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
   inset:0;
   display:grid;
   place-items:center;
-  color:#8793a4;
+  color:var(--muted);
   font-size:.7rem;
   font-weight:700;
 }
@@ -3343,11 +3336,6 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
 .resource-btn.view-pdf-btn{background:#eef3fb;color:#294e94;border-color:#cbd9ed}
 
 @media(max-width:780px){
-  .resource-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
-  .resource-actions [data-print-pdf]{display:none}
-  .resource-actions [data-view-pdf],
-  .resource-actions [data-save-pdf]{width:100%;min-width:0}
-
   .pdf-viewer-nav{
     grid-template-columns:auto minmax(0,1fr);
     gap:6px;
@@ -3414,7 +3402,7 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
 .materials-essay-copy small{
   display:block;
   margin-top:3px;
-  color:#75839a;
+  color:var(--muted);
   font-size:.65rem;
   line-height:1.3;
 }
@@ -3441,7 +3429,7 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
 .cohort-setting-copy p{margin:5px 0 0;color:var(--muted);font-size:.74rem;line-height:1.45}
 .cohort-setting-fields{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:end}
 .cohort-setting-fields label{display:grid;gap:5px;min-width:0}
-.cohort-setting-fields label>span{color:#718096;font-size:.66rem;font-weight:850;letter-spacing:.045em;text-transform:uppercase}
+.cohort-setting-fields label>span{color:var(--muted);font-size:.66rem;font-weight:850;letter-spacing:.045em;text-transform:uppercase}
 .cohort-setting-fields select{
   width:100%;min-width:0;min-height:38px;padding:8px 9px;border:1px solid #d7e1ef;border-radius:10px;
   background:#fff;color:var(--text);font:inherit;font-size:.76rem
@@ -3472,7 +3460,7 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
 .notification-item.archived{opacity:.7}
 .notification-item-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
 .notification-item-head strong{font-size:.84rem;color:#243d6a}
-.notification-item-kind{font-size:.58rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:#718096}
+.notification-item-kind{font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
 .notification-item-body{margin:0;font-size:.75rem;line-height:1.48;color:#3f4f66}
 .notification-item-meta{font-size:.62rem;color:var(--muted)}
 .notification-item-actions{display:flex;gap:7px;flex-wrap:wrap}
@@ -3484,7 +3472,7 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
 .settings-feature-copy p{margin:5px 0 0;color:var(--muted);font-size:.74rem;line-height:1.45}
 .reminder-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;align-items:end}
 .reminder-controls>label:not(.analytics-switch),.settings-inline-select{display:grid;gap:5px}
-.reminder-controls>label>span,.settings-inline-select>span{color:#718096;font-size:.66rem;font-weight:850;letter-spacing:.045em;text-transform:uppercase}
+.reminder-controls>label>span,.settings-inline-select>span{color:var(--muted);font-size:.66rem;font-weight:850;letter-spacing:.045em;text-transform:uppercase}
 .reminder-controls input[type="time"],.reminder-controls select,.settings-inline-select select{
   width:100%;min-height:38px;padding:8px 9px;border:1px solid #d7e1ef;border-radius:10px;background:#fff;color:var(--text);font:inherit;font-size:.76rem
 }
@@ -3893,7 +3881,7 @@ body.essay-mode-active.mini-audio-visible .question-search-fab{
   }
 }
 
-/* v64: explicit PDF caching and compact document actions */
+/* Explicit PDF caching and document actions */
 #materialsPanelDownloads .materials-section-head{
   display:flex;
   align-items:center;
@@ -3922,12 +3910,12 @@ body.essay-mode-active.mini-audio-visible .question-search-fab{
 .resource-open:hover strong{color:#214fbe}
 .resource-open:focus-visible{outline:2px solid #7da3f8;outline-offset:4px;border-radius:5px}
 .resource-actions .pdf-resource-icon-btn{
-  flex:0 0 36px;
-  width:36px;
-  height:36px;
-  min-width:36px;
-  min-height:36px;
-  padding:8px;
+  flex:0 0 40px;
+  width:40px;
+  height:40px;
+  min-width:40px;
+  min-height:40px;
+  padding:9px;
   border-radius:10px;
 }
 .pdf-resource-icon-btn svg{
@@ -3939,19 +3927,18 @@ body.essay-mode-active.mini-audio-visible .question-search-fab{
   stroke-linecap:round;
   stroke-linejoin:round;
 }
-.pdf-viewer-actions{grid-template-columns:repeat(3,36px)}
+.pdf-viewer-actions{grid-template-columns:repeat(3,40px)}
 .pdf-viewer-actions .pdf-resource-icon-btn{
-  width:36px;
-  height:36px;
-  min-width:36px;
-  min-height:36px;
-  padding:8px;
+  width:40px;
+  height:40px;
+  min-width:40px;
+  min-height:40px;
+  padding:9px;
 }
 .pdf-download-btn.pdf-cached{
   border-color:#e2e7ee;
   background:#f5f6f8;
-  color:#9aa4b2;
-  opacity:.72;
+  color:var(--muted);
 }
 .pdf-resource-icon-btn.is-busy{opacity:.55;cursor:wait}
 @media(max-width:780px){
@@ -3960,11 +3947,30 @@ body.essay-mode-active.mini-audio-visible .question-search-fab{
   .resource-actions{display:flex;width:auto;flex-wrap:nowrap;justify-content:flex-start}
   .resource-actions [data-print-pdf]{display:inline-flex}
   .resource-actions [data-share-pdf],
-  .resource-actions [data-save-pdf]{width:36px;min-width:36px;flex:0 0 36px}
-  .pdf-viewer-actions{grid-template-columns:repeat(3,36px);width:auto;justify-self:end}
-  .pdf-viewer-actions .pdf-resource-icon-btn{width:36px;min-width:36px;min-height:36px;padding:8px}
+  .resource-actions [data-save-pdf]{width:40px;min-width:40px;flex:0 0 40px}
+  .pdf-viewer-actions{grid-template-columns:repeat(3,40px);width:auto;justify-self:end}
+  .pdf-viewer-actions .pdf-resource-icon-btn{width:40px;min-width:40px;min-height:40px;padding:9px}
 }
 @media(max-width:520px){
   #materialsPanelDownloads .materials-section-head{flex-direction:column}
   .pdf-library-actions{width:100%;align-items:center;justify-content:space-between;flex-direction:row}
+}
+
+@media (pointer:coarse) {
+  .resource-actions .pdf-resource-icon-btn,
+  .pdf-viewer-actions .pdf-resource-icon-btn,
+  .notification-icon-btn { width:44px; height:44px; min-width:44px; min-height:44px; }
+  .resource-actions .pdf-resource-icon-btn { flex-basis:44px; }
+  .pdf-viewer-actions { grid-template-columns:repeat(3,44px); }
+  .materials-tab { min-height:44px; }
+  .question-audio-row.study-resource-audio-row { grid-template-columns:minmax(0,1fr) 44px; }
+  .question-audio-transcript.study-resource-transcript { min-width:44px; min-height:44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation:none !important;
+    scroll-behavior:auto !important;
+    transition:none !important;
+  }
 }

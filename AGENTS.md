@@ -43,6 +43,7 @@ The current stable Zman ID and analytics key are `2026-summer`. Its display name
 - All analytics, feedback, notifications, documents, and review-audio paths must resolve inside the active Zman.
 - Progress, essay mastery, essay-category filters, audio playback state, and chabura settings are Zman-scoped.
 - Preserve migration reads for the legacy Summer 2026 ID `nat-bar-nat-stam-yeinam-summer-26` until intentionally retired.
+- Legacy IDs are storage/selection aliases, not duplicate content packages. Do not keep a second deployable Zman directory solely for a legacy ID; it will drift from the canonical package.
 - The old storage envelope property `cohorts` is a compatibility detail; do not create new user-facing “cohort” terminology from it.
 - A newly available `latestZmanId` should prompt existing users to switch; do not silently discard their selected Zman.
 
@@ -73,7 +74,9 @@ Never expose R2 credentials to browser code.
 
 Zman-configured documents live under `documents/<zman-id>/`. The build currently preserves root document URLs for older installed clients and copies the current Zman's documents into its namespace.
 
-Student-facing PDFs are offline-first but intentionally **not** part of the service worker `APP_SHELL`. Learners explicitly cache the compact review, full course notes, cumulative test, answer key, essay Q&A, and glossary with the per-document download action or `Download all`. App and service worker must use the same persistent document cache name (`scp-study-documents-v1` until intentionally migrated), and service-worker activation must preserve that cache across app releases. Normal viewing/printing/sharing must not silently populate the document cache.
+Student-facing PDFs are offline-first but intentionally **not** part of the service worker `APP_SHELL`. Learners explicitly cache the compact review, full course notes, cumulative test, answer key, essay Q&A, and glossary with the per-document download action or `Download all`. App and service worker must use the same persistent document cache name (`scp-study-documents-v2` until intentionally migrated), and service-worker activation must preserve that cache across app releases. Normal viewing/printing/sharing must not silently populate the document cache.
+
+Configured PDF requests must include the active Zman's `contentVersion` in their cache identity. If a document changes at the same configured path, increment `contentVersion`; otherwise an explicitly cached older PDF can remain valid forever. The v2 document cache intentionally replaced v1 when this invariant was introduced.
 
 The document download action has two jobs: make the PDF available offline and then invoke the platform save/download behavior. A cached download icon is visually muted but stays enabled because learners may still need to save another filesystem copy (and iOS may expose Save to Files through the share sheet). Keep Print, Share, Download in that visual order. `Download all` populates the offline cache only; it must not trigger six filesystem downloads or share sheets.
 
@@ -117,13 +120,17 @@ Delete All Data must distinguish local-only deletion from local plus anonymous s
 
 ## Anonymous learner sync
 
-Sync is subordinate to Anonymous Usage: it may be configured only when anonymous usage is enabled, and progress transfer pauses while anonymous usage is off. Linked devices share the historical analytics `installationId`, which now represents an anonymous learner identity for synced users. Never treat that ID as a credential or expose it as a pairing secret.
+Sync is subordinate to Anonymous Usage: it may be configured only when anonymous usage is enabled, and shared state transfer pauses while anonymous usage is off. Linked devices share the historical analytics `installationId`, which now represents an anonymous learner identity for synced users. Never treat that ID as a credential or expose it as a pairing secret.
 
 Each browser/PWA has a separate `deviceId` and, when linked, a separate high-entropy device token. Analytics stores only the token hash. Device tokens are independently revocable; revoking another device must not delete its local study data and must remove only that device's push endpoint from the shared learner.
 
 Question/essay/test progress sync is Zman-scoped, offline-first, operation-based, and idempotent. Do not replace it with whole-localStorage last-write-wins uploads. Resets advance a per-Zman generation so stale offline operations cannot resurrect deleted progress. Active practice-test state remains device-local.
 
-Notification read/archive state is intentionally shared through the anonymous learner ID. Push subscriptions and reminder delivery remain per device. Synced inbox/push/reminder access must require a valid linked-device credential once a sync account exists.
+Notification read/archive state is intentionally shared through the anonymous learner ID only while both Anonymous Usage and device Sync are on. If either is paused on a linked device, read/archive changes stay in a device-local pending overlay and must not adopt read/archive mutations from another device; flush the pending state when both controls are on again. Push subscriptions and reminder delivery remain per device. Synced inbox/push/reminder access must require a valid linked-device credential once a sync account exists.
+
+## Adaptive study selection
+
+The recent-question penalty is ordered oldest-to-newest across the last four study-history entries. A more recent question must receive a stronger penalty than an older one. With four recent slots the multipliers are `0.65, 0.45, 0.28, 0.18`; never reverse this ordering when refactoring the picker.
 
 Sync credentials, pairing material, cursors, and queues are local implementation state and must never be exported. Import while linked is an explicit merge operation and must warn about duplicate already-synced history.
 
@@ -164,6 +171,8 @@ All dismissible dialogs should close when the user clicks the backdrop/outside t
 
 Responsive form controls must not overflow their cards. Grid children and inputs/selects should use `min-width: 0`, `max-width: 100%`, and `box-sizing: border-box` where intrinsic mobile control sizing can otherwise escape the container.
 
+Small text must keep normal-text contrast, active icon controls must remain distinguishable even when visually muted, and coarse-pointer layouts should provide generous touch targets for primary utility controls. Honor `prefers-reduced-motion` for CSS motion as well as scripted scrolling.
+
 
 ## Current R2 state
 
@@ -183,6 +192,8 @@ Browsers generally cannot re-open the native permission prompt after the user ha
 Settings use one primary section title, not a numeric eyebrow plus a duplicate label. Zman and Chabura show their currently saved value at the bottom of their cards.
 
 Font size is the first setting. Keep it device-local, apply it immediately, preserve the browser's own default font/zoom behavior, and include it in Settings import/export. Large text must reflow without making controls overflow their cards.
+
+In Materials → Downloads, use concise document names such as “Compact Course Review” and “Course Glossary”; do not repeat the “SCP Study” product prefix on every row.
 
 Notification Settings uses the concise description: “Get notified on important announcements and daily study reminders (excluding Shabbat and Yom Tov).”
 

@@ -10,12 +10,12 @@
   const ESSAY_PRACTICE_KEY = 'scpStudy.essayPractice.v1';
   const ESSAY_CATEGORY_FILTER_KEY = 'scpStudy.essayCategoryFilter.v1';
   const AUDIO_CACHE_NAME = 'scp-study-audio-v3';
-  const DOCUMENT_CACHE_NAME = 'scp-study-documents-v1';
+  const DOCUMENT_CACHE_NAME = 'scp-study-documents-v2';
   const BUNDLED_AUDIO_REVIEWS = AUDIO_REVIEW_DATA.map(track => ({
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 64;
+  const APP_VERSION = 65;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -28,6 +28,7 @@
   const SYNC_API_BASE = 'https://scp-study-analytics.ksariash.workers.dev/api/sync';
   const SYNC_SETTINGS_KEY = 'scpStudy.sync.v1';
   const SYNC_QUEUE_KEY = 'scpStudy.syncQueue.v1';
+  const NOTIFICATION_LOCAL_STATE_KEY = 'scpStudy.notificationLocalState.v1';
   const STUDY_REMINDER_SETTINGS_KEY = 'scpStudy.studyReminders.v1';
   const LATEST_ZMAN_PROMPT_KEY = 'scpStudy.latestZmanPrompt.v1';
   const COHORT_SELECTION_KEY = 'scpStudy.activeZman.v1';
@@ -259,7 +260,7 @@
   let cachedPdfUrls = new Set();
   let transcriptExpanded = true;
   let activeMaterialsTab = 'audio';
-  const materialsScrollByTab = { audio: 0, questions: 0, glossary: 0, downloads: 0, settings: 0 };
+  const materialsScrollByTab = { audio: 0, questions: 0, essays: 0, glossary: 0, downloads: 0, settings: 0 };
   let glossaryPronunciationAudio = null;
   let resumeCourseAudioAfterGlossary = false;
   let analyticsFlushInFlight = false;
@@ -647,9 +648,11 @@
       queueChaburaProfileAnalytics();
       void flushAnalyticsQueue();
       void flushSync();
+      void flushPendingNotificationState();
     }
     updateAnalyticsUi();
     updateSyncUi();
+    if (dom.notificationInboxDialog?.open) void loadNotificationInbox();
   }
 
   function updateAnalyticsUi() {
@@ -714,6 +717,11 @@
   function syncConfigured() {
     const config = syncConfig();
     return !!(config.enabled && config.deviceToken && config.deviceId);
+  }
+
+  function sharedNotificationStateEnabled() {
+    const config = syncConfig();
+    return !config.deviceToken || (analyticsEnabled() && !!config.enabled);
   }
 
   function syncAuthHeaders() {
@@ -866,15 +874,16 @@
   async function enableStudySync() {
     if (!analyticsEnabled()) { showAppToast('Turn on anonymous usage before enabling sync.'); updateSyncUi(); return false; }
     let config=syncConfig();
-    if(config.deviceToken){config.enabled=true;saveSyncConfig(config);updateSyncUi();void flushSync();return true;}
+    if(config.deviceToken){config.enabled=true;saveSyncConfig(config);updateSyncUi();void flushSync();void flushPendingNotificationState();return true;}
     try{
       const deviceId=syncDeviceId(),result=await syncRequest('/create',{method:'POST',auth:false,body:{learnerId:analyticsInstallationId(),deviceId,deviceName:syncDeviceName()}});
-      config=syncConfig();config.enabled=true;config.deviceId=deviceId;config.deviceToken=result.deviceToken;config.cursor=0;config.generations={};saveSyncConfig(config);enqueueInitialSyncBaseline();updateSyncUi();await flushSync();showAppToast('Device sync is on.');return true;
+      config=syncConfig();config.enabled=true;config.deviceId=deviceId;config.deviceToken=result.deviceToken;config.cursor=0;config.generations={};saveSyncConfig(config);enqueueInitialSyncBaseline();updateSyncUi();await flushSync();await flushPendingNotificationState();showAppToast('Device sync is on.');return true;
     }catch(error){showAppToast('Could not enable sync: '+error.message);updateSyncUi();return false;}
   }
 
   function pauseStudySync() {
     const config=syncConfig();config.enabled=false;saveSyncConfig(config);updateSyncUi();
+    if(dom.notificationInboxDialog?.open)void loadNotificationInbox();
   }
 
   async function joinExistingSync() {
@@ -885,7 +894,7 @@
       const result=await syncRequest('/pair/finish',{method:'POST',auth:false,body:{code,deviceId,deviceName:syncDeviceName()}});
       const config=syncConfig();config.enabled=true;config.deviceId=deviceId;config.deviceToken=result.deviceToken;config.cursor=0;config.generations={};saveSyncConfig(config);
       localStorage.setItem(ANALYTICS_INSTALLATION_KEY,result.learnerId);localStorage.removeItem(ANALYTICS_QUEUE_KEY);
-      enqueueInitialSyncBaseline();updateAnalyticsUi();updateSyncUi();await flushSync();
+      enqueueInitialSyncBaseline();updateAnalyticsUi();updateSyncUi();await flushSync();await flushPendingNotificationState();
       if(oldLearnerId!==result.learnerId&&reminderSettings().pushEnabled)void syncPushSubscription();
       showAppToast('This device is linked.');
     }catch(error){showAppToast('Could not link device: '+error.message);}
@@ -928,7 +937,7 @@
   }
 
   async function detachLocalSyncIdentity() {
-    const config=syncConfig();config.enabled=false;config.deviceToken='';config.cursor=0;config.generations={};config.lastSyncAt=null;saveSyncConfig(config);saveSyncQueue([]);localStorage.setItem(ANALYTICS_INSTALLATION_KEY,newAnonymousId());localStorage.removeItem(ANALYTICS_QUEUE_KEY);updateAnalyticsUi();updateSyncUi();
+    const config=syncConfig();config.enabled=false;config.deviceToken='';config.cursor=0;config.generations={};config.lastSyncAt=null;saveSyncConfig(config);saveSyncQueue([]);localStorage.setItem(ANALYTICS_INSTALLATION_KEY,newAnonymousId());localStorage.removeItem(ANALYTICS_QUEUE_KEY);removeScopedValue(NOTIFICATION_LOCAL_STATE_KEY);updateAnalyticsUi();updateSyncUi();
     if(reminderSettings().pushEnabled)try{await syncPushSubscription();}catch(_){}
   }
 
@@ -2097,7 +2106,7 @@
         else if (ageMin > 24 * 60) w *= 1.2;
       }
       const recentIndex = recentIds.lastIndexOf(q.id);
-      if (recentIndex >= 0) w *= [0.18, 0.28, 0.45, 0.65][recentIndex] || 0.5;
+      if (recentIndex >= 0) w *= [0.65, 0.45, 0.28, 0.18][recentIndex] || 0.5;
       if (s.lastResult === 'correct' && s.correct >= 3) w /= Math.sqrt(Math.min(s.correct, 9));
       return { q, w: Math.max(0.03, w) };
     });
@@ -2992,6 +3001,19 @@
     catch (_) { return url; }
   }
 
+  function versionedDocumentUrl(url) {
+    const raw = String(url || '');
+    if (!raw) return '';
+    try {
+      const resolved = new URL(raw, window.location.href);
+      const contentVersion = Math.max(1, Number(ACTIVE_COHORT.contentVersion) || 1);
+      resolved.searchParams.set('content', String(contentVersion));
+      return resolved.href;
+    } catch (_) {
+      return raw;
+    }
+  }
+
   async function refreshAudioCacheState() {
     if (!('caches' in window)) return;
     const cache = await caches.open(AUDIO_CACHE_NAME);
@@ -3292,7 +3314,8 @@
   }
 
   function courseNoteDoc(key) {
-    return COURSE_NOTE_REFS.docs?.[key] || null;
+    const doc = COURSE_NOTE_REFS.docs?.[key] || null;
+    return doc ? { ...doc, url:versionedDocumentUrl(doc.url) } : null;
   }
 
   function courseNotePage(ref, docKey) {
@@ -3938,7 +3961,7 @@
   }
 
   async function clearOfflineCache() {
-    const msg = 'Clear downloaded audio and cached app files? Your study statistics and settings will not be erased.';
+    const msg = 'Clear downloaded audio, cached PDFs, and cached app files? Your study statistics and settings will not be erased.';
     if (!confirm(msg)) return;
     if (!('caches' in window)) {
       setSettingsStatus('Offline cache controls are not available in this browser.');
@@ -5137,6 +5160,7 @@
       void flushAnalyticsQueue();
       void flushContentFeedbackQueue();
       void flushSync();
+      void flushPendingNotificationState();
     });
 
     window.addEventListener('beforeinstallprompt', e => {
@@ -5167,7 +5191,7 @@
   function syncActiveZmanDocuments() {
     const documents = ACTIVE_COHORT.documents && typeof ACTIVE_COHORT.documents === 'object' ? ACTIVE_COHORT.documents : {};
     document.querySelectorAll('[data-document-key]').forEach(button => {
-      const url = String(documents[button.dataset.documentKey] || '');
+      const url = versionedDocumentUrl(documents[button.dataset.documentKey]);
       if (!url) return;
       if (button.hasAttribute('data-view-pdf')) button.dataset.viewPdf = url;
       if (button.hasAttribute('data-print-pdf')) button.dataset.printPdf = url;
@@ -5198,7 +5222,7 @@
     };
     const entry = aliases[key];
     if (!entry || !documents[entry[0]]) return null;
-    return { url:String(documents[entry[0]]), title:entry[1], docKey:null };
+    return { url:versionedDocumentUrl(documents[entry[0]]), title:entry[1], docKey:null };
   }
 
   function consumeExternalReference() {
@@ -5488,6 +5512,95 @@
 
   let notificationInboxCache = [];
 
+  function notificationLocalState() {
+    const saved = readScopedJson(NOTIFICATION_LOCAL_STATE_KEY, {});
+    return saved && typeof saved === 'object' && !Array.isArray(saved) ? saved : {};
+  }
+
+  function saveNotificationLocalState(value) {
+    writeScopedJson(NOTIFICATION_LOCAL_STATE_KEY, value && typeof value === 'object' ? value : {});
+  }
+
+  function snapshotSharedNotificationState(items) {
+    if (!sharedNotificationStateEnabled()) return;
+    const saved = notificationLocalState();
+    for (const item of Array.isArray(items) ? items : []) {
+      const id = String(item?.id || '');
+      if (!id || saved[id]?.dirty) continue;
+      saved[id] = { read:!!item.readAt, archived:!!item.archivedAt, dirty:false };
+    }
+    saveNotificationLocalState(saved);
+  }
+
+  function pausedNotificationPayload(payload, includeArchived) {
+    const saved = notificationLocalState();
+    const all = (Array.isArray(payload?.notifications) ? payload.notifications : []).map(item => {
+      const local = saved[String(item?.id || '')];
+      const read = local ? !!local.read : false;
+      const archived = local ? !!local.archived : false;
+      return {
+        ...item,
+        readAt:read ? (item.readAt || 'local') : null,
+        archivedAt:archived ? (item.archivedAt || 'local') : null
+      };
+    });
+    return {
+      ...payload,
+      notifications:includeArchived ? all : all.filter(item => !item.archivedAt),
+      unread:all.filter(item => !item.archivedAt && !item.readAt).length
+    };
+  }
+
+  function savePausedNotificationState(id, changes) {
+    const key = String(id || '');
+    if (!key) return;
+    const saved = notificationLocalState();
+    const visible = notificationInboxCache.find(item => String(item?.id || '') === key);
+    const prior = saved[key] || { read:!!visible?.readAt, archived:!!visible?.archivedAt };
+    saved[key] = {
+      read:typeof changes.read === 'boolean' ? changes.read : !!prior.read,
+      archived:typeof changes.archived === 'boolean' ? changes.archived : !!prior.archived,
+      dirty:true
+    };
+    saveNotificationLocalState(saved);
+  }
+
+  function saveSharedNotificationMutation(id, changes) {
+    const key = String(id || '');
+    if (!key) return;
+    const saved = notificationLocalState();
+    const visible = notificationInboxCache.find(item => String(item?.id || '') === key);
+    const prior = saved[key] || { read:!!visible?.readAt, archived:!!visible?.archivedAt };
+    saved[key] = {
+      read:typeof changes.read === 'boolean' ? changes.read : !!prior.read,
+      archived:typeof changes.archived === 'boolean' ? changes.archived : !!prior.archived,
+      dirty:false
+    };
+    saveNotificationLocalState(saved);
+  }
+
+  async function flushPendingNotificationState() {
+    if (!sharedNotificationStateEnabled() || !navigator.onLine) return false;
+    const saved = notificationLocalState();
+    const pending = Object.entries(saved).filter(([, value]) => value?.dirty);
+    if (!pending.length) return true;
+    for (const [id, value] of pending) {
+      try {
+        await postJson(NOTIFICATION_STATE_ENDPOINT, {
+          installationId:analyticsInstallationId(), id,
+          read:!!value.read, archived:!!value.archived
+        });
+        saved[id] = { read:!!value.read, archived:!!value.archived, dirty:false };
+        saveNotificationLocalState(saved);
+      } catch (error) {
+        console.warn('Notification state sync deferred:', error);
+        return false;
+      }
+    }
+    if (dom.notificationInboxDialog?.open) void loadNotificationInbox();
+    return true;
+  }
+
   function safeNotificationUrl(value) {
     if (!value) return '';
     try {
@@ -5575,14 +5688,17 @@
       const url = new URL(NOTIFICATIONS_ENDPOINT);
       url.searchParams.set('zman', ANALYTICS_COHORT);
       url.searchParams.set('installationId', analyticsInstallationId());
-      if (includeArchived) url.searchParams.set('includeArchived','1');
+      const sharedState = sharedNotificationStateEnabled();
+      if (includeArchived || !sharedState) url.searchParams.set('includeArchived','1');
       const response = await fetch(url, { mode:'cors', credentials:'omit', cache:'no-store', headers:syncAuthHeaders() });
       const data = await response.json();
       if (!response.ok) { if(response.status===401&&syncConfig().deviceToken)void handleRevokedSyncDevice(); throw new Error(data?.error || 'Could not load notifications'); }
-      renderNotificationInbox(data);
+      if (sharedState) snapshotSharedNotificationState(data.notifications);
+      const rendered = sharedState ? data : pausedNotificationPayload(data, includeArchived);
+      renderNotificationInbox(rendered);
       syncNotificationPermissionNag();
-      if (status) status.textContent = '';
-      return data;
+      if (status) status.textContent = sharedState ? '' : 'Notification status is staying on this device while sync is paused.';
+      return rendered;
     } catch (error) {
       if (status) status.textContent = 'Could not load notifications: ' + error.message;
       return null;
@@ -5590,7 +5706,20 @@
   }
 
   async function updateNotificationState(id, changes) {
+    if (!sharedNotificationStateEnabled()) {
+      savePausedNotificationState(id, changes);
+      const current = notificationInboxCache.map(item => String(item?.id || '') === String(id)
+        ? { ...item, readAt:typeof changes.read === 'boolean' ? (changes.read ? (item.readAt || 'local') : null) : item.readAt, archivedAt:typeof changes.archived === 'boolean' ? (changes.archived ? (item.archivedAt || 'local') : null) : item.archivedAt }
+        : item);
+      const includeArchived = !!el('notificationShowArchived')?.checked;
+      const visible = includeArchived ? current : current.filter(item => !item.archivedAt);
+      renderNotificationInbox({ notifications:visible, unread:current.filter(item => !item.archivedAt && !item.readAt).length });
+      const status = el('notificationInboxStatus');
+      if (status) status.textContent = 'Saved on this device; it will sync when Anonymous Usage and Sync are on.';
+      return { local:true };
+    }
     await postJson(NOTIFICATION_STATE_ENDPOINT, { installationId:analyticsInstallationId(), id, ...changes });
+    saveSharedNotificationMutation(id, changes);
     return loadNotificationInbox();
   }
 
@@ -5809,12 +5938,12 @@
     window.location.reload();
   }
 
-  function syncV53SettingsUi() {
+  function syncNotificationSettingsUi() {
     syncReminderSettingsUi();
   }
 
   function initNotificationAndSettingsFeatures() {
-    syncV53SettingsUi();
+    syncNotificationSettingsUi();
 
     dom.fontSizeSelect?.addEventListener('change', event => setFontScale(event.currentTarget.value));
     el('notificationsBtn')?.addEventListener('click', () => void handleNotificationBellClick());
@@ -5929,6 +6058,7 @@
     void flushAnalyticsQueue();
     void flushContentFeedbackQueue();
     void flushSync();
+    void flushPendingNotificationState();
     activeMaterialsTab = savedMaterialsTab();
     setMaterialsTab(activeMaterialsTab, { remember: false });
     setTranscriptExpanded(savedTranscriptExpanded(), { remember: false });

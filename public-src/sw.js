@@ -1,7 +1,7 @@
-const APP_VERSION = 64;
-const CACHE_NAME = 'scp-study-v64';
+const APP_VERSION = 65;
+const CACHE_NAME = 'scp-study-v65';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v3';
-const DOCUMENT_CACHE_NAME = 'scp-study-documents-v1';
+const DOCUMENT_CACHE_NAME = 'scp-study-documents-v2';
 const APP_SHELL = [
   './',
   './index.html',
@@ -79,7 +79,7 @@ self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
     for (const key of keys) {
-      if (key === CACHE_NAME || key === AUDIO_CACHE_NAME || key === DOCUMENT_CACHE_NAME) continue;
+      if (!key.startsWith('scp-study-') || key === CACHE_NAME || key === AUDIO_CACHE_NAME || key === DOCUMENT_CACHE_NAME) continue;
       await caches.delete(key);
     }
     await self.clients.claim();

@@ -132,9 +132,13 @@ After `Sync now` completes its local study and notification-state push/pull, it 
 
 Notification read/archive state is intentionally shared through the anonymous learner ID only while both Anonymous Usage and device Sync are on. If either is paused on a linked device, read/archive changes stay in a device-local pending overlay and must not adopt read/archive mutations from another device; flush the pending state when both controls are on again. Push subscriptions and reminder delivery remain per device. Synced inbox/push/reminder access must require a valid linked-device credential once a sync account exists.
 
+For `issue_resolved` inbox items, `contentType` + `contentId` are the navigation authority for “View details.” Open questions in Question Explorer and essay prompts/pairings in Essay Explorer (expanding the referenced pairing when applicable) rather than following the legacy generic `/?notifications=1` action back to the inbox.
+
 ## Adaptive study selection
 
 The recent-question penalty is ordered oldest-to-newest across the last four study-history entries. A more recent question must receive a stronger penalty than an older one. With four recent slots the multipliers are `0.65, 0.45, 0.28, 0.18`; never reverse this ordering when refactoring the picker.
+
+Weighted review treats study-aid use as weaker evidence of independent recall without changing the learner's visible score. If the most recent answer used relevant audio, an inline glossary definition, or the question's course-note link before submission, multiply the next review weight by `1.6` after a correct result or `1.25` after a partial/incorrect result. Persist `lastStudyAidUsed` with question stats and carry it in sync baselines/answer operations so linked devices schedule consistently. Do not count aid browsing in Question Explorer, Materials, or Essay surfaces against the unrelated current multiple-choice question.
 
 Sync credentials, pairing material, cursors, and queues are local implementation state and must never be exported. Import while linked is an explicit merge operation and must warn about duplicate already-synced history.
 

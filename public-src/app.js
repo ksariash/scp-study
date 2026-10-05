@@ -15,7 +15,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 71;
+  const APP_VERSION = 72;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -267,7 +267,7 @@
   let syncFlushInFlight = false;
   let applyingSyncOps = false;
   let analyticsAssistKey = null;
-  let analyticsAssist = { audioUsed: false, glossaryUsed: false };
+  let analyticsAssist = { audioUsed: false, glossaryUsed: false, notesUsed: false };
   let essayProgressState = loadEssayProgress();
   let essayRun = null;
   let essayModeActive = false;
@@ -772,7 +772,7 @@
     const add = (kind, payload) => ops.push({ kind, payload });
     for (const q of QUESTIONS) {
       const s = state.stats?.[q.id] || {};
-      if (Number(s.shown)||Number(s.attempts)||Number(s.totalTimeMs)) add('question_baseline',{ qid:q.id, stats:{ shown:Number(s.shown)||0, attempts:Number(s.attempts)||0, correct:Number(s.correct)||0, partial:Number(s.partial)||0, incorrect:Number(s.incorrect)||0, pointsEarned:Number(s.pointsEarned)||0, totalTimeMs:Number(s.totalTimeMs)||0, lastResult:s.lastResult||null, lastSeen:Number(s.lastSeen)||null, lastAnswered:Number(s.lastAnswered)||null } });
+      if (Number(s.shown)||Number(s.attempts)||Number(s.totalTimeMs)) add('question_baseline',{ qid:q.id, stats:{ shown:Number(s.shown)||0, attempts:Number(s.attempts)||0, correct:Number(s.correct)||0, partial:Number(s.partial)||0, incorrect:Number(s.incorrect)||0, pointsEarned:Number(s.pointsEarned)||0, totalTimeMs:Number(s.totalTimeMs)||0, lastResult:s.lastResult||null, lastStudyAidUsed:!!s.lastStudyAidUsed, lastSeen:Number(s.lastSeen)||null, lastAnswered:Number(s.lastAnswered)||null } });
     }
     for (const [factId, raw] of Object.entries(essayProgressState.facts || {})) {
       if (Number(raw?.seen)||Number(raw?.correct)) add('essay_fact_baseline',{ factId, seen:Number(raw.seen)||0, correct:Number(raw.correct)||0, mastery:Number(raw.mastery)||0, lastSeen:Number(raw.lastSeen)||0 });
@@ -818,12 +818,12 @@
         const s=state.stats?.[p.qid],r=p.stats||{};if(!s)return;
         for(const key of ['shown','attempts','correct','partial','incorrect','pointsEarned','totalTimeMs'])s[key]=(Number(s[key])||0)+(Number(r[key])||0);
         s.lastSeen=Math.max(Number(s.lastSeen)||0,Number(r.lastSeen)||0)||null;
-        if((Number(r.lastAnswered)||0)>=(Number(s.lastAnswered)||0)){s.lastAnswered=Number(r.lastAnswered)||null;s.lastResult=r.lastResult||s.lastResult;}
+        if((Number(r.lastAnswered)||0)>=(Number(s.lastAnswered)||0)){s.lastAnswered=Number(r.lastAnswered)||null;s.lastResult=r.lastResult||s.lastResult;s.lastStudyAidUsed=!!r.lastStudyAidUsed;}
         saveState();
       } else if (op.kind === 'question_shown') {
         const s=state.stats?.[p.qid];if(!s)return;s.shown+=1;s.lastSeen=Math.max(Number(s.lastSeen)||0,Number(p.at)||0)||Date.now();saveState();
       } else if (op.kind === 'question_answer') {
-        const s=state.stats?.[p.qid];if(!s)return;s.attempts+=1;if(['correct','partial','incorrect'].includes(p.result))s[p.result]+=1;s.pointsEarned+=(Number(p.credit)||0);s.totalTimeMs+=(Number(p.elapsedMs)||0);if((Number(p.at)||0)>=(Number(s.lastAnswered)||0)){s.lastAnswered=Number(p.at)||Date.now();s.lastResult=p.result||s.lastResult;}saveState();
+        const s=state.stats?.[p.qid];if(!s)return;s.attempts+=1;if(['correct','partial','incorrect'].includes(p.result))s[p.result]+=1;s.pointsEarned+=(Number(p.credit)||0);s.totalTimeMs+=(Number(p.elapsedMs)||0);if((Number(p.at)||0)>=(Number(s.lastAnswered)||0)){s.lastAnswered=Number(p.at)||Date.now();s.lastResult=p.result||s.lastResult;s.lastStudyAidUsed=!!p.studyAidUsed;}saveState();
       } else if (op.kind === 'test_complete') {
         const test=p.test;if(test?.id&&!state.tests.some(item=>item.id===test.id)){state.tests.push(test);state.tests=state.tests.slice(-30);saveState();}
       } else if (op.kind === 'essay_fact_baseline') {
@@ -1269,15 +1269,23 @@
     const key = currentAnalyticsEntryKey();
     if (key === analyticsAssistKey) return;
     analyticsAssistKey = key;
-    analyticsAssist = { audioUsed: false, glossaryUsed: false };
+    analyticsAssist = { audioUsed: false, glossaryUsed: false, notesUsed: false };
   }
 
   function markAnalyticsAssist(kind) {
     const entry = currentEntry();
     if (!entry || entry.answered) return;
+    entry.studyAidUsed = true;
+    saveState();
     syncAnalyticsAssist();
     if (kind === 'audio') analyticsAssist.audioUsed = true;
     if (kind === 'glossary') analyticsAssist.glossaryUsed = true;
+    if (kind === 'notes') analyticsAssist.notesUsed = true;
+  }
+
+  function currentStudyAidUsed() {
+    syncAnalyticsAssist();
+    return !!(currentEntry()?.studyAidUsed || analyticsAssist.audioUsed || analyticsAssist.glossaryUsed || analyticsAssist.notesUsed);
   }
 
   function queueGlossaryAnalytics(entry, source = 'other') {
@@ -1353,7 +1361,7 @@
     const queue = analyticsQueue();
     queue.push(event);
     saveAnalyticsQueue(queue);
-    analyticsAssist = { audioUsed: false, glossaryUsed: false };
+    analyticsAssist = { audioUsed: false, glossaryUsed: false, notesUsed: false };
     void flushAnalyticsQueue();
   }
 
@@ -1426,7 +1434,7 @@
   }
 
   function defaultQuestionStats() {
-    return { shown: 0, attempts: 0, correct: 0, partial: 0, incorrect: 0, pointsEarned: 0, totalTimeMs: 0, lastResult: null, lastSeen: null, lastAnswered: null };
+    return { shown: 0, attempts: 0, correct: 0, partial: 0, incorrect: 0, pointsEarned: 0, totalTimeMs: 0, lastResult: null, lastStudyAidUsed: false, lastSeen: null, lastAnswered: null };
   }
 
   function defaultState() {
@@ -1478,6 +1486,7 @@
         pointsEarned: Math.max(0, Number(s.pointsEarned) || 0),
         totalTimeMs: Math.max(0, Number(s.totalTimeMs) || 0),
         lastResult: ['correct','partial','incorrect'].includes(s.lastResult) ? s.lastResult : null,
+        lastStudyAidUsed: !!s.lastStudyAidUsed,
         lastSeen: Number(s.lastSeen) || null,
         lastAnswered: Number(s.lastAnswered) || null
       };
@@ -1500,7 +1509,8 @@
         answered: !!x.answered,
         result: ['correct','partial','incorrect'].includes(x.result) ? x.result : null,
         credit: Math.max(0, Math.min(1, Number(x.credit) || 0)),
-        elapsedMs: Math.max(0, Number(x.elapsedMs) || 0)
+        elapsedMs: Math.max(0, Number(x.elapsedMs) || 0),
+        studyAidUsed: !!x.studyAidUsed
       };
     });
     return {
@@ -2133,6 +2143,8 @@
         w *= 1.2;
       }
 
+      if (s.lastStudyAidUsed) w *= s.lastResult === 'correct' ? 1.6 : 1.25;
+
       if (s.lastAnswered) {
         const ageMin = (now - s.lastAnswered) / 60000;
         if (ageMin < 3) w *= 0.12;
@@ -2156,7 +2168,7 @@
   }
 
   function appendStudyQuestion(q = weightedPick()) {
-    const entry = { qid: q.id, selected: [], answered: false, result: null, credit: 0, elapsedMs: 0 };
+    const entry = { qid: q.id, selected: [], answered: false, result: null, credit: 0, elapsedMs: 0, studyAidUsed: false };
     state.study.history = state.study.history.slice(0, state.study.index + 1);
     state.study.history.push(entry);
     state.study.index = state.study.history.length - 1;
@@ -2198,15 +2210,16 @@
     return { result: 'incorrect', credit: 0 };
   }
 
-  function updateQuestionStats(qid, result, credit, elapsedMs) {
+  function updateQuestionStats(qid, result, credit, elapsedMs, studyAidUsed = false) {
     const s = state.stats[qid];
     s.attempts += 1;
     s[result] += 1;
     s.pointsEarned += credit;
     s.totalTimeMs += elapsedMs;
     s.lastResult = result;
+    s.lastStudyAidUsed = !!studyAidUsed;
     s.lastAnswered = Date.now();
-    queueSyncOp('question_answer', { qid, result, credit, elapsedMs, at:s.lastAnswered });
+    queueSyncOp('question_answer', { qid, result, credit, elapsedMs, studyAidUsed:!!studyAidUsed, at:s.lastAnswered });
   }
 
   function selectedFromForm() {
@@ -2287,7 +2300,7 @@
 
   function openGlossaryEntry(entryOrId, source = 'other') {
     flushQuestionTime();
-    markAnalyticsAssist('glossary');
+    if (source === 'question') markAnalyticsAssist('glossary');
     const entry = typeof entryOrId === 'string' ? glossaryById.get(entryOrId) : entryOrId;
     if (!entry || !dom.glossaryTermDialog) return;
     queueGlossaryAnalytics(entry, source);
@@ -2465,8 +2478,9 @@
     entry.result = result;
     entry.credit = credit;
     const attemptNumber = (state.stats[q.id]?.attempts || 0) + 1;
+    const studyAidUsed = currentStudyAidUsed();
     queueAnswerAnalytics({ q, selected, result, credit, elapsedMs: entry.elapsedMs || 0, attemptNumber });
-    updateQuestionStats(q.id, result, credit, entry.elapsedMs || 0);
+    updateQuestionStats(q.id, result, credit, entry.elapsedMs || 0, studyAidUsed);
     saveState();
     render();
   }
@@ -2704,7 +2718,7 @@
       if (existingIndex >= 0) {
         state.study.index = existingIndex;
       } else {
-        const entry = { qid, selected: [], answered: false, result: null, credit: 0, elapsedMs: 0 };
+        const entry = { qid, selected: [], answered: false, result: null, credit: 0, elapsedMs: 0, studyAidUsed: false };
         const insertAt = Math.min(state.study.history.length, Math.max(0, state.study.index + 1));
         state.study.history.splice(insertAt, 0, entry);
         state.study.index = insertAt;
@@ -2817,7 +2831,7 @@
     essayModeActive = false;
     const order = shuffle(QUESTIONS.map(q => q.id));
     const items = {};
-    order.forEach(id => { items[id] = { viewed: false, selected: [], answered: false, result: null, credit: 0, elapsedMs: 0 }; });
+    order.forEach(id => { items[id] = { viewed: false, selected: [], answered: false, result: null, credit: 0, elapsedMs: 0, studyAidUsed: false }; });
     const now = Date.now();
     state.activeTest = { id: `test-${now}`, order, index: 0, startedAt: now, endTime: now + TEST_DURATION_MS, items };
     mode = 'test';
@@ -3855,6 +3869,7 @@
     const page = courseNotePage(ref, docKey);
     if (!doc || !page) return;
     const question = kind === 'question' ? questionById.get(Number(id)) : null;
+    if (question && question.id === currentQuestion()?.id && !currentEntry()?.answered && !dom.questionReviewDialog?.open) markAnalyticsAssist('notes');
     queueResourceAnalytics({
       resourceType:'notes',
       resourceId:`${docKey}:p${page}`,
@@ -4097,7 +4112,7 @@
     dom.materialsEssaySearchClear?.classList.toggle('hidden', !term);
   }
 
-  function openMaterialsEssay(essayId) {
+  function openMaterialsEssay(essayId, factId = '') {
     const essay = ESSAY_BANK.find(item => item.id === essayId);
     if (!essay || mode === 'test') return;
     if (dom.materialsDialog?.open) dom.materialsDialog.close();
@@ -4106,6 +4121,14 @@
     if (dom.essayLibrarySearch) dom.essayLibrarySearch.value = essay.title;
     renderEssayLibrary(essay.title);
     if (!dom.essayLibraryDialog.open) dom.essayLibraryDialog.showModal();
+    if (factId) {
+      requestAnimationFrame(() => {
+        const point = dom.essayLibraryList?.querySelector(`[data-essay-library-fact="${CSS.escape(String(factId))}"]`);
+        const details = point?.closest('details');
+        if (details) details.open = true;
+        point?.scrollIntoView({ block:'center', behavior:'auto' });
+      });
+    }
   }
 
   function launchMaterialsQuestionSearch() {
@@ -5381,7 +5404,7 @@
       if (!term) return;
       e.preventDefault();
       e.stopPropagation();
-      openGlossaryEntry(term.dataset.glossaryId, term.closest('#glossaryList') ? 'materials' : (term.closest('#essayLibraryDialog, #essayPracticeMain') ? 'other' : 'question'));
+      openGlossaryEntry(term.dataset.glossaryId, term.closest('#glossaryList') ? 'materials' : (term.closest('#essayLibraryDialog, #essayPracticeMain, #questionReviewDialog') ? 'other' : 'question'));
     }, true);
     document.addEventListener('keydown', e => {
       if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -5396,7 +5419,7 @@
       if (!term) return;
       e.preventDefault();
       e.stopPropagation();
-      openGlossaryEntry(term.dataset.glossaryId, term.closest('#glossaryList') ? 'materials' : (term.closest('#essayLibraryDialog, #essayPracticeMain') ? 'other' : 'question'));
+      openGlossaryEntry(term.dataset.glossaryId, term.closest('#glossaryList') ? 'materials' : (term.closest('#essayLibraryDialog, #essayPracticeMain, #questionReviewDialog') ? 'other' : 'question'));
     }, true);
     dom.closeGlossaryTerm?.addEventListener('click', () => { stopGlossaryPronunciation({ resumeCourseAudio: true }); dom.glossaryTermDialog.close(); });
     dom.glossarySpeakBtn?.addEventListener('click', playActiveGlossaryEntry);
@@ -5929,7 +5952,10 @@
     list.innerHTML = notificationInboxCache.map(item => {
       const read = !!item.readAt, archived = !!item.archivedAt;
       const actionUrl = safeNotificationUrl(item.action?.url);
-      const action = actionUrl ? `<a href="${escapeHtml(actionUrl)}" target="_blank" rel="noopener" data-notification-open="${escapeHtml(item.id)}">${escapeHtml(item.action?.label || 'Open')}</a>` : '';
+      const issueDetails = item.kind === 'issue_resolved' && item.contentType && item.contentId;
+      const action = issueDetails
+        ? `<button class="secondary" type="button" data-notification-details="${escapeHtml(item.id)}">${escapeHtml(item.action?.label || 'View details')}</button>`
+        : (actionUrl ? `<a href="${escapeHtml(actionUrl)}" target="_blank" rel="noopener" data-notification-open="${escapeHtml(item.id)}">${escapeHtml(item.action?.label || 'Open')}</a>` : '');
       const kind = String(item.kind || 'notification').replaceAll('_',' ');
       return `<article class="notification-item ${read ? '' : 'unread'} ${archived ? 'archived' : ''}">
         <div class="notification-item-head"><div><span class="notification-item-kind">${escapeHtml(kind)}</span><br><strong>${escapeHtml(item.title || 'SCP Study')}</strong></div><span class="notification-item-meta">${escapeHtml(new Date(item.createdAt).toLocaleString())}</span></div>
@@ -5989,6 +6015,33 @@
     const dialog = el('notificationInboxDialog');
     if (dialog && !dialog.open) dialog.showModal();
     void loadNotificationInbox();
+  }
+
+  function openResolvedNotificationDetails(id) {
+    const item = notificationInboxCache.find(notification => String(notification?.id || '') === String(id || ''));
+    if (!item) return false;
+    if (item.contentType === 'question') {
+      const qid = Number(item.contentId);
+      if (!Number.isInteger(qid) || !questionById.has(qid)) return false;
+      dom.notificationInboxDialog?.close();
+      openQuestionReviewAll(qid);
+      return true;
+    }
+    if (item.contentType === 'essay_prompt') {
+      const essay = ESSAY_BANK.find(candidate => String(candidate.id) === String(item.contentId));
+      if (!essay || mode === 'test') return false;
+      dom.notificationInboxDialog?.close();
+      openMaterialsEssay(essay.id);
+      return true;
+    }
+    if (item.contentType === 'essay_pairing') {
+      const essay = ESSAY_BANK.find(candidate => candidate.facts?.some(fact => String(fact.id) === String(item.contentId)));
+      if (!essay || mode === 'test') return false;
+      dom.notificationInboxDialog?.close();
+      openMaterialsEssay(essay.id, item.contentId);
+      return true;
+    }
+    return false;
   }
 
   async function handleNotificationBellClick() {
@@ -6220,6 +6273,13 @@
       if (read) { void updateNotificationState(read.dataset.notificationRead, { read:read.dataset.readValue === '1' }); return; }
       const archive = event.target.closest('[data-notification-archive]');
       if (archive) { void updateNotificationState(archive.dataset.notificationArchive, { archived:archive.dataset.archiveValue === '1' }); return; }
+      const details = event.target.closest('[data-notification-details]');
+      if (details) {
+        const id = details.dataset.notificationDetails;
+        if (openResolvedNotificationDetails(id)) void updateNotificationState(id, { read:true });
+        else showAppToast(mode === 'test' ? 'Exit the practice test to open these details.' : 'That reported content is no longer available in this Zman.');
+        return;
+      }
       const open = event.target.closest('[data-notification-open]');
       if (open) void updateNotificationState(open.dataset.notificationOpen, { read:true });
     });

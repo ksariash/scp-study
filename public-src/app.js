@@ -15,7 +15,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 66;
+  const APP_VERSION = 67;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -234,7 +234,7 @@
     glossaryTermDialog: el('glossaryTermDialog'), closeGlossaryTerm: el('closeGlossaryTerm'), glossaryTermTitle: el('glossaryTermTitle'), glossaryTermPronunciation: el('glossaryTermPronunciation'), glossaryTermIpa: el('glossaryTermIpa'), glossaryTermDefinition: el('glossaryTermDefinition'), glossarySpeakBtn: el('glossarySpeakBtn'), glossaryTermCategoriesWrap: el('glossaryTermCategoriesWrap'), glossaryTermCategories: el('glossaryTermCategories'),
     contentFeedbackDialog: el('contentFeedbackDialog'), closeContentFeedback: el('closeContentFeedback'), cancelContentFeedback: el('cancelContentFeedback'), submitContentFeedback: el('submitContentFeedback'), contentFeedbackType: el('contentFeedbackType'), contentFeedbackTitle: el('contentFeedbackTitle'), contentFeedbackPreview: el('contentFeedbackPreview'), contentFeedbackDetails: el('contentFeedbackDetails'), contentFeedbackCount: el('contentFeedbackCount'), contentFeedbackStatus: el('contentFeedbackStatus'),
     appVersionFooter: el('appVersionFooter'), appToast: el('appToast'), updatePullIndicator: el('updatePullIndicator'),
-    pdfViewerDialog: el('pdfViewerDialog'), pdfViewerBackBtn: el('pdfViewerBackBtn'), pdfViewerTitle: el('pdfViewerTitle'), pdfViewerJump: el('pdfViewerJump'), pdfViewerShareBtn: el('pdfViewerShareBtn'), pdfViewerPrintBtn: el('pdfViewerPrintBtn'), pdfViewerDownloadBtn: el('pdfViewerDownloadBtn'), pdfViewerBody: el('pdfViewerBody'), pdfViewerStatus: el('pdfViewerStatus'), pdfViewerPages: el('pdfViewerPages'),
+    pdfViewerDialog: el('pdfViewerDialog'), pdfViewerBackBtn: el('pdfViewerBackBtn'), pdfViewerTitle: el('pdfViewerTitle'), pdfViewerJumpPicker: el('pdfViewerJumpPicker'), pdfViewerJump: el('pdfViewerJump'), pdfViewerJumpTrigger: el('pdfViewerJumpTrigger'), pdfViewerJumpMenu: el('pdfViewerJumpMenu'), pdfViewerShareBtn: el('pdfViewerShareBtn'), pdfViewerPrintBtn: el('pdfViewerPrintBtn'), pdfViewerDownloadBtn: el('pdfViewerDownloadBtn'), pdfViewerBody: el('pdfViewerBody'), pdfViewerStatus: el('pdfViewerStatus'), pdfViewerPages: el('pdfViewerPages'),
     chaburaDialog: el('chaburaDialog'), chaburaDialogLocation: el('chaburaDialogLocation'), chaburaDialogSelect: el('chaburaDialogSelect'), saveChaburaDialogBtn: el('saveChaburaDialogBtn')
   };
 
@@ -3438,9 +3438,11 @@
   function buildCourseNoteJump(docKey, selectedValue = '') {
     if (!dom.pdfViewerJump) return;
     const isNotes = docKey === 'compact' || docKey === 'full';
-    dom.pdfViewerJump.classList.toggle('hidden', !isNotes);
+    dom.pdfViewerJumpPicker?.classList.toggle('hidden', !isNotes);
     if (!isNotes) {
       dom.pdfViewerJump.innerHTML = '';
+      if (dom.pdfViewerJumpMenu) dom.pdfViewerJumpMenu.innerHTML = '';
+      closePdfViewerJumpMenu();
       return;
     }
     const options = ['<option value="">Jump to question or essay…</option>'];
@@ -3461,6 +3463,60 @@
     options.push('</optgroup>');
     dom.pdfViewerJump.innerHTML = options.join('');
     if (selectedValue) dom.pdfViewerJump.value = selectedValue;
+    if (dom.pdfViewerJumpMenu) {
+      dom.pdfViewerJumpMenu.innerHTML = '';
+      [...dom.pdfViewerJump.querySelectorAll('optgroup')].forEach(group => {
+        const section = document.createElement('div');
+        section.className = 'pdf-viewer-jump-section';
+        const heading = document.createElement('strong');
+        heading.className = 'pdf-viewer-jump-section-title';
+        heading.textContent = group.label;
+        section.append(heading);
+        [...group.querySelectorAll('option')].forEach(option => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'pdf-viewer-jump-option';
+          button.dataset.pdfJump = option.value;
+          button.dataset.page = option.dataset.page || '';
+          button.setAttribute('role', 'menuitemradio');
+          button.setAttribute('aria-checked', 'false');
+          button.textContent = option.textContent;
+          section.append(button);
+        });
+        dom.pdfViewerJumpMenu.append(section);
+      });
+    }
+    syncPdfViewerJumpSelection(dom.pdfViewerJump.value || '');
+  }
+
+  function syncPdfViewerJumpSelection(value = '') {
+    if (!dom.pdfViewerJump) return;
+    dom.pdfViewerJump.value = value;
+    const selected = dom.pdfViewerJump.selectedOptions?.[0];
+    if (dom.pdfViewerJumpTrigger) {
+      dom.pdfViewerJumpTrigger.textContent = selected?.value ? selected.textContent : 'Jump to question or essay…';
+      dom.pdfViewerJumpTrigger.title = selected?.value ? selected.textContent : 'Jump to question or essay';
+    }
+    dom.pdfViewerJumpMenu?.querySelectorAll('[data-pdf-jump]').forEach(button => {
+      const active = button.dataset.pdfJump === value;
+      button.classList.toggle('selected', active);
+      button.setAttribute('aria-checked', active ? 'true' : 'false');
+    });
+  }
+
+  function closePdfViewerJumpMenu({ restoreFocus = false } = {}) {
+    if (!dom.pdfViewerJumpMenu || !dom.pdfViewerJumpTrigger) return;
+    dom.pdfViewerJumpMenu.classList.add('hidden');
+    dom.pdfViewerJumpTrigger.setAttribute('aria-expanded', 'false');
+    if (restoreFocus) dom.pdfViewerJumpTrigger.focus({ preventScroll:true });
+  }
+
+  function openPdfViewerJumpMenu() {
+    if (!dom.pdfViewerJumpMenu || !dom.pdfViewerJumpTrigger) return;
+    dom.pdfViewerJumpMenu.classList.remove('hidden');
+    dom.pdfViewerJumpTrigger.setAttribute('aria-expanded', 'true');
+    const selected = dom.pdfViewerJumpMenu.querySelector('.pdf-viewer-jump-option.selected');
+    (selected || dom.pdfViewerJumpMenu.querySelector('.pdf-viewer-jump-option'))?.focus({ preventScroll:true });
   }
 
   function pdfTargetText(selection) {
@@ -3737,6 +3793,7 @@
     try { viewer?.loadingTask?.destroy?.(); } catch (_) {}
     try { viewer?.pdf?.destroy?.(); } catch (_) {}
     if (dom.pdfViewerPages) dom.pdfViewerPages.innerHTML = '';
+    closePdfViewerJumpMenu();
     setPdfViewerStatus('');
     if (closeDialog && dom.pdfViewerDialog?.open) dom.pdfViewerDialog.close();
   }
@@ -4816,7 +4873,47 @@
     dom.pdfViewerJump?.addEventListener('change', e => {
       const option = e.currentTarget.selectedOptions?.[0];
       const page = Number(option?.dataset?.page);
+      syncPdfViewerJumpSelection(e.currentTarget.value || '');
       if (page && activePdfViewer) void scrollPdfViewerTo(page, e.currentTarget.value || '');
+    });
+    dom.pdfViewerJumpTrigger?.addEventListener('click', () => {
+      if (dom.pdfViewerJumpMenu?.classList.contains('hidden')) openPdfViewerJumpMenu();
+      else closePdfViewerJumpMenu();
+    });
+    dom.pdfViewerJumpTrigger?.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowDown') return;
+      event.preventDefault();
+      openPdfViewerJumpMenu();
+    });
+    dom.pdfViewerJumpMenu?.addEventListener('click', event => {
+      const button = event.target.closest?.('[data-pdf-jump]');
+      if (!button) return;
+      const value = button.dataset.pdfJump || '';
+      const page = Number(button.dataset.page);
+      syncPdfViewerJumpSelection(value);
+      closePdfViewerJumpMenu({ restoreFocus:true });
+      if (page && activePdfViewer) void scrollPdfViewerTo(page, value);
+    });
+    dom.pdfViewerJumpMenu?.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closePdfViewerJumpMenu({ restoreFocus:true });
+        return;
+      }
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp' && event.key !== 'Home' && event.key !== 'End') return;
+      const buttons = [...dom.pdfViewerJumpMenu.querySelectorAll('[data-pdf-jump]')];
+      const index = buttons.indexOf(document.activeElement);
+      if (index < 0) return;
+      event.preventDefault();
+      const nextIndex = event.key === 'Home' ? 0
+        : event.key === 'End' ? buttons.length - 1
+        : event.key === 'ArrowDown' ? Math.min(buttons.length - 1, index + 1)
+        : Math.max(0, index - 1);
+      buttons[nextIndex]?.focus({ preventScroll:true });
+    });
+    document.addEventListener('pointerdown', event => {
+      if (dom.pdfViewerJumpMenu?.classList.contains('hidden')) return;
+      if (!dom.pdfViewerJumpPicker?.contains(event.target)) closePdfViewerJumpMenu();
     });
 
     dom.statsBtn.addEventListener('click', openStats);

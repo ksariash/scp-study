@@ -29,10 +29,6 @@
           <span class="timer-label" id="timerLabel">Session</span>
           <strong id="mainTimer">00:00:00</strong>
         </div>
-        <button class="notification-icon-btn" id="notificationsBtn" type="button" aria-label="Notifications" title="Notifications">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z"/><path d="M10 21h4"/></svg>
-          <span class="notification-alert hidden" id="notificationBadge" aria-hidden="true">!</span>
-        </button>
       </div>
       <div class="topbar-right">
         <button class="icon-btn" id="categoriesBtn" type="button" aria-label="Filter categories">Categories</button>
@@ -40,6 +36,10 @@
         <button class="icon-btn" id="statsBtn" type="button">Stats</button>
         <button class="icon-btn essay-mode-btn" id="essayBtn" type="button">Essay</button>
         <button class="primary compact" id="testBtn" type="button">Test</button>
+        <button class="notification-icon-btn" id="notificationsBtn" type="button" aria-label="Notifications" title="Notifications">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z"/><path d="M10 21h4"/></svg>
+          <span class="notification-alert hidden" id="notificationBadge" aria-hidden="true">!</span>
+        </button>
       </div>
     </header>
 
@@ -949,7 +949,11 @@
       <nav class="pdf-viewer-nav" aria-label="PDF viewer controls">
         <button class="pdf-viewer-btn pdf-viewer-back" type="button" id="pdfViewerBackBtn">← Back</button>
         <strong class="pdf-viewer-title" id="pdfViewerTitle">PDF</strong>
-        <select class="pdf-viewer-jump hidden" id="pdfViewerJump" aria-label="Jump to a question or essay"></select>
+        <div class="pdf-viewer-jump-picker hidden" id="pdfViewerJumpPicker">
+          <select class="pdf-viewer-jump" id="pdfViewerJump" aria-label="Jump to a question or essay"></select>
+          <button class="pdf-viewer-jump-trigger" id="pdfViewerJumpTrigger" type="button" aria-haspopup="menu" aria-expanded="false">Jump to question or essay…</button>
+          <div class="pdf-viewer-jump-menu hidden" id="pdfViewerJumpMenu" role="menu" aria-label="Jump to a question or essay"></div>
+        </div>
         <div class="pdf-viewer-actions">
           <button class="pdf-viewer-btn pdf-resource-icon-btn" type="button" id="pdfViewerPrintBtn" aria-label="Print PDF" title="Print"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z"/></svg></button>
           <button class="pdf-viewer-btn pdf-resource-icon-btn" type="button" id="pdfViewerShareBtn" aria-label="Share PDF" title="Share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 12v7h14v-7"/></svg></button>

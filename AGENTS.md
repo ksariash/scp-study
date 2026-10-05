@@ -165,7 +165,7 @@ Prefer the interface itself over explanatory prose. If a heading, label, selecte
 
 Settings should be concise. In particular, Zman and chabura controls do not need prose explaining that they select a Zman/chabura. Reserve status text for a real state change, warning, error, or confirmation.
 
-Use familiar icons instead of text for compact utility actions when the icon is conventional and unambiguous. Icon-only buttons must have an accessible `aria-label` and a useful `title`. The notification control is a small bell adjacent to the session timer; unread state is a compact alert mark, not a large labeled card.
+Use familiar icons instead of text for compact utility actions when the icon is conventional and unambiguous. Icon-only buttons must have an accessible `aria-label` and a useful `title`. On desktop, the notification control is the last topbar action immediately to the right of Test, while the session timer is centered independently in the app header. On compact/mobile layouts, the timer and bell remain a top-right cluster. Unread state is a compact alert mark, not a large labeled card.
 
 All dismissible dialogs should close when the user clicks the backdrop/outside the dialog box. Keep this behavior in the shared dialog lifecycle rather than implementing one-off backdrop handlers.
 
@@ -180,7 +180,7 @@ Small text must keep normal-text contrast, active icon controls must remain dist
 
 Summer 2026 review audio is canonical at `audio/2026-summer/<filename>`. Because production playback failed after the migration, the Worker temporarily keeps read-only compatibility probes for a literal-leading-slash key and the legacy flat `audio/<filename>` key. Remove those probes only after a live production HEAD/Range playback check confirms the canonical objects and metadata.
 
-The topbar treats the session timer and notification bell as one visual cluster. On compact layouts the cluster occupies the top-right cell; never place the bell as an independent grid item that can wrap beneath the main navigation.
+The topbar separates desktop and compact placement. On desktop the session timer is centered relative to the full app header, and the notification bell follows Test at the far right. On compact layouts the timer and bell form one top-right visual cluster; never let the bell wrap beneath the main navigation.
 
 
 ## Notification permission UX
@@ -203,7 +203,7 @@ The bottom reminder summary comes from Analytics `/api/reminders/next`, not dupl
 
 Mobile time/select controls must remain within their card even when WebKit gives native controls a large intrinsic width.
 
-The main question picker keeps the native `<select>` on coarse-pointer/mobile devices, but fine-pointer desktop uses the app-rendered numbered menu. This avoids platform/native long-select popup rendering and hidden-overflow quirks (notably Firefox) while retaining the mobile system picker. Keep both controls synchronized to the current question.
+The main question picker and the in-PDF question/essay jump picker keep native `<select>` controls on coarse-pointer/mobile devices, but fine-pointer desktop uses app-rendered menus. This avoids platform/native long-select popup rendering and hidden-overflow quirks (notably Firefox) while retaining mobile system pickers. Keep each native/custom pair synchronized to the current selection.
 
 
 ## Reminder preference model

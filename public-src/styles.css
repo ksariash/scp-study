@@ -3257,6 +3257,7 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
   color:#182744;
   font-size:.84rem;
 }
+.pdf-viewer-jump-picker{position:relative;width:100%;min-width:0}
 .pdf-viewer-jump{
   width:100%;
   min-width:0;
@@ -3270,6 +3271,28 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
   font-size:.72rem;
   font-weight:700;
   text-overflow:ellipsis;
+}
+.pdf-viewer-jump-trigger,.pdf-viewer-jump-menu{display:none}
+@media(hover:hover) and (pointer:fine){
+  .pdf-viewer-jump-picker .pdf-viewer-jump{display:none}
+  .pdf-viewer-jump-trigger{
+    display:flex;align-items:center;width:100%;min-width:0;min-height:36px;padding:7px 32px 7px 10px;
+    border:1px solid #d3deed;border-radius:10px;background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20'%3E%3Cpath d='M5.5 7.5 10 12l4.5-4.5' fill='none' stroke='%2331558f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 11px center / 12px 12px,
+      #fff;color:#253a60;font:inherit;font-size:.72rem;font-weight:700;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  }
+  .pdf-viewer-jump-trigger:hover{border-color:#adc1de;background-color:#f8fbff}
+  .pdf-viewer-jump-trigger:focus-visible{outline:3px solid rgba(49,86,183,.24);outline-offset:2px}
+  .pdf-viewer-jump-menu:not(.hidden){
+    position:absolute;z-index:8;top:calc(100% + 7px);right:0;display:grid;gap:9px;
+    width:min(650px,calc(100vw - 40px));max-height:min(520px,65vh);overflow:auto;scrollbar-gutter:stable;
+    padding:10px;border:1px solid #c8d7ef;border-radius:14px;background:#fff;box-shadow:0 18px 48px rgba(20,45,90,.2)
+  }
+  .pdf-viewer-jump-section{display:grid;gap:4px;min-width:0}
+  .pdf-viewer-jump-section-title{position:sticky;top:-10px;z-index:1;margin:-1px -2px 2px;padding:8px 7px 6px;background:#fff;color:#60718a;font-size:.64rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+  .pdf-viewer-jump-option{width:100%;min-width:0;padding:8px 9px;border:1px solid transparent;border-radius:9px;background:#f7f9fc;color:#314764;font:inherit;font-size:.7rem;font-weight:720;line-height:1.35;text-align:left}
+  .pdf-viewer-jump-option:hover,.pdf-viewer-jump-option:focus-visible{border-color:#b5c9e8;background:#eef4ff;color:#234382;outline:0}
+  .pdf-viewer-jump-option.selected{border-color:#7597d3;background:#dfeaff;color:#173e88;box-shadow:inset 0 0 0 1px rgba(49,86,183,.08)}
 }
 .pdf-viewer-actions{display:grid;grid-template-columns:repeat(3,minmax(0,auto));gap:6px;min-width:0}
 .pdf-viewer-body{
@@ -3369,7 +3392,8 @@ button,a,[role="button"],select,input,label{touch-action:manipulation}
   }
   .pdf-viewer-back{grid-column:1}
   .pdf-viewer-title{grid-column:2;font-size:.8rem}
-  .pdf-viewer-jump{grid-column:1 / -1;grid-row:2;min-height:34px;font-size:.68rem}
+  .pdf-viewer-jump-picker{grid-column:1 / -1;grid-row:2}
+  .pdf-viewer-jump{min-height:34px;font-size:.68rem}
   .pdf-viewer-actions{grid-column:1 / -1;grid-row:3;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
   .pdf-viewer-actions .pdf-viewer-btn{width:100%;min-width:0;min-height:34px;padding:6px 5px;font-size:.68rem}
   .pdf-viewer-body{padding:7px 5px calc(12px + env(safe-area-inset-bottom))}
@@ -3979,6 +4003,36 @@ body.essay-mode-active.mini-audio-visible .question-search-fab{
 @media(max-width:520px){
   #materialsPanelDownloads .materials-section-head{flex-direction:column}
   .pdf-library-actions{width:100%;align-items:center;justify-content:space-between;flex-direction:row}
+}
+
+/* v67: centered desktop session timer and notification placement */
+@media (min-width:781px) {
+  .timer-actions{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    z-index:2;
+  }
+  .topbar-right{flex-wrap:nowrap}
+}
+
+@media (max-width:780px) {
+  .timer-actions{margin-right:51px}
+  .topbar-right{position:static}
+  .topbar-right > #notificationsBtn{
+    position:absolute;
+    top:10px;
+    right:12px;
+    width:36px;
+    min-width:36px;
+    height:36px;
+    min-height:36px;
+    padding:0;
+  }
+}
+@media (max-width:390px) {
+  .topbar-right > #notificationsBtn{right:9px}
 }
 
 @media (pointer:coarse) {

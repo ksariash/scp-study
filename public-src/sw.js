@@ -1,5 +1,5 @@
-const APP_VERSION = 65;
-const CACHE_NAME = 'scp-study-v65';
+const APP_VERSION = 66;
+const CACHE_NAME = 'scp-study-v66';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v3';
 const DOCUMENT_CACHE_NAME = 'scp-study-documents-v2';
 const APP_SHELL = [

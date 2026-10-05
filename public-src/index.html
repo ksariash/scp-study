@@ -55,7 +55,11 @@
       <article class="question-card" id="questionCard">
         <div class="question-topline">
           <div>
-            <select class="pill question-number-jump" id="questionNumber" aria-label="Go to question"></select>
+            <span class="question-number-picker" id="questionNumberPicker">
+              <select class="pill question-number-jump" id="questionNumber" aria-label="Go to question"></select>
+              <button class="pill question-number-trigger" id="questionNumberTrigger" type="button" aria-haspopup="menu" aria-expanded="false">Question 1</button>
+              <span class="question-number-menu hidden" id="questionNumberMenu" role="menu" aria-label="Go to question"></span>
+            </span>
             <span class="pill subtle" id="questionCategory">Category</span>
           </div>
           <div class="question-top-actions">

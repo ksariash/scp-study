@@ -15,7 +15,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 65;
+  const APP_VERSION = 66;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -217,7 +217,7 @@
     notificationInboxDialog: el('notificationInboxDialog'),
     categoriesBtn: el('categoriesBtn'), materialsBtn: el('materialsBtn'), statsBtn: el('statsBtn'), essayBtn: el('essayBtn'), testBtn: el('testBtn'), questionSearchFab: el('questionSearchFab'), installBtn: el('installBtn'), installGuideDialog: el('installGuideDialog'), closeInstallGuide: el('closeInstallGuide'),
     testProgressWrap: el('testProgressWrap'), testQuestionCount: el('testQuestionCount'), testAnsweredCount: el('testAnsweredCount'), testProgressFill: el('testProgressFill'),
-    questionNumber: el('questionNumber'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), questionNoteLinks: el('questionNoteLinks'), answerForm: el('answerForm'),
+    questionNumber: el('questionNumber'), questionNumberPicker: el('questionNumberPicker'), questionNumberTrigger: el('questionNumberTrigger'), questionNumberMenu: el('questionNumberMenu'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), questionNoteLinks: el('questionNoteLinks'), answerForm: el('answerForm'),
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     questionCard: el('questionCard'), prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoriesDialogTitle: el('categoriesDialogTitle'), categoriesDialogDescription: el('categoriesDialogDescription'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
@@ -914,7 +914,10 @@
     dom.syncDeviceList.innerHTML='';if(dom.syncDevicesStatus)dom.syncDevicesStatus.textContent='Loading…';
     try{
       const result=await syncRequest('/devices');
-      dom.syncDeviceList.innerHTML=(result.devices||[]).map(device=>`<div class="sync-device-row"><div class="sync-device-copy"><strong>${escapeHtml(device.name||'Linked device')}${device.current?' · This device':''}</strong><span>${escapeHtml(formatDeviceSeen(device.lastSeenAt))}</span></div>${device.current?'':`<button class="secondary settings-action-btn" type="button" data-unlink-device="${escapeHtml(device.deviceId)}">Unlink</button>`}</div>`).join('')||'<div class="empty-state">No linked devices found.</div>';
+      dom.syncDeviceList.innerHTML=(result.devices||[]).map(device=>{
+        const name=String(device.name||'Linked device');
+        return `<div class="sync-device-row"><div class="sync-device-copy"><strong>${escapeHtml(name)}${device.current?' · This device':''}</strong><span>${escapeHtml(formatDeviceSeen(device.lastSeenAt))}</span></div>${device.current?'':`<button class="secondary sync-device-unlink-btn" type="button" data-unlink-device="${escapeHtml(device.deviceId)}" aria-label="Unlink ${escapeHtml(name)}" title="Unlink device"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 15.5 15.5 8.5M7.2 11.3 5.4 13.1a4 4 0 0 0 5.7 5.6l1.7-1.7M16.8 12.7l1.8-1.8a4 4 0 0 0-5.7-5.6L11.2 7M4 4l16 16"/></svg></button>`}</div>`;
+      }).join('')||'<div class="empty-state">No linked devices found.</div>';
       if(dom.unlinkOtherDevicesBtn)dom.unlinkOtherDevicesBtn.disabled=(result.devices||[]).length<=1;
       if(dom.syncDevicesStatus)dom.syncDevicesStatus.textContent=`${(result.devices||[]).length} linked device${(result.devices||[]).length===1?'':'s'}`;
     }catch(error){if(dom.syncDevicesStatus)dom.syncDevicesStatus.textContent='Could not load devices: '+error.message;}
@@ -2475,11 +2478,9 @@
       dom.testQuestionCount.textContent = `${t.index + 1}/${QUESTIONS.length}`;
       dom.testAnsweredCount.textContent = `${answered} answered`;
       dom.testProgressFill.style.width = `${((t.index + 1) / QUESTIONS.length) * 100}%`;
-      dom.questionNumber.value = String(q.id);
-      dom.questionNumber.setAttribute('aria-label', `Question ${q.id}. Choose another question.`);
+      setQuestionNumberPicker(q.id);
     } else {
-      dom.questionNumber.value = String(q.id);
-      dom.questionNumber.setAttribute('aria-label', `Question ${q.id}. Choose another question.`);
+      setQuestionNumberPicker(q.id);
     }
     dom.questionCategory.textContent = q.category;
     setGlossaryText(dom.questionPrompt, q.prompt);
@@ -2590,6 +2591,7 @@
   function populateQuestionNumberDropdown() {
     if (!dom.questionNumber || dom.questionNumber.options.length === QUESTIONS.length) return;
     dom.questionNumber.textContent = '';
+    if (dom.questionNumberMenu) dom.questionNumberMenu.textContent = '';
     QUESTIONS
       .slice()
       .sort((left, right) => Number(left.id) - Number(right.id))
@@ -2598,7 +2600,52 @@
         option.value = String(question.id);
         option.textContent = `Question ${question.id}`;
         dom.questionNumber.append(option);
+        if (dom.questionNumberMenu) {
+          const menuButton = document.createElement('button');
+          menuButton.type = 'button';
+          menuButton.className = 'question-number-option';
+          menuButton.dataset.questionNumber = String(question.id);
+          menuButton.setAttribute('role', 'menuitemradio');
+          menuButton.setAttribute('aria-checked', 'false');
+          menuButton.setAttribute('aria-label', `Question ${question.id}`);
+          menuButton.title = `Question ${question.id}`;
+          menuButton.textContent = String(question.id);
+          dom.questionNumberMenu.append(menuButton);
+        }
       });
+  }
+
+  function closeQuestionNumberMenu({ restoreFocus = false } = {}) {
+    if (!dom.questionNumberMenu || !dom.questionNumberTrigger) return;
+    dom.questionNumberMenu.classList.add('hidden');
+    dom.questionNumberTrigger.setAttribute('aria-expanded', 'false');
+    if (restoreFocus) dom.questionNumberTrigger.focus({ preventScroll:true });
+  }
+
+  function openQuestionNumberMenu() {
+    if (!dom.questionNumberMenu || !dom.questionNumberTrigger) return;
+    dom.questionNumberMenu.classList.remove('hidden');
+    dom.questionNumberTrigger.setAttribute('aria-expanded', 'true');
+    const selected = dom.questionNumberMenu.querySelector('.question-number-option.selected');
+    selected?.focus({ preventScroll:true });
+  }
+
+  function setQuestionNumberPicker(questionId) {
+    const value = String(questionId);
+    const label = `Question ${questionId}`;
+    if (dom.questionNumber) {
+      dom.questionNumber.value = value;
+      dom.questionNumber.setAttribute('aria-label', `${label}. Choose another question.`);
+    }
+    if (dom.questionNumberTrigger) {
+      dom.questionNumberTrigger.textContent = label;
+      dom.questionNumberTrigger.setAttribute('aria-label', `${label}. Choose another question.`);
+    }
+    dom.questionNumberMenu?.querySelectorAll('.question-number-option').forEach(button => {
+      const selected = button.dataset.questionNumber === value;
+      button.classList.toggle('selected', selected);
+      button.setAttribute('aria-checked', selected ? 'true' : 'false');
+    });
   }
 
   function goToQuestionNumber(rawValue) {
@@ -2862,10 +2909,15 @@
 
   function closeOnBackdrop(dialog) {
     if (!dialog) return;
+    let pointerStartedOnBackdrop = false;
+    dialog.addEventListener('pointerdown', event => {
+      pointerStartedOnBackdrop = event.target === dialog;
+    });
+    dialog.addEventListener('pointercancel', () => { pointerStartedOnBackdrop = false; });
     dialog.addEventListener('click', event => {
-      const rect = dialog.getBoundingClientRect();
-      const inside = rect.top <= event.clientY && event.clientY <= rect.bottom && rect.left <= event.clientX && event.clientX <= rect.right;
-      if (!inside) dialog.close();
+      const shouldClose = pointerStartedOnBackdrop && event.target === dialog;
+      pointerStartedOnBackdrop = false;
+      if (shouldClose) dialog.close();
     });
   }
 
@@ -4625,6 +4677,47 @@
       const currentId = currentQuestion()?.id;
       const nextId = Number(event.currentTarget.value);
       if (nextId && nextId !== currentId) goToQuestionNumber(nextId);
+    });
+    dom.questionNumberTrigger?.addEventListener('click', () => {
+      if (dom.questionNumberMenu?.classList.contains('hidden')) openQuestionNumberMenu();
+      else closeQuestionNumberMenu();
+    });
+    dom.questionNumberTrigger?.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowDown') return;
+      event.preventDefault();
+      openQuestionNumberMenu();
+    });
+    dom.questionNumberMenu?.addEventListener('click', event => {
+      const button = event.target.closest?.('[data-question-number]');
+      if (!button) return;
+      const currentId = currentQuestion()?.id;
+      const nextId = Number(button.dataset.questionNumber);
+      closeQuestionNumberMenu({ restoreFocus:true });
+      if (nextId && nextId !== currentId) goToQuestionNumber(nextId);
+    });
+    dom.questionNumberMenu?.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeQuestionNumberMenu({ restoreFocus:true });
+        return;
+      }
+      const buttons = [...dom.questionNumberMenu.querySelectorAll('[data-question-number]')];
+      const index = buttons.indexOf(document.activeElement);
+      if (index < 0) return;
+      let nextIndex = index;
+      if (event.key === 'ArrowRight') nextIndex = Math.min(buttons.length - 1, index + 1);
+      else if (event.key === 'ArrowLeft') nextIndex = Math.max(0, index - 1);
+      else if (event.key === 'ArrowDown') nextIndex = Math.min(buttons.length - 1, index + 6);
+      else if (event.key === 'ArrowUp') nextIndex = Math.max(0, index - 6);
+      else if (event.key === 'Home') nextIndex = 0;
+      else if (event.key === 'End') nextIndex = buttons.length - 1;
+      else return;
+      event.preventDefault();
+      buttons[nextIndex]?.focus({ preventScroll:true });
+    });
+    document.addEventListener('pointerdown', event => {
+      if (dom.questionNumberMenu?.classList.contains('hidden')) return;
+      if (!dom.questionNumberPicker?.contains(event.target)) closeQuestionNumberMenu();
     });
 
     [dom.brandLogo, dom.brandTitle].forEach(node => {

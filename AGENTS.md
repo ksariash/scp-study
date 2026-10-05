@@ -169,6 +169,8 @@ Use familiar icons instead of text for compact utility actions when the icon is 
 
 All dismissible dialogs should close when the user clicks the backdrop/outside the dialog box. Keep this behavior in the shared dialog lifecycle rather than implementing one-off backdrop handlers.
 
+Backdrop dismissal must require the pointer gesture to start and end on the actual `<dialog>` backdrop target. Do not infer backdrop clicks from pointer coordinates alone: Firefox native `<select>` popups can report option-click coordinates outside the dialog and must not close Settings when a selection is made.
+
 Responsive form controls must not overflow their cards. Grid children and inputs/selects should use `min-width: 0`, `max-width: 100%`, and `box-sizing: border-box` where intrinsic mobile control sizing can otherwise escape the container.
 
 Small text must keep normal-text contrast, active icon controls must remain distinguishable even when visually muted, and coarse-pointer layouts should provide generous touch targets for primary utility controls. Honor `prefers-reduced-motion` for CSS motion as well as scripted scrolling.
@@ -200,6 +202,8 @@ Notification Settings uses the concise description: “Get notified on important
 The bottom reminder summary comes from Analytics `/api/reminders/next`, not duplicated holiday calculations in the browser. It should say disabled, today, tomorrow, after Shabbat, or after Yom Tov as appropriate.
 
 Mobile time/select controls must remain within their card even when WebKit gives native controls a large intrinsic width.
+
+The main question picker keeps the native `<select>` on coarse-pointer/mobile devices, but fine-pointer desktop uses the app-rendered numbered menu. This avoids platform/native long-select popup rendering and hidden-overflow quirks (notably Firefox) while retaining the mobile system picker. Keep both controls synchronized to the current question.
 
 
 ## Reminder preference model

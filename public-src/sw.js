@@ -1,6 +1,7 @@
-const APP_VERSION = 63;
-const CACHE_NAME = 'scp-study-v63';
+const APP_VERSION = 64;
+const CACHE_NAME = 'scp-study-v64';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v3';
+const DOCUMENT_CACHE_NAME = 'scp-study-documents-v1';
 const APP_SHELL = [
   './',
   './index.html',
@@ -22,11 +23,6 @@ const APP_SHELL = [
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
   './images/install-scp-study-ios.png',
-  './documents/2026-summer/SCP-Study-Compact-Course-Review.pdf',
-  './documents/2026-summer/SCP-Study-Full-Course-Notes.pdf',
-  './documents/2026-summer/SCP-Study-Cumulative-Test.pdf',
-  './documents/2026-summer/SCP-Study-Cumulative-Test-Answer-Key.pdf',
-  './documents/2026-summer/SCP-Study-Essay-Questions-and-Sample-Answers.pdf',
   './glossary-audio/glossary-nat-bar-nat.mp3',
   './glossary-audio/glossary-taam-keikar.mp3',
   './glossary-audio/glossary-ben-yomo.mp3',
@@ -69,6 +65,7 @@ const APP_SHELL = [
 ];
 
 const AUDIO_PATH_RE = /\.(?:m4a|mp3|mp4|aac|wav|ogg)(?:$|\?)/i;
+const PDF_PATH_RE = /\.pdf(?:$|\?)/i;
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -82,7 +79,7 @@ self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
     for (const key of keys) {
-      if (key === CACHE_NAME || key === AUDIO_CACHE_NAME) continue;
+      if (key === CACHE_NAME || key === AUDIO_CACHE_NAME || key === DOCUMENT_CACHE_NAME) continue;
       await caches.delete(key);
     }
     await self.clients.claim();
@@ -101,6 +98,11 @@ self.addEventListener('message', event => {
 
 function isAudioRequest(request) {
   try { return AUDIO_PATH_RE.test(new URL(request.url).pathname); }
+  catch (_) { return false; }
+}
+
+function isPdfRequest(request) {
+  try { return PDF_PATH_RE.test(new URL(request.url).pathname); }
   catch (_) { return false; }
 }
 
@@ -163,6 +165,16 @@ self.addEventListener('fetch', event => {
   const rangeHeader = event.request.headers.get('range');
   if (rangeHeader && isAudioRequest(event.request)) {
     event.respondWith(handleAudioRangeRequest(event.request));
+    return;
+  }
+
+  if (isPdfRequest(event.request)) {
+    event.respondWith((async () => {
+      const documentCache = await caches.open(DOCUMENT_CACHE_NAME);
+      const cached = await documentCache.match(event.request.url);
+      if (cached) return cached;
+      return fetch(event.request);
+    })());
     return;
   }
 

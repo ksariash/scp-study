@@ -276,6 +276,14 @@ async function readEssays(cohortId) {
   return sandbox.window.ESSAY_PRACTICE_DATA;
 }
 
+async function readGlossary(cohortId) {
+  const source = await readFile(join(ROOT, 'public-src', 'cohorts', cohortId, 'glossary.js'), 'utf8');
+  const sandbox = {};
+  runInNewContext(source + '\n;globalThis.__GLOSSARY_TERMS = GLOSSARY_TERMS;', sandbox);
+  if (!Array.isArray(sandbox.__GLOSSARY_TERMS)) throw new Error('Could not load glossary for cohort ' + cohortId);
+  return sandbox.__GLOSSARY_TERMS;
+}
+
 function addPageFooter(doc, family = 'noto', prefix = 'Page ') {
   const range = doc.bufferedPageRange();
   for (let page = range.start; page < range.start + range.count; page++) {
@@ -599,18 +607,67 @@ function renderEssays(doc, essays) {
   }
 }
 
+function renderGlossary(doc, glossary) {
+  const left = 49;
+  const width = 514;
+  const bottom = 730;
+  let y = 48;
+
+  const addPage = () => {
+    doc.addPage({ size:'LETTER', margin:0 });
+    y = 48;
+  };
+
+  drawMixedParagraph(doc, 'SCP Study - Course Glossary', left, y, {
+    width, size:22, bold:true, color:'#16376e', leading:27
+  });
+  y += 38;
+  drawMixedParagraph(doc, 'Key Hebrew and halachic terms used throughout the course.', left, y, {
+    width, size:9.5, color:'#5f6f86', leading:14
+  });
+  y += 30;
+  doc.moveTo(left, y).lineTo(left + width, y).strokeColor('#d9e4f4').lineWidth(1.2).stroke();
+  y += 18;
+
+  glossary.forEach((entry, index) => {
+    const termLines = wrapMixed(doc, entry.term || '', { width:width - 22, size:12, bold:true });
+    const pronunciationLines = wrapMixed(doc, entry.pronunciation || '', { width:width - 22, size:8.4 });
+    const definitionLines = wrapMixed(doc, entry.definition || '', { width:width - 22, size:9.2 });
+    const height = Math.max(70,
+      11 + termLines.length * 17 + pronunciationLines.length * 12 + definitionLines.length * 13.5 + 15
+    );
+    if (y + height > bottom) addPage();
+
+    doc.roundedRect(left, y, width, height - 7, 6).fillAndStroke(index % 2 ? '#fbfcfe' : '#f7faff', '#dce6f2');
+    let cy = y + 10;
+    termLines.forEach((line, lineIndex) => {
+      drawMixedLine(doc, line, left + 11, cy + lineIndex * 17, { size:12, bold:true, color:'#173d84' });
+    });
+    cy += termLines.length * 17 + 1;
+    pronunciationLines.forEach((line, lineIndex) => {
+      drawMixedLine(doc, line, left + 11, cy + lineIndex * 12, { size:8.4, color:'#66758b' });
+    });
+    cy += pronunciationLines.length * 12 + 4;
+    definitionLines.forEach((line, lineIndex) => {
+      drawMixedLine(doc, line, left + 11, cy + lineIndex * 13.5, { size:9.2, color:'#33425b' });
+    });
+    y += height;
+  });
+}
+
 export async function generatePdfs(outputDir = join(ROOT, 'public'), cohortId = null) {
   const resolvedCohortId = await resolveCohortId(cohortId);
-  const [fonts, questions, essays] = await Promise.all([loadFonts(), readQuestions(resolvedCohortId), readEssays(resolvedCohortId)]);
+  const [fonts, questions, essays, glossary] = await Promise.all([loadFonts(), readQuestions(resolvedCohortId), readEssays(resolvedCohortId), readGlossary(resolvedCohortId)]);
   const documents = join(outputDir, 'documents');
   await mkdir(documents, { recursive:true });
 
   await writePdf(join(documents,'SCP-Study-Cumulative-Test.pdf'),'SCP Study - Cumulative Test',fonts,{size:'LETTER'},doc=>renderTest(doc,questions),doc=>addPageFooter(doc,'noto','Page '));
   await writePdf(join(documents,'SCP-Study-Cumulative-Test-Answer-Key.pdf'),'SCP Study - Cumulative Test Answer Key',fonts,{size:LANDSCAPE},doc=>renderAnswerKey(doc,questions),doc=>addPageFooter(doc,'noto','Page '));
   await writePdf(join(documents,'SCP-Study-Essay-Questions-and-Sample-Answers.pdf'),'SCP Study - Essay Questions & Sample Answers',fonts,{size:'LETTER'},doc=>renderEssays(doc,essays),doc=>addPageFooter(doc,'dejavu','SCP Study | '));
+  await writePdf(join(documents,'SCP-Study-Course-Glossary.pdf'),'SCP Study - Course Glossary',fonts,{size:'LETTER'},doc=>renderGlossary(doc,glossary),doc=>addPageFooter(doc,'noto','Page '));
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await generatePdfs(process.argv[2] || join(ROOT, 'public'));
-  console.log('Generated SCP Study question, answer-key, and essay PDF assets.');
+  console.log('Generated SCP Study question, answer-key, essay, and glossary PDF assets.');
 }

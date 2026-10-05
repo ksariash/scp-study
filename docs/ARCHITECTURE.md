@@ -62,7 +62,9 @@ Configured Zman documents use:
 
 The build also preserves legacy root documents for previously installed clients. Materials UI resolves its buttons from the active Zman configuration rather than treating root paths as canonical.
 
-Learner-facing study documents are offline-first. The current service-worker app shell precaches the compact review, full course notes, cumulative test, answer key, and essay Q&A PDF so installed clients can open them without a prior online view. A cache-membership change must use a new cache name so existing PWAs receive the new file set. The current application cache is `scp-study-v63`.
+Learner-facing study documents use explicit offline caching. PDFs are excluded from the service-worker app shell and are stored only when the learner uses a per-document download action or `Download all`. The dedicated `scp-study-documents-v1` cache survives normal app-cache upgrades; PDF requests consult it first but ordinary viewing does not silently add to it. This keeps offline storage intentional while still letting a cached document open, print, share, or save without network access. The current application cache is `scp-study-v64`.
+
+The glossary PDF is generated from the active Zman's `glossary.js` alongside the cumulative test, answer key, and essay Q&A. It is not an independent source of course terminology.
 
 Generated study PDFs use an LTR page layout with embedded RTL Hebrew phrases. The generator keeps source strings in logical reading order and performs visual word/run ordering only at draw time. Adjacent Hebrew words are ordered as a group; neutral trailing punctuation in an LTR sentence stays on the browser-equivalent visual side of that RTL group. Source content must not be manually reversed to compensate for the renderer.
 

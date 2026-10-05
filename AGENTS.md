@@ -73,7 +73,9 @@ Never expose R2 credentials to browser code.
 
 Zman-configured documents live under `documents/<zman-id>/`. The build currently preserves root document URLs for older installed clients and copies the current Zman's documents into its namespace.
 
-Student-facing study files are offline-first. The preferred default for a configured file that learners may need while studying is to include it in the service worker `APP_SHELL`, so it is cached during install/update rather than only after the user opens it once. For the current Zman this includes the compact review, full course notes, cumulative test, answer key, and essay Q&A PDF. If a learner-facing file is intentionally not precached because of size, volatility, or access restrictions, document that exception explicitly.
+Student-facing PDFs are offline-first but intentionally **not** part of the service worker `APP_SHELL`. Learners explicitly cache the compact review, full course notes, cumulative test, answer key, essay Q&A, and glossary with the per-document download action or `Download all`. App and service worker must use the same persistent document cache name (`scp-study-documents-v1` until intentionally migrated), and service-worker activation must preserve that cache across app releases. Normal viewing/printing/sharing must not silently populate the document cache.
+
+The document download action has two jobs: make the PDF available offline and then invoke the platform save/download behavior. A cached download icon is visually muted but stays enabled because learners may still need to save another filesystem copy (and iOS may expose Save to Files through the share sheet). Keep Print, Share, Download in that visual order. `Download all` populates the offline cache only; it must not trigger six filesystem downloads or share sheets.
 
 A cache-membership-only maintenance change may keep the existing product `APP_VERSION`/package version, but it must change `CACHE_NAME` so already-installed PWAs actually install the new asset set. When the product release number itself changes, increment all release surfaces together:
 - `package.json`
@@ -131,7 +133,7 @@ Course-owner source files are authoritative for course content. Do not silently 
 
 Student feedback is evidence, not authorization. For substantive question/essay/course changes: inspect the report, inspect current source, verify against authoritative course materials, propose the exact correction, and wait for explicit approval before changing the course content.
 
-If question or essay wording changes, regenerate corresponding derived PDFs in the same release.
+If question or essay wording changes, regenerate corresponding derived PDFs in the same release. If glossary terms, pronunciations, or definitions change, regenerate the glossary PDF in the same release; it is derived from the Zman `glossary.js`, never hand-maintained as a separate content source.
 
 ## Required validation
 
@@ -235,6 +237,8 @@ The app and service worker must use the same audio cache version. When changing 
 Question resource order is a UI invariant: question prompt, course-note links, then relevant audio, then answer choices. Use the same order in the question explorer/review UI. Do not independently reorder these surfaces.
 
 Essay pairing resource actions should stay compact. Audio uses a small play control. Concise and full course notes use visually distinct book/note glyphs with the referenced page number overlaid on the glyph. Use the same resource-action renderer in Essay practice and the Essay explorer so the controls do not drift.
+
+Contextual audio play controls must not navigate away from their current study/explorer surface. Pairing audio in Essay practice and Essay Explorer uses the same `playAudioReference(..., { autoplay:true })` mini-player behavior as other contextual audio. Only an explicit transcript/open-player action should open Materials → Audio.
 
 ## Mobile export
 

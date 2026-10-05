@@ -380,53 +380,66 @@
           <div>
             <span class="eyebrow">Downloads</span>
             <h3 id="downloadsHeading">Course PDFs</h3>
-            <p>View, print, or download the course notes, test, and essay materials.</p>
+            <p>Open, print, share, save, or keep course materials available offline.</p>
+          </div>
+          <div class="pdf-library-actions">
+            <span class="audio-cache-status" id="pdfCacheStatus" aria-live="polite"></span>
+            <button class="secondary audio-download-all" type="button" id="downloadAllPdfsBtn">Download all</button>
           </div>
         </div>
         <div class="resource-list">
           <div class="resource-card">
             <span class="resource-icon" aria-hidden="true">PDF</span>
-            <span class="resource-copy"><strong>SCP Study — Compact Course Review</strong><span>Highlighted concise course summary and study reference.</span></span>
+            <button class="resource-copy resource-open" type="button" data-document-key="compactReview" data-view-pdf="documents/SCP-Study-Compact-Course-Review.pdf" data-pdf-title="SCP Study — Compact Course Review" data-course-notes="compact"><strong>SCP Study — Compact Course Review</strong><span>Highlighted concise course summary and study reference.</span></button>
             <span class="resource-actions">
-              <button class="resource-btn view-pdf-btn" type="button" data-document-key="compactReview" data-view-pdf="documents/SCP-Study-Compact-Course-Review.pdf" data-pdf-title="SCP Study — Compact Course Review" data-course-notes="compact">View</button>
-              <button class="resource-btn" type="button" data-document-key="compactReview" data-print-pdf="documents/SCP-Study-Compact-Course-Review.pdf">Print</button>
-              <button class="resource-btn primary-link" type="button" data-document-key="compactReview" data-save-pdf="documents/SCP-Study-Compact-Course-Review.pdf" data-pdf-title="SCP Study — Compact Course Review">Download</button>
+              <button class="resource-btn pdf-resource-icon-btn" type="button" data-document-key="compactReview" data-print-pdf="documents/SCP-Study-Compact-Course-Review.pdf" aria-label="Print Compact Course Review" title="Print"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z"/></svg></button>
+              <button class="resource-btn pdf-resource-icon-btn" type="button" data-document-key="compactReview" data-share-pdf="documents/SCP-Study-Compact-Course-Review.pdf" data-pdf-title="SCP Study — Compact Course Review" aria-label="Share Compact Course Review" title="Share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 12v7h14v-7"/></svg></button>
+              <button class="resource-btn pdf-resource-icon-btn pdf-download-btn" type="button" data-document-key="compactReview" data-save-pdf="documents/SCP-Study-Compact-Course-Review.pdf" data-pdf-title="SCP Study — Compact Course Review" aria-label="Download Compact Course Review" title="Download"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg></button>
             </span>
           </div>
           <div class="resource-card">
             <span class="resource-icon" aria-hidden="true">PDF</span>
-            <span class="resource-copy"><strong>SCP Study — Full Course Notes</strong><span>Full annotated course notes converted from the supplied WPS document.</span></span>
+            <button class="resource-copy resource-open" type="button" data-document-key="fullNotes" data-view-pdf="documents/SCP-Study-Full-Course-Notes.pdf" data-pdf-title="SCP Study — Full Course Notes" data-course-notes="full"><strong>SCP Study — Full Course Notes</strong><span>Full annotated course notes converted from the supplied WPS document.</span></button>
             <span class="resource-actions">
-              <button class="resource-btn view-pdf-btn" type="button" data-document-key="fullNotes" data-view-pdf="documents/SCP-Study-Full-Course-Notes.pdf" data-pdf-title="SCP Study — Full Course Notes" data-course-notes="full">View</button>
-              <button class="resource-btn" type="button" data-document-key="fullNotes" data-print-pdf="documents/SCP-Study-Full-Course-Notes.pdf">Print</button>
-              <button class="resource-btn primary-link" type="button" data-document-key="fullNotes" data-save-pdf="documents/SCP-Study-Full-Course-Notes.pdf" data-pdf-title="SCP Study — Full Course Notes">Download</button>
+              <button class="resource-btn pdf-resource-icon-btn" type="button" data-document-key="fullNotes" data-print-pdf="documents/SCP-Study-Full-Course-Notes.pdf" aria-label="Print Full Course Notes" title="Print"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z"/></svg></button>
+              <button class="resource-btn pdf-resource-icon-btn" type="button" data-document-key="fullNotes" data-share-pdf="documents/SCP-Study-Full-Course-Notes.pdf" data-pdf-title="SCP Study — Full Course Notes" aria-label="Share Full Course Notes" title="Share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 12v7h14v-7"/></svg></button>
+              <button class="resource-btn pdf-resource-icon-btn pdf-download-btn" type="button" data-document-key="fullNotes" data-save-pdf="documents/SCP-Study-Full-Course-Notes.pdf" data-pdf-title="SCP Study — Full Course Notes" aria-label="Download Full Course Notes" title="Download"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg></button>
             </span>
           </div>
           <div class="resource-card">
             <span class="resource-icon" aria-hidden="true">PDF</span>
-            <span class="resource-copy"><strong>SCP Study — Cumulative Test</strong><span>Student version of the 58-question cumulative test.</span></span>
+            <button class="resource-copy resource-open" type="button" data-document-key="cumulativeTest" data-view-pdf="documents/SCP-Study-Cumulative-Test.pdf" data-pdf-title="SCP Study — Cumulative Test"><strong>SCP Study — Cumulative Test</strong><span>Student version of the 58-question cumulative test.</span></button>
             <span class="resource-actions">
-              <button class="resource-btn view-pdf-btn" type="button" data-document-key="cumulativeTest" data-view-pdf="documents/SCP-Study-Cumulative-Test.pdf" data-pdf-title="SCP Study — Cumulative Test">View</button>
-              <button class="resource-btn" type="button" data-document-key="cumulativeTest" data-print-pdf="documents/SCP-Study-Cumulative-Test.pdf">Print</button>
-              <button class="resource-btn primary-link" type="button" data-document-key="cumulativeTest" data-save-pdf="documents/SCP-Study-Cumulative-Test.pdf" data-pdf-title="SCP Study — Cumulative Test">Download</button>
+              <button class="resource-btn pdf-resource-icon-btn" type="button" data-document-key="cumulativeTest" data-print-pdf="documents/SCP-Study-Cumulative-Test.pdf" aria-label="Print Cumulative Test" title="Print"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z"/></svg></button>
+              <button class="resource-btn pdf-resource-icon-btn" type="button" data-document-key="cumulativeTest" data-share-pdf="documents/SCP-Study-Cumulative-Test.pdf" data-pdf-title="SCP Study — Cumulative Test" aria-label="Share Cumulative Test" title="Share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 12v7h14v-7"/></svg></button>
+              <button class="resource-btn pdf-resource-icon-btn pdf-download-btn" type="button" data-document-key="cumulativeTest" data-save-pdf="documents/SCP-Study-Cumulative-Test.pdf" data-pdf-title="SCP Study — Cumulative Test" aria-label="Download Cumulative Test" title="Download"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg></button>
             </span>
           </div>
           <div class="resource-card">
             <span class="resource-icon" aria-hidden="true">PDF</span>
-            <span class="resource-copy"><strong>SCP Study — Cumulative Test Answer Key</strong><span>Instructor key, explanations, coverage audit, and scope check.</span></span>
+            <button class="resource-copy resource-open" type="button" data-document-key="cumulativeAnswerKey" data-view-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" data-pdf-title="SCP Study — Cumulative Test Answer Key"><strong>SCP Study — Cumulative Test Answer Key</strong><span>Instructor key, explanations, coverage audit, and scope check.</span></button>
             <span class="resource-actions">
-              <button class="resource-btn view-pdf-btn" type="button" data-document-key="cumulativeAnswerKey" data-view-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" data-pdf-title="SCP Study — Cumulative Test Answer Key">View</button>
-              <button class="resource-btn" type="button" data-document-key="cumulativeAnswerKey" data-print-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf">Print</button>
-              <button class="resource-btn primary-link" type="button" data-document-key="cumulativeAnswerKey" data-save-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" data-pdf-title="SCP Study — Cumulative Test Answer Key">Download</button>
+              <button class="resource-btn pdf-resource-icon-btn" type="button" data-document-key="cumulativeAnswerKey" data-print-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" aria-label="Print Cumulative Test Answer Key" title="Print"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z"/></svg></button>
+              <button class="resource-btn pdf-resource-icon-btn" type="button" data-document-key="cumulativeAnswerKey" data-share-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" data-pdf-title="SCP Study — Cumulative Test Answer Key" aria-label="Share Cumulative Test Answer Key" title="Share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 12v7h14v-7"/></svg></button>
+              <button class="resource-btn pdf-resource-icon-btn pdf-download-btn" type="button" data-document-key="cumulativeAnswerKey" data-save-pdf="documents/SCP-Study-Cumulative-Test-Answer-Key.pdf" data-pdf-title="SCP Study — Cumulative Test Answer Key" aria-label="Download Cumulative Test Answer Key" title="Download"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg></button>
             </span>
           </div>
           <div class="resource-card">
             <span class="resource-icon" aria-hidden="true">PDF</span>
-            <span class="resource-copy"><strong>SCP Study — Essay Questions & Sample Answers</strong><span>All essay prompts with concise sample answers for review.</span></span>
+            <button class="resource-copy resource-open" type="button" data-document-key="essayQuestionsAndAnswers" data-view-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" data-pdf-title="SCP Study — Essay Questions & Sample Answers"><strong>SCP Study — Essay Questions & Sample Answers</strong><span>All essay prompts with concise sample answers for review.</span></button>
             <span class="resource-actions">
-              <button class="resource-btn view-pdf-btn" type="button" data-document-key="essayQuestionsAndAnswers" data-view-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" data-pdf-title="SCP Study — Essay Questions & Sample Answers">View</button>
-              <button class="resource-btn" type="button" data-document-key="essayQuestionsAndAnswers" data-print-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf">Print</button>
-              <button class="resource-btn primary-link" type="button" data-document-key="essayQuestionsAndAnswers" data-save-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" data-pdf-title="SCP Study — Essay Questions & Sample Answers">Download</button>
+              <button class="resource-btn pdf-resource-icon-btn" type="button" data-document-key="essayQuestionsAndAnswers" data-print-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" aria-label="Print Essay Questions and Sample Answers" title="Print"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z"/></svg></button>
+              <button class="resource-btn pdf-resource-icon-btn" type="button" data-document-key="essayQuestionsAndAnswers" data-share-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" data-pdf-title="SCP Study — Essay Questions & Sample Answers" aria-label="Share Essay Questions and Sample Answers" title="Share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 12v7h14v-7"/></svg></button>
+              <button class="resource-btn pdf-resource-icon-btn pdf-download-btn" type="button" data-document-key="essayQuestionsAndAnswers" data-save-pdf="documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf" data-pdf-title="SCP Study — Essay Questions & Sample Answers" aria-label="Download Essay Questions and Sample Answers" title="Download"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg></button>
+            </span>
+          </div>
+          <div class="resource-card">
+            <span class="resource-icon" aria-hidden="true">PDF</span>
+            <button class="resource-copy resource-open" type="button" data-document-key="glossary" data-view-pdf="documents/SCP-Study-Course-Glossary.pdf" data-pdf-title="SCP Study — Course Glossary"><strong>SCP Study — Course Glossary</strong><span>Course terms, pronunciations, and concise definitions.</span></button>
+            <span class="resource-actions">
+              <button class="resource-btn pdf-resource-icon-btn" type="button" data-document-key="glossary" data-print-pdf="documents/SCP-Study-Course-Glossary.pdf" aria-label="Print Course Glossary" title="Print"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z"/></svg></button>
+              <button class="resource-btn pdf-resource-icon-btn" type="button" data-document-key="glossary" data-share-pdf="documents/SCP-Study-Course-Glossary.pdf" data-pdf-title="SCP Study — Course Glossary" aria-label="Share Course Glossary" title="Share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 12v7h14v-7"/></svg></button>
+              <button class="resource-btn pdf-resource-icon-btn pdf-download-btn" type="button" data-document-key="glossary" data-save-pdf="documents/SCP-Study-Course-Glossary.pdf" data-pdf-title="SCP Study — Course Glossary" aria-label="Download Course Glossary" title="Download"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg></button>
             </span>
           </div>
         </div>
@@ -934,9 +947,9 @@
         <strong class="pdf-viewer-title" id="pdfViewerTitle">PDF</strong>
         <select class="pdf-viewer-jump hidden" id="pdfViewerJump" aria-label="Jump to a question or essay"></select>
         <div class="pdf-viewer-actions">
-          <button class="pdf-viewer-btn" type="button" id="pdfViewerShareBtn">Share</button>
-          <button class="pdf-viewer-btn" type="button" id="pdfViewerPrintBtn">Print</button>
-          <button class="pdf-viewer-btn primary" type="button" id="pdfViewerDownloadBtn">Download</button>
+          <button class="pdf-viewer-btn pdf-resource-icon-btn" type="button" id="pdfViewerPrintBtn" aria-label="Print PDF" title="Print"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z"/></svg></button>
+          <button class="pdf-viewer-btn pdf-resource-icon-btn" type="button" id="pdfViewerShareBtn" aria-label="Share PDF" title="Share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 12v7h14v-7"/></svg></button>
+          <button class="pdf-viewer-btn pdf-resource-icon-btn pdf-download-btn" type="button" id="pdfViewerDownloadBtn" aria-label="Download PDF" title="Download"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg></button>
         </div>
       </nav>
       <div class="pdf-viewer-body" id="pdfViewerBody" tabindex="0">
@@ -953,7 +966,7 @@
           <span class="eyebrow">About</span>
           <div class="app-info-title-row">
             <h2 id="appInfoTitle">SCP Study</h2>
-            <span class="app-info-version" id="appInfoVersion">v63</span>
+            <span class="app-info-version" id="appInfoVersion">v64</span>
           </div>
           <p>A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.</p>
         </div>

@@ -12,6 +12,7 @@ const GENERATED_PDFS = new Set([
   'documents/SCP-Study-Cumulative-Test.pdf',
   'documents/SCP-Study-Cumulative-Test-Answer-Key.pdf',
   'documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf',
+  'documents/SCP-Study-Course-Glossary.pdf',
 ]);
 
 const COHORT_REQUIRED_FILES = [
@@ -217,7 +218,8 @@ for (const filename of [
   'SCP-Study-Full-Course-Notes.pdf',
   'SCP-Study-Cumulative-Test.pdf',
   'SCP-Study-Cumulative-Test-Answer-Key.pdf',
-  'SCP-Study-Essay-Questions-and-Sample-Answers.pdf'
+  'SCP-Study-Essay-Questions-and-Sample-Answers.pdf',
+  'SCP-Study-Course-Glossary.pdf'
 ]) {
   await cp(new URL(`./documents/${filename}`, outputDir), new URL(`./documents/${defaultZmanId}/${filename}`, outputDir));
 }

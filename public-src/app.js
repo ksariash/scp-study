@@ -10,11 +10,12 @@
   const ESSAY_PRACTICE_KEY = 'scpStudy.essayPractice.v1';
   const ESSAY_CATEGORY_FILTER_KEY = 'scpStudy.essayCategoryFilter.v1';
   const AUDIO_CACHE_NAME = 'scp-study-audio-v3';
+  const DOCUMENT_CACHE_NAME = 'scp-study-documents-v1';
   const BUNDLED_AUDIO_REVIEWS = AUDIO_REVIEW_DATA.map(track => ({
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 63;
+  const APP_VERSION = 64;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -219,7 +220,7 @@
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     questionCard: el('questionCard'), prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoriesDialogTitle: el('categoriesDialogTitle'), categoriesDialogDescription: el('categoriesDialogDescription'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
-    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), fontSizeSelect: el('fontSizeSelect'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), syncToggle: el('syncToggle'), syncStatus: el('syncStatus'), syncActions: el('syncActions'), joinSyncBtn: el('joinSyncBtn'), linkDeviceBtn: el('linkDeviceBtn'), manageDevicesBtn: el('manageDevicesBtn'), syncDevicesDialog: el('syncDevicesDialog'), closeSyncDevices: el('closeSyncDevices'), syncDeviceList: el('syncDeviceList'), syncDevicesStatus: el('syncDevicesStatus'), unlinkThisDeviceBtn: el('unlinkThisDeviceBtn'), unlinkOtherDevicesBtn: el('unlinkOtherDevicesBtn'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'), settingsTransferStatus: el('settingsTransferStatus'),
+    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), downloadAllPdfsBtn: el('downloadAllPdfsBtn'), pdfCacheStatus: el('pdfCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), fontSizeSelect: el('fontSizeSelect'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), syncToggle: el('syncToggle'), syncStatus: el('syncStatus'), syncActions: el('syncActions'), joinSyncBtn: el('joinSyncBtn'), linkDeviceBtn: el('linkDeviceBtn'), manageDevicesBtn: el('manageDevicesBtn'), syncDevicesDialog: el('syncDevicesDialog'), closeSyncDevices: el('closeSyncDevices'), syncDeviceList: el('syncDeviceList'), syncDevicesStatus: el('syncDevicesStatus'), unlinkThisDeviceBtn: el('unlinkThisDeviceBtn'), unlinkOtherDevicesBtn: el('unlinkOtherDevicesBtn'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'), settingsTransferStatus: el('settingsTransferStatus'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
     essayPracticeMain: el('essayPracticeMain'), essayQuickNav: el('essayQuickNav'), essayCategoryTags: el('essayCategoryTags'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayNoteLinks: el('essayNoteLinks'), essayQuestionAudio: el('essayQuestionAudio'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingResources: el('essayPairingResources'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
@@ -255,6 +256,7 @@
   let activeTranscriptIndex = -1;
   let miniAudioStopped = true;
   let cachedAudioUrls = new Set();
+  let cachedPdfUrls = new Set();
   let transcriptExpanded = true;
   let activeMaterialsTab = 'audio';
   const materialsScrollByTab = { audio: 0, questions: 0, glossary: 0, downloads: 0, settings: 0 };
@@ -3060,6 +3062,84 @@
     }
   }
 
+  function configuredPdfDocuments() {
+    if (!dom.materialsPanelDownloads) return [];
+    return [...dom.materialsPanelDownloads.querySelectorAll('[data-save-pdf]')].map(button => ({
+      url: absoluteUrl(button.dataset.savePdf),
+      title: button.dataset.pdfTitle || 'SCP Study PDF',
+      button
+    })).filter(item => item.url);
+  }
+
+  function updatePdfCacheStatus(message = '') {
+    const documents = configuredPdfDocuments();
+    const count = documents.filter(item => cachedPdfUrls.has(item.url)).length;
+    if (dom.pdfCacheStatus) dom.pdfCacheStatus.textContent = message || (count ? `${count}/${documents.length} offline` : '');
+    if (message) return;
+    if (dom.downloadAllPdfsBtn) {
+      dom.downloadAllPdfsBtn.textContent = count === documents.length && documents.length ? 'Downloaded' : 'Download all';
+      dom.downloadAllPdfsBtn.disabled = count === documents.length && documents.length > 0;
+    }
+    documents.forEach(({ url, title, button }) => {
+      const cached = cachedPdfUrls.has(url);
+      const shortTitle = title.replace(/^SCP Study\s*[—-]\s*/, '');
+      button.classList.toggle('pdf-cached', cached);
+      button.setAttribute('aria-label', cached ? `${shortTitle} is cached offline; download file` : `Download ${shortTitle} and keep offline`);
+      button.title = cached ? 'Cached offline · Download file' : 'Download and keep offline';
+    });
+    if (dom.pdfViewerDownloadBtn && activePdfViewer?.url) {
+      const cached = cachedPdfUrls.has(absoluteUrl(activePdfViewer.url));
+      dom.pdfViewerDownloadBtn.classList.toggle('pdf-cached', cached);
+      dom.pdfViewerDownloadBtn.setAttribute('aria-label', cached ? 'PDF is cached offline; download file' : 'Download PDF and keep offline');
+      dom.pdfViewerDownloadBtn.title = cached ? 'Cached offline · Download file' : 'Download and keep offline';
+    }
+  }
+
+  async function refreshPdfCacheState() {
+    if (!('caches' in window)) return;
+    const cache = await caches.open(DOCUMENT_CACHE_NAME);
+    const documents = configuredPdfDocuments();
+    const entries = await Promise.all(documents.map(async item => (await cache.match(item.url)) ? item.url : null));
+    cachedPdfUrls = new Set(entries.filter(Boolean));
+    updatePdfCacheStatus();
+  }
+
+  async function cachePdf(url, { quiet = false } = {}) {
+    if (!('caches' in window)) throw new Error('Offline caching is unavailable.');
+    const absolute = absoluteUrl(url);
+    const cache = await caches.open(DOCUMENT_CACHE_NAME);
+    if (!(await cache.match(absolute))) {
+      const response = await fetch(absolute, { cache:'reload' });
+      if (!response.ok) throw new Error(`Could not download PDF (${response.status}).`);
+      await cache.put(absolute, response.clone());
+    }
+    cachedPdfUrls.add(absolute);
+    if (!quiet) updatePdfCacheStatus('Ready offline');
+    return true;
+  }
+
+  async function cacheAllPdfs() {
+    const documents = configuredPdfDocuments();
+    if (!documents.length) return;
+    if (dom.downloadAllPdfsBtn) dom.downloadAllPdfsBtn.disabled = true;
+    try {
+      if (navigator.storage?.persist) { try { await navigator.storage.persist(); } catch (_) {} }
+      for (let i = 0; i < documents.length; i++) {
+        updatePdfCacheStatus(`Downloading ${i + 1}/${documents.length}…`);
+        await cachePdf(documents[i].url, { quiet:true });
+      }
+      updatePdfCacheStatus('Ready offline');
+      setTimeout(() => updatePdfCacheStatus(), 1300);
+    } catch (error) {
+      console.warn('Could not cache all PDFs:', error);
+      updatePdfCacheStatus('Download failed');
+      setTimeout(() => updatePdfCacheStatus(), 1800);
+    } finally {
+      if (dom.downloadAllPdfsBtn) dom.downloadAllPdfsBtn.disabled = false;
+      updatePdfCacheStatus();
+    }
+  }
+
   function formatAudioTime(seconds) {
     const total = Math.max(0, Math.floor(Number(seconds) || 0));
     const h = Math.floor(total / 3600);
@@ -3571,6 +3651,7 @@
     setPdfViewerStatus('Loading PDF…');
     if (!dom.pdfViewerDialog.open) dom.pdfViewerDialog.showModal();
     if (dom.pdfViewerBody) dom.pdfViewerBody.scrollTop = 0;
+    void refreshPdfCacheState();
     void loadPdfViewerDocument(viewer);
   }
 
@@ -3678,13 +3759,31 @@
     }
   }
 
+  async function downloadPdf(url, title = 'SCP Study PDF') {
+    try {
+      await cachePdf(url, { quiet:true });
+      updatePdfCacheStatus();
+    } catch (error) {
+      console.warn('Could not cache PDF for offline use:', error);
+    }
+    await savePdf(url, title);
+    void refreshPdfCacheState();
+  }
+
   async function withResourceButtonBusy(button, work) {
     if (!button || button.disabled) return;
-    const prior = button.textContent;
+    const prior = button.innerHTML;
     button.disabled = true;
-    button.textContent = 'Preparing…';
+    button.classList.add('is-busy');
+    button.setAttribute('aria-busy', 'true');
+    if (!button.classList.contains('pdf-resource-icon-btn')) button.textContent = 'Preparing…';
     try { await work(); }
-    finally { button.disabled = false; button.textContent = prior; }
+    finally {
+      button.disabled = false;
+      button.classList.remove('is-busy');
+      button.removeAttribute('aria-busy');
+      button.innerHTML = prior;
+    }
   }
 
   function isIOSDevice() {
@@ -3852,7 +3951,9 @@
       const appKeys = keys.filter(key => key.startsWith('scp-study-'));
       await Promise.all(appKeys.map(key => caches.delete(key)));
       cachedAudioUrls.clear();
+      cachedPdfUrls.clear();
       updateAudioCacheStatus();
+      updatePdfCacheStatus();
       renderAudioPlaylist();
       setSettingsStatus('Cache cleared. Files will download again as needed.');
     } catch (err) {
@@ -4165,6 +4266,7 @@
       syncTranscriptToAudio(true);
     }
     void refreshAudioCacheState();
+    void refreshPdfCacheState();
     updateMiniAudio();
   }
 
@@ -4593,7 +4695,7 @@
       if (activePdfViewer) printPdf(activePdfViewer.url);
     });
     dom.pdfViewerDownloadBtn?.addEventListener('click', () => {
-      if (activePdfViewer) void withResourceButtonBusy(dom.pdfViewerDownloadBtn, () => savePdf(activePdfViewer.url, activePdfViewer.title));
+      if (activePdfViewer) void withResourceButtonBusy(dom.pdfViewerDownloadBtn, () => downloadPdf(activePdfViewer.url, activePdfViewer.title));
     });
     dom.pdfViewerJump?.addEventListener('change', e => {
       const option = e.currentTarget.selectedOptions?.[0];
@@ -4807,10 +4909,7 @@
       if (!ref) return;
       const context = audio.dataset.pairingAudioContext || 'library';
       if (context === 'practice' && essayRun?.essay?.id === essay?.id) essayRun.stepAudioUsed = true;
-      void playAudioReference(Number(ref.review), Number(ref.start), {
-        autoplay: context === 'practice',
-        openMaterials: context !== 'practice'
-      });
+      void playAudioReference(Number(ref.review), Number(ref.start), { autoplay:true });
     });
 
     dom.materialsDialog.addEventListener('click', e => {
@@ -4827,7 +4926,7 @@
       const print = e.target.closest('[data-print-pdf]');
       if (print) { printPdf(print.dataset.printPdf); return; }
       const save = e.target.closest('[data-save-pdf]');
-      if (save) { void withResourceButtonBusy(save, () => savePdf(save.dataset.savePdf, save.dataset.pdfTitle || 'SCP Study PDF')); return; }
+      if (save) { void withResourceButtonBusy(save, () => downloadPdf(save.dataset.savePdf, save.dataset.pdfTitle || 'SCP Study PDF')); return; }
       const share = e.target.closest('[data-share-pdf]');
       if (share) void withResourceButtonBusy(share, () => sharePdf(share.dataset.sharePdf, share.dataset.pdfTitle || 'SCP Study PDF'));
     });
@@ -4836,6 +4935,7 @@
     dom.audioForward10Btn?.addEventListener('click', () => seekAudioBy(10));
     dom.audioNextBtn.addEventListener('click', () => moveAudioTrack(1, true));
     dom.downloadAllAudioBtn?.addEventListener('click', () => void cacheAllAudio());
+    dom.downloadAllPdfsBtn?.addEventListener('click', () => void cacheAllPdfs());
     dom.audioPlaylistToggle?.addEventListener('click', () => {
       const expanded = !dom.audioPlaylistWrap.classList.contains('mobile-expanded');
       setMobilePlaylistExpanded(expanded);
@@ -5807,6 +5907,7 @@
     populateEssayQuickNav();
     bindEvents();
     syncActiveZmanDocuments();
+    void refreshPdfCacheState();
     consumeExternalReference();
     initNotificationAndSettingsFeatures();
     maybePromptLatestZman();

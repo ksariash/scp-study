@@ -18,7 +18,8 @@ window.SCP_ZMAN_CONFIG = {
     fullNotes: "documents/2026-summer/SCP-Study-Full-Course-Notes.pdf",
     cumulativeTest: "documents/2026-summer/SCP-Study-Cumulative-Test.pdf",
     cumulativeAnswerKey: "documents/2026-summer/SCP-Study-Cumulative-Test-Answer-Key.pdf",
-    essayQuestionsAndAnswers: "documents/2026-summer/SCP-Study-Essay-Questions-and-Sample-Answers.pdf"
+    essayQuestionsAndAnswers: "documents/2026-summer/SCP-Study-Essay-Questions-and-Sample-Answers.pdf",
+    glossary: "documents/2026-summer/SCP-Study-Course-Glossary.pdf"
   },
   essayCategoryTags: {
     "nbn-intentional-cooking": ["נ״ט בר נ״ט"],

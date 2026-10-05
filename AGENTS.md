@@ -205,6 +205,8 @@ Mobile time/select controls must remain within their card even when WebKit gives
 
 The main question picker and the in-PDF question/essay jump picker keep native `<select>` controls on coarse-pointer/mobile devices, but fine-pointer desktop uses app-rendered menus. This avoids platform/native long-select popup rendering and hidden-overflow quirks (notably Firefox) while retaining mobile system pickers. Keep each native/custom pair synchronized to the current selection.
 
+In the full-screen PDF viewer, the desktop jump menu must match the width of its trigger field. The `<dialog>` and viewer shell are non-scrolling containers; `.pdf-viewer-body` is the single PDF scrolling surface. Do not allow the dialog itself to expose a second inert scrollbar alongside the PDF scroll position.
+
 
 ## Reminder preference model
 

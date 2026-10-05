@@ -62,7 +62,7 @@ Configured Zman documents use:
 
 The build also preserves legacy root documents for previously installed clients. Materials UI resolves its buttons from the active Zman configuration rather than treating root paths as canonical.
 
-Learner-facing study documents use explicit offline caching. PDFs are excluded from the service-worker app shell and are stored only when the learner uses a per-document download action or `Download all`. The dedicated `scp-study-documents-v2` cache survives normal app-cache upgrades; PDF requests consult it first but ordinary viewing does not silently add to it. Configured document requests include the Zman's `contentVersion` in their cache identity, so replacing a PDF at the same path requires incrementing that content version and cannot leave an old explicit download pinned forever. The current application cache is `scp-study-v67`.
+Learner-facing study documents use explicit offline caching. PDFs are excluded from the service-worker app shell and are stored only when the learner uses a per-document download action or `Download all`. The dedicated `scp-study-documents-v2` cache survives normal app-cache upgrades; PDF requests consult it first but ordinary viewing does not silently add to it. Configured document requests include the Zman's `contentVersion` in their cache identity, so replacing a PDF at the same path requires incrementing that content version and cannot leave an old explicit download pinned forever. The current application cache is `scp-study-v68`.
 
 The glossary PDF is generated from the active Zman's `glossary.js` alongside the cumulative test, answer key, and essay Q&A. It is not an independent source of course terminology.
 

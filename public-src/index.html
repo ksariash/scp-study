@@ -543,7 +543,10 @@
                 <span class="analytics-switch-track" aria-hidden="true"><span></span></span>
                 <span>Sync across devices</span>
               </label>
-              <span class="analytics-status" id="syncStatus" aria-live="polite"></span>
+              <div class="sync-status-row">
+                <span class="analytics-status" id="syncStatus" aria-live="polite"></span>
+                <button class="sync-now-link hidden" type="button" id="syncNowBtn">Sync now</button>
+              </div>
               <button class="secondary settings-action-btn" type="button" id="joinSyncBtn">Link to existing sync</button>
               <div class="sync-actions hidden" id="syncActions">
                 <button class="secondary settings-action-btn" type="button" id="linkDeviceBtn">Link another device</button>

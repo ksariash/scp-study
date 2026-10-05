@@ -15,7 +15,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 68;
+  const APP_VERSION = 69;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -221,7 +221,7 @@
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     questionCard: el('questionCard'), prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoriesDialogTitle: el('categoriesDialogTitle'), categoriesDialogDescription: el('categoriesDialogDescription'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
-    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), downloadAllPdfsBtn: el('downloadAllPdfsBtn'), pdfCacheStatus: el('pdfCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), fontSizeSelect: el('fontSizeSelect'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), syncToggle: el('syncToggle'), syncStatus: el('syncStatus'), syncActions: el('syncActions'), joinSyncBtn: el('joinSyncBtn'), linkDeviceBtn: el('linkDeviceBtn'), manageDevicesBtn: el('manageDevicesBtn'), syncDevicesDialog: el('syncDevicesDialog'), closeSyncDevices: el('closeSyncDevices'), syncDeviceList: el('syncDeviceList'), syncDevicesStatus: el('syncDevicesStatus'), unlinkThisDeviceBtn: el('unlinkThisDeviceBtn'), unlinkOtherDevicesBtn: el('unlinkOtherDevicesBtn'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'), settingsTransferStatus: el('settingsTransferStatus'),
+    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), downloadAllPdfsBtn: el('downloadAllPdfsBtn'), pdfCacheStatus: el('pdfCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), fontSizeSelect: el('fontSizeSelect'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), syncToggle: el('syncToggle'), syncStatus: el('syncStatus'), syncNowBtn: el('syncNowBtn'), syncActions: el('syncActions'), joinSyncBtn: el('joinSyncBtn'), linkDeviceBtn: el('linkDeviceBtn'), manageDevicesBtn: el('manageDevicesBtn'), syncDevicesDialog: el('syncDevicesDialog'), closeSyncDevices: el('closeSyncDevices'), syncDeviceList: el('syncDeviceList'), syncDevicesStatus: el('syncDevicesStatus'), unlinkThisDeviceBtn: el('unlinkThisDeviceBtn'), unlinkOtherDevicesBtn: el('unlinkOtherDevicesBtn'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'), settingsTransferStatus: el('settingsTransferStatus'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
     essayPracticeMain: el('essayPracticeMain'), essayQuickNav: el('essayQuickNav'), essayCategoryTags: el('essayCategoryTags'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayNoteLinks: el('essayNoteLinks'), essayQuestionAudio: el('essayQuestionAudio'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingResources: el('essayPairingResources'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
@@ -849,13 +849,16 @@
 
   async function flushSync() {
     const config = syncConfig();
-    if (syncFlushInFlight || !config.enabled || !config.deviceToken || !analyticsEnabled() || !navigator.onLine) return;
+    if (syncFlushInFlight || !config.enabled || !config.deviceToken || !analyticsEnabled() || !navigator.onLine) return false;
     syncFlushInFlight = true;
+    updateSyncUi();
+    let completed = false;
     try {
       let queue=syncQueue();
       while(queue.length){
         const batch=queue.slice(0,500),result=await syncRequest('/ops',{method:'POST',body:{ops:batch}});
-        queue=queue.slice(batch.length);saveSyncQueue(queue);
+        const sentIds=new Set(batch.map(op=>op.opId));
+        queue=syncQueue().filter(op=>!sentIds.has(op.opId));saveSyncQueue(queue);
         if(result?.generations&&typeof result.generations==='object'){const latest=syncConfig();latest.generations={...latest.generations,...result.generations};saveSyncConfig(latest);}
       }
       let hasMore=true;
@@ -864,11 +867,30 @@
         (result.ops||[]).forEach(applyRemoteSyncOp);
         latest.cursor=Math.max(Number(latest.cursor)||0,Number(result.cursor)||0);latest.generations={...latest.generations,...(result.generations||{})};latest.lastSyncAt=new Date().toISOString();saveSyncConfig(latest);hasMore=!!result.hasMore;
       }
+      completed = true;
       updateSyncUi();
+      return true;
     } catch (error) {
       if (error?.status === 401) await handleRevokedSyncDevice();
       else console.warn('Study sync deferred:',error);
-    } finally { syncFlushInFlight=false; }
+      return false;
+    } finally {
+      syncFlushInFlight=false;
+      updateSyncUi();
+      if(completed&&syncQueue().length&&syncConfigured()&&analyticsEnabled()&&navigator.onLine)window.setTimeout(()=>void flushSync(),80);
+    }
+  }
+
+  async function syncNowFromSettings() {
+    const config=syncConfig();
+    if(!config.enabled||!config.deviceToken)return;
+    if(!analyticsEnabled()){showAppToast('Turn on anonymous usage to sync.');return;}
+    if(!navigator.onLine){showAppToast('You are offline. Sync will resume when you reconnect.');updateSyncUi();return;}
+    if(syncFlushInFlight)return;
+    const synced=await flushSync();
+    const notificationsSynced=synced?await flushPendingNotificationState():false;
+    if(synced&&notificationsSynced)showAppToast('Sync complete.');
+    else if(syncConfigured())showAppToast('Some changes are still waiting. Sync will retry automatically.');
   }
 
   async function enableStudySync() {
@@ -950,12 +972,15 @@
   }
 
   function updateSyncUi() {
-    const config=syncConfig(),hasCredential=!!config.deviceToken,enabled=!!config.enabled&&hasCredential,analytics=analyticsEnabled(),queued=syncQueue().length;
+    const config=syncConfig(),hasCredential=!!config.deviceToken,enabled=!!config.enabled&&hasCredential,analytics=analyticsEnabled(),online=navigator.onLine,queued=syncQueue().length;
     if(dom.syncToggle){dom.syncToggle.checked=enabled;dom.syncToggle.disabled=!analytics;}
     dom.joinSyncBtn?.classList.toggle('hidden',!analytics||hasCredential);
     dom.syncActions?.classList.toggle('hidden',!enabled);
+    if(dom.syncNowBtn){dom.syncNowBtn.classList.toggle('hidden',!enabled);dom.syncNowBtn.disabled=!analytics||!online||syncFlushInFlight;dom.syncNowBtn.textContent=syncFlushInFlight?'Syncing…':'Sync now';}
     if(dom.syncStatus)dom.syncStatus.textContent=!analytics?(hasCredential?'Paused · anonymous usage is off.':'Requires anonymous usage to be on.'):
-      enabled?(queued?`On · ${queued} change${queued===1?'':'s'} waiting to sync.`:(config.lastSyncAt?`On · last synced ${new Date(config.lastSyncAt).toLocaleString()}.`:'On · ready to sync.')):
+      enabled?(!online?(queued?`On · offline · ${queued} change${queued===1?'':'s'} waiting to sync.`:'On · offline.'):
+        syncFlushInFlight?(queued?`On · syncing ${queued} change${queued===1?'':'s'}…`:'On · syncing…'):
+        queued?`On · ${queued} change${queued===1?'':'s'} waiting to sync.`:(config.lastSyncAt?`On · last synced ${new Date(config.lastSyncAt).toLocaleString()}.`:'On · ready to sync.')):
       hasCredential?'Off · this device remains linked.':'Off';
   }
 
@@ -3758,6 +3783,11 @@
     }
   }
 
+  function setPdfViewerDocumentScrollLocked(locked) {
+    document.documentElement.classList.toggle('pdf-viewer-open', !!locked);
+    document.body?.classList.toggle('pdf-viewer-open', !!locked);
+  }
+
   function openPdfViewer({ url, title = 'SCP Study PDF', page = 1, docKey = null, selection = '' } = {}) {
     if (!url || !dom.pdfViewerDialog || !dom.pdfViewerPages) return;
     closePdfViewer({ closeDialog: false });
@@ -3780,6 +3810,7 @@
     buildCourseNoteJump(docKey, selection);
     if (dom.pdfViewerPages) dom.pdfViewerPages.innerHTML = '';
     setPdfViewerStatus('Loading PDF…');
+    setPdfViewerDocumentScrollLocked(true);
     if (!dom.pdfViewerDialog.open) dom.pdfViewerDialog.showModal();
     if (dom.pdfViewerBody) dom.pdfViewerBody.scrollTop = 0;
     void refreshPdfCacheState();
@@ -3795,6 +3826,7 @@
     if (dom.pdfViewerPages) dom.pdfViewerPages.innerHTML = '';
     closePdfViewerJumpMenu();
     setPdfViewerStatus('');
+    setPdfViewerDocumentScrollLocked(false);
     if (closeDialog && dom.pdfViewerDialog?.open) dom.pdfViewerDialog.close();
   }
 
@@ -4861,6 +4893,7 @@
 
     dom.pdfViewerBackBtn?.addEventListener('click', closePdfViewer);
     dom.pdfViewerDialog?.addEventListener('cancel', e => { e.preventDefault(); closePdfViewer(); });
+    dom.pdfViewerDialog?.addEventListener('close', () => setPdfViewerDocumentScrollLocked(false));
     dom.pdfViewerShareBtn?.addEventListener('click', () => {
       if (activePdfViewer) void withResourceButtonBusy(dom.pdfViewerShareBtn, () => sharePdf(activePdfViewer.url, activePdfViewer.title));
     });
@@ -5086,6 +5119,7 @@
     });
     dom.analyticsToggle?.addEventListener('change', e => setAnalyticsEnabled(e.currentTarget.checked));
     dom.syncToggle?.addEventListener('change', e => { if(e.currentTarget.checked)void enableStudySync();else pauseStudySync(); });
+    dom.syncNowBtn?.addEventListener('click', () => void syncNowFromSettings());
     dom.joinSyncBtn?.addEventListener('click', () => void joinExistingSync());
     dom.linkDeviceBtn?.addEventListener('click', () => void createLinkCode());
     dom.manageDevicesBtn?.addEventListener('click', () => { if(dom.syncDevicesDialog&&!dom.syncDevicesDialog.open)dom.syncDevicesDialog.showModal();void loadSyncDevices(); });
@@ -5352,6 +5386,7 @@
       void flushSync();
       void flushPendingNotificationState();
     });
+    window.addEventListener('offline', updateSyncUi);
 
     window.addEventListener('beforeinstallprompt', e => {
       e.preventDefault();

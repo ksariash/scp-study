@@ -126,6 +126,8 @@ Each browser/PWA has a separate `deviceId` and, when linked, a separate high-ent
 
 Question/essay/test progress sync is Zman-scoped, offline-first, operation-based, and idempotent. Do not replace it with whole-localStorage last-write-wins uploads. Resets advance a per-Zman generation so stale offline operations cannot resurrect deleted progress. Active practice-test state remains device-local.
 
+Queued study operations normally trigger a sync immediately (short debounce) while the linked device is online and Anonymous Usage + Sync are both enabled. Sync also flushes on app startup, reconnect, and return to the visible app. The Settings status includes a compact `Sync now` action for an explicit push/pull. A sync pass must acknowledge/remove only the operation IDs it actually sent; never replace the persisted queue with a stale in-memory remainder, because new operations may be appended while a request is in flight. If a successful pass finishes with newly queued operations, schedule another pass.
+
 Notification read/archive state is intentionally shared through the anonymous learner ID only while both Anonymous Usage and device Sync are on. If either is paused on a linked device, read/archive changes stay in a device-local pending overlay and must not adopt read/archive mutations from another device; flush the pending state when both controls are on again. Push subscriptions and reminder delivery remain per device. Synced inbox/push/reminder access must require a valid linked-device credential once a sync account exists.
 
 ## Adaptive study selection
@@ -205,7 +207,7 @@ Mobile time/select controls must remain within their card even when WebKit gives
 
 The main question picker and the in-PDF question/essay jump picker keep native `<select>` controls on coarse-pointer/mobile devices, but fine-pointer desktop uses app-rendered menus. This avoids platform/native long-select popup rendering and hidden-overflow quirks (notably Firefox) while retaining mobile system pickers. Keep each native/custom pair synchronized to the current selection.
 
-In the full-screen PDF viewer, the desktop jump menu must match the width of its trigger field. The `<dialog>` and viewer shell are non-scrolling containers; `.pdf-viewer-body` is the single PDF scrolling surface. Do not allow the dialog itself to expose a second inert scrollbar alongside the PDF scroll position.
+In the full-screen PDF viewer, the desktop jump menu must match the width of its trigger field. The `<dialog>` and viewer shell are non-scrolling containers; `.pdf-viewer-body` is the single PDF scrolling surface. While the viewer is open, lock document scrolling on both `html` and `body` so the main app scrollbar is hidden and cannot be mistaken for the PDF position. Do not allow the document or dialog to expose a second inert scrollbar alongside the PDF scroll position.
 
 
 ## Reminder preference model

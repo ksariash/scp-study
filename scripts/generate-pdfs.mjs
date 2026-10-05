@@ -10,6 +10,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = dirname(HERE);
 const require = createRequire(import.meta.url);
 const HEBREW_RE = /[\u0590-\u05ff]/;
+const STRONG_LTR_RE = /[\p{L}\p{N}]/u;
 const PDF_CONTROL_RE = /[\u0000\u200e\u200f\u202a-\u202e\u2066-\u2069]/g;
 function pdfSafeText(value) {
   return String(value ?? '').replace(PDF_CONTROL_RE, '');
@@ -79,6 +80,30 @@ function splitPdfFontRuns(value) {
   return runs;
 }
 
+function pdfStrongDirection(value) {
+  for (const ch of pdfSafeText(value)) {
+    if (HEBREW_RE.test(ch)) return 'rtl';
+    if (STRONG_LTR_RE.test(ch)) return 'ltr';
+  }
+  return 'neutral';
+}
+
+function reorderRtlWordGroups(words) {
+  const visual = [];
+  for (let index = 0; index < words.length;) {
+    if (pdfStrongDirection(words[index]) !== 'rtl') {
+      visual.push(words[index]);
+      index += 1;
+      continue;
+    }
+    let end = index + 1;
+    while (end < words.length && pdfStrongDirection(words[end]) === 'rtl') end += 1;
+    for (let cursor = end - 1; cursor >= index; cursor -= 1) visual.push(words[cursor]);
+    index = end;
+  }
+  return visual;
+}
+
 function wordWidth(doc, word, options = {}) {
   let width = 0;
   for (const run of splitPdfFontRuns(word)) {
@@ -88,14 +113,53 @@ function wordWidth(doc, word, options = {}) {
   return width;
 }
 
+function phraseWidth(doc, value, options = {}) {
+  const parts = String(value ?? '').match(/\s+|[^\s]+/g) || [];
+  const space = wordWidth(doc, ' ', options);
+  return parts.reduce((total, part) => total + (/^\s+$/.test(part) ? space * part.length : wordWidth(doc, part, options)), 0);
+}
+
 function drawPdfToken(doc, token, x, y, options = {}, color = '#000000') {
+  const runs = splitPdfFontRuns(token);
+  if (!runs.length) return x;
+  const widths = runs.map(run => {
+    setFont(doc, run.text, options);
+    return doc.widthOfString(run.text, pdfTextOptions(run.text));
+  });
+
+  if (pdfStrongDirection(token) === 'rtl' && runs.length > 1) {
+    const total = widths.reduce((sum, width) => sum + width, 0);
+    let right = x + total;
+    runs.forEach((run, index) => {
+      right -= widths[index];
+      setFont(doc, run.text, options);
+      doc.fillColor(color).text(run.text, right, y, pdfTextOptions(run.text, { lineBreak:false }));
+    });
+    return x + total;
+  }
+
   let cursor = x;
-  for (const run of splitPdfFontRuns(token)) {
+  runs.forEach((run, index) => {
     setFont(doc, run.text, options);
     doc.fillColor(color).text(run.text, cursor, y, pdfTextOptions(run.text, { lineBreak:false }));
-    cursor += doc.widthOfString(run.text, pdfTextOptions(run.text));
-  }
+    cursor += widths[index];
+  });
   return cursor;
+}
+
+function drawPdfPhrase(doc, value, x, y, options = {}, color = '#000000') {
+  const text = String(value ?? '');
+  const space = wordWidth(doc, ' ', options);
+  if (!text.trim()) return x + text.length * space;
+  const leading = text.match(/^\s+/)?.[0].length || 0;
+  const trailing = text.match(/\s+$/)?.[0].length || 0;
+  const words = reorderRtlWordGroups(text.trim().split(/\s+/).filter(Boolean));
+  let cursor = x + leading * space;
+  words.forEach((word, index) => {
+    cursor = drawPdfToken(doc, word, cursor, y, options, color);
+    if (index < words.length - 1) cursor += space;
+  });
+  return cursor + trailing * space;
 }
 
 function wrapMixed(doc, text, { width, size = 10, bold = false, family = 'noto' } = {}) {
@@ -124,10 +188,12 @@ function wrapMixed(doc, text, { width, size = 10, bold = false, family = 'noto' 
 function drawMixedLine(doc, words, x, y, { size = 10, bold = false, family = 'noto', color = '#000000' } = {}) {
   let cursor = x;
   const space = wordWidth(doc, ' ', { size, bold, family });
-  for (const word of words) {
+  const visualWords = reorderRtlWordGroups(words);
+  visualWords.forEach((word, index) => {
     const tokenSize = HEBREW_RE.test(word) && family === 'noto' ? size + 1 : size;
-    cursor = drawPdfToken(doc, word, cursor, y, { size: tokenSize, bold, family }, color) + space;
-  }
+    cursor = drawPdfToken(doc, word, cursor, y, { size: tokenSize, bold, family }, color);
+    if (index < visualWords.length - 1) cursor += space;
+  });
   return cursor;
 }
 
@@ -143,15 +209,8 @@ function drawRunsLine(doc, runs, x, y, size = 10, color = '#000000') {
   for (const run of runs) {
     const family = run.family || 'noto';
     const bold = !!run.bold;
-    const words = String(run.text || '').split(/(\s+)/).filter(Boolean);
-    for (const word of words) {
-      if (/^\s+$/.test(word)) {
-        cursor += wordWidth(doc, ' ', { size, bold, family }) * word.length;
-        continue;
-      }
-      const tokenSize = HEBREW_RE.test(word) && family === 'noto' ? size + 1 : size;
-      cursor = drawPdfToken(doc, word, cursor, y, { size: tokenSize, bold, family }, color);
-    }
+    const tokenSize = HEBREW_RE.test(run.text) && family === 'noto' ? size + 1 : size;
+    cursor = drawPdfPhrase(doc, run.text || '', cursor, y, { size: tokenSize, bold, family }, color);
   }
   return cursor;
 }
@@ -254,16 +313,13 @@ function renderTest(doc, questions) {
   ];
   const widths = titleRuns.map(run => {
     const tokenSize = HEBREW_RE.test(run.text) ? 11 : (run.bold ? 17 : 11);
-    setFont(doc, run.text, { size: tokenSize, bold: run.bold, family: 'noto' });
-    return doc.widthOfString(run.text);
+    return phraseWidth(doc, run.text, { size: tokenSize, bold: run.bold, family: 'noto' });
   });
   const titleWidth = widths.reduce((a,b) => a+b, 0);
   let tx = (612 - titleWidth) / 2;
   titleRuns.forEach((run, idx) => {
     const tokenSize = HEBREW_RE.test(run.text) ? 11 : (run.bold ? 17 : 11);
-    setFont(doc, run.text, { size: tokenSize, bold: run.bold, family: 'noto' });
-    doc.fillColor('#000000').text(run.text, tx, 41.0, { lineBreak: false });
-    tx += widths[idx];
+    tx = drawPdfPhrase(doc, run.text, tx, 41.0, { size: tokenSize, bold: run.bold, family: 'noto' }, '#000000');
   });
   doc.font('NotoBold').fontSize(12).fillColor('#000000').text('Student Test', 0, 67.0, { width: 612, align: 'center', lineBreak: false });
 
@@ -273,7 +329,6 @@ function renderTest(doc, questions) {
   const instruction = 'Choose the best answer for each multiple-choice question. For questions marked “Select all that apply,” choose every correct answer. For True/False questions, mark True or False.';
   const instrLines = wrapMixed(doc, instruction, { width: promptWidth - prefixW, size:10 });
   if (instrLines[0]) drawMixedLine(doc, instrLines[0], left + prefixW, 86.0, { size:10 });
-  const consumed = instrLines[0]?.join(' ').length || 0;
   const firstText = instrLines[0]?.join(' ') || '';
   let remaining = instruction.slice(firstText.length).trim();
   if (remaining) {
@@ -446,10 +501,13 @@ function renderAnswerKey(doc, questions) {
   ];
   const widths=runs.map(run=>{
     const size=HEBREW_RE.test(run.text)?11:(run.bold?16:11);
-    setFont(doc,run.text,{size,bold:run.bold});return doc.widthOfString(run.text);
+    return phraseWidth(doc,run.text,{size,bold:run.bold,family:'noto'});
   });
   let x=(792-widths.reduce((a,b)=>a+b,0))/2;
-  runs.forEach((run,i)=>{const size=HEBREW_RE.test(run.text)?11:(run.bold?16:11);setFont(doc,run.text,{size,bold:run.bold});doc.fillColor('#000').text(run.text,x,34.0,{lineBreak:false});x+=widths[i];});
+  runs.forEach((run,i)=>{
+    const size=HEBREW_RE.test(run.text)?11:(run.bold?16:11);
+    x=drawPdfPhrase(doc,run.text,x,34.0,{size,bold:run.bold,family:'noto'},'#000');
+  });
   doc.font('NotoBold').fontSize(10.5).text('Answer Key, Coverage Audit, and Scope Check',0,58.5,{width:792,align:'center',lineBreak:false});
   drawQuestionKeyTable(doc,questions);
   drawCoverageAudit(doc);
@@ -475,11 +533,13 @@ function wrapEssay(doc,text,width,size,bold=false){
 function drawEssayLine(doc,words,x,y,size,bold,color){
   let cursor=x;
   const space=wordWidth(doc,' ',{family:'dejavu',bold,size});
-  for(const word of words){
+  const visualWords=reorderRtlWordGroups(words);
+  visualWords.forEach((word,index)=>{
     const family=HEBREW_RE.test(word)?'noto':'dejavu';
     const tokenSize=HEBREW_RE.test(word)?size+.15:size;
-    cursor=drawPdfToken(doc,word,cursor,y,{family,bold,size:tokenSize},color)+space;
-  }
+    cursor=drawPdfToken(doc,word,cursor,y,{family,bold,size:tokenSize},color);
+    if(index<visualWords.length-1)cursor+=space;
+  });
 }
 function drawEssayParagraph(doc,text,x,y,width,size,bold,color,leading){
   const lines=wrapEssay(doc,text,width,size,bold);

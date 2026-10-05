@@ -1,5 +1,5 @@
 const APP_VERSION = 61;
-const CACHE_NAME = 'scp-study-v61';
+const CACHE_NAME = 'scp-study-v61-docs2';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v3';
 const APP_SHELL = [
   './',
@@ -23,6 +23,7 @@ const APP_SHELL = [
   './icons/apple-touch-icon.png',
   './images/install-scp-study-ios.png',
   './documents/2026-summer/SCP-Study-Compact-Course-Review.pdf',
+  './documents/2026-summer/SCP-Study-Full-Course-Notes.pdf',
   './documents/2026-summer/SCP-Study-Cumulative-Test.pdf',
   './documents/2026-summer/SCP-Study-Cumulative-Test-Answer-Key.pdf',
   './documents/2026-summer/SCP-Study-Essay-Questions-and-Sample-Answers.pdf',

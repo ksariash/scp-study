@@ -150,6 +150,40 @@
 .settings-about-row > div { min-width: 0; }
 .settings-about-row .settings-action-btn { width: auto !important; max-width: 100%; }
 
+/* Keep privacy/sync controls inside their settings card at every width. */
+#materialsDialog.settings-entry-surface .analytics-preference {
+  display: grid !important;
+  grid-template-columns: minmax(0,1fr) minmax(190px,260px);
+  align-items: start !important;
+  gap: 18px !important;
+  width: 100%;
+  min-width: 0;
+}
+#materialsDialog.settings-entry-surface .analytics-preference-copy,
+#materialsDialog.settings-entry-surface .anonymous-usage-controls {
+  min-width: 0;
+  max-width: 100%;
+}
+#materialsDialog.settings-entry-surface .anonymous-usage-controls {
+  width: 100%;
+}
+#materialsDialog.settings-entry-surface .analytics-switch {
+  display: grid !important;
+  grid-template-columns: 40px minmax(0,1fr);
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+#materialsDialog.settings-entry-surface .analytics-switch-track {
+  width: 40px;
+  min-width: 40px;
+}
+#materialsDialog.settings-entry-surface .analytics-switch > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 780px) {
   .topbar {
     grid-template-columns: auto auto minmax(0,1fr) !important;
@@ -184,6 +218,10 @@
     min-height: 38px !important;
     padding: 6px 2px !important;
     font-size: .65rem !important;
+  }
+  #materialsDialog.settings-entry-surface .analytics-preference {
+    grid-template-columns: 1fr;
+    gap: 10px !important;
   }
 }
 

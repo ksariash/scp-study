@@ -7,9 +7,9 @@ SCP Study should feel like one carefully designed installed application, not a c
 The interface has four levels of navigation and action. Do not blur them:
 
 1. **Identity and global utilities** — product mark, session status, Materials, Progress, Settings, Notifications.
-2. **Primary study mode** — Questions, Essays, Test, presented as one segmented control.
+2. **Primary study mode** — Questions, Essays, Test.
 3. **Context controls** — question/essay picker, category, filter, test progress, search, local resource actions.
-4. **Content actions** — answer choices, play audio, open notes, reveal answers, submit, next/previous.
+4. **Content actions** — answer choices, pairings, play audio, open notes, reveal answers, submit, next/previous.
 
 A control's location, style, and remembered state must reflect its level. A top-level destination must always mean the same thing when tapped.
 
@@ -36,7 +36,7 @@ One icon means one thing. Do not reuse the same glyph for a different action, an
 
 Global utility buttons share one size, shape, border treatment, icon optical size, hover/pressed behavior, and focus treatment. Their order is Materials → Progress → Settings → Notifications. On compact phones, preserve the group rather than wrapping a utility to a second row.
 
-During a practice test, Materials and Progress may be hidden to reduce distraction, but Settings and Notifications remain available. A user's ability to inspect or change app-level settings is not a study aid.
+During a practice test, Materials and Progress are hidden to reduce distraction, while Settings and Notifications remain available. Hiding neighboring utilities must not change the internal geometry of the surviving controls: Settings and Notifications stay optically centered in the same circles they use elsewhere.
 
 ### Product identity / About
 
@@ -48,9 +48,11 @@ The app icon and Settings → About are two entry points into the same dialog an
 
 In normal Question study, the session timer itself is the reset target. It remains visually a single status capsule; tapping/clicking it asks for reset confirmation. Do not add a separate reset icon beside the timer. In Essay and Test modes the timer is display-only.
 
-### Segmented mode selector
+### Primary mode selector
 
-Questions / Essays / Test form one equal-width segmented control. The outer control needs a visible neutral container. Inactive segments must still look tappable; the selected segment gets a distinct filled surface/shadow. Labels stay centered and never change meaning based on selection.
+Questions / Essays / Test form one stable primary-navigation control. Their labels never mutate based on selection, inactive choices must still look actionable, and the selected mode must be unmistakable. Equal alignment and balanced geometry matter at phone size.
+
+The exact visual treatment is intentionally open for a future reference-driven redesign. Do not assume the current segmented-control appearance is permanent. Once the product owner selects an external reference pattern, reproduce that visual logic consistently rather than creating a hybrid. Preserve the semantic contract and accessibility regardless of the chosen styling.
 
 ### Context groups
 
@@ -64,15 +66,27 @@ Settings has one visual frame: the dialog shell. Do not repeat “Settings / App
 
 Any dialog with multiple launch controls must have a canonical preparation step that runs before `showModal()`. Dynamic labels, version/Zman data, selected state, counts, and permissions must never depend on another launch control having been used earlier in the session.
 
+Settings controls must be intrinsically size-safe. Toggle labels, sync state, and action buttons must remain inside their cards at desktop dialog widths as well as narrow phones. Prefer `minmax(0,1fr)`, `min-width:0`, and intentional wrapping over fixed intrinsic widths that force overflow.
+
 ### Test question state
 
 In Test mode, the question picker communicates three attempt states: unanswered, answered, and marked for follow-up. Use symbols/shape in addition to color so native mobile selects and accessibility settings retain the distinction. Follow-up marking is a review aid only and must not resemble “report content.”
 
-### Test sections and essays
+A submitted multiple-choice answer may be locked, but its correctness is private until the entire test is submitted. During the active attempt, suppress result-colored choice styling, Correct/Incorrect/Partial status, explanations, and correct-answer text. Neutral “Answered” is sufficient.
+
+### Test sections, progress, and essays
 
 The combined test uses one three-hour countdown for Questions plus Essays. Questions and Essays are peer sections inside one active attempt: the learner may switch between them at any time, jump directly to a question or essay, and return to unfinished work. Do not gate Essays behind completion of every multiple-choice question.
 
-Essay prompts use a quiet exam-like response surface with autosaved text and no model answer/study aid during the attempt. Post-test self-review may reveal the model answer. Multiple-choice score and essay completion are reported separately because free-form essay responses are not automatically graded.
+Progress bars report work completed, not navigation position. The question bar is `answered questions / total questions`. Directly beneath it, a visually distinct essay bar is `fully completed essays / total essays`. An essay is complete only when every required pairing has a submitted selection; merely opening or partially completing an essay does not advance the overall essay bar.
+
+Test essays deliberately reuse the normal Essay-mode pairing vocabulary. Show the essay prompt, the same authority/concept → position pairing task, and a neutral list of submitted pairings. Do not introduce a parallel free-form essay editor for the test. Submitted pairings are editable during the attempt: tapping one reopens that pairing and allows a different selection.
+
+Correctness remains hidden for essay pairings until final test submission. No green/red states, “Correct”, “Not that pairing”, model answers, or study-aid hints appear during the timed attempt. Once the entire test is submitted, compare the stored selections with the canonical essay facts, show per-pairing correctness, per-essay results, and the model answer.
+
+Keyboard navigation follows the active section. While viewing test essays, Left/Right navigate essays and must not fall through to the multiple-choice navigation handler. Capture/stop events where necessary so one keystroke cannot cause two navigation actions.
+
+`Exit test` must remain a reliable escape route while the attempt is incomplete. After confirmation, it records an incomplete result and leaves Test mode. Once every multiple-choice question has been submitted, the same control becomes `Finish test`; finishing submits the combined attempt and confirms if any essays are still incomplete.
 
 ## 4. Spacing and geometry
 
@@ -82,19 +96,20 @@ Touch controls should be comfortably tappable on coarse pointers; where a visual
 
 ## 5. Responsive methodology
 
-Before a learner-facing release, inspect at roughly 320, 375, 390, and 430 CSS px plus a normal desktop width. Also test at least one enlarged app font setting. At each width verify:
+Before a learner-facing release, inspect at roughly 320, 375, 390, and 430 CSS px plus normal and constrained desktop dialog widths. Also test at least one enlarged app font setting. At each width verify:
 
-- no horizontal overflow;
-- global utilities remain one coherent group;
-- the segmented mode selector is centered and equal-width;
+- no horizontal overflow, including Settings toggle/action cards;
+- global utilities remain one coherent group and their glyphs remain centered;
+- the primary mode selector is balanced and its active/inactive states are clear;
 - Filter / question picker / category remain deliberately grouped;
 - long labels truncate or wrap in the intended place;
 - no control is stranded on a row by itself;
 - selected/unselected/disabled states remain understandable;
-- Settings action rows reflow as a whole when a generic full-width mobile button would otherwise collide with adjacent copy;
+- Settings action rows reflow as a whole when a generic full-width button would otherwise collide with adjacent copy;
 - test question statuses remain readable in native and custom pickers;
 - test Questions/Essays section switching and direct essay jumping remain usable at narrow widths;
-- essay response fields and navigation fit without creating a second horizontal scroll surface;
+- submitted test pairings remain legible and obviously editable without implying correctness;
+- the question and essay progress bars remain visually distinct and aligned;
 - safe-area insets and bottom floating controls remain usable;
 - dialogs have one intentional scroll surface.
 
@@ -106,7 +121,7 @@ Remember state only when remembering it helps the same semantic destination. Exa
 
 When two controls lead into shared internals, their entry contracts remain independent but their initialization must be equivalent. Test each path as the **first** path used after a cold load, not merely after another path has already populated the shared UI.
 
-Test follow-up flags and essay drafts belong to the active test attempt. They must not leak into a later attempt. Free-form essay text is device-local unless a future feature explicitly asks the learner to sync or submit it.
+Test follow-up flags, essay pairing selections, current test section, and per-essay pairing position belong to the active test attempt and must not leak into a later attempt. During the attempt, stored grading data may exist internally for M/C scheduling, but the UI contract still forbids revealing correctness until final submission.
 
 ## 7. Review before release
 
@@ -118,8 +133,10 @@ A UI change is complete only after a design pass over the affected surface and i
 - Do all entry points into a shared dialog show correct dynamic state on their first open after a cold load?
 - Are repeated controls geometrically and visually consistent?
 - Does the session timer use the intended mode-specific interaction?
-- Does the layout still look intentional at narrow iPhone widths and large text?
-- If Test changed, are Settings, question states, follow-up marking, free Questions↔Essays navigation, direct essay jumping, and the three-hour timer all coherent?
+- Does the layout still look intentional at narrow iPhone widths, constrained desktop dialogs, and large text?
+- If Test changed, is there zero correctness leakage before final submission?
+- Can the learner freely move Questions↔Essays, edit submitted pairings, use essay-local arrow keys, exit early, and finish after questions are complete?
+- Do question and essay progress bars reflect answered/completed counts rather than navigation position?
 - Did this change create a new visual dialect that should instead be folded into the shared component system?
 
 Prefer fewer, stronger patterns over more custom styling.

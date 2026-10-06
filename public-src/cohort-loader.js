@@ -33,6 +33,7 @@
   document.write(
     files.map(file => '<script src="' + base + '/' + file + '"><\/script>').join('') +
     '<script src="ui-system.js"><\/script>' +
-    '<script src="test-mode-v2.js"><\/script>'
+    '<script src="test-mode-v2.js"><\/script>' +
+    '<script src="test-mode-v2-enter.js"><\/script>'
   );
 })();

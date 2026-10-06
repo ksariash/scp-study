@@ -37,7 +37,7 @@ body.ui-test-essays .essay-choice.test-essay-choice {
 
 .test-pairing-nav {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0,1fr));
+  grid-template-columns: repeat(2, minmax(0,1fr));
   gap: 7px;
   margin: 12px 0;
   align-items: stretch;
@@ -61,7 +61,7 @@ body.ui-test-essays .essay-choice.test-essay-choice {
   color: #795306;
 }
 #testPairingFlagBtn { grid-column: 1 / span 1; }
-#testEssayFlagBtn { grid-column: 2 / span 2; }
+#testEssayFlagBtn { grid-column: 2 / span 1; }
 
 .test-essay-shortcuts,
 .test-review-shortcuts {
@@ -173,9 +173,7 @@ body.ui-test-essays .essay-choice.test-essay-choice {
 
 @media (max-width: 600px) {
   .test-pairing-nav { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .test-pairing-nav [data-test-pair-nav="prev"],
-  .test-pairing-nav [data-test-pair-nav="skip"] { grid-column: span 1; }
-  .test-pairing-nav [data-test-pair-nav="next"] { grid-column: 1 / -1; }
+  .test-pairing-nav [data-test-pair-nav] { grid-column: span 1; }
   #testPairingFlagBtn, #testEssayFlagBtn { grid-column: span 1; }
   .test-history-row { grid-template-columns: minmax(0,1fr) auto; }
   .test-review-nav { grid-template-columns: 1fr 1fr; }

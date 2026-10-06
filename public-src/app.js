@@ -239,6 +239,7 @@
   };
 
   let importReloadPending = false;
+  let testControllerReloadPending = false;
   let externalReferenceActive = false;
   let state = loadState();
   let mode = state.activeTest ? 'test' : 'study';
@@ -1473,7 +1474,7 @@
   }
 
   function saveState() {
-    if (importReloadPending) return;
+    if (importReloadPending || testControllerReloadPending) return;
     try { writeMainProgressForCohort(state); }
     catch (err) { console.warn('Could not save progress:', err); }
   }
@@ -4803,7 +4804,7 @@
     if (mode === 'test' && state.activeTest) {
       const remaining = state.activeTest.endTime - Date.now();
       dom.mainTimer.textContent = formatDuration(Math.max(0, remaining));
-      if (remaining <= 0) finishTest('time');
+      if (remaining <= 0 && !document.body.classList.contains('ui-test-active')) finishTest('time');
     } else {
       dom.mainTimer.textContent = formatDuration(studyElapsedNow());
     }
@@ -4812,7 +4813,7 @@
   function checkExpiredTestOnLoad() {
     if (state.activeTest && state.activeTest.endTime <= Date.now()) {
       mode = 'test';
-      setTimeout(() => finishTest('time'), 50);
+      if (!document.body.classList.contains('ui-test-active')) setTimeout(() => finishTest('time'), 50);
       return true;
     }
     return false;
@@ -5061,6 +5062,12 @@
         const fact = essay?.facts.find(item => item.id === pairingReport.dataset.reportEssayPairing);
         if (essay && fact) openContentFeedback(essayPairingFeedbackTarget(essay, fact, 'essay_library'));
       }
+    });
+
+    window.addEventListener('scp:test-controller-reload', () => {
+      testControllerReloadPending = true;
+      activeQuestionTickStart = null;
+      studyTickStart = null;
     });
 
     dom.testBtn.addEventListener('click', () => {

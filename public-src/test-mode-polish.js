@@ -15,7 +15,6 @@
   const ANALYTICS_SETTINGS_KEY = 'scpStudy.analytics.v1';
   const ANALYTICS_INSTALLATION_KEY = 'scpStudy.analyticsInstallation.v1';
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/test-attempts';
-  const TEST_DURATION = 3 * 60 * 60 * 1000;
 
   const json = (value, fallback = null) => {
     try { return JSON.parse(value); } catch (_) { return fallback; }
@@ -73,15 +72,16 @@
     return id;
   }
 
+  let lastDraftSignature = '';
   function snapshotActive() {
     const attempt = activeAttempt();
     if (!attempt?.sup) return;
     const sup = ensureSupplementFields(structuredClone(attempt.sup));
-    writeJson(DRAFT, {
-      savedAt: Date.now(),
-      test: structuredClone(attempt.test),
-      sup
-    });
+    const test = structuredClone(attempt.test);
+    const signature = JSON.stringify({ test, sup });
+    if (signature === lastDraftSignature) return;
+    lastDraftSignature = signature;
+    writeJson(DRAFT, { savedAt: Date.now(), test, sup });
   }
 
   function historyRows() {
@@ -245,18 +245,16 @@
   function rerenderEssay(ctx = currentEssayContext()) {
     if (!ctx) return;
     saveSupplement(ctx.sup);
-    const native = el('essayQuickNav');
-    if (native) {
-      native.value = String(ctx.sup.essayIndex || 0);
-      native.dispatchEvent(new Event('change', { bubbles:true }));
-    }
+    window.dispatchEvent(new CustomEvent('scp:test-refresh-essay'));
   }
 
   function movePairing(delta) {
     const ctx = currentEssayContext();
     if (!ctx?.essay?.facts?.length) return;
     const count = ctx.essay.facts.length;
-    ctx.sup.essayFactIndex[ctx.essayId] = (ctx.factIndex + Number(delta) + count) % count;
+    const next = Math.min(Math.max(0, ctx.factIndex + Number(delta)), count - 1);
+    if (next === ctx.factIndex) return;
+    ctx.sup.essayFactIndex[ctx.essayId] = next;
     rerenderEssay(ctx);
   }
   function moveEssay(delta) {
@@ -326,7 +324,6 @@
       controls.className = 'test-pairing-nav';
       controls.innerHTML = `
         <button type="button" class="secondary" data-test-pair-nav="prev">← Pairing</button>
-        <button type="button" class="secondary" data-test-pair-nav="skip">Skip</button>
         <button type="button" class="secondary" data-test-pair-nav="next">Pairing →</button>
         <button type="button" class="test-flag-btn" id="testPairingFlagBtn" aria-pressed="false">☆ Pairing</button>
         <button type="button" class="test-flag-btn" id="testEssayFlagBtn" aria-pressed="false">☆ Essay</button>`;
@@ -334,7 +331,7 @@
       controls.addEventListener('click', event => {
         const nav = event.target.closest?.('[data-test-pair-nav]')?.dataset.testPairNav;
         if (nav === 'prev') movePairing(-1);
-        if (nav === 'skip' || nav === 'next') movePairing(1);
+        if (nav === 'next') movePairing(1);
         if (event.target.closest?.('#testPairingFlagBtn')) togglePairingFlag();
         if (event.target.closest?.('#testEssayFlagBtn')) toggleEssayFlag();
       });
@@ -349,7 +346,6 @@
       el('essayPracticeMain')?.append(footer);
     }
 
-    refreshEssayControls(ctx);
   }
 
   function refreshEssayControls(ctx = currentEssayContext()) {
@@ -383,31 +379,16 @@
     const essayFlagged = (ctx.sup.essayFlags || []).map(String).includes(ctx.essayId);
     if (pairFlag) { pairFlag.textContent = pairFlagged ? '★ Pairing' : '☆ Pairing'; pairFlag.classList.toggle('active', pairFlagged); pairFlag.setAttribute('aria-pressed', pairFlagged ? 'true' : 'false'); }
     if (essayFlag) { essayFlag.textContent = essayFlagged ? '★ Essay' : '☆ Essay'; essayFlag.classList.toggle('active', essayFlagged); essayFlag.setAttribute('aria-pressed', essayFlagged ? 'true' : 'false'); }
+    const previous = el('testPairingNav')?.querySelector('[data-test-pair-nav="prev"]');
+    const next = el('testPairingNav')?.querySelector('[data-test-pair-nav="next"]');
+    if (previous) previous.disabled = ctx.factIndex <= 0;
+    if (next) next.disabled = ctx.factIndex >= Math.max(0, ctx.essay.facts.length - 1);
   }
 
   function hardenEssayHitTargets() {
     document.querySelectorAll('[data-test-essay-choice], [data-test-edit-fact]').forEach(button => {
       button.classList.add('test-full-hit-target');
       button.querySelectorAll('*').forEach(child => child.classList.add('test-hit-child'));
-    });
-  }
-
-  function decorateQuestionStates() {
-    const attempt = activeAttempt();
-    if (!attempt || attempt.sup?.phase === 'essays') return;
-    const answered = new Set((attempt.test.order || []).filter(id => attempt.test.items?.[id]?.answered).map(Number));
-    const flags = new Set((attempt.sup?.flags || []).map(Number));
-    const select = el('questionNumber');
-    if (select) [...select.options].forEach(option => {
-      const id = Number(option.value);
-      option.textContent = `${flags.has(id) ? '★ ' : ''}${answered.has(id) ? '✓' : '□'} Question ${id}`;
-    });
-    el('questionNumberMenu')?.querySelectorAll('[data-question-number]').forEach(button => {
-      const id = Number(button.dataset.questionNumber);
-      button.classList.toggle('test-answered', answered.has(id));
-      button.classList.toggle('test-unanswered', !answered.has(id));
-      button.classList.toggle('test-flagged', flags.has(id));
-      button.textContent = `${flags.has(id) ? '★ ' : ''}${answered.has(id) ? '✓' : '□'} ${id}`;
     });
   }
 
@@ -433,28 +414,6 @@
       if (done < total) el('nextBtn')?.click();
       autoAdvanceBusy = false;
     }, 120);
-  }
-
-  function stabilizeProgress() {
-    const attempt = activeAttempt();
-    if (!attempt) return;
-    const total = attempt.test.order?.length || 0;
-    const done = attempt.test.order?.filter(id => attempt.test.items?.[id]?.answered).length || 0;
-    const fill = el('testProgressFill');
-    if (fill) fill.style.setProperty('width', `${total ? done / total * 100 : 0}%`, 'important');
-  }
-
-  function smoothTimer() {
-    const attempt = activeAttempt();
-    if (!attempt) return;
-    const start = Number(attempt.test.startedAt) || Date.now();
-    const remaining = Math.max(0, start + TEST_DURATION - Date.now());
-    const total = Math.floor(remaining / 1000);
-    const h = Math.floor(total / 3600);
-    const m = Math.floor((total % 3600) / 60);
-    const s = total % 60;
-    const timer = el('mainTimer');
-    if (timer) timer.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   }
 
   function ensureHistoryDialogs() {
@@ -630,21 +589,33 @@
     }, true);
   }
 
+  let essayControlsKey = '';
   function tick() {
     const attempt = activeAttempt();
     if (attempt?.sup) {
       ensureSupplementFields(attempt.sup);
       snapshotActive();
-      decorateQuestionStates();
       watchAutoAdvance();
-      stabilizeProgress();
-      smoothTimer();
       if (attempt.sup.phase === 'essays') {
         ensureEssayControls();
-        refreshEssayControls();
-        hardenEssayHitTargets();
+        const ctx = currentEssayContext();
+        const controlsKey = ctx ? JSON.stringify([
+          ctx.essayId,
+          ctx.factIndex,
+          ctx.sup.essayPairings,
+          ctx.sup.essayFlags,
+          ctx.sup.pairingFlags
+        ]) : '';
+        if (controlsKey !== essayControlsKey) {
+          essayControlsKey = controlsKey;
+          refreshEssayControls(ctx);
+          hardenEssayHitTargets();
+        }
+      } else {
+        essayControlsKey = '';
       }
     } else {
+      essayControlsKey = '';
       reconcileCompletedAttempt();
     }
   }

@@ -16,7 +16,6 @@
   const SYNC = 'scpStudy.sync.v1';
   const SYNCQ = 'scpStudy.syncQueue.v1';
   const DURATION = 3 * 60 * 60 * 1000;
-  const CORE_TIMER_GRACE = 3 * 1000;
 
   const qMap = new Map(Q.map(q => [Number(q.id), q]));
   const eMap = new Map(E.map(e => [String(e.id), e]));
@@ -30,6 +29,7 @@
   }[character]));
 
   let finishing = false;
+  let renderedEssayKey = '';
 
   function stored() {
     const raw = json(localStorage.getItem(MAIN), null);
@@ -118,7 +118,6 @@
   }
 
   const exactDeadline = test => (Number(test.startedAt) || Date.now()) + DURATION;
-  const coreDeadline = test => exactDeadline(test) + CORE_TIMER_GRACE;
 
   function active() {
     const state = read();
@@ -128,8 +127,8 @@
       return null;
     }
 
-    const desiredEnd = coreDeadline(test);
-    if (!Number(test.endTime) || Number(test.endTime) < desiredEnd) {
+    const desiredEnd = exactDeadline(test);
+    if (Number(test.endTime) !== desiredEnd) {
       test.endTime = desiredEnd;
       write(state);
     }
@@ -165,7 +164,7 @@
       const state = read();
       const test = state?.activeTest;
       if (!test?.id) return;
-      test.endTime = coreDeadline(test);
+      test.endTime = exactDeadline(test);
       write(state);
       saveSup(baseSup(test));
       window.location.reload();
@@ -531,6 +530,7 @@
     const essayId = String(essay.id);
     const factIndex = currentEssayFactIndex(attempt, essay);
     const fact = essay.facts[factIndex];
+    renderedEssayKey = `${attempt.test.id}:${essayId}:${factIndex}`;
     const pairs = pairingMap(attempt.sup, essayId);
     const selectedId = pairs[String(fact.id)] || '';
 
@@ -830,6 +830,7 @@
     if (!state.tests.some(item => String(item?.id) === result.id)) state.tests.push(result);
     state.tests = state.tests.slice(-30);
     state.activeTest = null;
+    window.dispatchEvent(new CustomEvent('scp:test-controller-reload'));
     write(state);
     queueSync(result);
     localStorage.setItem(PENDING, JSON.stringify({ id: result.id }));
@@ -884,22 +885,13 @@
     dialog.showModal();
   }
 
-  function formatDuration(ms) {
-    const total = Math.max(0, Math.floor(ms / 1000));
-    const hours = Math.floor(total / 3600);
-    const minutes = Math.floor((total % 3600) / 60);
-    const seconds = total % 60;
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-  }
-
-  function syncExactTimer(attempt) {
+  function enforceDeadline(attempt) {
     const remaining = exactDeadline(attempt.test) - Date.now();
-    const timer = el('mainTimer');
-    if (timer) timer.textContent = formatDuration(remaining);
     if (remaining <= 0) finish('time');
   }
 
   function showQuestionSurface(attempt) {
+    renderedEssayKey = '';
     document.body.classList.remove('ui-test-essays');
     el('questionCard')?.classList.remove('ui-test-section-hidden');
     el('saveNote')?.classList.remove('ui-test-section-hidden');
@@ -924,12 +916,24 @@
       cleanupInactive();
       return;
     }
-    syncExactTimer(attempt);
+    enforceDeadline(attempt);
     if (finishing) return;
     updateProgress(attempt);
-    if (attempt.sup.phase === 'essays') renderEssay(attempt);
-    else showQuestionSurface(attempt);
+    if (attempt.sup.phase === 'essays') {
+      const essay = currentEssay(attempt);
+      const essayId = String(essay?.id || '');
+      const factIndex = essay ? currentEssayFactIndex(attempt, essay) : 0;
+      const renderKey = `${attempt.test.id}:${essayId}:${factIndex}`;
+      if (renderedEssayKey !== renderKey) renderEssay(attempt);
+    } else {
+      showQuestionSurface(attempt);
+    }
   }
+
+  window.addEventListener('scp:test-refresh-essay', () => {
+    const attempt = active();
+    if (attempt?.sup.phase === 'essays') renderEssay(attempt);
+  });
 
   el('startTestBtn')?.addEventListener('click', bridgeNativeStart);
 

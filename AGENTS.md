@@ -201,7 +201,13 @@ Prefer the interface itself over explanatory prose. If a heading, label, selecte
 
 Settings should be concise. In particular, Zman and chabura controls do not need prose explaining that they select a Zman/chabura. Reserve status text for a real state change, warning, error, or confirmation.
 
-Use familiar icons instead of text for compact utility actions when the icon is conventional and unambiguous. Icon-only buttons must have an accessible `aria-label` and a useful `title`. On desktop, the notification control is the last topbar action immediately to the right of Test, while the session timer is centered independently in the app header. On compact/mobile layouts, the timer and bell remain a top-right cluster. Unread state is a compact alert mark, not a large labeled card.
+Use familiar icons instead of text for compact utility actions when the icon is conventional and unambiguous. Icon-only buttons must have an accessible `aria-label` and a useful `title`. The app header is for identity, session status, and global utilities: Materials, Progress/Stats, Settings, then Notifications. Keep those utilities icon-only and keep Notifications last. The product logo/title is identity, not a hidden navigation target; About belongs at the bottom of Settings. Unread state is a compact alert mark, not a large labeled card.
+
+Keep primary study modes in a stable selector below the app header: `Questions`, `Essays`, `Test`. Do not rename a selected mode to mean its inverse (for example, `Essays` must not become `M/C`, and `Test` must not become `Exit test`). Selected mode state is visual and uses `aria-current`; exiting an active test is an explicit action in the test-progress surface. Categories is a contextual question filter beside the question category, not a global header destination.
+
+The session timer is a status display, not an invisible button. Center it relative to the full desktop header; on compact layouts keep it in the single header row with the brand mark and utility icons. In question-study mode an explicit compact reset icon may live inside the timer. Do not make the entire timer a reset target. On very narrow screens, hide brand copy before abbreviating primary navigation labels.
+
+During an active practice test, preserve test integrity and reduce distraction: prevent switching study modes, hide question search/category filtering and study-aid/global utility entries such as Materials, Stats, and Settings, keep Notifications available, and provide the explicit `Exit test` action beside test progress.
 
 Keep native keyboard semantics for intentionally focused controls. After main-question navigation changes the displayed question, move focus to the new question heading rather than globally overriding Enter on focused buttons; this lets Enter submit from question context while preserving Tab/Shift+Tab and native button activation. In Question Explorer, answer reveal is a dialog-session preference: preserve it while moving/searching between questions, reset it when the dialog closes, and keep Explorer navigation/reveal shortcuts out of text-entry controls.
 
@@ -220,7 +226,7 @@ Small text must keep normal-text contrast, active icon controls must remain dist
 
 Summer 2026 review audio is canonical at `audio/2026-summer/<filename>`. Because production playback failed after the migration, the Worker temporarily keeps read-only compatibility probes for a literal-leading-slash key and the legacy flat `audio/<filename>` key. Remove those probes only after a live production HEAD/Range playback check confirms the canonical objects and metadata.
 
-The topbar separates desktop and compact placement. On desktop the session timer is centered relative to the full app header, and the notification bell follows Test at the far right. On compact layouts the timer and bell form one top-right visual cluster; vertically center the bell against the timer and never let it wrap beneath the main navigation.
+The topbar separates desktop and compact placement. On desktop the session timer is centered relative to the full app header. On compact layouts, logo, timer, and the icon utility group remain a single visually centered row; never let Notifications wrap beneath that row. Primary mode navigation remains the separate `Questions` / `Essays` / `Test` selector immediately below the header.
 
 
 ## Notification permission UX
@@ -234,6 +240,8 @@ Browsers generally cannot re-open the native permission prompt after the user ha
 Settings use one primary section title, not a numeric eyebrow plus a duplicate label. Zman and Chabura show their currently saved value at the bottom of their cards.
 
 Font size is the first setting. Keep it device-local, apply it immediately, preserve the browser's own default font/zoom behavior, and include it in Settings import/export. Large text must reflow without making controls overflow their cards.
+
+Settings is the single home for destructive learner-data actions. Stats/Progress is informational and must not duplicate reset/delete controls. Keep About as a compact final Settings row showing the runtime app version; its dialog should be lightweight product metadata (including current Zman) plus Share app / Check for updates, not a second navigation menu.
 
 In Materials → Downloads, use concise document names such as “Compact Course Review” and “Course Glossary”; do not repeat the “SCP Study” product prefix on every row.
 

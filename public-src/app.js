@@ -15,7 +15,7 @@
     ...track,
     name: track.title
   }));
-  const APP_VERSION = 74;
+  const APP_VERSION = 75;
   const ANALYTICS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/events';
   const CONTENT_FEEDBACK_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/feedback/report';
   const NOTIFICATIONS_ENDPOINT = 'https://scp-study-analytics.ksariash.workers.dev/api/notifications';
@@ -212,21 +212,21 @@
 
   const el = id => document.getElementById(id);
   const dom = {
-    modeLabel: el('modeLabel'), timerLabel: el('timerLabel'), mainTimer: el('mainTimer'), timerCard: el('timerCard'), brandLogo: el('brandLogo'), brandTitle: el('brandTitle'),
-    appInfoDialog: el('appInfoDialog'), closeAppInfo: el('closeAppInfo'), appInfoMcBtn: el('appInfoMcBtn'), appInfoEssayBtn: el('appInfoEssayBtn'), appInfoTestBtn: el('appInfoTestBtn'), appInfoShareBtn: el('appInfoShareBtn'), appInfoUpdateBtn: el('appInfoUpdateBtn'), appInfoSettingsBtn: el('appInfoSettingsBtn'),
+    modeLabel: el('modeLabel'), timerLabel: el('timerLabel'), mainTimer: el('mainTimer'), timerCard: el('timerCard'), timerResetBtn: el('timerResetBtn'), brandLogo: el('brandLogo'), brandTitle: el('brandTitle'),
+    appInfoDialog: el('appInfoDialog'), closeAppInfo: el('closeAppInfo'), appInfoShareBtn: el('appInfoShareBtn'), appInfoUpdateBtn: el('appInfoUpdateBtn'), appInfoZman: el('appInfoZman'),
     notificationInboxDialog: el('notificationInboxDialog'),
-    categoriesBtn: el('categoriesBtn'), materialsBtn: el('materialsBtn'), statsBtn: el('statsBtn'), essayBtn: el('essayBtn'), testBtn: el('testBtn'), questionSearchFab: el('questionSearchFab'), installBtn: el('installBtn'), installGuideDialog: el('installGuideDialog'), closeInstallGuide: el('closeInstallGuide'),
-    testProgressWrap: el('testProgressWrap'), testQuestionCount: el('testQuestionCount'), testAnsweredCount: el('testAnsweredCount'), testProgressFill: el('testProgressFill'),
+    categoriesBtn: el('categoriesBtn'), materialsBtn: el('materialsBtn'), statsBtn: el('statsBtn'), settingsBtn: el('settingsBtn'), questionsModeBtn: el('questionsModeBtn'), essayBtn: el('essayBtn'), testBtn: el('testBtn'), questionSearchFab: el('questionSearchFab'), installBtn: el('installBtn'), installGuideDialog: el('installGuideDialog'), closeInstallGuide: el('closeInstallGuide'),
+    testProgressWrap: el('testProgressWrap'), testQuestionCount: el('testQuestionCount'), testAnsweredCount: el('testAnsweredCount'), testProgressFill: el('testProgressFill'), exitTestBtn: el('exitTestBtn'),
     questionNumber: el('questionNumber'), questionNumberPicker: el('questionNumberPicker'), questionNumberTrigger: el('questionNumberTrigger'), questionNumberMenu: el('questionNumberMenu'), questionCategory: el('questionCategory'), questionStatus: el('questionStatus'), questionPrompt: el('questionPrompt'), questionReportBtn: el('questionReportBtn'), multiNote: el('multiNote'), questionAudio: el('questionAudio'), questionNoteLinks: el('questionNoteLinks'), answerForm: el('answerForm'),
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     questionCard: el('questionCard'), prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoriesDialogTitle: el('categoriesDialogTitle'), categoriesDialogDescription: el('categoriesDialogDescription'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
-    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), downloadAllPdfsBtn: el('downloadAllPdfsBtn'), pdfCacheStatus: el('pdfCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), fontSizeSelect: el('fontSizeSelect'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), syncToggle: el('syncToggle'), syncStatus: el('syncStatus'), syncNowBtn: el('syncNowBtn'), syncActions: el('syncActions'), joinSyncBtn: el('joinSyncBtn'), linkDeviceBtn: el('linkDeviceBtn'), manageDevicesBtn: el('manageDevicesBtn'), syncDevicesDialog: el('syncDevicesDialog'), closeSyncDevices: el('closeSyncDevices'), syncDeviceList: el('syncDeviceList'), syncDevicesStatus: el('syncDevicesStatus'), unlinkThisDeviceBtn: el('unlinkThisDeviceBtn'), unlinkOtherDevicesBtn: el('unlinkOtherDevicesBtn'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'), settingsTransferStatus: el('settingsTransferStatus'),
+    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), downloadAllPdfsBtn: el('downloadAllPdfsBtn'), pdfCacheStatus: el('pdfCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), fontSizeSelect: el('fontSizeSelect'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), syncToggle: el('syncToggle'), syncStatus: el('syncStatus'), syncNowBtn: el('syncNowBtn'), syncActions: el('syncActions'), joinSyncBtn: el('joinSyncBtn'), linkDeviceBtn: el('linkDeviceBtn'), manageDevicesBtn: el('manageDevicesBtn'), syncDevicesDialog: el('syncDevicesDialog'), closeSyncDevices: el('closeSyncDevices'), syncDeviceList: el('syncDeviceList'), syncDevicesStatus: el('syncDevicesStatus'), unlinkThisDeviceBtn: el('unlinkThisDeviceBtn'), unlinkOtherDevicesBtn: el('unlinkOtherDevicesBtn'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'), settingsTransferStatus: el('settingsTransferStatus'), settingsAboutBtn: el('settingsAboutBtn'), settingsAboutVersion: el('settingsAboutVersion'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
     essayPracticeMain: el('essayPracticeMain'), essayQuickNav: el('essayQuickNav'), essayCategoryTags: el('essayCategoryTags'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayNoteLinks: el('essayNoteLinks'), essayQuestionAudio: el('essayQuestionAudio'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingResources: el('essayPairingResources'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
     audioPlayerShell: el('audioPlayerShell'), audioPlayer: el('audioPlayer'), audioTrackTitle: el('audioTrackTitle'), audioTrackCounter: el('audioTrackCounter'), audioPrevBtn: el('audioPrevBtn'), audioBack10Btn: el('audioBack10Btn'), audioForward10Btn: el('audioForward10Btn'), audioNextBtn: el('audioNextBtn'), audioEmptyState: el('audioEmptyState'), audioPlaylistWrap: el('audioPlaylistWrap'), audioPlaylistCount: el('audioPlaylistCount'), audioPlaylistToggle: el('audioPlaylistToggle'), audioPlaylist: el('audioPlaylist'), transcriptPanel: el('transcriptPanel'), transcriptToggle: el('transcriptToggle'), audioTranscript: el('audioTranscript'), transcriptClock: el('transcriptClock'), miniAudioPlayer: el('miniAudioPlayer'), miniAudioOpen: el('miniAudioOpen'), miniAudioTitle: el('miniAudioTitle'), miniAudioTime: el('miniAudioTime'), miniAudioBack10: el('miniAudioBack10'), miniAudioPlayPause: el('miniAudioPlayPause'), miniAudioStop: el('miniAudioStop'),
-    statsDialog: el('statsDialog'), statsContent: el('statsContent'), closeStats: el('closeStats'), resetStatsBtn: el('resetStatsBtn'), doneStatsBtn: el('doneStatsBtn'),
+    statsDialog: el('statsDialog'), statsContent: el('statsContent'), closeStats: el('closeStats'), doneStatsBtn: el('doneStatsBtn'),
     questionReviewDialog: el('questionReviewDialog'), closeQuestionReview: el('closeQuestionReview'), reviewTitle: el('reviewTitle'), reviewContextLabel: el('reviewContextLabel'), reviewSearchInput: el('reviewSearchInput'), reviewSearchClear: el('reviewSearchClear'), reviewSearchCount: el('reviewSearchCount'), reviewSearchEmpty: el('reviewSearchEmpty'), reviewNav: el('reviewNav'), reviewBody: el('reviewBody'), reviewQuestionNumber: el('reviewQuestionNumber'), reviewCategory: el('reviewCategory'), reviewQuestionReportBtn: el('reviewQuestionReportBtn'), reviewStatsGrid: el('reviewStatsGrid'), reviewLastAnswer: el('reviewLastAnswer'), reviewPrompt: el('reviewPrompt'), reviewChoices: el('reviewChoices'), reviewExplanation: el('reviewExplanation'), reviewCorrectAnswer: el('reviewCorrectAnswer'), reviewAnswerDetails: el('reviewAnswerDetails'), reviewRevealBtn: el('reviewRevealBtn'), reviewAudio: el('reviewAudio'), reviewNoteLinks: el('reviewNoteLinks'), reviewPrevBtn: el('reviewPrevBtn'), reviewNextBtn: el('reviewNextBtn'), reviewCounter: el('reviewCounter'),
     mcIntroDialog: el('mcIntroDialog'), closeMcIntro: el('closeMcIntro'), cancelMcStart: el('cancelMcStart'), startMcFromIntroBtn: el('startMcFromIntroBtn'),
     testIntroDialog: el('testIntroDialog'), closeTestIntro: el('closeTestIntro'), cancelTestStart: el('cancelTestStart'), startTestBtn: el('startTestBtn'),
@@ -432,63 +432,9 @@
     }
   }
 
-  function updateBrandShareAffordance() {
-    [dom.brandLogo, dom.brandTitle].forEach(node => {
-      if (!node) return;
-      node.tabIndex = 0;
-      node.setAttribute('role', 'button');
-      node.setAttribute('aria-label', 'About SCP Study');
-      node.setAttribute('title', 'About SCP Study');
-    });
-  }
-
-  function updateAppInfoModeUi() {
-    const inEssay = essayModeActive && mode === 'study';
-    const inTest = mode === 'test';
-    [
-      [dom.appInfoMcBtn, !inEssay && !inTest],
-      [dom.appInfoEssayBtn, inEssay],
-      [dom.appInfoTestBtn, inTest]
-    ].forEach(([button, active]) => {
-      if (!button) return;
-      button.classList.toggle('active-mode', !!active);
-      button.setAttribute('aria-current', active ? 'true' : 'false');
-    });
-  }
-
   function openAppInfo() {
-    updateAppInfoModeUi();
+    if (dom.appInfoZman) dom.appInfoZman.textContent = ACTIVE_COHORT.name || ANALYTICS_COHORT;
     if (dom.appInfoDialog && !dom.appInfoDialog.open) dom.appInfoDialog.showModal();
-  }
-
-  function openSettingsFromAppInfo() {
-    dom.appInfoDialog?.close();
-    openMaterials('settings');
-  }
-
-  function chooseModeFromAppInfo(target) {
-    dom.appInfoDialog?.close();
-    if (target === 'mc') {
-      if (mode === 'test') {
-        showAppToast('Exit the practice test before switching to M/C.');
-        return;
-      }
-      if (essayModeActive) leaveEssayMode();
-      return;
-    }
-    if (target === 'essay') {
-      if (mode === 'test') {
-        showAppToast('Exit the practice test before switching to Essay mode.');
-        return;
-      }
-      if (!essayModeActive) openEssayIntro();
-      return;
-    }
-    if (target === 'test') {
-      if (mode === 'test') return;
-      flushQuestionTime();
-      if (!dom.testIntroDialog.open) dom.testIntroDialog.showModal();
-    }
   }
 
 
@@ -508,6 +454,7 @@
     if (dom.appVersionFooter) dom.appVersionFooter.textContent = `SCP Study v${APP_VERSION}`;
     const aboutVersion = document.getElementById('appInfoVersion');
     if (aboutVersion) aboutVersion.textContent = `v${APP_VERSION}`;
+    if (dom.settingsAboutVersion) dom.settingsAboutVersion.textContent = `Version ${APP_VERSION}`;
   }
 
   function consumeUpdateAnnouncement() {
@@ -1633,8 +1580,8 @@
   }
 
   function handleEssayModeButton() {
-    if (essayModeActive) openMultipleChoiceIntro();
-    else openEssayIntro();
+    if (mode === 'test' || essayModeActive) return;
+    openEssayIntro();
   }
 
   function openEssayIntro() {
@@ -2539,26 +2486,34 @@
     syncAnalyticsAssist();
 
     const inEssayMode = essayModeActive && mode === 'study';
+    const inTest = mode === 'test';
     document.body.classList.toggle('essay-mode-active', inEssayMode);
-    dom.modeLabel.textContent = mode === 'test' ? 'Practice test' : inEssayMode ? 'Essay mode' : 'Study mode';
-    dom.timerLabel.textContent = mode === 'test' ? 'Time left' : 'Session';
-    dom.timerCard.classList.toggle('is-clickable', mode === 'study' && !inEssayMode);
-    dom.timerCard.setAttribute('title', mode === 'test' ? 'Practice test countdown' : inEssayMode ? 'Essay study session' : 'Click to reset the study session timer');
-    dom.timerCard.setAttribute('aria-label', mode === 'test' ? 'Practice test countdown timer' : inEssayMode ? 'Essay study session timer.' : 'Study session timer. Click to reset.');
-    dom.testBtn.textContent = mode === 'test' ? 'Exit test' : 'Test';
-    dom.categoriesBtn.disabled = mode === 'test';
-    dom.statsBtn.disabled = mode === 'test';
-    if (dom.essayBtn) {
-      dom.essayBtn.disabled = mode === 'test';
-      dom.essayBtn.textContent = inEssayMode ? 'M/C' : 'Essay';
-      dom.essayBtn.setAttribute('aria-label', inEssayMode ? 'Switch to multiple choice mode' : 'Open essay practice');
+    dom.modeLabel.textContent = inTest ? 'Practice test' : inEssayMode ? 'Essay mode' : 'Question study';
+    dom.timerLabel.textContent = inTest ? 'Time left' : 'Session';
+    if (dom.timerResetBtn) {
+      dom.timerResetBtn.classList.toggle('hidden', inTest || inEssayMode);
+      dom.timerResetBtn.disabled = inTest || inEssayMode;
     }
-    dom.testProgressWrap.classList.toggle('hidden', mode !== 'test');
+    [
+      [dom.questionsModeBtn, !inTest && !inEssayMode],
+      [dom.essayBtn, !inTest && inEssayMode],
+      [dom.testBtn, inTest]
+    ].forEach(([button, active]) => {
+      if (!button) return;
+      button.classList.toggle('active', active);
+      if (active) button.setAttribute('aria-current', 'page');
+      else button.removeAttribute('aria-current');
+      button.disabled = inTest;
+    });
+    dom.categoriesBtn.classList.toggle('hidden', inTest || inEssayMode);
+    dom.categoriesBtn.disabled = inTest || inEssayMode;
+    [dom.materialsBtn, dom.statsBtn, dom.settingsBtn].forEach(button => button?.classList.toggle('hidden', inTest));
+    dom.testProgressWrap.classList.toggle('hidden', !inTest);
     dom.questionCard?.classList.toggle('hidden', inEssayMode);
     dom.saveNote?.classList.toggle('hidden', inEssayMode);
     dom.essayPracticeMain?.classList.toggle('hidden', !inEssayMode);
     if (dom.questionSearchFab) {
-      dom.questionSearchFab.classList.toggle('hidden', mode === 'test');
+      dom.questionSearchFab.classList.toggle('hidden', inTest);
       dom.questionSearchFab.setAttribute('aria-label', inEssayMode ? 'Search essays' : 'Search course questions');
       dom.questionSearchFab.setAttribute('title', inEssayMode ? 'Search essays' : 'Search course questions (/)');
     }
@@ -4912,15 +4867,6 @@
       if (!dom.questionNumberPicker?.contains(event.target)) closeQuestionNumberMenu();
     });
 
-    [dom.brandLogo, dom.brandTitle].forEach(node => {
-      node?.addEventListener('click', openAppInfo);
-      node?.addEventListener('keydown', e => {
-        if (e.key !== 'Enter' && e.key !== ' ') return;
-        e.preventDefault();
-        openAppInfo();
-      });
-    });
-
     dom.settingsCohortSelect?.addEventListener('change', syncCohortSettingsUi);
     dom.switchCohortBtn?.addEventListener('click', switchStudyCohort);
     dom.settingsChaburaLocation?.addEventListener('change', e => {
@@ -4952,6 +4898,11 @@
     dom.nextBtn.addEventListener('click', goNext);
     dom.categoriesBtn.addEventListener('click', openCategories);
     dom.materialsBtn.addEventListener('click', openMaterials);
+    dom.settingsBtn?.addEventListener('click', () => openMaterials('settings'));
+    dom.questionsModeBtn?.addEventListener('click', () => {
+      if (mode === 'test' || !essayModeActive) return;
+      openMultipleChoiceIntro();
+    });
     dom.questionSearchFab?.addEventListener('click', () => {
       if (essayModeActive && mode === 'study') openEssaySearch();
       else openQuestionSearch();
@@ -5054,15 +5005,12 @@
 
     dom.statsBtn.addEventListener('click', openStats);
     dom.closeAppInfo?.addEventListener('click', () => dom.appInfoDialog.close());
-    dom.appInfoMcBtn?.addEventListener('click', () => chooseModeFromAppInfo('mc'));
-    dom.appInfoEssayBtn?.addEventListener('click', () => chooseModeFromAppInfo('essay'));
-    dom.appInfoTestBtn?.addEventListener('click', () => chooseModeFromAppInfo('test'));
     dom.appInfoShareBtn?.addEventListener('click', () => void shareStudyApp());
     dom.appInfoUpdateBtn?.addEventListener('click', () => {
       dom.appInfoDialog?.close();
       void checkForAppUpdate({ manual: true });
     });
-    dom.appInfoSettingsBtn?.addEventListener('click', openSettingsFromAppInfo);
+    dom.settingsAboutBtn?.addEventListener('click', openAppInfo);
     dialogs.forEach(d => {
       closeOnBackdrop(d);
       d.addEventListener('close', () => {
@@ -5071,14 +5019,7 @@
         updateMiniAudio();
       });
     });
-    dom.timerCard.addEventListener('click', resetStudySessionTimer);
-    dom.timerCard.addEventListener('keydown', e => {
-      if (mode !== 'study') return;
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        resetStudySessionTimer();
-      }
-    });
+    dom.timerResetBtn?.addEventListener('click', resetStudySessionTimer);
 
     dom.essayBtn?.addEventListener('click', handleEssayModeButton);
     dom.closeEssayIntro?.addEventListener('click', () => dom.essayIntroDialog.close());
@@ -5123,12 +5064,11 @@
     });
 
     dom.testBtn.addEventListener('click', () => {
-      if (mode === 'test') requestExitTest();
-      else {
-        flushQuestionTime();
-        dom.testIntroDialog.showModal();
-      }
+      if (mode === 'test') return;
+      flushQuestionTime();
+      dom.testIntroDialog.showModal();
     });
+    dom.exitTestBtn?.addEventListener('click', requestExitTest);
 
     dom.selectAllCategories.addEventListener('click', () => dom.categoryOptions.querySelectorAll('input').forEach(i => i.checked = true));
     dom.clearCategories.addEventListener('click', () => dom.categoryOptions.querySelectorAll('input').forEach(i => i.checked = false));
@@ -5379,7 +5319,6 @@
 
     dom.closeStats.addEventListener('click', () => dom.statsDialog.close());
     dom.doneStatsBtn.addEventListener('click', () => dom.statsDialog.close());
-    dom.resetStatsBtn.addEventListener('click', promptResetStatisticsScope);
 
     dom.closeQuestionReview.addEventListener('click', () => dom.questionReviewDialog.close());
     dom.questionReviewDialog.addEventListener('close', () => {
@@ -6421,7 +6360,6 @@
     setupPullToCheckUpdates();
     void registerServiceWorker();
     setupMediaSession();
-    updateBrandShareAffordance();
     updateInstallButtonVisibility();
     updateAnalyticsUi();
     updateSyncUi();

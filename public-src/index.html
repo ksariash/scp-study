@@ -18,24 +18,23 @@
   <div class="app-shell">
     <header class="topbar">
       <div class="brand-wrap">
-        <img class="brand-logo brand-info-target" id="brandLogo" src="icons/icon-192.png" alt="SCP Study app information" role="button" tabindex="0" aria-label="About SCP Study" title="About SCP Study" />
-        <div>
-          <div class="brand brand-info-target" id="brandTitle" role="button" tabindex="0" aria-label="About SCP Study" title="About SCP Study">SCP Study</div>
+        <img class="brand-logo" id="brandLogo" src="icons/icon-192.png" alt="" aria-hidden="true" />
+        <div class="brand-copy">
+          <div class="brand" id="brandTitle">SCP Study</div>
           <div class="subbrand" id="modeLabel">Study mode</div>
         </div>
       </div>
       <div class="timer-actions">
-        <div class="timer-card" id="timerCard" aria-live="polite" role="button" tabindex="0" title="Click to reset the study session timer">
+        <div class="timer-card" id="timerCard" aria-live="polite">
           <span class="timer-label" id="timerLabel">Session</span>
           <strong id="mainTimer">00:00:00</strong>
+          <button class="timer-reset-btn" id="timerResetBtn" type="button" aria-label="Reset study session timer" title="Reset timer">↻</button>
         </div>
       </div>
       <div class="topbar-right">
-        <button class="icon-btn" id="categoriesBtn" type="button" aria-label="Filter categories">Categories</button>
-        <button class="icon-btn" id="materialsBtn" type="button">Materials</button>
-        <button class="icon-btn" id="statsBtn" type="button">Stats</button>
-        <button class="icon-btn essay-mode-btn" id="essayBtn" type="button">Essay</button>
-        <button class="primary compact" id="testBtn" type="button">Test</button>
+        <button class="header-utility-btn" id="materialsBtn" type="button" aria-label="Materials" title="Materials"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5zM20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5z"/></svg></button>
+        <button class="header-utility-btn" id="statsBtn" type="button" aria-label="Progress and stats" title="Progress & stats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V11M12 19V5M19 19V8"/></svg></button>
+        <button class="header-utility-btn" id="settingsBtn" type="button" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></button>
         <button class="notification-icon-btn" id="notificationsBtn" type="button" aria-label="Notifications" title="Notifications">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z"/><path d="M10 21h4"/></svg>
           <span class="notification-alert hidden" id="notificationBadge" aria-hidden="true">!</span>
@@ -43,10 +42,17 @@
       </div>
     </header>
 
+    <nav class="mode-nav" aria-label="Study mode">
+      <button class="mode-nav-btn active" id="questionsModeBtn" type="button" aria-current="page">Questions</button>
+      <button class="mode-nav-btn" id="essayBtn" type="button">Essays</button>
+      <button class="mode-nav-btn" id="testBtn" type="button">Test</button>
+    </nav>
+
     <section class="test-progress hidden" id="testProgressWrap" aria-label="Test progress">
       <div class="test-progress-row">
         <strong id="testQuestionCount">1/58</strong>
         <span id="testAnsweredCount">0 answered</span>
+        <button class="test-exit-btn" id="exitTestBtn" type="button">Exit test</button>
       </div>
       <div class="progress-track"><div class="progress-fill" id="testProgressFill"></div></div>
     </section>
@@ -61,6 +67,7 @@
               <span class="question-number-menu hidden" id="questionNumberMenu" role="menu" aria-label="Go to question"></span>
             </span>
             <span class="pill subtle" id="questionCategory">Category</span>
+            <button class="question-filter-btn" id="categoriesBtn" type="button" aria-label="Filter study categories" title="Filter study categories"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6.2 7.1v5.1L10 19v-6.9z"/></svg></button>
           </div>
           <div class="question-top-actions">
             <button class="content-report-btn" id="questionReportBtn" type="button" aria-label="Report an issue with this question" title="Report an issue">⚑</button>
@@ -610,6 +617,10 @@
               <button class="danger settings-action-btn" type="button" id="deleteAllDataBtn">Delete all data</button>
             </div>
           </div>
+          <div class="settings-about-row settings-ordered-section">
+            <div><strong>About SCP Study</strong><span id="settingsAboutVersion">Version —</span></div>
+            <button class="secondary settings-action-btn" type="button" id="settingsAboutBtn">About</button>
+          </div>
           <span class="settings-status" id="settingsStatus" aria-live="polite"></span>
         </section>
       </div>
@@ -741,8 +752,7 @@
         <button class="close-btn" id="closeStats" aria-label="Close">×</button>
       </div>
       <div id="statsContent"></div>
-      <div class="modal-footer split">
-        <button class="danger" type="button" id="resetStatsBtn">Reset all progress</button>
+      <div class="modal-footer">
         <button class="primary" type="button" id="doneStatsBtn">Done</button>
       </div>
     </div>
@@ -979,26 +989,18 @@
       <div class="modal-head">
         <div>
           <span class="eyebrow">About</span>
-          <div class="app-info-title-row">
-            <h2 id="appInfoTitle">SCP Study</h2>
-            <span class="app-info-version" id="appInfoVersion">v—</span>
-          </div>
+          <div class="app-info-title-row"><h2 id="appInfoTitle">SCP Study</h2></div>
           <p>A spaced repetition study aid for the Semichas Chaver Program; App created by KBT congregation of Los Angeles using ChatGPT.</p>
         </div>
         <button class="close-btn" id="closeAppInfo" aria-label="Close">×</button>
       </div>
-      <div class="app-info-section">
-        <span class="app-info-label">Mode</span>
-        <div class="app-info-mode-grid">
-          <button class="secondary" type="button" id="appInfoMcBtn">M/C</button>
-          <button class="secondary" type="button" id="appInfoEssayBtn">Essay</button>
-          <button class="secondary" type="button" id="appInfoTestBtn">Test</button>
-        </div>
+      <div class="app-info-meta-grid">
+        <div class="app-info-meta"><span>Version</span><strong id="appInfoVersion">v—</strong></div>
+        <div class="app-info-meta"><span>Current Zman</span><strong id="appInfoZman">—</strong></div>
       </div>
       <div class="app-info-actions">
         <button class="secondary" type="button" id="appInfoShareBtn">Share app</button>
-        <button class="secondary" type="button" id="appInfoUpdateBtn">Check for updates</button>
-        <button class="primary" type="button" id="appInfoSettingsBtn">Open settings</button>
+        <button class="primary" type="button" id="appInfoUpdateBtn">Check for updates</button>
       </div>
     </div>
   </dialog>

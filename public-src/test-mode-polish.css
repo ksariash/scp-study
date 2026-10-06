@@ -1,0 +1,186 @@
+/* Practice-test interaction polish: clear state, reliable hit targets, keyboard navigation, and review history. */
+body.ui-test-active #testProgressFill { transition: none !important; }
+
+/* Unanswered questions must be unmistakable at a glance. */
+body.ui-test-active .question-number-option.test-unanswered:not(.selected) {
+  background: #fff8e6 !important;
+  border-color: #e5bd58 !important;
+  color: #725006 !important;
+  border-style: dashed !important;
+}
+body.ui-test-active .question-number-option.test-answered:not(.selected) {
+  background: #eef8f1 !important;
+  border-color: #b9dbc4 !important;
+  color: #176335 !important;
+}
+body.ui-test-active .question-number-option.test-flagged {
+  box-shadow: inset 0 0 0 1px #d39a19 !important;
+}
+
+/* Essay choices and submitted pairings use the entire visible button as the hit target. */
+body.ui-test-essays .test-full-hit-target {
+  width: 100% !important;
+  min-height: 48px !important;
+  cursor: pointer !important;
+  touch-action: manipulation;
+}
+body.ui-test-essays .test-hit-child { pointer-events: none !important; }
+body.ui-test-essays .essay-choice.test-essay-choice {
+  width: 100%;
+  min-height: 48px;
+  text-align: left;
+  touch-action: manipulation;
+}
+
+.test-native-essay-nav-hidden { display: none !important; }
+.test-essay-quick-nav { width: min(100%, 480px); }
+
+.test-pairing-nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 7px;
+  margin: 12px 0;
+  align-items: stretch;
+}
+.test-pairing-nav > button { min-width: 0; min-height: 40px; }
+.test-pairing-nav .test-flag-btn {
+  grid-column: span 1;
+  min-height: 38px;
+  border: 1px solid #d7e1ef;
+  border-radius: 10px;
+  background: #f7f9fc;
+  color: #52647e;
+  font: inherit;
+  font-size: .7rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.test-pairing-nav .test-flag-btn.active {
+  border-color: #e1b34b;
+  background: #fff8e6;
+  color: #795306;
+}
+#testPairingFlagBtn { grid-column: 1 / span 1; }
+#testEssayFlagBtn { grid-column: 2 / span 2; }
+
+.test-essay-shortcuts,
+.test-review-shortcuts {
+  margin-top: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 16px;
+}
+
+.test-history-list { display: grid; gap: 8px; }
+.test-history-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 13px;
+  border: 1px solid #dce5f1;
+  border-radius: 12px;
+  background: #fff;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.test-history-row:hover,
+.test-history-row:focus-visible { background: #f6f9ff; border-color: #b9cbe8; outline: none; }
+.test-history-row span { display: grid; gap: 3px; min-width: 0; }
+.test-history-row span:last-child { text-align: right; }
+.test-history-row strong { font-size: .78rem; color: #223d6c; }
+.test-history-row b { font-size: .86rem; color: #214b9a; }
+.test-history-row small { font-size: .64rem; color: #728097; }
+
+.test-history-stats-section .section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.test-history-stats-section h3 { margin: 0; }
+
+.test-review-inner { min-height: min(720px, 92vh); }
+.test-review-tabs {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 4px;
+  padding: 3px;
+  margin-bottom: 14px;
+  border: 1px solid #d6deea;
+  border-radius: 11px;
+  background: #edf1f6;
+}
+.test-review-tabs button {
+  min-height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #60708a;
+  font: inherit;
+  font-size: .74rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.test-review-tabs button.active {
+  background: #fff;
+  color: #214883;
+  box-shadow: 0 1px 4px rgba(20,35,66,.14);
+}
+.test-review-nav {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  gap: 9px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.test-review-nav strong { text-align: center; font-size: .74rem; color: #596a84; }
+.test-review-result {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  margin-bottom: 10px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 900;
+}
+.test-review-result.correct { background:#e9f7ee; color:#176335; }
+.test-review-result.partial { background:#fff7df; color:#7a5609; }
+.test-review-result.incorrect,
+.test-review-result.unanswered { background:#fff0f2; color:#8c3441; }
+.test-review-choices { display:grid; gap:8px; margin:14px 0; }
+.test-review-choice {
+  display:grid;
+  grid-template-columns: 30px minmax(0,1fr) auto;
+  gap:9px;
+  align-items:center;
+  padding:10px 11px;
+  border:1px solid #dce5f1;
+  border-radius:11px;
+  background:#fff;
+}
+.test-review-choice > strong { display:grid; place-items:center; width:28px; height:28px; border-radius:8px; background:#f0f4fa; color:#36517c; }
+.test-review-choice > small { font-size:.6rem; font-weight:850; color:#6d7d92; }
+.test-review-choice.correct { border-color:#b9dec5; background:#f4fbf6; }
+.test-review-choice.wrong { border-color:#ebc9cd; background:#fff7f8; }
+.test-review-choice.selected { box-shadow: inset 3px 0 0 #315fca; }
+.test-review-explanation { margin-top:14px; padding:12px; border:1px solid #dce5f1; border-radius:12px; background:#f8faff; }
+.test-review-explanation > strong { color:#263e69; }
+.test-review-explanation p { margin:.45rem 0 0; line-height:1.5; }
+
+@media (max-width: 600px) {
+  .test-pairing-nav { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .test-pairing-nav [data-test-pair-nav="prev"],
+  .test-pairing-nav [data-test-pair-nav="skip"] { grid-column: span 1; }
+  .test-pairing-nav [data-test-pair-nav="next"] { grid-column: 1 / -1; }
+  #testPairingFlagBtn, #testEssayFlagBtn { grid-column: span 1; }
+  .test-history-row { grid-template-columns: minmax(0,1fr) auto; }
+  .test-review-nav { grid-template-columns: 1fr 1fr; }
+  .test-review-nav strong { grid-column: 1 / -1; grid-row: 1; }
+  .test-review-nav button { grid-row: 2; }
+  .test-review-choice { grid-template-columns: 28px minmax(0,1fr); }
+  .test-review-choice > small { grid-column: 2; }
+}

@@ -1,19 +1,13 @@
 const APP_VERSION = 75;
-const CACHE_NAME = 'scp-study-v75-ui8';
+const CACHE_NAME = 'scp-study-v75-ui9';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v3';
 const DOCUMENT_CACHE_NAME = 'scp-study-documents-v2';
 const APP_SHELL = [
   './',
   './index.html',
   './styles.css',
-  './ui-system.css',
-  './test-mode.css',
-  './test-mode-polish.css',
   // BUILD: ZMAN_APP_SHELL
   './cohort-loader.js',
-  './ui-system.js',
-  './test-mode.js',
-  './test-mode-polish.js',
   './pdfjs/pdf.mjs',
   './pdfjs/pdf.worker.mjs',
   './app.js',

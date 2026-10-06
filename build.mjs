@@ -1,8 +1,10 @@
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { gunzipSync } from 'node:zlib';
 import { runInNewContext } from 'node:vm';
 import { generatePdfs } from './scripts/generate-pdfs.mjs';
+import { compileZmanim } from './scripts/zman-authoring.mjs';
 
 const ROOT = new URL('./', import.meta.url);
 const sourceDir = new URL('./public-src/', ROOT);
@@ -18,7 +20,7 @@ const PUBLIC_SOURCE_OVERRIDES = new Set([
   'images/install-scp-study-ios.png',
 ]);
 
-const COHORT_REQUIRED_FILES = [
+const ZMAN_RUNTIME_REQUIRED_FILES = [
   'cohort.js',
   'questions.js',
   'chaburos.js',
@@ -28,8 +30,8 @@ const COHORT_REQUIRED_FILES = [
   'course-notes.js',
 ];
 
-async function loadCohortScript(id, file, expose = '') {
-  const source = await readFile(new URL(`./public-src/cohorts/${id}/${file}`, ROOT), 'utf8');
+async function loadZmanRuntimeScript(id, file, expose = '') {
+  const source = await readFile(new URL(`./cohorts/${id}/${file}`, outputDir), 'utf8');
   const sandbox = { window: {} };
   runInNewContext(source + expose, sandbox, { filename: `cohorts/${id}/${file}` });
   return sandbox;
@@ -49,75 +51,75 @@ function positivePage(value) {
   return Number.isInteger(Number(raw)) && Number(raw) > 0;
 }
 
-async function validateCohortPackages() {
-  const registrySource = await readFile(new URL('./public-src/cohorts/index.js', ROOT), 'utf8');
+async function validateZmanRuntimePackages() {
+  const registrySource = await readFile(new URL('./cohorts/index.js', outputDir), 'utf8');
   const registrySandbox = { window: {} };
   runInNewContext(registrySource, registrySandbox, { filename: 'cohorts/index.js' });
-  const registry = registrySandbox.window.SCP_COHORT_REGISTRY;
-  if (!registry || !Array.isArray(registry.cohorts) || !registry.cohorts.length) {
-    throw new Error('Cohort registry must contain at least one cohort.');
+  const registry = registrySandbox.window.SCP_ZMAN_REGISTRY;
+  if (!registry || !Array.isArray(registry.zmanim) || !registry.zmanim.length) {
+    throw new Error('Zman registry must contain at least one Zman.');
   }
 
-  assertUnique(registry.cohorts.map(cohort => cohort?.id), 'cohort ID');
-  assertUnique(registry.cohorts.map(cohort => cohort?.analyticsKey), 'cohort analyticsKey');
+  assertUnique(registry.zmanim.map(zman => zman?.id), 'Zman ID');
+  assertUnique(registry.zmanim.map(zman => zman?.analyticsKey), 'Zman analyticsKey');
 
-  const ids = new Set(registry.cohorts.map(cohort => String(cohort.id)));
-  if (!ids.has(String(registry.defaultCohortId || ''))) {
-    throw new Error('Cohort registry defaultCohortId must identify a configured cohort.');
+  const ids = new Set(registry.zmanim.map(zman => String(zman.id)));
+  if (!ids.has(String(registry.defaultZmanId || ''))) {
+    throw new Error('Zman registry defaultZmanId must identify a configured Zman.');
   }
 
-  for (const entry of registry.cohorts) {
+  for (const entry of registry.zmanim) {
     const id = String(entry.id);
-    for (const file of COHORT_REQUIRED_FILES) {
-      await readFile(new URL(`./public-src/cohorts/${id}/${file}`, ROOT));
+    for (const file of ZMAN_RUNTIME_REQUIRED_FILES) {
+      await readFile(new URL(`./cohorts/${id}/${file}`, outputDir));
     }
 
-    const config = (await loadCohortScript(id, 'cohort.js')).window.SCP_COHORT_CONFIG;
+    const config = (await loadZmanRuntimeScript(id, 'cohort.js')).window.SCP_ZMAN_CONFIG;
     if (!config || config.id !== id || config.analyticsKey !== entry.analyticsKey || config.name !== entry.name) {
-      throw new Error(`Cohort ${id}: cohort.js identity must match cohorts/index.js.`);
+      throw new Error(`Zman ${id}: runtime identity must match the Zman registry.`);
     }
 
-    const qSandbox = await loadCohortScript(id, 'questions.js', '\nwindow.__QUESTIONS = QUESTIONS;');
+    const qSandbox = await loadZmanRuntimeScript(id, 'questions.js', '\nwindow.__QUESTIONS = QUESTIONS;');
     const questions = qSandbox.window.__QUESTIONS;
     if (!Array.isArray(questions) || questions.length !== Number(entry.questionCount)) {
-      throw new Error(`Cohort ${id}: expected ${entry.questionCount} questions, found ${questions?.length ?? 'invalid'}.`);
+      throw new Error(`Zman ${id}: expected ${entry.questionCount} questions, found ${questions?.length ?? 'invalid'}.`);
     }
     assertUnique(questions.map(question => question.id), `${id} question ID`);
     for (const question of questions) {
       if (!question.category || !question.prompt || !Array.isArray(question.choices) || question.choices.length < 2 || !Array.isArray(question.answer) || !question.answer.length) {
-        throw new Error(`Cohort ${id}: malformed question ${question.id}.`);
+        throw new Error(`Zman ${id}: malformed question ${question.id}.`);
       }
       const valid = new Set(question.choices.map((_, index) => String.fromCharCode(65 + index)));
-      if (question.answer.some(letter => !valid.has(String(letter)))) throw new Error(`Cohort ${id}: question ${question.id} has an invalid answer letter.`);
+      if (question.answer.some(letter => !valid.has(String(letter)))) throw new Error(`Zman ${id}: question ${question.id} has an invalid answer letter.`);
     }
 
-    const eSandbox = await loadCohortScript(id, 'essay-practice.js');
+    const eSandbox = await loadZmanRuntimeScript(id, 'essay-practice.js');
     const essays = eSandbox.window.ESSAY_PRACTICE_DATA;
     if (!Array.isArray(essays) || essays.length !== Number(entry.essayCount)) {
-      throw new Error(`Cohort ${id}: expected ${entry.essayCount} essays, found ${essays?.length ?? 'invalid'}.`);
+      throw new Error(`Zman ${id}: expected ${entry.essayCount} essays, found ${essays?.length ?? 'invalid'}.`);
     }
     assertUnique(essays.map(essay => essay.id), `${id} essay ID`);
     const facts = essays.flatMap(essay => essay.facts || []);
     assertUnique(facts.map(fact => fact.id), `${id} essay fact ID`);
 
-    const audioSandbox = await loadCohortScript(id, 'audio-reviews.js',
+    const audioSandbox = await loadZmanRuntimeScript(id, 'audio-reviews.js',
       '\nwindow.__AUDIO = AUDIO_REVIEW_DATA; window.__QUESTION_AUDIO_MAP = QUESTION_AUDIO_MAP; window.__ESSAY_AUDIO_MAP = ESSAY_AUDIO_MAP;');
     const reviews = audioSandbox.window.__AUDIO;
-    if (!Array.isArray(reviews) || !reviews.length) throw new Error(`Cohort ${id}: audio review catalog is empty.`);
+    if (!Array.isArray(reviews) || !reviews.length) throw new Error(`Zman ${id}: audio review catalog is empty.`);
     assertUnique(reviews.map(review => review.id), `${id} audio review ID`);
     const reviewIds = new Set(reviews.map(review => Number(review.id)));
     const expectedPrefix = String(config.audio?.publicUrlPrefix || '');
     for (const review of reviews) {
       if (!review.src || (expectedPrefix && !String(review.src).startsWith(expectedPrefix))) {
-        throw new Error(`Cohort ${id}: audio review ${review.id} must use publicUrlPrefix ${expectedPrefix || '(configured prefix missing)'}.`);
+        throw new Error(`Zman ${id}: audio review ${review.id} must use publicUrlPrefix ${expectedPrefix || '(configured prefix missing)'}.`);
       }
     }
     const validateAudioMap = (map, label) => {
       for (const [contentId, refs] of Object.entries(map || {})) {
-        if (!Array.isArray(refs) || !refs.length) throw new Error(`Cohort ${id}: ${label} ${contentId} has no audio references.`);
+        if (!Array.isArray(refs) || !refs.length) throw new Error(`Zman ${id}: ${label} ${contentId} has no audio references.`);
         for (const ref of refs) {
           if (!reviewIds.has(Number(ref.review)) || !Number.isFinite(Number(ref.start)) || Number(ref.start) < 0) {
-            throw new Error(`Cohort ${id}: ${label} ${contentId} has an invalid audio reference.`);
+            throw new Error(`Zman ${id}: ${label} ${contentId} has an invalid audio reference.`);
           }
         }
       }
@@ -125,32 +127,42 @@ async function validateCohortPackages() {
     validateAudioMap(audioSandbox.window.__QUESTION_AUDIO_MAP, 'question');
     validateAudioMap(audioSandbox.window.__ESSAY_AUDIO_MAP, 'essay fact');
 
-    const notes = (await loadCohortScript(id, 'course-notes.js')).window.COURSE_NOTE_REFS;
+    const notes = (await loadZmanRuntimeScript(id, 'course-notes.js')).window.COURSE_NOTE_REFS;
     for (const docKey of ['compact', 'full']) {
-      if (!notes?.docs?.[docKey]?.url) throw new Error(`Cohort ${id}: missing ${docKey} notes document.`);
+      if (!notes?.docs?.[docKey]?.url) throw new Error(`Zman ${id}: missing ${docKey} notes document.`);
     }
     for (const question of questions) {
       const ref = notes?.questions?.[String(question.id)];
-      if (!ref || !positivePage(ref.compact) || !positivePage(ref.full)) throw new Error(`Cohort ${id}: question ${question.id} needs compact and full note locations.`);
+      if (!ref || !positivePage(ref.compact) || !positivePage(ref.full)) throw new Error(`Zman ${id}: question ${question.id} needs compact and full note locations.`);
     }
     for (const essay of essays) {
       const ref = notes?.essays?.[String(essay.id)];
-      if (!ref || !positivePage(ref.compact) || !positivePage(ref.full)) throw new Error(`Cohort ${id}: essay ${essay.id} needs compact and full note locations.`);
+      if (!ref || !positivePage(ref.compact) || !positivePage(ref.full)) throw new Error(`Zman ${id}: essay ${essay.id} needs compact and full note locations.`);
     }
 
-    const glossarySandbox = await loadCohortScript(id, 'glossary.js', '\nwindow.__GLOSSARY = GLOSSARY_TERMS;');
+    const glossarySandbox = await loadZmanRuntimeScript(id, 'glossary.js', '\nwindow.__GLOSSARY = GLOSSARY_TERMS;');
     const glossary = glossarySandbox.window.__GLOSSARY;
-    if (!Array.isArray(glossary)) throw new Error(`Cohort ${id}: glossary must be an array.`);
+    if (!Array.isArray(glossary)) throw new Error(`Zman ${id}: glossary must be an array.`);
     assertUnique(glossary.map(term => term.id), `${id} glossary ID`);
   }
   return registry;
 }
 
-const cohortRegistry = await validateCohortPackages();
-
 await rm(outputDir, { recursive: true, force: true });
 await mkdir(outputDir, { recursive: true });
 await cp(sourceDir, outputDir, { recursive: true });
+await compileZmanim({ outputRoot: fileURLToPath(new URL('./cohorts/', outputDir)) });
+const zmanRegistry = await validateZmanRuntimePackages();
+
+const serviceWorkerUrl = new URL('./sw.js', outputDir);
+const serviceWorkerSource = await readFile(serviceWorkerUrl, 'utf8');
+const appShellMarker = '  // BUILD: ZMAN_APP_SHELL';
+if (!serviceWorkerSource.includes(appShellMarker)) throw new Error('Service worker is missing the Zman app-shell build marker.');
+const zmanAppShell = [
+  './cohorts/index.js',
+  ...zmanRegistry.zmanim.flatMap((zman) => ZMAN_RUNTIME_REQUIRED_FILES.map((file) => `./cohorts/${zman.id}/${file}`)),
+].map((asset) => `  '${asset}',`).join('\n');
+await writeFile(serviceWorkerUrl, serviceWorkerSource.replace(appShellMarker, zmanAppShell));
 
 const pdfJsOutput = new URL('./pdfjs/', outputDir);
 await mkdir(pdfJsOutput, { recursive: true });
@@ -213,7 +225,7 @@ await writeFile(fullNotesDestination, Buffer.from(fullNotesEncoded, 'base64'));
 
 await generatePdfs(outputDir.pathname);
 
-const defaultZmanId = String(cohortRegistry.defaultCohortId || '2026-summer');
+const defaultZmanId = String(zmanRegistry.defaultZmanId || '2026-summer');
 const defaultDocumentsDir = new URL(`./documents/${defaultZmanId}/`, outputDir);
 await mkdir(defaultDocumentsDir, { recursive: true });
 for (const filename of [
@@ -227,4 +239,4 @@ for (const filename of [
   await cp(new URL(`./documents/${filename}`, outputDir), new URL(`./documents/${defaultZmanId}/${filename}`, outputDir));
 }
 
-console.log(`Built SCP Study static assets for ${cohortRegistry.cohorts.length} Zman package(s); preserved legacy document URLs and generated namespaced documents. Short & Sweet review audio remains in R2.`);
+console.log(`Built SCP Study static assets for ${zmanRegistry.zmanim.length} Zman package(s); preserved legacy document URLs and generated namespaced documents. Short & Sweet review audio remains in R2.`);

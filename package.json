@@ -9,7 +9,6 @@
     "deploy": "npm run build && wrangler deploy",
     "zman:validate": "node scripts/zman.mjs validate",
     "zman:compile": "node scripts/zman.mjs compile",
-    "zman:compare-legacy": "node scripts/zman.mjs compare-legacy",
     "zman:new": "node scripts/zman.mjs new"
   },
   "devDependencies": {

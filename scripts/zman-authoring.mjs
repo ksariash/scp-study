@@ -5,16 +5,6 @@ import YAML from 'yaml';
 
 export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const ZMAN_SOURCE_ROOT = path.join(REPO_ROOT, 'zmanim');
-export const RUNTIME_FILES = [
-  'cohort.js',
-  'questions.js',
-  'essay-practice.js',
-  'audio-reviews.js',
-  'glossary.js',
-  'chaburos.js',
-  'course-notes.js',
-];
-
 function invariant(condition, message) {
   if (!condition) throw new Error(message);
 }
@@ -261,7 +251,7 @@ function renderRegistry(registry, packages) {
     essayCount: pkg.essays.length,
   }));
   const value = { version: 2, defaultZmanId: registry.defaultZmanId, latestZmanId: registry.latestZmanId, zmanim };
-  return `window.SCP_ZMAN_REGISTRY = ${js(value)};\nwindow.SCP_COHORT_REGISTRY = window.SCP_ZMAN_REGISTRY;\n`;
+  return `window.SCP_ZMAN_REGISTRY = ${js(value)};\nwindow.SCP_COHORT_REGISTRY = {\n  version: window.SCP_ZMAN_REGISTRY.version,\n  defaultCohortId: window.SCP_ZMAN_REGISTRY.defaultZmanId,\n  latestZmanId: window.SCP_ZMAN_REGISTRY.latestZmanId,\n  cohorts: window.SCP_ZMAN_REGISTRY.zmanim\n};\n`;
 }
 
 export async function compileZmanim({ sourceRoot = ZMAN_SOURCE_ROOT, outputRoot } = {}) {

@@ -21,19 +21,17 @@ Reusable app shell:
 - `src/index.js`
 - `build.mjs`
 
-Zman registry:
-- `public-src/cohorts/index.js`
+Zman authoring source:
+- `zmanim/registry.yaml`
+- `zmanim/<zman-id>/zman.yaml`
+- `zmanim/<zman-id>/questions.yaml`
+- `zmanim/<zman-id>/essays.yaml`
+- `zmanim/<zman-id>/audio-reviews.yaml`
+- `zmanim/<zman-id>/transcripts/*.vtt`
+- `zmanim/<zman-id>/glossary.yaml`
+- `zmanim/<zman-id>/chaburos.yaml`
 
-The directory name `cohorts/` is a legacy filesystem name. Product language, documentation, new APIs, and new code concepts should say **Zman / Zmanim**.
-
-Each Zman package lives at `public-src/cohorts/<zman-id>/` and contains:
-- `cohort.js` (legacy filename; exports `SCP_ZMAN_CONFIG` and compatibility alias)
-- `questions.js`
-- `essay-practice.js`
-- `audio-reviews.js`
-- `glossary.js`
-- `chaburos.js`
-- `course-notes.js`
+Do not hand-author browser runtime files for Zman content. `build.mjs` compiles the readable source above into `public/cohorts/` for compatibility with already-shipped clients. The runtime directory and `cohort.js`/`SCP_COHORT_*` names are compatibility details only. Product language, documentation, new APIs, and new source concepts should say **Zman / Zmanim**.
 
 The current stable Zman ID and analytics key are `2026-summer`. Its display name is `Nat Bar Nat & Stam Ye'enam - Summer 26`.
 
@@ -48,7 +46,7 @@ The current stable Zman ID and analytics key are `2026-summer`. Its display name
 - The old storage envelope property `cohorts` is a compatibility detail; do not create new user-facing “cohort” terminology from it.
 - A newly available `latestZmanId` should prompt existing users to switch; do not silently discard their selected Zman.
 
-Read `docs/ARCHITECTURE.md` and `docs/NEW-ZMAN-PIPELINE.md` before adding another Zman.
+Read `zmanim/README.md`, `docs/ARCHITECTURE.md`, and `docs/NEW-ZMAN-PIPELINE.md` before adding another Zman. Run `npm run zman:validate` before the normal production build.
 
 ## Cross-repository contract
 

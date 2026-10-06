@@ -181,11 +181,12 @@ const SHELL_STYLE_PATHS = [
 ];
 const SHELL_SCRIPT_PATHS = [
   'ui-system.js',
+  'chabura-ui.js',
   'test-mode.js',
   'test-mode-polish.js',
   'test-analytics-retry.js'
 ];
-const SHELL_CACHE_NAME = 'scp-study-v75-ui8';
+const SHELL_CACHE_NAME = 'scp-study-v75-ui9';
 
 function cloneAssetResponse(response, body, contentType = null) {
   const headers = new Headers(response.headers);
@@ -218,6 +219,9 @@ async function enhanceServiceWorker(response) {
   source = source.replace(/const CACHE_NAME = 'scp-study-v75-ui\d+';/, `const CACHE_NAME = '${SHELL_CACHE_NAME}';`);
   if (!source.includes("'./chabura-ui.css'")) {
     source = source.replace("  './ui-system.css',", "  './ui-system.css',\n  './chabura-ui.css',");
+  }
+  if (!source.includes("'./chabura-ui.js'")) {
+    source = source.replace("  './ui-system.js',", "  './ui-system.js',\n  './chabura-ui.js',");
   }
   if (!source.includes("'./test-analytics-retry.js'")) {
     source = source.replace("  './test-mode-polish.js',", "  './test-mode-polish.js',\n  './test-analytics-retry.js',");

@@ -142,9 +142,55 @@ async function serveAudio(request, env, key) {
   return new Response('Not found', { status: 404, headers: { 'X-SCP-Audio-Requested-Key': key } });
 }
 
+function suggestedChaburaRegion(cf = {}) {
+  const country = String(cf.country || '').toUpperCase();
+  const continent = String(cf.continent || '').toUpperCase();
+  const timezone = String(cf.timezone || '');
+
+  if (country === 'IL') return 'Israel';
+  if (country === 'CA') return 'Canada';
+  if (country === 'US') {
+    const easternZones = new Set([
+      'America/New_York',
+      'America/Detroit',
+      'America/Indiana/Indianapolis',
+      'America/Indiana/Marengo',
+      'America/Indiana/Vevay',
+      'America/Indiana/Vincennes',
+      'America/Indiana/Winamac',
+      'America/Kentucky/Louisville',
+      'America/Kentucky/Monticello'
+    ]);
+    return easternZones.has(timezone) ? 'East Coast (EST)' : 'Central/West Coast';
+  }
+  if (continent === 'EU' || ['GB','IE','FR','DE','ES','IT','NL','BE','CH','AT','PT','SE','NO','DK','FI','PL','CZ','HU','RO','GR'].includes(country)) {
+    return 'Europe';
+  }
+  if (country === 'AU' || country === 'ZA' || continent === 'SA') {
+    return 'Australia/South Africa/South America';
+  }
+  return null;
+}
+
+function clientLocationResponse(request) {
+  if (request.method !== 'GET') {
+    return new Response('Method not allowed', { status: 405, headers: { Allow:'GET' } });
+  }
+  return new Response(JSON.stringify({
+    suggestedChaburaRegion: suggestedChaburaRegion(request.cf || {})
+  }), {
+    headers: {
+      'Content-Type':'application/json; charset=utf-8',
+      'Cache-Control':'no-store',
+      'X-Robots-Tag':'noindex, nofollow'
+    }
+  });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === '/api/client-location') return clientLocationResponse(request);
     const key = audioObjectKey(url.pathname);
     if (key) return serveAudio(request, env, key);
     return env.ASSETS.fetch(request);

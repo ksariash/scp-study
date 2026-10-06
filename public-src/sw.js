@@ -13,6 +13,7 @@ const APP_SHELL = [
   './cohort-loader.js',
   './ui-system.js',
   './test-mode-v2.js',
+  './test-mode-v2-enter.js',
   './cohorts/2026-summer/cohort.js',
   './cohorts/2026-summer/questions.js',
   './cohorts/2026-summer/chaburos.js',

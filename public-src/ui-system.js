@@ -38,14 +38,41 @@
       </svg>`, { label: 'Settings', title: 'Settings' });
   }
 
-  function separateSessionReset() {
+  function installTimerResetProxy() {
     const timer = el('timerCard');
     const reset = el('timerResetBtn');
-    const actions = timer?.parentElement;
-    if (!timer || !reset || !actions || reset.parentElement !== timer) return;
-    actions.insertBefore(reset, timer.nextSibling);
-    reset.setAttribute('aria-label', 'Reset study session timer');
-    reset.title = 'Reset session timer';
+    if (!timer || !reset) return;
+    if (reset.parentElement === timer && timer.parentElement) timer.parentElement.insertBefore(reset, timer.nextSibling);
+    reset.classList.add('ui-timer-reset-proxy');
+    reset.setAttribute('aria-hidden', 'true');
+    reset.tabIndex = -1;
+
+    const activate = event => {
+      if (document.body.classList.contains('ui-test-active') || document.body.classList.contains('essay-mode-active')) return;
+      if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
+      if (event.type === 'keydown') event.preventDefault();
+      reset.click();
+    };
+    timer.addEventListener('click', activate);
+    timer.addEventListener('keydown', activate);
+  }
+
+  function syncTimerSemantics() {
+    const timer = el('timerCard');
+    if (!timer) return;
+    const interactive = !document.body.classList.contains('ui-test-active') && !document.body.classList.contains('essay-mode-active');
+    timer.classList.toggle('ui-timer-reset-target', interactive);
+    if (interactive) {
+      timer.tabIndex = 0;
+      timer.setAttribute('role', 'button');
+      timer.setAttribute('aria-label', 'Session timer. Activate to reset the study session timer.');
+      timer.title = 'Reset session timer';
+    } else {
+      timer.tabIndex = -1;
+      timer.removeAttribute('role');
+      timer.setAttribute('aria-label', document.body.classList.contains('ui-test-active') ? 'Practice test time remaining' : 'Study session timer');
+      timer.removeAttribute('title');
+    }
   }
 
   function groupQuestionContext() {
@@ -55,18 +82,15 @@
     const row = picker?.parentElement;
     if (!row || !category || !filter) return;
     row.classList.add('question-context-controls');
-    if (!row.querySelector('.question-category-group')) {
-      const group = document.createElement('span');
-      group.className = 'question-category-group';
-      row.insertBefore(group, category);
-      group.append(category, filter);
+
+    const legacyGroup = row.querySelector('.question-category-group');
+    if (legacyGroup) {
+      row.insertBefore(category, legacyGroup);
+      row.insertBefore(filter, legacyGroup);
+      legacyGroup.remove();
     }
-    if (!filter.querySelector('.question-filter-label')) {
-      const label = document.createElement('span');
-      label.className = 'question-filter-label';
-      label.textContent = 'Filter';
-      filter.append(label);
-    }
+    filter.querySelector('.question-filter-label')?.remove();
+    row.insertBefore(filter, picker);
     filter.setAttribute('aria-label', 'Filter study categories');
     filter.title = 'Filter study categories';
   }
@@ -103,8 +127,16 @@
       : 'Audio, questions, essays, glossary, and downloads.';
   }
 
+  function simplifySettingsSurface() {
+    const settingsPanel = el('materialsPanelSettings');
+    const redundantHead = settingsPanel?.querySelector('.settings-section > .materials-section-head');
+    redundantHead?.classList.add('ui-settings-redundant-head');
+    settingsPanel?.querySelector('.settings-section')?.classList.add('ui-settings-content');
+  }
+
   function installMaterialsBehavior() {
     const materialsButton = el('materialsBtn');
+    const settingsButton = el('settingsBtn');
     const tabs = el('materialsTabs');
     const dialog = el('materialsDialog');
     const settingsTab = el('materialsTabSettings');
@@ -120,6 +152,7 @@
       prepareMaterialsDestination();
       setMaterialsSurface('materials');
     }, true);
+    settingsButton?.addEventListener('click', () => setMaterialsSurface('settings'), true);
 
     tabs?.addEventListener('click', event => {
       const tab = event.target.closest?.('[data-materials-tab]')?.dataset.materialsTab;
@@ -138,14 +171,55 @@
         attributes: true,
         attributeFilter: ['open', 'hidden']
       });
-      dialog.addEventListener('close', () => setMaterialsSurface('materials'));
+      dialog.addEventListener('close', () => {
+        if (!settingsPanel.hidden) prepareMaterialsDestination();
+        setMaterialsSurface('materials');
+      });
     }
 
     rememberContentTab(storedContentTab());
+    simplifySettingsSurface();
+  }
+
+  function installAboutLogo() {
+    const logo = el('brandLogo');
+    const dialog = el('appInfoDialog');
+    if (!logo || !dialog) return;
+    logo.removeAttribute('aria-hidden');
+    logo.setAttribute('role', 'button');
+    logo.setAttribute('tabindex', '0');
+    logo.setAttribute('aria-label', 'About SCP Study');
+    logo.title = 'About SCP Study';
+    const open = event => {
+      if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
+      if (event.type === 'keydown') event.preventDefault();
+      window.setTimeout(() => {
+        if (!dialog.open) dialog.showModal();
+      }, 0);
+    };
+    logo.addEventListener('click', open);
+    logo.addEventListener('keydown', open);
+  }
+
+  function refreshNavigationCopy() {
+    const chaburaDescription = el('chaburaDialog')?.querySelector('.modal-head p');
+    if (chaburaDescription) chaburaDescription.textContent = 'Select your region and chabura. You can change this later in Settings.';
+    setMaterialsSurface(el('materialsPanelSettings')?.hidden === false ? 'settings' : 'materials');
+  }
+
+  function afterCoreInit() {
+    refreshNavigationCopy();
+    simplifySettingsSurface();
+    syncTimerSemantics();
+    const bodyObserver = new MutationObserver(syncTimerSemantics);
+    bodyObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   }
 
   installUtilityIcons();
-  separateSessionReset();
+  installTimerResetProxy();
   groupQuestionContext();
   installMaterialsBehavior();
+  installAboutLogo();
+  refreshNavigationCopy();
+  window.setTimeout(afterCoreInit, 0);
 })();

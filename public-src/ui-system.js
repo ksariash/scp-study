@@ -3,8 +3,14 @@
 
   const MATERIALS_TAB_KEY = 'scpStudy.materialsTab.v1';
   const LAST_CONTENT_TAB_KEY = 'scpStudy.lastMaterialsContentTab.v1';
+  const CHABURA_SETTINGS_KEY = 'scpStudy.chabura.v1';
   const CONTENT_TABS = new Set(['audio', 'questions', 'essays', 'glossary', 'downloads']);
   const el = id => document.getElementById(id);
+  let networkRegionPromise = null;
+
+  function activeZmanConfig() {
+    return window.SCP_ZMAN_CONFIG || window.SCP_COHORT_CONFIG || window.SCP_ACTIVE_ZMAN || window.SCP_ACTIVE_COHORT || {};
+  }
 
   function replaceUtilityIcon(button, svg, { label, title = label } = {}) {
     if (!button) return;
@@ -181,8 +187,65 @@
     simplifySettingsSurface();
   }
 
+  function chaburaData() {
+    const questions = Array.isArray(window.SCP_CHABURA_DATA?.questions) ? window.SCP_CHABURA_DATA.questions : [];
+    const locationQuestion = questions.find(item => item.id === 'location') || {};
+    const chaburaQuestion = questions.find(item => item.id === 'chabura') || {};
+    return {
+      locations: Array.isArray(locationQuestion.options) ? locationQuestion.options.map(String) : [],
+      byLocation: chaburaQuestion.optionsByLocation && typeof chaburaQuestion.optionsByLocation === 'object' ? chaburaQuestion.optionsByLocation : {}
+    };
+  }
+
+  function loadUiChaburaProfile() {
+    const active = activeZmanConfig();
+    const ids = [active.id, ...(Array.isArray(active.legacyIds) ? active.legacyIds : [])].map(String).filter(Boolean);
+    const data = chaburaData();
+    try {
+      for (const id of ids) {
+        const raw = localStorage.getItem(`${CHABURA_SETTINGS_KEY}:${id}`);
+        if (!raw) continue;
+        const parsed = JSON.parse(raw);
+        const location = String(parsed?.location || '').trim();
+        const chabura = String(parsed?.chabura || '').trim();
+        const validRavs = Array.isArray(data.byLocation?.[location]) ? data.byLocation[location].map(String) : [];
+        if (data.locations.includes(location) && (validRavs.includes(chabura) || chabura === 'Not listed / unsure')) return { location, chabura };
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  function ensureAboutChaburaCard() {
+    const grid = el('appInfoDialog')?.querySelector('.app-info-meta-grid');
+    if (!grid) return null;
+    let card = el('appInfoChaburaCard');
+    if (card) return card;
+    card = document.createElement('div');
+    card.id = 'appInfoChaburaCard';
+    card.className = 'app-info-meta app-info-chabura';
+    card.innerHTML = `
+      <span>Chabura</span>
+      <strong id="appInfoChabura">Not selected</strong>
+      <small id="appInfoChaburaRegion"></small>
+      <button type="button" class="app-info-chabura-action" id="appInfoChooseChabura">Choose chabura</button>`;
+    grid.append(card);
+    el('appInfoChooseChabura')?.addEventListener('click', () => void openChaburaChooser());
+    return card;
+  }
+
+  function syncAboutChabura() {
+    ensureAboutChaburaCard();
+    const profile = loadUiChaburaProfile();
+    const rav = el('appInfoChabura');
+    const region = el('appInfoChaburaRegion');
+    const choose = el('appInfoChooseChabura');
+    if (rav) rav.textContent = profile?.chabura || 'Not selected';
+    if (region) region.textContent = profile?.location || 'Choose your SCP chabura to personalize this device.';
+    if (choose) choose.hidden = !!profile;
+  }
+
   function syncAboutMetadata() {
-    const active = window.SCP_ZMAN_CONFIG || window.SCP_COHORT_CONFIG || window.SCP_ACTIVE_ZMAN || window.SCP_ACTIVE_COHORT || {};
+    const active = activeZmanConfig();
     const zmanLabel = String(active.name || active.analyticsKey || active.id || '').trim();
     if (zmanLabel && el('appInfoZman')) el('appInfoZman').textContent = zmanLabel;
 
@@ -192,6 +255,216 @@
     const footerVersion = String(el('appVersionFooter')?.textContent || '').match(/\bv(\d+)\b/i);
     const version = settingsVersion?.[1] || footerVersion?.[1] || '';
     if (version && el('appInfoVersion')) el('appInfoVersion').textContent = `v${version}`;
+    syncAboutChabura();
+  }
+
+  function fillLocationSelectIfNeeded(select) {
+    if (!select) return;
+    const data = chaburaData();
+    const values = [...select.options].map(option => option.value).filter(Boolean);
+    if (data.locations.every(location => values.includes(location))) return;
+    const selected = select.value;
+    select.innerHTML = '<option value="">Choose a location…</option>';
+    data.locations.forEach(location => {
+      const option = document.createElement('option');
+      option.value = location;
+      option.textContent = location;
+      select.append(option);
+    });
+    if (data.locations.includes(selected)) select.value = selected;
+  }
+
+  async function suggestedNetworkRegion() {
+    if (!networkRegionPromise) {
+      networkRegionPromise = fetch('/api/client-location', { cache:'no-store', credentials:'same-origin' })
+        .then(response => response.ok ? response.json() : null)
+        .then(data => {
+          const value = String(data?.suggestedChaburaRegion || '');
+          return chaburaData().locations.includes(value) ? value : '';
+        })
+        .catch(() => '');
+    }
+    return networkRegionPromise;
+  }
+
+  async function applyNetworkRegionSuggestion() {
+    if (loadUiChaburaProfile()) return;
+    const suggested = await suggestedNetworkRegion();
+    if (!suggested || loadUiChaburaProfile()) return;
+    for (const select of [el('settingsChaburaLocation'), el('chaburaDialogLocation')]) {
+      fillLocationSelectIfNeeded(select);
+      if (!select || select.value) continue;
+      select.value = suggested;
+      select.dispatchEvent(new Event('change', { bubbles:true }));
+      select.dataset.networkSuggested = 'true';
+    }
+  }
+
+  async function openChaburaChooser() {
+    const dialog = el('chaburaDialog');
+    const location = el('chaburaDialogLocation');
+    const rav = el('chaburaDialogSelect');
+    if (!dialog || !location || !rav) return;
+    fillLocationSelectIfNeeded(location);
+    const profile = loadUiChaburaProfile();
+    const about = el('appInfoDialog');
+    if (about?.open) about.close();
+
+    if (profile) {
+      location.value = profile.location;
+      location.dispatchEvent(new Event('change', { bubbles:true }));
+      window.setTimeout(() => {
+        rav.value = profile.chabura;
+        rav.dispatchEvent(new Event('change', { bubbles:true }));
+      }, 0);
+    } else if (!location.value) {
+      const suggested = await suggestedNetworkRegion();
+      if (suggested && !location.value) {
+        location.value = suggested;
+        location.dispatchEvent(new Event('change', { bubbles:true }));
+      }
+    }
+
+    if (!dialog.open) dialog.showModal();
+  }
+
+  function installSearchableRavSelect(selectId, locationId, label) {
+    const select = el(selectId);
+    const location = el(locationId);
+    if (!select || select.dataset.searchableRav === 'true') return;
+    select.dataset.searchableRav = 'true';
+    select.classList.add('ui-rav-native-select');
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'ui-rav-combobox';
+    const input = document.createElement('input');
+    input.type = 'search';
+    input.className = 'ui-rav-search';
+    input.id = `${selectId}Search`;
+    input.autocomplete = 'off';
+    input.spellcheck = false;
+    input.placeholder = 'Type to find a Rav…';
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-expanded', 'false');
+    input.setAttribute('aria-label', label);
+    const list = document.createElement('div');
+    list.className = 'ui-rav-suggestions';
+    list.id = `${selectId}Suggestions`;
+    list.setAttribute('role', 'listbox');
+    list.hidden = true;
+    input.setAttribute('aria-controls', list.id);
+    wrapper.append(input, list);
+    select.insertAdjacentElement('afterend', wrapper);
+
+    let visible = [];
+    let activeIndex = -1;
+
+    const values = () => [...select.options].map(option => option.value).filter(Boolean);
+    const close = () => {
+      list.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+      activeIndex = -1;
+      input.removeAttribute('aria-activedescendant');
+    };
+    const choose = value => {
+      if (!values().includes(value)) return;
+      select.value = value;
+      input.value = value;
+      select.dispatchEvent(new Event('change', { bubbles:true }));
+      close();
+    };
+    const refreshActive = () => {
+      [...list.querySelectorAll('.ui-rav-option')].forEach((button, index) => button.classList.toggle('active', index === activeIndex));
+      const active = list.querySelectorAll('.ui-rav-option')[activeIndex];
+      if (active) {
+        input.setAttribute('aria-activedescendant', active.id);
+        active.scrollIntoView({ block:'nearest' });
+      } else input.removeAttribute('aria-activedescendant');
+    };
+    const render = () => {
+      const query = input.value.trim().toLocaleLowerCase();
+      visible = values().filter(value => !query || value.toLocaleLowerCase().includes(query));
+      list.innerHTML = '';
+      if (!visible.length) {
+        const empty = document.createElement('div');
+        empty.className = 'ui-rav-empty';
+        empty.textContent = 'No matching Rav. Try another spelling.';
+        list.append(empty);
+      } else {
+        visible.forEach((value, index) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'ui-rav-option';
+          button.id = `${selectId}Option${index}`;
+          button.setAttribute('role', 'option');
+          button.textContent = value;
+          button.addEventListener('pointerdown', event => {
+            event.preventDefault();
+            choose(value);
+          });
+          list.append(button);
+        });
+      }
+      list.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+      activeIndex = -1;
+      refreshActive();
+    };
+    const syncFromSelect = ({ preserveQuery = false } = {}) => {
+      const selected = String(select.value || '');
+      if (selected) input.value = selected;
+      else if (!preserveQuery) input.value = '';
+    };
+
+    input.addEventListener('focus', render);
+    input.addEventListener('input', () => {
+      const currentValues = values();
+      const exact = currentValues.find(value => value.toLocaleLowerCase() === input.value.trim().toLocaleLowerCase());
+      if (exact) {
+        if (select.value !== exact) {
+          select.value = exact;
+          select.dispatchEvent(new Event('change', { bubbles:true }));
+        }
+      } else if (select.value) {
+        select.value = '';
+        select.dispatchEvent(new Event('change', { bubbles:true }));
+      }
+      render();
+    });
+    input.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (list.hidden) render();
+        if (!visible.length) return;
+        const delta = event.key === 'ArrowDown' ? 1 : -1;
+        activeIndex = (activeIndex + delta + visible.length) % visible.length;
+        refreshActive();
+        return;
+      }
+      if (event.key === 'Enter') {
+        if (!list.hidden && visible.length) {
+          event.preventDefault();
+          const value = visible[Math.max(0, activeIndex)];
+          if (value) choose(value);
+        }
+        return;
+      }
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+      }
+    });
+    input.addEventListener('blur', () => window.setTimeout(close, 120));
+    select.addEventListener('change', () => syncFromSelect());
+    location?.addEventListener('change', () => window.setTimeout(() => {
+      syncFromSelect();
+      if (document.activeElement === input) render();
+    }, 0));
+    new MutationObserver(() => window.setTimeout(() => syncFromSelect({ preserveQuery: document.activeElement === input }), 0))
+      .observe(select, { childList:true, subtree:true });
+
+    syncFromSelect();
   }
 
   function installAboutLogo() {
@@ -232,9 +505,30 @@
     setMaterialsSurface(el('materialsPanelSettings')?.hidden === false ? 'settings' : 'materials');
   }
 
+  function installChaburaUi() {
+    installSearchableRavSelect('settingsChaburaSelect', 'settingsChaburaLocation', 'Find your Rav');
+    installSearchableRavSelect('chaburaDialogSelect', 'chaburaDialogLocation', 'Find your Rav');
+    ensureAboutChaburaCard();
+    syncAboutChabura();
+    void applyNetworkRegionSuggestion();
+
+    el('saveChaburaSettingsBtn')?.addEventListener('click', () => window.setTimeout(syncAboutMetadata, 0));
+    el('saveChaburaDialogBtn')?.addEventListener('click', () => window.setTimeout(syncAboutMetadata, 0));
+    el('chaburaDialog')?.addEventListener('close', () => window.setTimeout(syncAboutMetadata, 0));
+    el('settingsAboutBtn')?.addEventListener('click', syncAboutMetadata, true);
+
+    const infoDialog = el('appInfoDialog');
+    if (infoDialog) {
+      new MutationObserver(() => {
+        if (infoDialog.open) syncAboutMetadata();
+      }).observe(infoDialog, { attributes:true, attributeFilter:['open'] });
+    }
+  }
+
   function afterCoreInit() {
     refreshNavigationCopy();
     simplifySettingsSurface();
+    installChaburaUi();
     syncAboutMetadata();
     syncTimerSemantics();
     const bodyObserver = new MutationObserver(syncTimerSemantics);

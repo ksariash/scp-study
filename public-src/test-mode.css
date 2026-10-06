@@ -22,8 +22,10 @@ body.ui-test-active #notificationsBtn svg {
   margin: 0 !important;
 }
 
-/* No correctness feedback is exposed until the whole test is submitted. */
-body.ui-test-active #feedbackBox {
+/* No correctness feedback or study-aid leakage is exposed until the whole test is submitted. */
+body.ui-test-active #feedbackBox,
+body.ui-test-active #questionNoteLinks,
+body.ui-test-active #questionAudio {
   display: none !important;
 }
 body.ui-test-active .choice.correct-choice,
@@ -37,8 +39,22 @@ body.ui-test-active .choice.selected.wrong-choice {
   border-color: #7da3f8 !important;
   background: linear-gradient(180deg, #f6f9ff 0%, #eef4ff 100%) !important;
 }
-body.ui-test-active .choice.locked {
-  opacity: 1;
+body.ui-test-active .choice.locked { opacity: 1; }
+/* app.js may synchronously write Correct/Partial/Incorrect before test-mode.js runs its
+   neutralization pass. Mask those result labels at the CSS layer so there is no flash. */
+body.ui-test-active #questionStatus.correct,
+body.ui-test-active #questionStatus.partial,
+body.ui-test-active #questionStatus.incorrect {
+  color: #667085 !important;
+  background: #f2f4f7 !important;
+  font-size: 0 !important;
+}
+body.ui-test-active #questionStatus.correct::after,
+body.ui-test-active #questionStatus.partial::after,
+body.ui-test-active #questionStatus.incorrect::after {
+  content: 'Answered';
+  font-size: .76rem;
+  font-weight: 750;
 }
 
 /* Questions / Essays are peer sections of one active attempt. */
@@ -165,9 +181,7 @@ body.ui-test-essays #essayPairingReportBtn,
 body.ui-test-essays #essayPairingResources {
   display: none !important;
 }
-body.ui-test-essays #essayMasterySummary {
-  color: #5f6f88;
-}
+body.ui-test-essays #essayMasterySummary { color: #5f6f88; }
 body.ui-test-essays .essay-match-section {
   border-color: #dbe4f1;
   background: #fff;
@@ -222,9 +236,7 @@ body.ui-test-essays .essay-choice.test-selected::after {
   font-size: .64rem;
   font-weight: 850;
 }
-body.ui-test-essays .essay-answer-placeholder {
-  color: #78869b;
-}
+body.ui-test-essays .essay-answer-placeholder { color: #78869b; }
 
 /* Post-submit essay grading. */
 .test-result-pairings {
@@ -256,7 +268,6 @@ body.ui-test-essays .essay-answer-placeholder {
 .test-result-pairing.incorrect small,
 .test-result-pairing.unanswered small { color: #8f3d47; }
 .test-result-essay-body p { white-space: pre-wrap; line-height: 1.5; }
-
 .test-time-value { font-size: 1.05rem !important; }
 
 @media (max-width: 780px) {
@@ -274,7 +285,6 @@ body.ui-test-essays .essay-answer-placeholder {
     min-width: 40px !important;
     min-height: 40px !important;
   }
-
   .test-section-nav { margin-bottom: 7px; }
   .test-section-btn { min-height: 34px; padding-inline: 6px; font-size: .7rem; }
   .test-progress-label { font-size: .63rem; }

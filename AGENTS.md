@@ -17,6 +17,7 @@ Reusable app shell:
 - `public-src/styles.css`
 - `public-src/app.js`
 - `public-src/sw.js`
+- `public-src/images/` (including the iOS install guide artwork)
 - `src/index.js`
 - `build.mjs`
 
@@ -88,6 +89,8 @@ A cache-membership-only maintenance change may keep the existing product `APP_VE
 The About dialog version is runtime-derived; do not add a second hard-coded release number.
 
 A source fix is not complete if existing installed PWAs remain pinned to an unchanged cache name.
+
+The iOS install guide image is canonical at `public-src/images/install-scp-study-ios.png`; never maintain it only in generated `public/`. The legacy static-binary bundle still contains an older copy, so `build.mjs` must keep `images/install-scp-study-ios.png` in `PUBLIC_SOURCE_OVERRIDES` so bundle extraction cannot overwrite the canonical asset. Keep the guide compact enough for a phone modal, and when the production origin shown in the artwork changes, update every visible URL in the image and verify the rendered asset visually before release.
 
 Generated PDFs are mixed-direction documents: English layout is LTR while Hebrew phrases are RTL. Preserve the logical source wording and handle direction in the PDF renderer. Contiguous Hebrew words must keep their reading order (for example, logical `כלי שני` must render visually as `כלי שני`, not `שני כלי`), and punctuation adjacent to Hebrew must use a font/direction-safe run rather than producing missing-glyph/null boxes.
 

@@ -16,7 +16,7 @@ npm install
 npm run build
 ```
 
-`npm run build` creates `public/` from the versioned text sources in `public-src/` plus the binary static-asset bundle at `assets/static-binaries.tar.gz`. Review audio is intentionally not included in that archive.
+`npm run build` creates `public/` from the versioned sources in `public-src/` plus the binary static-asset bundle at `assets/static-binaries.tar.gz`. The canonical iOS install tutorial lives in `public-src/images/` and intentionally overrides the older bundle copy during extraction. Review audio is intentionally not included in that archive.
 
 ## Deploy
 

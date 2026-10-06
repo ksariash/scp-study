@@ -14,6 +14,9 @@ const GENERATED_PDFS = new Set([
   'documents/SCP-Study-Essay-Questions-and-Sample-Answers.pdf',
   'documents/SCP-Study-Course-Glossary.pdf',
 ]);
+const PUBLIC_SOURCE_OVERRIDES = new Set([
+  'images/install-scp-study-ios.png',
+]);
 
 const COHORT_REQUIRED_FILES = [
   'cohort.js',
@@ -188,7 +191,7 @@ while (offset + 512 <= tar.length) {
     // Only the question/test/essay PDFs are regenerated. The compact course
     // review is a versioned static binary in the repository and is copied
     // unchanged from the asset bundle.
-    if (!GENERATED_PDFS.has(safeName)) {
+    if (!GENERATED_PDFS.has(safeName) && !PUBLIC_SOURCE_OVERRIDES.has(safeName)) {
       await mkdir(dirname(destination.pathname), { recursive: true });
       await writeFile(destination, tar.subarray(offset + 512, offset + 512 + size));
     }

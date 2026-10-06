@@ -25,8 +25,6 @@ function audioContentType(key) {
 function baseAudioHeaders(object, key) {
   const headers = new Headers();
   object.writeHttpMetadata(headers);
-  // The copied R2 objects may retain generic application/octet-stream
-  // metadata. Browsers, especially Safari/iOS, need a real media MIME type.
   headers.set('Content-Type', audioContentType(key));
   headers.set('Content-Disposition', 'inline');
   headers.set('ETag', object.httpEtag);
@@ -40,12 +38,7 @@ function baseAudioHeaders(object, key) {
 
 function candidateAudioKeys(key) {
   const keys = [key];
-
-  // Be tolerant of an R2 object that was created with a literal leading slash.
   keys.push('/' + key);
-
-  // Keep the pre-Zman flat key as a temporary compatibility read. It is never
-  // used for writes and can be removed after production audio is verified.
   if (key.startsWith(CURRENT_AUDIO_PREFIX)) {
     const filename = key.slice(CURRENT_AUDIO_PREFIX.length);
     if (filename && !filename.includes('/')) {
@@ -105,7 +98,6 @@ async function serveAudio(request, env, key) {
     for (const candidate of candidates) {
       const metadata = await env.AUDIO.head(candidate);
       if (!metadata) continue;
-
       const range = parseByteRange(rangeHeader, Number(metadata.size));
       if (!range || range.invalid) {
         return new Response('Requested range not satisfiable', {
@@ -117,12 +109,8 @@ async function serveAudio(request, env, key) {
           }
         });
       }
-
-      const object = await env.AUDIO.get(candidate, {
-        range: { offset: range.start, length: range.length }
-      });
+      const object = await env.AUDIO.get(candidate, { range: { offset: range.start, length: range.length } });
       if (!object || !('body' in object)) continue;
-
       const headers = baseAudioHeaders(object, candidate);
       headers.set('Content-Range', `bytes ${range.start}-${range.end}/${metadata.size}`);
       headers.set('Content-Length', String(range.length));
@@ -176,9 +164,7 @@ function clientLocationResponse(request) {
   if (request.method !== 'GET') {
     return new Response('Method not allowed', { status: 405, headers: { Allow:'GET' } });
   }
-  return new Response(JSON.stringify({
-    suggestedChaburaRegion: suggestedChaburaRegion(request.cf || {})
-  }), {
+  return new Response(JSON.stringify({ suggestedChaburaRegion: suggestedChaburaRegion(request.cf || {}) }), {
     headers: {
       'Content-Type':'application/json; charset=utf-8',
       'Cache-Control':'no-store',
@@ -196,9 +182,10 @@ const SHELL_STYLE_PATHS = [
 const SHELL_SCRIPT_PATHS = [
   'ui-system.js',
   'test-mode.js',
-  'test-mode-polish.js'
+  'test-mode-polish.js',
+  'test-analytics-retry.js'
 ];
-const SHELL_CACHE_NAME = 'scp-study-v75-ui7';
+const SHELL_CACHE_NAME = 'scp-study-v75-ui8';
 
 function cloneAssetResponse(response, body, contentType = null) {
   const headers = new Headers(response.headers);
@@ -231,6 +218,9 @@ async function enhanceServiceWorker(response) {
   source = source.replace(/const CACHE_NAME = 'scp-study-v75-ui\d+';/, `const CACHE_NAME = '${SHELL_CACHE_NAME}';`);
   if (!source.includes("'./chabura-ui.css'")) {
     source = source.replace("  './ui-system.css',", "  './ui-system.css',\n  './chabura-ui.css',");
+  }
+  if (!source.includes("'./test-analytics-retry.js'")) {
+    source = source.replace("  './test-mode-polish.js',", "  './test-mode-polish.js',\n  './test-analytics-retry.js',");
   }
   return cloneAssetResponse(response, source, 'application/javascript; charset=utf-8');
 }

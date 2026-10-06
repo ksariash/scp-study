@@ -187,12 +187,70 @@ function clientLocationResponse(request) {
   });
 }
 
+const SHELL_STYLE_PATHS = [
+  'ui-system.css',
+  'test-mode.css',
+  'test-mode-polish.css',
+  'chabura-ui.css'
+];
+const SHELL_SCRIPT_PATHS = [
+  'ui-system.js',
+  'test-mode.js',
+  'test-mode-polish.js'
+];
+const SHELL_CACHE_NAME = 'scp-study-v75-ui7';
+
+function cloneAssetResponse(response, body, contentType = null) {
+  const headers = new Headers(response.headers);
+  headers.delete('Content-Length');
+  if (contentType) headers.set('Content-Type', contentType);
+  return new Response(body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers
+  });
+}
+
+async function enhanceHtmlShell(response) {
+  if (!response.ok) return response;
+  let html = await response.text();
+  for (const path of SHELL_STYLE_PATHS) {
+    if (html.includes(`href="${path}"`) || html.includes(`href="./${path}"`)) continue;
+    html = html.replace('</head>', `  <link rel="stylesheet" href="${path}" />\n</head>`);
+  }
+  for (const path of SHELL_SCRIPT_PATHS) {
+    if (html.includes(`src="${path}"`) || html.includes(`src="./${path}"`)) continue;
+    html = html.replace('</body>', `  <script src="${path}"></script>\n</body>`);
+  }
+  return cloneAssetResponse(response, html, 'text/html; charset=utf-8');
+}
+
+async function enhanceServiceWorker(response) {
+  if (!response.ok) return response;
+  let source = await response.text();
+  source = source.replace(/const CACHE_NAME = 'scp-study-v75-ui\d+';/, `const CACHE_NAME = '${SHELL_CACHE_NAME}';`);
+  if (!source.includes("'./chabura-ui.css'")) {
+    source = source.replace("  './ui-system.css',", "  './ui-system.css',\n  './chabura-ui.css',");
+  }
+  return cloneAssetResponse(response, source, 'application/javascript; charset=utf-8');
+}
+
+async function serveAsset(request, env, url) {
+  const response = await env.ASSETS.fetch(request);
+  if (request.method !== 'GET') return response;
+  if ((url.pathname === '/' || url.pathname === '/index.html') && response.headers.get('Content-Type')?.includes('text/html')) {
+    return enhanceHtmlShell(response);
+  }
+  if (url.pathname === '/sw.js') return enhanceServiceWorker(response);
+  return response;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/api/client-location') return clientLocationResponse(request);
     const key = audioObjectKey(url.pathname);
     if (key) return serveAudio(request, env, key);
-    return env.ASSETS.fetch(request);
+    return serveAsset(request, env, url);
   }
 };

@@ -1,5 +1,5 @@
 const APP_VERSION = 75;
-const CACHE_NAME = 'scp-study-v75-ui4';
+const CACHE_NAME = 'scp-study-v75-ui5';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v3';
 const DOCUMENT_CACHE_NAME = 'scp-study-documents-v2';
 const APP_SHELL = [
@@ -138,8 +138,6 @@ async function handleAudioRangeRequest(request) {
   const audioCache = await caches.open(AUDIO_CACHE_NAME);
   const cached = await audioCache.match(request.url);
 
-  // Let the origin/R2 Worker satisfy uncached Range requests directly. This
-  // avoids downloading the entire M4A just to answer a small media probe.
   if (!cached || cached.status === 206) return fetch(request);
 
   const body = await cached.arrayBuffer();

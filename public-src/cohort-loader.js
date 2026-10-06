@@ -29,7 +29,7 @@
   document.head.append(uiStyles);
 
   document.write(
-    files.map(file => '<script src="' + base + '/' + file + '"><\\/script>').join('') +
-    '<script src="ui-system.js"><\\/script>'
+    files.map(file => '<script src="' + base + '/' + file + '"><\/script>').join('') +
+    '<script src="ui-system.js"><\/script>'
   );
 })();

@@ -92,6 +92,63 @@ export async function loadZmanAuthoring(sourceRoot = ZMAN_SOURCE_ROOT) {
   return { registry, packages };
 }
 
+
+function normalizedTextKey(value) {
+  return String(value || '').normalize('NFKC').toLocaleLowerCase('en-US').replace(/\s+/g, ' ').trim();
+}
+
+function normalizedEssayPairings(essay) {
+  if (essay?.pairings && typeof essay.pairings === 'object') {
+    return {
+      roots: Array.isArray(essay.pairings.roots) ? essay.pairings.roots : [],
+      responses: Array.isArray(essay.pairings.responses) ? essay.pairings.responses : [],
+      legacy: false,
+    };
+  }
+  const facts = Array.isArray(essay?.facts) ? essay.facts : [];
+  return {
+    roots: facts.map((fact) => ({
+      id: fact.id,
+      label: fact.authority,
+      context: fact.label,
+      accepts: [fact.id],
+      reviewClips: fact.reviewClips || [],
+    })),
+    responses: facts.map((fact) => ({
+      id: fact.id,
+      text: fact.position,
+      maxUses: 1,
+    })),
+    legacy: true,
+  };
+}
+
+function responseMaxUses(response) {
+  if (response?.maxUses === 'unlimited') return Number.POSITIVE_INFINITY;
+  if (response?.maxUses == null) return 1;
+  return Number(response.maxUses);
+}
+
+function essayPairingGraphIsSolvable(pairings) {
+  const roots = [...pairings.roots].sort((a, b) => a.accepts.length - b.accepts.length);
+  const limits = new Map(pairings.responses.map((response) => [response.id, responseMaxUses(response)]));
+  const uses = new Map();
+  const visit = (index) => {
+    if (index >= roots.length) return true;
+    for (const responseId of roots[index].accepts) {
+      const used = uses.get(responseId) || 0;
+      const limit = limits.get(responseId) || 0;
+      if (used >= limit) continue;
+      uses.set(responseId, used + 1);
+      if (visit(index + 1)) return true;
+      if (used) uses.set(responseId, used);
+      else uses.delete(responseId);
+    }
+    return false;
+  };
+  return visit(0);
+}
+
 export function validateAuthoring(registry, packages) {
   invariant(registry?.schemaVersion === 1, 'zmanim/registry.yaml: schemaVersion must be 1');
   const ids = packages.map((pkg) => pkg.id);
@@ -137,17 +194,44 @@ export function validateAuthoring(registry, packages) {
 
     invariant(Array.isArray(essays) && essays.length, `${id}/essays.yaml must contain essays`);
     unique(essays.map((essay) => essay.id), `${id} essay IDs`);
-    const factIds = essays.flatMap((essay) => essay.facts?.map((fact) => fact.id) || []);
-    unique(factIds, `${id} essay fact IDs`);
+    const pairingRootIds = [];
     for (const essay of essays) {
-      invariant(essay.title && essay.prompt, `${id}: essay ${essay.id} needs title and prompt`);
+      invariant(essay.title && essay.prompt && essay.modelAnswer, `${id}: essay ${essay.id} needs title, prompt, and modelAnswer`);
       invariant(essay.notes?.compact && essay.notes?.full, `${id}: essay ${essay.id} needs compact/full note pages`);
       invariant(Array.isArray(essay.tags), `${id}: essay ${essay.id} needs tags (use [] for none)`);
-      invariant(Array.isArray(essay.facts) && essay.facts.length, `${id}: essay ${essay.id} needs facts`);
-      for (const fact of essay.facts) {
-        invariant(fact.id && fact.label && fact.authority && fact.position, `${id}: essay ${essay.id} has an incomplete fact`);
+      const pairings = normalizedEssayPairings(essay);
+      invariant(pairings.roots.length, `${id}: essay ${essay.id} needs pairing roots`);
+      invariant(pairings.responses.length, `${id}: essay ${essay.id} needs pairing responses`);
+      unique(pairings.roots.map((root) => root.id), `${id} essay ${essay.id} pairing root IDs`);
+      unique(pairings.responses.map((response) => response.id), `${id} essay ${essay.id} response IDs`);
+      pairingRootIds.push(...pairings.roots.map((root) => root.id));
+      const responseIds = new Set(pairings.responses.map((response) => response.id));
+      const acceptedBy = new Map(pairings.responses.map((response) => [response.id, 0]));
+      const textKeys = pairings.responses.map((response) => normalizedTextKey(response.text));
+      invariant(textKeys.every(Boolean), `${id}: essay ${essay.id} response text is required`);
+      unique(textKeys, `${id} essay ${essay.id} normalized response text`);
+      for (const response of pairings.responses) {
+        invariant(response.id && typeof response.text === 'string' && response.text.trim(), `${id}: essay ${essay.id} has an incomplete response`);
+        const maxUses = responseMaxUses(response);
+        invariant(maxUses === Number.POSITIVE_INFINITY || (Number.isInteger(maxUses) && maxUses >= 1), `${id}: essay ${essay.id} response ${response.id} maxUses must be a positive integer or "unlimited"`);
       }
+      for (const root of pairings.roots) {
+        invariant(root.id && typeof root.label === 'string' && root.label.trim(), `${id}: essay ${essay.id} has an incomplete pairing root`);
+        invariant(Array.isArray(root.accepts) && root.accepts.length, `${id}: essay ${essay.id} root ${root.id} needs at least one accepted response`);
+        unique(root.accepts, `${id} essay ${essay.id} root ${root.id} accepts`);
+        for (const responseId of root.accepts) {
+          invariant(responseIds.has(responseId), `${id}: essay ${essay.id} root ${root.id} accepts missing response ${responseId}`);
+          acceptedBy.set(responseId, (acceptedBy.get(responseId) || 0) + 1);
+        }
+      }
+      for (const response of pairings.responses) {
+        const count = acceptedBy.get(response.id) || 0;
+        if (response.distractor === true) invariant(count === 0, `${id}: essay ${essay.id} distractor ${response.id} cannot be accepted by a root`);
+        else invariant(count > 0, `${id}: essay ${essay.id} response ${response.id} is unused; mark it distractor: true or connect it to a root`);
+      }
+      invariant(essayPairingGraphIsSolvable(pairings), `${id}: essay ${essay.id} pairing graph has no complete assignment under response maxUses limits`);
     }
+    unique(pairingRootIds, `${id} essay pairing root IDs`);
 
     invariant(Array.isArray(glossary) && glossary.length, `${id}/glossary.yaml must contain terms`);
     unique(glossary.map((term) => term.id), `${id} glossary IDs`);
@@ -167,7 +251,7 @@ export function validateAuthoring(registry, packages) {
     }
     const reviewClips = [
       ...questions.flatMap((question) => question.reviewClips || []),
-      ...essays.flatMap((essay) => essay.facts.flatMap((fact) => fact.reviewClips || [])),
+      ...essays.flatMap((essay) => normalizedEssayPairings(essay).roots.flatMap((root) => root.reviewClips || [])),
     ];
     for (const clip of reviewClips) {
       invariant(reviewIds.has(clip.review), `${id}: review clip references missing review ${clip.review}`);
@@ -220,15 +304,19 @@ function runtimePackage(pkg) {
     glossaryCategoryLinks: Object.fromEntries(glossary.filter((term) => term.categories.length).map((term) => [term.id, term.categories])),
   };
 
-  const runtimeQuestions = questions.map(({ notes, reviewClips, testedConcept, ...question }) => question);
-  const runtimeEssays = essays.map(({ notes, tags, ...essay }) => ({
-    ...essay,
-    facts: essay.facts.map(({ authority, position, reviewClips, ...fact }) => ({
+  const runtimeQuestions = questions.map(({ notes, reviewClips, testedConcept, provenance, ...question }) => question);
+  const runtimeEssays = essays.map(({ notes, tags, facts, pairings, provenance, ...essay }) => {
+    const normalized = normalizedEssayPairings({ facts, pairings });
+    const runtimePairings = {
+      roots: normalized.roots.map(({ reviewClips, provenance: rootProvenance, ...root }) => ({ ...root })),
+      responses: normalized.responses.map(({ provenance: responseProvenance, ...response }) => ({ ...response })),
+    };
+    const legacyFacts = normalized.legacy ? facts.map(({ authority, position, reviewClips, ...fact }) => ({
       ...fact,
       tokens: [[`${fact.id}a`, authority], [`${fact.id}b`, position]],
-    })),
-    distractors: [],
-  }));
+    })) : [];
+    return { ...essay, pairings: runtimePairings, facts: legacyFacts, distractors: [] };
+  });
   const runtimeGlossary = glossary.map(({ categories, ...term }) => term);
   const reviews = audioReviews.reviews.map(({ file, transcript, _transcript, ...review }) => ({
     ...review,
@@ -236,7 +324,7 @@ function runtimePackage(pkg) {
     transcript: _transcript,
   }));
   const questionAudioMap = Object.fromEntries(questions.filter((q) => q.reviewClips?.length).map((q) => [q.id, q.reviewClips]));
-  const essayAudioMap = Object.fromEntries(essays.flatMap((essay) => essay.facts.filter((fact) => fact.reviewClips?.length).map((fact) => [fact.id, fact.reviewClips])));
+  const essayAudioMap = Object.fromEntries(essays.flatMap((essay) => normalizedEssayPairings(essay).roots.filter((root) => root.reviewClips?.length).map((root) => [root.id, root.reviewClips])));
   const documents = {
     compact: { key: 'compact', title: manifest.documentTitles?.compact || 'Compact Course Review', url: config.documents.compactReview },
     full: { key: 'full', title: manifest.documentTitles?.full || 'Full Course Notes', url: config.documents.fullNotes },

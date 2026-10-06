@@ -21,15 +21,18 @@
   const base = String(zman.path || ('cohorts/' + zman.id)).replace(/\/$/, '');
   const files = ['cohort.js','questions.js','chaburos.js','audio-reviews.js','glossary.js','essay-practice.js','course-notes.js'];
 
-  // Load the shared UI component layer before app.js so it can normalize the
-  // shell without duplicating product behavior in markup-specific handlers.
-  const uiStyles = document.createElement('link');
-  uiStyles.rel = 'stylesheet';
-  uiStyles.href = 'ui-system.css';
-  document.head.append(uiStyles);
+  // Shared shell/design normalization and the combined-test controller load
+  // before app.js so their capture-phase entry contracts are established first.
+  for (const href of ['ui-system.css', 'test-mode.css']) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    document.head.append(link);
+  }
 
   document.write(
     files.map(file => '<script src="' + base + '/' + file + '"><\/script>').join('') +
-    '<script src="ui-system.js"><\/script>'
+    '<script src="ui-system.js"><\/script>' +
+    '<script src="test-mode.js"><\/script>'
   );
 })();

@@ -1,0 +1,258 @@
+locationLabel: Where is your Semichas Chaver Chabura located?
+chaburaLabel: Which SCP chabura do you attend?
+regions:
+  - name: Israel
+    ravs:
+      - Rav Aharon Herskovitz
+      - Rav Aminadav Grossman
+      - Rav Aryeh Leibowitz
+      - Rav Avraham Kimchi
+      - Rav Azi Horowitz
+      - Rav Barak Shloush
+      - Rav Barry Schuman
+      - Rav Chaim Eisenstein
+      - Rav Dani Schreiber
+      - Rav Daniel Braude
+      - Rav Daniel Rosenfeld
+      - Rav David Fine
+      - Rav Dovid Gottlieb
+      - Rav Dovid Halpern
+      - Rav Dovid Simon
+      - Rav Eli Ozarowski
+      - Rav Eliezer Lerea
+      - Rav Elyada Goldwicht - Jerusalem
+      - Rav Elyada Goldwicht - Ra'anana
+      - Rav Elyada Goldwicht - RBS
+      - Rav Evan Levine
+      - Rav Gary Alon Rogoff
+      - Rav Gavriel Friedman
+      - Rav Issac Selter
+      - Rav Jay Weinstein
+      - Rav Monish Rose
+      - Rav Moshe Wertenteil
+      - Rav Natan Sideman
+      - Rav Repahel  Raiton
+      - Rav Shalom Rosner
+      - Rav Shimmy Wieder
+      - Rav Shmuel Rosenthal
+      - Rav Simcha Dumas
+      - Rav Steven Pruzansky
+      - Rav Tal Goldberg
+      - Rav Tzvi Wohlgelernter
+      - Rav Yaakov Panitch
+      - Rav Yehoshua Pfeffer
+      - Rav Yoni Allswang
+      - Rav Yosef Ashenberg
+      - Rav Yudi Rand
+      - Rav Zev Weiner
+  - name: East Coast (EST)
+    ravs:
+      - Rav Aaron Ciment
+      - Rav Aaron Cohen
+      - Rav Andrew Markowitz
+      - Rav Ari Spiegler
+      - Rav Ariel Sobol
+      - Rav Aryeh Lebowitz
+      - Rav Avraham Soleimani
+      - Rav Avromy Broyde
+      - Rav Asher Sova
+      - Rav AY Benjamin
+      - Rav Baruch Goldstein
+      - Rav Ben Zion Feld
+      - Rav Beni Krohn
+      - Rav Benjie Goldschmidt
+      - Rav Binyomin Silver
+      - Rav Binyomin Sloviter
+      - Rav Binyomin Marwick
+      - Rav Binyomin Weinreb
+      - Rav Chaim Marcus
+      - Rav Chaim Yeshaya Freeman
+      - Rav Daniel Cooper
+      - Rav Daniel Coren
+      - Rav Daniel Feldman
+      - Rav David Rubinoff
+      - Rav Daniel Rose
+      - Rav Daniel Yaros
+      - Rav David Melamed
+      - Rav Donald Bixon
+      - Rav Daniel Schon
+      - Rav David Bitton
+      - Rav Dov Foxbrunner
+      - Rav Dovid Hirsch
+      - Rav Dovid Koehler
+      - Rav Duvie Rubin
+      - Rav Efrem Goldberg
+      - Rav Eli Babich
+      - Rav Eli Belizon
+      - Rav Eliezer Goldschmidt
+      - Rav Eliyahu Yosef
+      - Rav Etan Tennebaum
+      - Rav Etan Tokayer
+      - Rav Ethan Stein
+      - Rav Ephraim Polakoff
+      - Rav Gavriel Koskas
+      - Rav Gedaliah Jaffe
+      - Rav Gedalya Frankel
+      - Rav Gershon Segal
+      - Rav Gidon Moskowitz
+      - Rav Hillel Shaps
+      - Rav Issac Aminov
+      - Rav Isaac Rice
+      - Rav Jeremy Perlow
+      - Rav Jonathan Beinenfeld
+      - Rav Jonathan Muskat
+      - Rav Joshua Hess
+      - Rav Joe Soshtain
+      - Rav Mayer Dagmy
+      - Rav Meir Shimon Eisenberg
+      - Rav Menachem Zev Kramer
+      - Rav Michael Davies
+      - Rav Mordy Kuessous
+      - Rav Moshe Sanders
+      - Rav Mosheh Aziz
+      - Rav Motti Neuberger
+      - Rav Naftali Burnstein
+      - Rav Natan Siegel
+      - Rav Nathan Escava
+      - Rav Netanael Muskat
+      - Rav Nissim Palty
+      - Rav Pinchas Fink
+      - Rav Refael Ribacoff
+      - Rav Reuven Fink
+      - Rav Sendy Shulman
+      - Rav Shai Kaminetsky
+      - Rav Shaul Kassin
+      - Rav Shay Schachter
+      - Rav Shlomo Abrams
+      - Rav Shlomo Eisnesberg
+      - Rav Shlomo Gabbay
+      - Rav Shmuel Ismach
+      - Rav Shmuel Kimche
+      - Rav Shmuel Marcus
+      - Rav Shmuel Silber
+      - Rav Shua Katz
+      - Rav Simcha Snaid
+      - Rav Sion Siyanov
+      - Rav Sruli Motzen
+      - Rav Tuvia Brander
+      - Rav Tzvi Benoff
+      - Rav Uri Lesser
+      - Rav Uri Orlian
+      - Rav Yaakov Glasser
+      - Rav Yaakov Lehrfield
+      - Rav Yaakov Marmor
+      - Rav Yaakov Taubes
+      - Rav Ya'akov Trump
+      - Rav Yaakov Zakai - Netive Ezra
+      - Rav Yechezkel Hartman
+      - Rav Yechezkel Freundlich
+      - Rav Yehoshua Yamens
+      - Rav Yehuda Betesh
+      - Rav Yehuda Leib Goldberger
+      - Rav Yerachmiel Botnick
+      - Rav Yishai Bane
+      - Rav Yitzchak Zuckerman
+      - Rav Yitzi Genack
+      - Rav Yitzi Gettinger
+      - Rav Yochai Oren
+      - Rav Yochanan Salazar Loewe
+      - Rav Yonah Gross
+      - Rav Yoni Goldberg
+      - Rav Yoni Kirsch – Rav Benjie Goldschmidt
+      - Rav Yosef Sharbat
+      - Rav Yossi Katz
+      - Rav Zev Goldberg
+  - name: Central/West Coast
+    ravs:
+      - Rav Avi Anderson
+      - Rav Avi Goldstein
+      - Rav Avrohom Weinreb
+      - Rav Aaron Kraft
+      - Rav Aaron Leibtag
+      - Rav Avrohom Chaim Agishtein
+      - Rav Ariel Rockosfsky
+      - Rav Ariel Shoshan
+      - Rav Daniel reich
+      - Rav Dovid Eldelstein
+      - Rav Dovid Gleizer
+      - Rav Elan Segelman
+      - Rav Eli Markowitz
+      - Rav Elie Ginsparg
+      - Rav Ezra Keir
+      - Rav Gavriel Goetz
+      - Rav Jonah Steinmetz
+      - Rav Josh Maslow
+      - Rav Menachem Siderson
+      - Rav Menashe Rashti
+      - Rav Moishe Shechter
+      - Rav Uriel Nashofer
+      - Rav Naphtali Buchwald
+      - Rav Noah Whittenberg
+      - R' Seth Berkowitz
+      - Rav Shaoul Hamaoui
+      - Rav Shmuel Halprin
+      - Rav Sholom Skolnik
+      - Rav Shlomo Eisenberg
+      - Rav Shmuel Kresch
+      - Rav Tzvi Rosenshein
+      - Rav Yaakov Tanenbaum
+      - Rav Yaakov Berkowitz
+      - Rav Yanky Morgenstern
+      - Rav Yehuda Grossman
+      - Rav Wes Kalmar
+      - Rav Zvi Engel
+  - name: Europe
+    ravs:
+      - Rav Ari Zimmer
+      - Rav Chaim Burman
+      - Rav Chaim Parnas
+      - Rav Daniel Roselaar
+      - Rav Dovid Roberts
+      - Rav Dovid Tugendhaft
+      - Rav Eli Grunhut
+      - Rav Gad Sebbag
+      - Rav Gershon Dunner
+      - Rav Ilan Halberstadt
+      - Rav Rashi Simon
+      - Rav Reuven Stepsky
+      - Rav Shaya Klyne
+      - Rav Shimon Rechnitzer
+      - Rav Shimon Shimonov
+      - Rav Shua Bitton
+      - Rav Yaakov Gabbay
+      - Rav Yechiel Bayles
+      - Rav Yisrael Rose
+  - name: Canada
+    ravs:
+      - Rav Aaron Bengio
+      - Rav Aharon Greenberg
+      - Rav Avi Brodsky
+      - Rav Chaim Cohen
+      - Rav Chanan Weiser
+      - Rav Daniel Korobkin
+      - Rav Dovid Reboh
+      - Rav Elisha Mandel
+      - Rav Guy Tal
+      - Rav Idan Scher
+      - Rav Tsvi Heber
+      - Rav Yehuda Mann - Mishkan Avraham
+      - Rav Yossi Michalawicz
+      - Rav Shlomo Gabbay
+      - Rav Zev Spitz - Rav Yehuda Mann
+  - name: Australia/South Africa/South America
+    ravs:
+      - Rav Andy Cohen
+      - Rav Ari Levi
+      - Rav Brett Cohen
+      - Rav Daniel Altschuler
+      - Rav Daniel Beider
+      - Rav Danny Brett
+      - Rav David Shaw
+      - Rav Eli Grunhut
+      - Rav Eliezer Besser
+      - Rav Gilad Friedman
+      - Rav Jonathan Altman
+      - Rav Mark Steiner
+      - Rav Reuven Zail
+      - Rav Simcha Simon
+      - Rav Yisrael Meir Raff

@@ -1,0 +1,18 @@
+schemaVersion: 1
+id: 2026-summer
+name: Nat Bar Nat & Stam Ye'enam - Summer 26
+startsOn: 2026-06-01
+status: current
+legacyIds:
+  - nat-bar-nat-stam-yeinam-summer-26
+contentVersion: 1
+audio:
+  migrationMode: legacy-fallback
+  legacyR2ObjectPrefix: audio/
+documents:
+  compactReview: SCP-Study-Compact-Course-Review.pdf
+  fullNotes: SCP-Study-Full-Course-Notes.pdf
+  cumulativeTest: SCP-Study-Cumulative-Test.pdf
+  cumulativeAnswerKey: SCP-Study-Cumulative-Test-Answer-Key.pdf
+  essayQuestionsAndAnswers: SCP-Study-Essay-Questions-and-Sample-Answers.pdf
+  glossary: SCP-Study-Course-Glossary.pdf

@@ -1,0 +1,1037 @@
+- id: nbn-intentional-cooking
+  title: נ״ט בר נ״ט — deliberate cooking
+  prompt: A parve food is deliberately cooked in a clean meat or dairy vessel with the intention of
+    later adding the opposite type. Discuss the relevant opinions for a ben-yomo vessel and an
+    eino-ben-yomo vessel, and include the dry-food-on-the-opposite-plate application.
+  modelAnswer: For a ben-yomo vessel, Shach, Ben Ish Chai, and Kaf HaChaim forbid לכתחילה deliberately
+    cooking the parve food when the plan is to add the opposite type, while Rav Ovadya permits
+    לכתחילה. For an eino-ben-yomo vessel, Gra and Badei HaShulchan permit; Chochmat Adam and Rav
+    Elyashiv initially forbid but allow when no other pot is available. Rav Moshe permits לכתחילה
+    placing dry parve food cooked in a ben-yomo meat or dairy vessel onto a clean plate of the
+    opposite type, while Pri Megadim dissents.
+  notes:
+    compact: 1
+    full: 5
+  tags:
+    - נ״ט בר נ״ט
+  facts:
+    - id: nbn1
+      label: Ben-yomo — stricter S”A-track authorities
+      authority: Shach / Ben Ish Chai / Kaf HaChaim
+      position: forbid לכתחילה deliberately cooking parve food in a ben-yomo meat or dairy vessel when the
+        plan is to add the opposite type.
+      reviewClips:
+        - review: 1
+          start: 96
+          label: Deliberately creating נ״ט בר נ״ט
+    - id: nbn2
+      label: Ben-yomo — Rav Ovadya
+      authority: Rav Ovadya
+      position: permits לכתחילה deliberately cooking parve food in a ben-yomo meat or dairy vessel when
+        the plan is to add the opposite type.
+      reviewClips:
+        - review: 1
+          start: 96
+          label: Deliberately creating נ״ט בר נ״ט
+    - id: nbn3
+      label: Eino-ben-yomo — permissive Ashkenazic authorities
+      authority: Gra / Badei HaShulchan
+      position: permit לכתחילה deliberately cooking parve food in an eino-ben-yomo meat or dairy vessel
+        for later use with the opposite type.
+      reviewClips:
+        - review: 1
+          start: 184
+          label: Eino-ben-yomo dispute
+    - id: nbn4
+      label: Eino-ben-yomo — stricter Ashkenazic authorities
+      authority: Chochmat Adam / Rav Elyashiv
+      position: forbid לכתחילה deliberately cooking parve food in an eino-ben-yomo meat or dairy vessel
+        for later use with the opposite type, but allow the cooking when no other pot is available.
+      reviewClips:
+        - review: 1
+          start: 184
+          label: Eino-ben-yomo dispute
+    - id: nbn5
+      label: Dry solid on opposite plate
+      authority: Rav Moshe
+      position: permits לכתחילה placing dry parve food cooked in a ben-yomo meat or dairy vessel onto a
+        clean plate of the opposite type.
+      reviewClips:
+        - review: 2
+          start: 0
+          label: Dry food on the opposite-type plate
+    - id: nbn6
+      label: Dry solid dissent
+      authority: Pri Megadim
+      position: forbids לכתחילה placing dry parve food cooked in a ben-yomo meat or dairy vessel onto a
+        clean plate of the opposite type.
+      reviewClips:
+        - review: 2
+          start: 0
+          label: Dry food on the opposite-type plate
+- id: nbn-model-failures
+  title: נ״ט בר נ״ט — when the model may fail
+  prompt: When does a transfer qualify as נ״ט בר נ״ט? Discuss the dispute over food-to-food transfer
+    and the case where the original source and recipient are still cooking together.
+  modelAnswer: Pri Megadim and Aruch HaShulchan do not count the first food-to-food transfer as נ״ט בר
+    נ״ט; Pnei Aryeh and Rav Ovadya do, while Chavot Da’at and Yad Yehuda are intermediate. For an
+    ongoing cooking connection, Chavot Da’at says the weakening has not yet occurred, Beit Ephraim
+    says it can, Ashkenazic practice can rely on Beit Ephraim בדיעבד or for significant loss, and
+    Rav Ovadya follows the lenient view.
+  notes:
+    compact: 2
+    full: 12
+  tags:
+    - נ״ט בר נ״ט
+  facts:
+    - id: nbf1
+      label: Food → food → vessel — strict
+      authority: Pri Megadim / Aruch HaShulchan
+      position: do not treat the first food-to-food transfer as a valid נ״ט בר נ״ט transfer.
+      reviewClips:
+        - review: 2
+          start: 131
+          label: Food → food → vessel
+    - id: nbf2
+      label: Food → food → vessel — lenient
+      authority: Pnei Aryeh / Rav Ovadya
+      position: do treat the first food-to-food transfer as a valid weakened transfer for נ״ט בר נ״ט.
+      reviewClips:
+        - review: 2
+          start: 131
+          label: Food → food → vessel
+    - id: nbf3
+      label: Food → food → vessel — intermediate
+      authority: Chavot Da’at / Yad Yehuda
+      position: take intermediate positions on whether a food-to-food transfer counts as נ״ט בר נ״ט.
+      reviewClips:
+        - review: 2
+          start: 131
+          label: Food → food → vessel
+    - id: nbf4
+      label: Ongoing connection — strict
+      authority: Chavot Da’at
+      position: holds that נ״ט בר נ״ט has not yet occurred while the original source and recipient are
+        still cooking together.
+      reviewClips:
+        - review: 2
+          start: 153
+          label: Ongoing cooking connection
+    - id: nbf5
+      label: Ongoing connection — lenient
+      authority: Beit Ephraim
+      position: holds that נ״ט בר נ״ט can apply even while the original source and recipient remain
+        connected through cooking.
+      reviewClips:
+        - review: 2
+          start: 153
+          label: Ongoing cooking connection
+    - id: nbf6
+      label: Practical reliance
+      authority: Ashkenazic practice
+      position: is initially cautious when the source and recipient are still cooking together, but can
+        rely on Beit Ephraim בדיעבד or for significant loss.
+      reviewClips:
+        - review: 2
+          start: 153
+          label: Ongoing cooking connection
+    - id: nbf7
+      label: Rav Ovadya on ongoing connection
+      authority: Rav Ovadya
+      position: follows the lenient position that נ״ט בר נ״ט can apply even while the original source and
+        recipient remain connected through cooking.
+      reviewClips:
+        - review: 2
+          start: 153
+          label: Ongoing cooking connection
+- id: fish-meat-bitul
+  title: Fish and meat — bitul and סכנה
+  prompt: Fish accidentally became mixed with meat. Discuss whether bitul applies to a סכנה mixture
+    and what additional grounds for leniency the course gives when there is no ששים.
+  modelAnswer: Maharil says bitul does not apply to סכנה, while Issur VeHeiter permits and the course
+    follows the lenient practical custom. Without ששים after an accidental mixture, S”A’s rule
+    allowing added היתר to an accidental rabbinic mixture, Pitchei Teshuvah’s question whether אין
+    מבטלין governs סכנה, Magen Avraham’s question whether the danger applies today, and Divrei
+    Malkiel’s extension to actual mixture are distinct possible tzirufim.
+  notes:
+    compact: 3
+    full: 23
+  tags:
+    - Fish & Meat
+    - סכנה
+  facts:
+    - id: fmb1
+      label: Bitul — Maharil
+      authority: Maharil
+      position: holds that ordinary bitul does not apply to a fish-and-meat סכנה mixture.
+      reviewClips:
+        - review: 3
+          start: 74
+          label: Bitul in a fish-and-meat סכנה mixture
+    - id: fmb2
+      label: Bitul — Issur VeHeiter
+      authority: Issur VeHeiter
+      position: permits bitul for a fish-and-meat סכנה mixture; the practical course custom follows this
+        lenient approach.
+      reviewClips:
+        - review: 3
+          start: 74
+          label: Bitul in a fish-and-meat סכנה mixture
+    - id: fmb3
+      label: Accidental rabbinic mixture — S”A
+      authority: S”A
+      position: permits adding היתר to an accidentally created rabbinic mixture.
+      reviewClips:
+        - review: 3
+          start: 74
+          label: Bitul and additional leniency routes
+    - id: fmb4
+      label: אין מבטלין route
+      authority: Pitchei Teshuvah
+      position: argues that אין מבטלין איסור לכתחילה may not govern a סכנה mixture in the ordinary way.
+      reviewClips:
+        - review: 3
+          start: 74
+          label: Bitul and additional leniency routes
+    - id: fmb5
+      label: Changed danger route
+      authority: Magen Avraham
+      position: questions whether the fish-and-meat danger applies today, creating an additional possible
+        tziruf.
+      reviewClips:
+        - review: 3
+          start: 27
+          label: Magen Avraham as a leniency factor
+    - id: fmb6
+      label: Extension to actual mixture
+      authority: Divrei Malkiel
+      position: extends the changed-danger consideration even to a case in which fish and meat actually
+        became mixed.
+      reviewClips:
+        - review: 3
+          start: 27
+          label: Changed-danger leniency factor
+- id: dish-transfer
+  title: Dish transfer — simultaneous vessels, עירוי, and a continuous stream
+  prompt: "Discuss the main disputes governing meat/dairy taste transfer in hot water: simultaneous
+    clean ben-yomo vessels, עירוי onto dirty opposite dishes, and a continuous stream of hot parve
+    soup into a cold opposite-type bowl."
+  modelAnswer: S”A permits simultaneous clean ben-yomo meat and dairy vessels in hot parve water,
+    while Rama forbids. For עירוי onto dirty opposite dishes, Rama permits and Shach forbids because
+    עירוי can transfer כדי קליפה. For a continuous hot parve stream from a ben-yomo meat pot into a
+    cold dairy bowl, Rama forbids the bowl while Shach permits it as נ״ט בר נ״ט. Ohr L’Tzion
+    supplies an additional sink leniency by treating travel through pipes as weakening to כלי שני.
+  notes:
+    compact: 3
+    full: 29
+  tags:
+    - Dish Transfer
+    - עירוי
+  facts:
+    - id: dt1
+      label: Simultaneous clean ben-yomo vessels — S”A
+      authority: S”A
+      position: permits clean ben-yomo meat and dairy vessels to be together in hot parve water.
+      reviewClips:
+        - review: 4
+          start: 58
+          label: Clean ben-yomo meat and dairy vessels
+    - id: dt2
+      label: Simultaneous clean ben-yomo vessels — Rama
+      authority: Rama
+      position: forbids clean ben-yomo meat and dairy vessels from being together in hot parve water
+        because the connected tastes meet too directly.
+      reviewClips:
+        - review: 4
+          start: 58
+          label: Clean ben-yomo meat and dairy vessels
+    - id: dt3
+      label: עירוי — Rama
+      authority: Rama
+      position: permits עירוי כלי ראשון onto dirty meat and dairy dishes.
+      reviewClips:
+        - review: 4
+          start: 237
+          label: עירוי כלי ראשון
+    - id: dt4
+      label: עירוי — Shach
+      authority: Shach
+      position: forbids עירוי כלי ראשון onto dirty meat and dairy dishes because עירוי can transfer taste
+        כדי קליפה.
+      reviewClips:
+        - review: 4
+          start: 237
+          label: עירוי כלי ראשון
+    - id: dt5
+      label: Continuous stream — Rama
+      authority: Rama
+      position: forbids a cold opposite-type bowl when hot parve soup pours into it continuously from a
+        ben-yomo meat or dairy pot.
+      reviewClips:
+        - review: 4
+          start: 128
+          label: Continuous stream into opposite-type vessel
+    - id: dt6
+      label: Continuous stream — Shach
+      authority: Shach
+      position: permits the cold opposite-type bowl because the continuous stream is already treated as
+        נ״ט בר נ״ט.
+      reviewClips:
+        - review: 4
+          start: 128
+          label: Continuous stream into opposite-type vessel
+    - id: dt7
+      label: Piped hot water
+      authority: Ohr L’Tzion
+      position: treats hot water that traveled through pipes as weakened to the level of כלי שני for the
+        sink application taught in the course.
+      reviewClips:
+        - review: 4
+          start: 292
+          label: Hot faucet water and pipes
+- id: soap-dishwasher
+  title: Soap and dishwashers
+  prompt: May one dishwasher be used sequentially for meat and dairy? Discuss the role of soap as
+    פוגם, the major permissive opinions, and the concern raised by modern filters.
+  modelAnswer: Piskei Uteshuvot raises a concern whether ordinary soap is sufficiently פוגם; Chazon
+    Ish and Rav Forst give it substantial weight. Rav Moshe permits sequential use with separate
+    racks, Rav Shmuel Tuvia Stern permits even with the same racks, and Rav Ovadya permits when the
+    initial rinse is cold. Agurah B’Ohalecha cautions that modern filters can undermine older
+    dishwasher analysis.
+  notes:
+    compact: 4
+    full: 42
+  tags:
+    - Dishwashers
+    - פוגם
+  facts:
+    - id: sd1
+      label: Soap — concern
+      authority: Piskei Uteshuvot
+      position: questions whether ordinary dish soap is sufficiently פוגם to support the dishwasher leniency.
+      reviewClips:
+        - review: 5
+          start: 42
+          label: פוגם agents and dish soap
+    - id: sd2
+      label: Soap — practical course approach
+      authority: Chazon Ish / Rav Forst
+      position: give substantial weight to ordinary dish soap as פוגם in the dishwasher analysis.
+      reviewClips:
+        - review: 5
+          start: 42
+          label: פוגם agents and dish soap
+    - id: sd3
+      label: Dishwasher — separate racks
+      authority: Rav Moshe
+      position: permits sequential meat-and-dairy dishwasher use when separate racks are used.
+      reviewClips:
+        - review: 5
+          start: 146
+          label: Dishwasher framework
+    - id: sd4
+      label: Dishwasher — same racks
+      authority: Rav Shmuel Tuvia Stern
+      position: permits sequential meat-and-dairy dishwasher use even when the same racks are used.
+      reviewClips:
+        - review: 5
+          start: 146
+          label: Dishwasher framework
+    - id: sd5
+      label: Dishwasher — cold initial rinse
+      authority: Rav Ovadya
+      position: permits meat-and-dairy dishwasher use when the initial rinse is cold, more broadly than
+        the Ashkenazic practice taught in the course.
+      reviewClips:
+        - review: 5
+          start: 146
+          label: Dishwasher framework
+    - id: sd6
+      label: Dishwasher — modern filter concern
+      authority: Agurah B’Ohalecha
+      position: argues that modern dishwasher filters can undermine the assumptions used in older
+        dishwasher leniencies.
+      reviewClips:
+        - review: 5
+          start: 146
+          label: Dishwasher framework and limitations
+- id: stam-benefit
+  title: סתם יינם — why benefit was prohibited and the modern-non-Jew dispute
+  prompt: Why is benefit from סתם יינם prohibited, and how do the major opinions treat benefit today
+    when ordinary non-Jews are not assumed to make wine libations? Include the practical S”A/Rama
+    framework.
+  modelAnswer: Beit Yosef explains the benefit ban by modeling סתם יינם on יין נסך; Ran connects it to
+    preventing benefit from actual יין נסך; Rashba describes a later benefit decree after the
+    original drinking decree. Rashi and the Geonim permit benefit today while drinking remains
+    prohibited; Rosh distinguishes the non-Jew’s own wine from Jewish wine touched by a non-Jew;
+    Rambam keeps benefit prohibited in both. S”A follows Rambam, while Rama allows Geonic/Rashi
+    reliance בדיעבד or for loss.
+  notes:
+    compact: 5
+    full: 61
+  tags:
+    - סתם יינם
+    - Benefit
+  facts:
+    - id: syb1
+      label: Benefit rationale — Beit Yosef
+      authority: Beit Yosef
+      position: explains that Chazal modeled the prohibition of סתם יינם on the rules of יין נסך.
+      reviewClips:
+        - review: 6
+          start: 199
+          label: Why benefit from סתם יינם was prohibited
+    - id: syb2
+      label: Benefit rationale — Ran
+      authority: Ran
+      position: explains that the benefit prohibition on סתם יינם helps prevent people from benefiting
+        from actual יין נסך.
+      reviewClips:
+        - review: 6
+          start: 199
+          label: Why benefit from סתם יינם was prohibited
+    - id: syb3
+      label: Benefit rationale — Rashba
+      authority: Rashba
+      position: explains that drinking was prohibited first and benefit was prohibited later when people
+        became lax around libation wine.
+      reviewClips:
+        - review: 6
+          start: 199
+          label: Why benefit from סתם יינם was prohibited
+    - id: syb4
+      label: Modern non-Jews — Rashi/Geonim
+      authority: Rashi / Geonim
+      position: permit benefit today from both a non-Jew’s own wine and Jewish wine touched by a non-Jew,
+        while drinking remains prohibited.
+      reviewClips:
+        - review: 7
+          start: 1
+          label: Benefit from סתם יינם today
+    - id: syb5
+      label: Modern non-Jews — Rosh
+      authority: Rosh
+      position: keeps benefit from a non-Jew’s own wine prohibited but permits benefit from Jewish wine
+        touched by the non-Jew.
+      reviewClips:
+        - review: 7
+          start: 1
+          label: Benefit from סתם יינם today
+    - id: syb6
+      label: Modern non-Jews — Rambam
+      authority: Rambam
+      position: keeps benefit prohibited both from a non-Jew’s own wine and from Jewish wine touched by
+        the non-Jew.
+      reviewClips:
+        - review: 7
+          start: 1
+          label: Benefit from סתם יינם today
+    - id: syb7
+      label: Practical psak — S”A
+      authority: S”A
+      position: follows Rambam as the formal baseline and keeps benefit prohibited in both modern-non-Jew
+        categories.
+      reviewClips:
+        - review: 7
+          start: 65
+          label: S”A / Rama practical framework
+    - id: syb8
+      label: Practical psak — Rama
+      authority: Rama
+      position: allows reliance בדיעבד or for loss on the Rashi/Geonim leniency permitting benefit today,
+        but not as a routine profit model.
+      reviewClips:
+        - review: 7
+          start: 65
+          label: S”A / Rama practical framework
+- id: mevushal-pasteurization
+  title: מבושל — ownership and pasteurization
+  prompt: A non-Jew owns kosher mevushal wine, and another case involves modern pasteurization of
+    kosher wine. Discuss the major opinions on whether מבושל protects the wine in each situation.
+  modelAnswer: Rosh, Ritva, and Ramban permit non-Jewish ownership of kosher mevushal wine on the “not
+    ordinary wine” logic; R. Akiva Eiger’s analysis keeps the ownership decree, while the notes read
+    S”A/Taz practically toward permission. On pasteurization, Shach, Ran, and Rashba emphasize
+    heating with some evaporation; Rav Moshe and Rav Ovadya accept יד סולדת בו; R. Shlomo Zalman and
+    others require a more meaningful cooking/evaporation change.
+  notes:
+    compact: 6
+    full: 76
+  tags:
+    - סתם יינם
+    - מבושל
+  facts:
+    - id: mp1
+      label: Non-Jew owns mevushal — permissive line
+      authority: Rosh / Ritva / Ramban
+      position: permit non-Jewish ownership of kosher mevushal wine because cooked wine is treated as
+        outside the ordinary wine category for this rule.
+      reviewClips:
+        - review: 8
+          start: 128
+          label: Non-Jewish ownership of mevushal wine
+    - id: mp2
+      label: Non-Jew owns mevushal — stringent analysis
+      authority: R. Akiva Eiger
+      position: retains the non-Jew-owned wine decree even when the kosher wine is mevushal.
+      reviewClips:
+        - review: 8
+          start: 128
+          label: Non-Jewish ownership of mevushal wine
+    - id: mp3
+      label: Practical reading
+      authority: S”A / Taz
+      position: are read in the course notes as supporting practical permission for non-Jewish ownership
+        of kosher mevushal wine.
+      reviewClips:
+        - review: 8
+          start: 128
+          label: Non-Jewish ownership of mevushal wine
+    - id: mp4
+      label: Pasteurization — evaporation focus
+      authority: Shach / Ran / Rashba
+      position: focus on heating with some evaporation as the classical marker that wine has become מבושל.
+      reviewClips:
+        - review: 8
+          start: 170
+          label: How hot wine must become
+    - id: mp5
+      label: Pasteurization — yad soledet
+      authority: Rav Moshe / Rav Ovadya
+      position: accept יד סולדת בו as sufficient for the modern pasteurization threshold taught in the
+        course.
+      reviewClips:
+        - review: 8
+          start: 170
+          label: Yad soledet and pasteurization
+    - id: mp6
+      label: Pasteurization — stronger change
+      authority: R. Shlomo Zalman and others
+      position: require a more meaningful cooking or evaporation change before modern pasteurization
+        qualifies as מבושל.
+      reviewClips:
+        - review: 8
+          start: 178
+          label: Evaporation and pasteurization
+- id: sherry-casks
+  title: Sherry-cask whisky
+  prompt: A whisky is aged in a sherry cask. Discuss the major reasons to prohibit or permit it,
+    including the amount needed for bitul, whether the sherry contributes positive flavor, and the
+    issue of אין מבטלין איסור לכתחילה.
+  modelAnswer: Shach can require ששים against the absorbed wine/barrel thickness; S”A and Taz use a
+    1:6 measure against כדי קליפה. Rav Moshe describes the remnant as weakened קיוהא, while Mishna
+    Halachot says the sherry prevents bad oak flavor rather than adding tasted wine flavor. For אין
+    מבטלין איסור לכתחילה, the notes/key give a manufacture-for-non-Jews route and Rav Moshe’s
+    limitation for a rabbinic prohibition without a practical biblical libation root. Second-fill
+    casks have more room because the retained taste is older/weaker.
+  notes:
+    compact: 6
+    full: 88
+  tags:
+    - סתם יינם
+    - Bitul
+  facts:
+    - id: sc1
+      label: Quantity — Shach
+      authority: Shach
+      position: can require ששים against the absorbed wine represented by the barrel thickness.
+      reviewClips:
+        - review: 10
+          start: 11
+          label: Sherry-cask quantities
+    - id: sc2
+      label: Quantity — S”A/Taz
+      authority: S”A / Taz
+      position: use a 1:6 measure against כדי קליפה when evaluating absorbed sherry in the cask.
+      reviewClips:
+        - review: 10
+          start: 11
+          label: Sherry-cask quantities
+    - id: sc3
+      label: Flavor — Rav Moshe
+      authority: Rav Moshe
+      position: characterizes the remaining sherry taste as weakened קיוהא rather than meaningful positive
+        wine flavor.
+      reviewClips:
+        - review: 10
+          start: 65
+          label: Sherry flavor — Rav Moshe
+    - id: sc4
+      label: Flavor — Mishna Halachot
+      authority: Mishna Halachot
+      position: frames the sherry as preventing bad oak flavor rather than contributing a tasted positive
+        wine flavor.
+      reviewClips:
+        - review: 10
+          start: 93
+          label: Sherry flavor — Mishnah Halachos
+    - id: sc5
+      label: Deliberate bitul — non-Jewish manufacture
+      authority: One route in the notes/key
+      position: uses manufacture for non-Jews as one route for addressing אין מבטלין איסור לכתחילה in the
+        sherry-cask discussion.
+      reviewClips:
+        - review: 10
+          start: 136
+          label: Deliberate bitul concern
+    - id: sc6
+      label: Deliberate bitul — Rav Moshe
+      authority: Rav Moshe
+      position: limits the deliberate-bitul concern where the prohibition is rabbinic and no longer has a
+        practical biblical wine-libation root.
+      reviewClips:
+        - review: 10
+          start: 160
+          label: Deliberate bitul — Rav Moshe
+    - id: sc7
+      label: Second-fill casks
+      authority: Second-fill casks
+      position: have substantially more room for leniency because the retained sherry taste is older and
+        weaker than in first-fill casks.
+      reviewClips:
+        - review: 10
+          start: 47
+          label: Second-fill casks
+- id: social-drinking-business
+  title: Social drinking — beer, business drinks, and coffee
+  prompt: "A Jew is invited to have drinks with non-Jews in several settings: ordinary beer, a
+    business drink at a non-Jewish bar, and coffee at a coffee shop. Discuss the relevant opinions
+    and distinctions."
+  modelAnswer: Rama limits the beer decree so ordinary grain beer is outside it; Gra rejects that
+    narrowing. Kaf HaChaim and Pri Chadash stress sporadic place and infrequency in the non-fixed
+    case. For a business drink, S”A/Gra prohibit as the baseline, Rav Moshe allows room where
+    refusal creates איבה, and Ohr L’Tzion remains cautious. Gra and Panim Meirot are among the
+    stricter views on prestigious coffee-shop social drinking.
+  notes:
+    compact: 7
+    full: 102
+  tags:
+    - סתם יינם
+    - Social Drinking
+  facts:
+    - id: sdb1
+      label: Ordinary beer — Rama
+      authority: Rama
+      position: limits the beer decree so ordinary grain beer is not included.
+      reviewClips:
+        - review: 11
+          start: 103
+          label: Rama on ordinary beer
+    - id: sdb2
+      label: Ordinary beer — Gra
+      authority: Gra
+      position: rejects the view that ordinary grain beer is outside the social-drinking decree.
+      reviewClips:
+        - review: 11
+          start: 2
+          label: S”A as understood by the Gra
+    - id: sdb3
+      label: Non-fixed drinking factors
+      authority: Kaf HaChaim / Pri Chadash
+      position: require attention to both an infrequent drinking occasion and a non-fixed or sporadic
+        place when using the non-fixed-drinking leniency.
+      reviewClips:
+        - review: 11
+          start: 69
+          label: Sporadic and non-fixed drinking
+    - id: sdb4
+      label: Business drink — baseline
+      authority: S”A / Gra
+      position: prohibit a business drink in a non-Jewish bar as the baseline.
+      reviewClips:
+        - review: 11
+          start: 2
+          label: Social-drinking baseline
+    - id: sdb5
+      label: Business drink — איבה
+      authority: Rav Moshe
+      position: allows room for a business drink in a non-Jewish bar when refusing would create איבה.
+      reviewClips:
+        - review: 11
+          start: 118
+          label: Business drinks and איבה
+    - id: sdb6
+      label: Business drink — caution
+      authority: Ohr L’Tzion
+      position: remains cautious about permitting a business drink in a non-Jewish bar even when איבה is a
+        concern.
+      reviewClips:
+        - review: 11
+          start: 118
+          label: Business drinks and איבה
+    - id: sdb7
+      label: Coffee shop — stricter views
+      authority: Gra / Panim Meirot
+      position: are stricter about prestigious non-alcoholic social drinking, such as sitting for coffee
+        in a coffee shop.
+      reviewClips:
+        - review: 11
+          start: 151
+          label: Coffee-shop application
+- id: social-drinking-weddings
+  title: Social drinking — weddings and family celebrations
+  prompt: A Jew is invited to non-Jewish celebrations. Discuss the rules for drinking at a non-Jewish
+    party or wedding, the role of איבה, and the special discussions of a Muslim wedding and a ger
+    attending a family celebration.
+  modelAnswer: Rambam forbids drinking even one’s own kosher/mevushal wine at a non-Jewish party;
+    S”A’s wedding rule is especially strong. Taz rejects a general איבה waiver, while Shach records
+    possible room rather than a categorical permission. Rav Ovadya permits a Muslim wedding because
+    the idolatry dimension differs; Darchei Teshuva still invokes intermarriage/social concern; Shav
+    V’Rafah permits a ger’s family celebration in its circumstances.
+  notes:
+    compact: 7
+    full: 111
+  tags:
+    - סתם יינם
+    - Social Drinking
+  facts:
+    - id: sdw1
+      label: Non-Jewish party
+      authority: Rambam
+      position: forbids drinking even one’s own kosher or mevushal wine at a non-Jewish party.
+      reviewClips:
+        - review: 11
+          start: 191
+          label: Non-Jewish party
+    - id: sdw2
+      label: Wedding — S”A
+      authority: S”A
+      position: has an especially strong prohibition against eating or drinking at a non-Jewish wedding
+        feast.
+      reviewClips:
+        - review: 11
+          start: 241
+          label: Non-Jewish wedding feast
+    - id: sdw3
+      label: Wedding — Taz
+      authority: Taz
+      position: rejects a general איבה waiver for the prohibition on eating or drinking at a non-Jewish
+        wedding.
+      reviewClips:
+        - review: 11
+          start: 241
+          label: Non-Jewish wedding feast
+    - id: sdw4
+      label: Wedding — Shach
+      authority: Shach
+      position: records possible room in an איבה case at a non-Jewish wedding, rather than a categorical
+        permission.
+      reviewClips:
+        - review: 11
+          start: 241
+          label: Non-Jewish wedding feast
+    - id: sdw5
+      label: Muslim wedding
+      authority: Rav Ovadya
+      position: permits attendance at a Muslim wedding because the idolatry dimension differs from a
+        classic non-Jewish idolatrous celebration.
+      reviewClips:
+        - review: 11
+          start: 241
+          label: Wedding/social-drinking framework
+    - id: sdw6
+      label: Muslim wedding — social concern
+      authority: Darchei Teshuva
+      position: still applies the intermarriage and social-concern dimension to a Muslim wedding despite
+        the different idolatry issue.
+      reviewClips:
+        - review: 11
+          start: 241
+          label: Wedding/social-drinking framework
+    - id: sdw7
+      label: Ger family celebration
+      authority: Shav V’Rafah
+      position: permits a ger to attend a family celebration in the circumstances discussed in the course.
+      reviewClips:
+        - review: 11
+          start: 259
+          label: Ger family celebration
+- id: wine-touch-actors
+  title: Who can prohibit Jewish wine?
+  prompt: How does the identity of the person touching Jewish wine affect the ruling? Discuss the
+    course’s treatment of modern non-Jews, Muslims—including doubtful touch—and a public Shabbat
+    desecrator.
+  modelAnswer: Rama’s “non-Jews today” approach can downgrade some touch results; Shach often limits
+    reliance especially to loss. Muslim touch retains a drinking concern but permits benefit, and
+    Rav Ovadya permits drinking in doubtful Muslim-touch cases. The course separately teaches that
+    wine touched by a public Shabbat desecrator can be forbidden to drink while benefit remains
+    permitted.
+  notes:
+    compact: 7
+    full: 115
+  tags:
+    - Wine Contact & Touch
+  facts:
+    - id: wta1
+      label: Today’s non-Jews — Rama
+      authority: Rama
+      position: can reduce some wine-touch restrictions for ordinary non-Jews today because they are
+        treated as non-libaters in this framework.
+      reviewClips:
+        - review: 13
+          start: 62
+          label: Rama on today’s non-Jews
+    - id: wta2
+      label: Today’s non-Jews — Shach
+      authority: Shach
+      position: limits practical reliance on the modern-non-Jew touch leniency, especially to a case of loss.
+      reviewClips:
+        - review: 13
+          start: 70
+          label: Shach qualification
+    - id: wta3
+      label: Muslim baseline
+      authority: Muslim touch
+      position: creates a drinking prohibition while benefit remains permitted because the wine-libation
+        concern is lower for a Muslim.
+      reviewClips:
+        - review: 12
+          start: 21
+          label: Muslim touch
+    - id: wta4
+      label: Doubtful Muslim touch
+      authority: Rav Ovadya
+      position: permits drinking when there is only a doubt whether a Muslim touched the wine.
+      reviewClips:
+        - review: 12
+          start: 21
+          label: Doubtful Muslim touch
+    - id: wta5
+      label: Public Shabbat desecrator
+      authority: A public Shabbat desecrator
+      position: can make the touched wine prohibited for drinking while benefit remains permitted.
+      reviewClips:
+        - review: 12
+          start: 25
+          label: Public Shabbat desecrator
+- id: wine-contact-actions
+  title: What act of contact forbids the wine?
+  prompt: "A non-Jew or nonreligious Jew handles Jewish wine in several ways: pouring, accidental
+    touch, shaking an open bottle, or deliberately pouring the wine. Discuss the major opinions and
+    practical qualifications for each act."
+  modelAnswer: For pouring without full shaking, S”A prohibits drinking but permits benefit; Rama’s
+    downgrade can permit drinking, with Shach emphasizing reliance especially for loss. S”A
+    similarly prohibits drinking after accidental touch while permitting benefit; Rama can be more
+    lenient for today’s non-Jews, with Shach more cautious without loss. On shaking an open bottle,
+    S”A prohibits drinking and benefit while Rama permits on his downgrade. Rav Ovadya still forbids
+    drinking after a Muslim’s deliberate pour, and Rav Elyashiv treats a nonreligious Jew’s pour as
+    significant because pouring can function like shaking.
+  notes:
+    compact: 8
+    full: 124
+  tags:
+    - Wine Contact & Touch
+  facts:
+    - id: wca1
+      label: Pouring — S”A
+      authority: S”A
+      position: prohibits drinking but permits benefit when a non-Jew pours Jewish wine without fully
+        shaking it.
+      reviewClips:
+        - review: 14
+          start: 32
+          label: Pouring wine
+    - id: wca2
+      label: Pouring — Rama
+      authority: Rama
+      position: can permit drinking after a non-Jew pours Jewish wine under the Rama’s modern-non-Jew
+        downgrade.
+      reviewClips:
+        - review: 14
+          start: 87
+          label: Pouring and shaking
+    - id: wca3
+      label: Pouring — Shach
+      authority: Shach
+      position: limits practical reliance on the Rama’s pouring leniency especially to a case of loss.
+      reviewClips:
+        - review: 14
+          start: 87
+          label: Pouring and shaking
+    - id: wca4
+      label: Accidental touch — S”A
+      authority: S”A
+      position: prohibits drinking but permits benefit after accidental non-Jewish touch.
+      reviewClips:
+        - review: 14
+          start: 225
+          label: Accidental touch
+    - id: wca5
+      label: Accidental touch — Rama
+      authority: Rama
+      position: can permit drinking and benefit after accidental touch by ordinary non-Jews today.
+      reviewClips:
+        - review: 14
+          start: 225
+          label: Accidental touch
+    - id: wca5s
+      label: Accidental touch — Shach
+      authority: Shach
+      position: is more cautious about permitting drinking after accidental touch by ordinary non-Jews
+        today when there is no case of loss.
+      reviewClips:
+        - review: 14
+          start: 225
+          label: Accidental touch
+    - id: wca6
+      label: Shake open bottle — S”A
+      authority: S”A
+      position: prohibits both drinking and benefit when a non-Jew shakes an open bottle without lifting it.
+      reviewClips:
+        - review: 13
+          start: 123
+          label: Shaking an open bottle
+    - id: wca6r
+      label: Shake open bottle — Rama
+      authority: Rama
+      position: permits the open-bottle shaking case under the Rama’s modern-non-Jew downgrade.
+      reviewClips:
+        - review: 13
+          start: 123
+          label: Shaking an open bottle
+    - id: wca7
+      label: Muslim deliberate pour
+      authority: Rav Ovadya
+      position: forbids drinking after a Muslim deliberately pours the wine.
+      reviewClips:
+        - review: 14
+          start: 32
+          label: Muslim deliberate pouring
+    - id: wca8
+      label: Nonreligious Jew deliberate pour
+      authority: Rav Elyashiv
+      position: treats deliberate pouring by a nonreligious Jew as significant because pouring can
+        function like shaking.
+      reviewClips:
+        - review: 14
+          start: 115
+          label: Nonreligious Jew deliberate pouring
+- id: nitzok
+  title: נצוק — the stream connection
+  prompt: Kosher wine is poured in a continuous stream into prohibited wine or prohibited residue.
+    Discuss whether נצוק connects the source to the receiving wine, the significant-loss rule, and
+    how mevushal status or ששים may affect the case.
+  modelAnswer: Rashi and Rav Chisda treat נצוק as a connection, while Rabbeinu Tam does not. S”A and
+    Rama allow reliance on the non-connection view in genuine significant loss. A mevushal source
+    can still face the issue when poured into already-forbidden non-mevushal residue; sufficient
+    ששים can provide a bitul route, though deliberately creating the ratio raises אין מבטלין איסור
+    לכתחילה.
+  notes:
+    compact: 8
+    full: 153
+  tags:
+    - Wine Contact & Touch
+    - נצוק
+  facts:
+    - id: nz1
+      label: Connection view
+      authority: Rashi / Rav Chisda
+      position: treat the continuous pouring stream as a halachic connection that can transmit the
+        prohibition back to the source wine.
+      reviewClips:
+        - review: 15
+          start: 40
+          label: נצוק — stream connection
+    - id: nz2
+      label: Non-connection view
+      authority: Rabbeinu Tam
+      position: does not treat the continuous pouring stream as connecting the source wine to the
+        prohibited wine below.
+      reviewClips:
+        - review: 15
+          start: 40
+          label: נצוק — stream connection
+    - id: nz3
+      label: Significant loss
+      authority: S”A / Rama
+      position: allow reliance on Rabbeinu Tam’s non-connection view when there is a genuine significant
+        loss.
+      reviewClips:
+        - review: 15
+          start: 138
+          label: Significant loss and נצוק
+    - id: nz4
+      label: Mevushal source limitation
+      authority: Mevushal source wine
+      position: can still be affected by נצוק when it is poured into residue that is already forbidden
+        non-mevushal wine.
+      reviewClips:
+        - review: 15
+          start: 212
+          label: Mevushal source wine and נצוק
+    - id: nz5
+      label: Bitul route
+      authority: ששים in the source against the residue
+      position: can provide a bitul route against forbidden residue, although deliberately creating the
+        ratio can raise אין מבטלין איסור לכתחילה.
+      reviewClips:
+        - review: 15
+          start: 160
+          label: ששים in the source
+- id: unattended-wine
+  title: Wine left with a non-Jew
+  prompt: Jewish wine is left with a non-Jew. Explain the rules for open wine left with an idolater or
+    Muslim, when יוצא ונכנס works, and what kinds of seals or other protections can preserve the
+    wine.
+  modelAnswer: S”A prohibits open wine immediately when it is left alone with an idolater under the
+    access conditions. For a Muslim, the course rule uses enough time to walk a mil, though Shach
+    can be stricter where drinking itself is the concern. יוצא ונכנס depends on unpredictability of
+    return and lack of visual/locking barriers; a fixed known schedule undermines it. Effective
+    seals or other protections must create tamper evidence or credible fear of being caught.
+  notes:
+    compact: 9
+    full: 159
+  tags:
+    - Unattended Wine
+  facts:
+    - id: uw1
+      label: Open wine with idolater
+      authority: S”A
+      position: prohibits open Jewish wine immediately when it is left alone with an idolater and the
+        relevant access conditions are present.
+      reviewClips:
+        - review: 15
+          start: 310
+          label: Open wine left with an idolater
+    - id: uw2
+      label: Open wine with Muslim
+      authority: The course rule for a Muslim
+      position: prohibits open Jewish wine left alone with a Muslim after enough time has passed to walk a
+        mil.
+      reviewClips:
+        - review: 15
+          start: 348
+          label: Wine left with a Muslim
+    - id: uw3
+      label: Muslim — Shach qualification
+      authority: Shach
+      position: can be stricter in an unattended-Muslim case when drinking the wine itself is the concern.
+      reviewClips:
+        - review: 15
+          start: 338
+          label: Rama / Shach unattended-wine qualification
+    - id: uw4
+      label: יוצא ונכנס
+      authority: יוצא ונכנס
+      position: protects the wine when the non-Jew does not know a meaningful absence window, cannot see
+        the Jew approaching, and cannot lock the Jew out from returning.
+      reviewClips:
+        - review: 16
+          start: 161
+          label: יוצא ונכנס
+    - id: uw5
+      label: Fixed schedule
+      authority: A fixed weekly run / known schedule
+      position: undermines יוצא ונכנס because a predictable return schedule removes the deterrent.
+      reviewClips:
+        - review: 16
+          start: 195
+          label: יוצא ונכנס requirements
+    - id: uw6
+      label: Protective options
+      authority: Protective options
+      position: include double seals, effective locks or combinations, monitored cameras, or hiding the
+        wine when those measures create tamper evidence or a credible fear of being caught.
+      reviewClips:
+        - review: 16
+          start: 0
+          label: Seals and protective options

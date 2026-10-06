@@ -1,0 +1,279 @@
+import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import YAML from 'yaml';
+
+export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+export const ZMAN_SOURCE_ROOT = path.join(REPO_ROOT, 'zmanim');
+export const RUNTIME_FILES = [
+  'cohort.js',
+  'questions.js',
+  'essay-practice.js',
+  'audio-reviews.js',
+  'glossary.js',
+  'chaburos.js',
+  'course-notes.js',
+];
+
+function invariant(condition, message) {
+  if (!condition) throw new Error(message);
+}
+
+function unique(values, label) {
+  const seen = new Set();
+  for (const value of values) {
+    invariant(!seen.has(value), `${label} must be unique; duplicate: ${value}`);
+    seen.add(value);
+  }
+}
+
+async function readYaml(file) {
+  return YAML.parse(await readFile(file, 'utf8'));
+}
+
+export function formatVttTimestamp(totalSeconds) {
+  const millis = Math.round(Number(totalSeconds) * 1000);
+  const hours = Math.floor(millis / 3_600_000);
+  const minutes = Math.floor((millis % 3_600_000) / 60_000);
+  const seconds = Math.floor((millis % 60_000) / 1000);
+  const ms = millis % 1000;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
+}
+
+function parseVttTimestamp(value, file) {
+  const match = /^(\d{2,}):(\d{2}):(\d{2})\.(\d{3})$/.exec(value.trim());
+  invariant(match, `${file}: invalid WebVTT timestamp: ${value}`);
+  const millis = Number(match[1]) * 3_600_000 + Number(match[2]) * 60_000 + Number(match[3]) * 1000 + Number(match[4]);
+  return millis / 1000;
+}
+
+export function parseVtt(source, file = 'transcript.vtt') {
+  const normalized = source.replace(/\r\n?/g, '\n').trim();
+  invariant(normalized.startsWith('WEBVTT'), `${file}: transcript must start with WEBVTT`);
+  const blocks = normalized.slice(6).trim().split(/\n{2,}/).filter(Boolean);
+  return blocks.map((block, index) => {
+    const lines = block.split('\n');
+    const timingIndex = lines.findIndex((line) => line.includes('-->'));
+    invariant(timingIndex >= 0, `${file}: cue ${index + 1} has no timing line`);
+    const [start, endWithSettings] = lines[timingIndex].split(/\s+-->\s+/);
+    const end = endWithSettings.split(/\s+/)[0];
+    const text = lines.slice(timingIndex + 1).join('\n').trim();
+    invariant(text, `${file}: cue ${index + 1} has no text`);
+    return { start: parseVttTimestamp(start, file), end: parseVttTimestamp(end, file), text };
+  });
+}
+
+async function loadPackage(dir, id) {
+  const base = path.join(dir, id);
+  const [manifest, questions, essays, glossary, audioReviews, chaburos] = await Promise.all([
+    readYaml(path.join(base, 'zman.yaml')),
+    readYaml(path.join(base, 'questions.yaml')),
+    readYaml(path.join(base, 'essays.yaml')),
+    readYaml(path.join(base, 'glossary.yaml')),
+    readYaml(path.join(base, 'audio-reviews.yaml')),
+    readYaml(path.join(base, 'chaburos.yaml')),
+  ]);
+  const reviews = audioReviews.reviews || [];
+  for (const review of reviews) {
+    const transcriptFile = path.join(base, review.transcript);
+    review._transcript = parseVtt(await readFile(transcriptFile, 'utf8'), transcriptFile);
+  }
+  return { id, base, manifest, questions, essays, glossary, audioReviews, chaburos };
+}
+
+export async function loadZmanAuthoring(sourceRoot = ZMAN_SOURCE_ROOT) {
+  const registry = await readYaml(path.join(sourceRoot, 'registry.yaml'));
+  const entries = await readdir(sourceRoot, { withFileTypes: true });
+  const ids = entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
+  const packages = await Promise.all(ids.map((id) => loadPackage(sourceRoot, id)));
+  validateAuthoring(registry, packages);
+  return { registry, packages };
+}
+
+export function validateAuthoring(registry, packages) {
+  invariant(registry?.schemaVersion === 1, 'zmanim/registry.yaml: schemaVersion must be 1');
+  const ids = packages.map((pkg) => pkg.id);
+  unique(ids, 'Zman IDs');
+  invariant(ids.includes(registry.defaultZmanId), 'registry defaultZmanId must name an existing Zman');
+  invariant(ids.includes(registry.latestZmanId), 'registry latestZmanId must name an existing Zman');
+
+  const legacyIds = [];
+  for (const pkg of packages) {
+    const { id, manifest, questions, essays, glossary, audioReviews, chaburos } = pkg;
+    invariant(manifest?.schemaVersion === 1, `${id}/zman.yaml: schemaVersion must be 1`);
+    invariant(manifest.id === id, `${id}/zman.yaml: id must match its directory name`);
+    invariant(typeof manifest.name === 'string' && manifest.name.trim(), `${id}: name is required`);
+    invariant(/^\d{4}-\d{2}-\d{2}$/.test(manifest.startsOn), `${id}: startsOn must be YYYY-MM-DD`);
+    invariant(['upcoming', 'current', 'archived'].includes(manifest.status), `${id}: invalid status`);
+    invariant(Number.isInteger(manifest.contentVersion) && manifest.contentVersion > 0, `${id}: contentVersion must be a positive integer`);
+    invariant(Array.isArray(manifest.legacyIds), `${id}: legacyIds must be an array`);
+    legacyIds.push(...manifest.legacyIds);
+    invariant(manifest.documents && Object.keys(manifest.documents).length === 6, `${id}: all six document filenames are required`);
+    for (const [key, file] of Object.entries(manifest.documents)) {
+      invariant(typeof file === 'string' && file === path.basename(file), `${id}: document ${key} must be a filename, not a path`);
+    }
+
+    invariant(Array.isArray(questions), `${id}/questions.yaml must contain a list`);
+    unique(questions.map((q) => q.id), `${id} question IDs`);
+    for (const q of questions) {
+      invariant(q.category && q.prompt && q.type, `${id}: question ${q.id} needs category, prompt, and type`);
+      invariant(['single', 'multi', 'truefalse'].includes(q.type), `${id}: question ${q.id} has unsupported type ${q.type}`);
+      invariant(Array.isArray(q.choices) && q.choices.length >= 2, `${id}: question ${q.id} needs choices`);
+      invariant(Array.isArray(q.answer) && q.answer.length > 0, `${id}: question ${q.id} has invalid answer`);
+      const validAnswers = q.choices.map((_, index) => String.fromCharCode(65 + index));
+      invariant(q.answer.every((answer) => validAnswers.includes(answer)), `${id}: question ${q.id} answer must use its choice letters`);
+      invariant(q.type === 'multi' || q.answer.length === 1, `${id}: question ${q.id} must have exactly one answer`);
+      invariant(q.notes?.compact && q.notes?.full, `${id}: question ${q.id} needs compact/full note pages`);
+    }
+
+    invariant(Array.isArray(essays), `${id}/essays.yaml must contain a list`);
+    unique(essays.map((essay) => essay.id), `${id} essay IDs`);
+    const factIds = essays.flatMap((essay) => essay.facts?.map((fact) => fact.id) || []);
+    unique(factIds, `${id} essay fact IDs`);
+    for (const essay of essays) {
+      invariant(essay.title && essay.prompt, `${id}: essay ${essay.id} needs title and prompt`);
+      invariant(essay.notes?.compact && essay.notes?.full, `${id}: essay ${essay.id} needs compact/full note pages`);
+      invariant(Array.isArray(essay.tags), `${id}: essay ${essay.id} needs tags (use [] for none)`);
+      invariant(Array.isArray(essay.facts) && essay.facts.length, `${id}: essay ${essay.id} needs facts`);
+      for (const fact of essay.facts) {
+        invariant(fact.id && fact.label && fact.authority && fact.position, `${id}: essay ${essay.id} has an incomplete fact`);
+      }
+    }
+
+    invariant(Array.isArray(glossary), `${id}/glossary.yaml must contain a list`);
+    unique(glossary.map((term) => term.id), `${id} glossary IDs`);
+    for (const term of glossary) {
+      invariant(term.term && term.definition, `${id}: glossary ${term.id} needs term and definition`);
+      invariant(Array.isArray(term.categories), `${id}: glossary ${term.id} needs categories (use [] for none)`);
+    }
+
+    const reviews = audioReviews?.reviews;
+    invariant(Array.isArray(reviews), `${id}/audio-reviews.yaml must have a reviews list`);
+    unique(reviews.map((review) => review.id), `${id} audio review IDs`);
+    const reviewIds = new Set(reviews.map((review) => review.id));
+    for (const review of reviews) {
+      invariant(review.id && Number.isInteger(review.number) && review.title && review.file && review.transcript, `${id}: incomplete audio review`);
+      invariant(review.file === path.basename(review.file), `${id}: audio review ${review.id} file must be a filename`);
+      invariant(/^transcripts\/[a-z0-9][a-z0-9._-]*\.vtt$/i.test(review.transcript), `${id}: audio review ${review.id} transcript must be a transcripts/*.vtt path`);
+    }
+    const reviewClips = [
+      ...questions.flatMap((question) => question.reviewClips || []),
+      ...essays.flatMap((essay) => essay.facts.flatMap((fact) => fact.reviewClips || [])),
+    ];
+    for (const clip of reviewClips) {
+      invariant(reviewIds.has(clip.review), `${id}: review clip references missing review ${clip.review}`);
+      invariant(typeof clip.start === 'number' && clip.start >= 0 && typeof clip.label === 'string' && clip.label.trim(), `${id}: invalid review clip`);
+    }
+    invariant(chaburos?.locationLabel && chaburos?.chaburaLabel && Array.isArray(chaburos.regions), `${id}: invalid chaburos.yaml`);
+    unique(chaburos.regions.map((region) => region.name), `${id} chabura region names`);
+    for (const region of chaburos.regions) invariant(Array.isArray(region.ravs), `${id}: ${region.name} ravs must be a list`);
+  }
+  unique(legacyIds, 'legacy Zman IDs');
+}
+
+function documentUrl(id, file) {
+  return `documents/${id}/${file}`;
+}
+
+function runtimePackage(pkg) {
+  const { id, manifest, questions, essays, glossary, audioReviews, chaburos } = pkg;
+  const audioPublicPrefix = `/audio/${id}/`;
+  const audioR2ObjectPrefix = `audio/${id}/`;
+  const config = {
+    id,
+    name: manifest.name,
+    analyticsKey: id,
+    status: manifest.status,
+    legacyIds: manifest.legacyIds,
+    contentVersion: manifest.contentVersion,
+    questionCount: questions.length,
+    essayCount: essays.length,
+    audio: {
+      publicUrlPrefix: audioPublicPrefix,
+      r2ObjectPrefix: audioR2ObjectPrefix,
+      migrationMode: manifest.audio?.migrationMode || 'canonical-only',
+      ...(manifest.audio?.legacyR2ObjectPrefix ? { legacyR2ObjectPrefix: manifest.audio.legacyR2ObjectPrefix } : {}),
+    },
+    documents: Object.fromEntries(Object.entries(manifest.documents).map(([key, file]) => [key, documentUrl(id, file)])),
+    essayCategoryTags: Object.fromEntries(essays.filter((essay) => essay.tags.length).map((essay) => [essay.id, essay.tags])),
+    glossaryCategoryLinks: Object.fromEntries(glossary.filter((term) => term.categories.length).map((term) => [term.id, term.categories])),
+  };
+
+  const runtimeQuestions = questions.map(({ notes, reviewClips, ...question }) => question);
+  const runtimeEssays = essays.map(({ notes, tags, ...essay }) => ({
+    ...essay,
+    facts: essay.facts.map(({ authority, position, reviewClips, ...fact }) => ({
+      ...fact,
+      tokens: [[`${fact.id}a`, authority], [`${fact.id}b`, position]],
+    })),
+    distractors: [],
+  }));
+  const runtimeGlossary = glossary.map(({ categories, ...term }) => term);
+  const reviews = audioReviews.reviews.map(({ file, transcript, _transcript, ...review }) => ({
+    ...review,
+    src: `${audioPublicPrefix}${file}`,
+    transcript: _transcript,
+  }));
+  const questionAudioMap = Object.fromEntries(questions.filter((q) => q.reviewClips?.length).map((q) => [q.id, q.reviewClips]));
+  const essayAudioMap = Object.fromEntries(essays.flatMap((essay) => essay.facts.filter((fact) => fact.reviewClips?.length).map((fact) => [fact.id, fact.reviewClips])));
+  const documents = {
+    compact: { key: 'compact', title: manifest.documentTitles?.compact || 'Compact Course Review', url: config.documents.compactReview },
+    full: { key: 'full', title: manifest.documentTitles?.full || 'Full Course Notes', url: config.documents.fullNotes },
+  };
+  const questionNotePages = Object.fromEntries(questions.map((q) => [q.id, q.notes]));
+  const essayNotePages = Object.fromEntries(essays.map((essay) => [essay.id, essay.notes]));
+  const chaburaData = {
+    questions: [
+      { id: 'location', label: chaburos.locationLabel, type: 'select', options: chaburos.regions.map((region) => region.name) },
+      { id: 'chabura', label: chaburos.chaburaLabel, type: 'select', dependsOn: 'location', optionsByLocation: Object.fromEntries(chaburos.regions.map((region) => [region.name, region.ravs])) },
+    ],
+  };
+  return { config, runtimeQuestions, runtimeEssays, runtimeGlossary, reviews, questionAudioMap, essayAudioMap, documents, questionNotePages, essayNotePages, chaburaData };
+}
+
+function js(value) {
+  return JSON.stringify(value, null, 2);
+}
+
+function renderPackageFiles(pkg) {
+  const data = runtimePackage(pkg);
+  return {
+    'cohort.js': `window.SCP_ZMAN_CONFIG = ${js(data.config)};\nwindow.SCP_COHORT_CONFIG = window.SCP_ZMAN_CONFIG;\n`,
+    'questions.js': `const QUESTIONS = ${js(data.runtimeQuestions)};\n`,
+    'essay-practice.js': `(() => {\n  'use strict';\n  window.ESSAY_PRACTICE_DATA = ${js(data.runtimeEssays)};\n})();\n`,
+    'audio-reviews.js': `const AUDIO_REVIEW_DATA = ${js(data.reviews)};\nconst QUESTION_AUDIO_MAP = ${js(data.questionAudioMap)};\nconst ESSAY_AUDIO_MAP = ${js(data.essayAudioMap)};\n`,
+    'glossary.js': `const GLOSSARY_TERMS = ${js(data.runtimeGlossary)};\n`,
+    'chaburos.js': `window.SCP_CHABURA_DATA = ${js(data.chaburaData)};\n`,
+    'course-notes.js': `window.COURSE_NOTE_REFS = ${js({ docs: data.documents, questions: data.questionNotePages, essays: data.essayNotePages })};\n`,
+  };
+}
+
+function renderRegistry(registry, packages) {
+  const zmanim = packages.map((pkg) => ({
+    id: pkg.id,
+    name: pkg.manifest.name,
+    analyticsKey: pkg.id,
+    status: pkg.manifest.status,
+    startsOn: pkg.manifest.startsOn,
+    path: `cohorts/${pkg.id}`,
+    legacyIds: pkg.manifest.legacyIds,
+    questionCount: pkg.questions.length,
+    essayCount: pkg.essays.length,
+  }));
+  const value = { version: 2, defaultZmanId: registry.defaultZmanId, latestZmanId: registry.latestZmanId, zmanim };
+  return `window.SCP_ZMAN_REGISTRY = ${js(value)};\nwindow.SCP_COHORT_REGISTRY = window.SCP_ZMAN_REGISTRY;\n`;
+}
+
+export async function compileZmanim({ sourceRoot = ZMAN_SOURCE_ROOT, outputRoot } = {}) {
+  invariant(outputRoot, 'compileZmanim requires outputRoot');
+  const { registry, packages } = await loadZmanAuthoring(sourceRoot);
+  await rm(outputRoot, { recursive: true, force: true });
+  await mkdir(outputRoot, { recursive: true });
+  await writeFile(path.join(outputRoot, 'index.js'), renderRegistry(registry, packages));
+  for (const pkg of packages) {
+    const dir = path.join(outputRoot, pkg.id);
+    await mkdir(dir, { recursive: true });
+    for (const [file, contents] of Object.entries(renderPackageFiles(pkg))) await writeFile(path.join(dir, file), contents);
+  }
+  return { registry, packages };
+}

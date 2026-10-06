@@ -1,0 +1,81 @@
+reviews:
+  - id: 1
+    number: 1
+    title: נ״ט בר נ״ט — Foundations
+    file: nat-bar-nat-foundations.m4a
+    transcript: transcripts/01-1.vtt
+  - id: 2
+    number: 2
+    title: נ״ט בר נ״ט — Applications & דבר חריף
+    file: nat-bar-nat-applications-and-davar-charif.m4a
+    transcript: transcripts/02-2.vtt
+  - id: 3
+    number: 3
+    title: Fish & Meat
+    file: fish-and-meat.m4a
+    transcript: transcripts/03-3.vtt
+  - id: 4
+    number: 4
+    title: Dishes, Sinks & Dishwashers — Flavor Transfer
+    file: dishes-sinks-flavor-transfer.m4a
+    transcript: transcripts/04-4.vtt
+  - id: 5
+    number: 5
+    title: Dishes, Sinks & Dishwashers — Practical Rules
+    file: sinks-and-dishwashers-practical-rules.m4a
+    transcript: transcripts/05-5.vtt
+  - id: 6
+    number: 6
+    title: Open Foods, Storage & סתם יינם Foundations
+    file: storage-and-stam-yeinam-foundations.m4a
+    transcript: transcripts/06-6.vtt
+  - id: 7
+    number: 7
+    title: סתם יינם — Benefit & Commerce
+    file: stam-yeinam-benefit-and-commerce.m4a
+    transcript: transcripts/07-7.vtt
+  - id: 8
+    number: 8
+    title: סתם יינם — Medical Use & Yayin Mevushal
+    file: medical-use-and-yayin-mevushal.m4a
+    transcript: transcripts/08-8.vtt
+  - id: 9
+    number: 9
+    title: Wine Processing — Mixtures & Sherry Casks
+    file: wine-mixtures-and-sherry-casks.m4a
+    transcript: transcripts/09-9.vtt
+  - id: 10
+    number: 10
+    title: Wine Processing — Sherry Casks, המשכה & Grape Products
+    file: sherry-casks-hamshacha-and-grape-products.m4a
+    transcript: transcripts/10-10.vtt
+  - id: 11
+    number: 11
+    title: Social Drinking
+    file: social-drinking.m4a
+    transcript: transcripts/11-11.vtt
+  - id: 12
+    number: 12
+    title: Wine Contact — Who Touched the Wine?
+    file: wine-contact-who-touched.m4a
+    transcript: transcripts/12-12.vtt
+  - id: 13
+    number: 13
+    title: Wine Contact — Four Conditions
+    file: wine-contact-four-conditions.m4a
+    transcript: transcripts/13-13.vtt
+  - id: 14
+    number: 14
+    title: Wine Contact — Pouring, Clinking & Accidental Contact
+    file: wine-contact-pouring-clinking-and-accidental-contact.m4a
+    transcript: transcripts/14-14.vtt
+  - id: 15
+    number: 15
+    title: Wine Contact — נצוק & Unattended Wine
+    file: nitzok-and-unattended-wine.m4a
+    transcript: transcripts/15-15.vtt
+  - id: 16
+    number: 16
+    title: Unattended Wine — Seals, יוצא ונכנס & Monitoring
+    file: unattended-wine-seals-and-monitoring.m4a
+    transcript: transcripts/16-16.vtt

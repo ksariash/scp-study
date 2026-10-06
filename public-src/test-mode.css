@@ -7,6 +7,36 @@
 /* Materials and Progress remain hidden in test mode; Settings and Notifications remain available. */
 body.ui-test-active #settingsBtn.hidden { display: inline-flex !important; }
 
+.test-section-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0 0 8px;
+  padding: 3px;
+  border: 1px solid #d7e0ec;
+  border-radius: 11px;
+  background: #eef2f7;
+}
+.test-section-btn {
+  min-width: 0;
+  min-height: 32px;
+  padding: 6px 9px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #60708a;
+  font-size: .74rem;
+  font-weight: 800;
+  text-align: center;
+}
+.test-section-btn:hover:not(:disabled) { background: rgba(255,255,255,.65); color: #294b86; }
+.test-section-btn.active {
+  background: #fff;
+  color: #214883;
+  box-shadow: 0 1px 4px rgba(20,35,66,.14), inset 0 0 0 1px rgba(255,255,255,.9);
+}
+.test-section-btn:focus-visible { outline: 2px solid #7f9fd5; outline-offset: 1px; }
+
 .test-followup-btn {
   display: inline-grid;
   place-items: center;
@@ -58,6 +88,34 @@ body.ui-test-essays #essayPracticeMain > :not(.test-essay-surface) { display: no
   width: min(780px, 100%);
   margin: 0 auto;
 }
+.test-essay-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 14px;
+}
+.test-essay-picker-label {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  width: min(100%, 560px);
+  color: #5e6d85;
+  font-size: .72rem;
+  font-weight: 800;
+}
+.test-essay-picker {
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  padding: 7px 9px;
+  border: 1px solid #cdd8e7;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+  font-size: .78rem;
+}
+.test-essay-picker:focus-visible { outline: 2px solid #8aa8dc; outline-offset: 1px; }
 .test-essay-head { padding-bottom: 18px; border-bottom: 1px solid var(--line); }
 .test-essay-head .eyebrow {
   color: #3156b7;
@@ -105,7 +163,10 @@ body.ui-test-essays #essayPracticeMain > :not(.test-essay-surface) { display: no
 .test-time-value { font-size: 1.05rem !important; }
 
 @media (max-width: 780px) {
+  .test-section-nav { margin-bottom: 7px; }
+  .test-section-btn { min-height: 34px; padding-inline: 6px; font-size: .7rem; }
   .test-essay-surface { padding: 0; }
+  .test-essay-picker-label { grid-template-columns: 1fr; gap: 5px; width: 100%; }
   .test-essay-response-field textarea { min-height: 240px; }
   .test-essay-nav { display: grid; grid-template-columns: 1fr 1fr; }
   .test-combined-stats { grid-template-columns: repeat(2, 1fr) !important; }
@@ -113,4 +174,5 @@ body.ui-test-essays #essayPracticeMain > :not(.test-essay-surface) { display: no
 
 @media (max-width: 390px) {
   .test-followup-btn { width: 30px; min-width: 30px; height: 30px; min-height: 30px; }
+  .test-section-btn { font-size: .66rem; }
 }

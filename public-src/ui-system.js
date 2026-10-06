@@ -181,6 +181,19 @@
     simplifySettingsSurface();
   }
 
+  function syncAboutMetadata() {
+    const active = window.SCP_ZMAN_CONFIG || window.SCP_COHORT_CONFIG || window.SCP_ACTIVE_ZMAN || window.SCP_ACTIVE_COHORT || {};
+    const zmanLabel = String(active.name || active.analyticsKey || active.id || '').trim();
+    if (zmanLabel && el('appInfoZman')) el('appInfoZman').textContent = zmanLabel;
+
+    // app.js owns the release number. Mirror its already-rendered value here so
+    // the shell never needs a second hard-coded version constant.
+    const settingsVersion = String(el('settingsAboutVersion')?.textContent || '').match(/\b(\d+)\b/);
+    const footerVersion = String(el('appVersionFooter')?.textContent || '').match(/\bv(\d+)\b/i);
+    const version = settingsVersion?.[1] || footerVersion?.[1] || '';
+    if (version && el('appInfoVersion')) el('appInfoVersion').textContent = `v${version}`;
+  }
+
   function installAboutLogo() {
     const logo = el('brandLogo');
     const dialog = el('appInfoDialog');
@@ -190,13 +203,25 @@
     logo.setAttribute('tabindex', '0');
     logo.setAttribute('aria-label', 'About SCP Study');
     logo.title = 'About SCP Study';
+
     const open = event => {
       if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
       if (event.type === 'keydown') event.preventDefault();
       window.setTimeout(() => {
+        syncAboutMetadata();
+
+        // Reuse app.js's canonical About opener when available. That keeps the
+        // logo and Settings entry points on one hydration path instead of
+        // directly showing a shared dialog with stale/default metadata.
+        const canonicalButton = el('settingsAboutBtn');
+        if (canonicalButton) {
+          canonicalButton.click();
+          if (dialog.open) return;
+        }
         if (!dialog.open) dialog.showModal();
       }, 0);
     };
+
     logo.addEventListener('click', open);
     logo.addEventListener('keydown', open);
   }
@@ -210,6 +235,7 @@
   function afterCoreInit() {
     refreshNavigationCopy();
     simplifySettingsSurface();
+    syncAboutMetadata();
     syncTimerSemantics();
     const bodyObserver = new MutationObserver(syncTimerSemantics);
     bodyObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });

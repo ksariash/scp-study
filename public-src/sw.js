@@ -1,5 +1,5 @@
 const APP_VERSION = 75;
-const CACHE_NAME = 'scp-study-v75-ui2';
+const CACHE_NAME = 'scp-study-v75-ui3';
 const AUDIO_CACHE_NAME = 'scp-study-audio-v3';
 const DOCUMENT_CACHE_NAME = 'scp-study-documents-v2';
 const APP_SHELL = [
@@ -7,9 +7,11 @@ const APP_SHELL = [
   './index.html',
   './styles.css',
   './ui-system.css',
+  './test-mode.css',
   './cohorts/index.js',
   './cohort-loader.js',
   './ui-system.js',
+  './test-mode.js',
   './cohorts/2026-summer/cohort.js',
   './cohorts/2026-summer/questions.js',
   './cohorts/2026-summer/chaburos.js',

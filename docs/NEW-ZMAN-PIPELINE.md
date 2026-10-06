@@ -24,7 +24,7 @@ Essay practice must represent each graded relationship as an atomic authority/co
 
 ## 4. Audit generated coverage
 
-Build a second matrix from every highlighted fact to generated MC question(s), essay fact(s), or both. Check for gaps, over-repetition, missing authorities, lost qualifications, and material outside audited scope.
+Build a second matrix from every highlighted fact to generated MC question(s), essay fact(s), or both. Check for gaps, over-repetition, missing authorities, lost qualifications, and material outside audited scope. Store the question-facing portion in `coverage-audit.yaml` and the concise tested concept beside each question so the instructor key is generated from the same reviewable evidence.
 
 ## 5. Process audio
 
@@ -44,7 +44,7 @@ Create the readable skeleton with:
 
 `npm run zman:new -- <zman-id> <YYYY-MM-DD> "<display name>"`
 
-Add the ID to `zmanim/registry.yaml`, then author the YAML and WebVTT files under `zmanim/<zman-id>/`. Follow `zmanim/README.md`; never create or hand-edit a `public/cohorts/` package.
+Author the YAML and WebVTT files under `zmanim/<zman-id>/`. The scaffold starts as `status: draft`, which is validated but excluded from the browser build. Follow `zmanim/README.md`; never create or hand-edit a `public/cohorts/` package.
 
 Give the Zman a permanent ID. The build derives its analytics key from that ID so the two cannot drift. Do not recycle an earlier ID for revised material.
 
@@ -62,6 +62,8 @@ Before the Zman becomes selectable:
 - verify an ID valid only in another Zman is rejected;
 - deploy and verify Analytics first.
 
+Only after this gate should Study move the Zman out of `draft` and, when intended, update `latestZmanId` or `defaultZmanId` in `zmanim/registry.yaml`.
+
 ## 9. Build and final QA
 
 Run `npm run zman:validate` and `npm run build`, then smoke-test:
@@ -75,4 +77,4 @@ Run `npm run zman:validate` and `npm run build`, then smoke-test:
 - analytics and feedback;
 - notification inbox/push if enabled.
 
-Keep the two coverage-audit artifacts so a future LLM can explain why each assessment item exists and which source material supports it.
+Keep source-material audit artifacts with the Zman so a future LLM can explain why each assessment item exists and which source material supports it. Do not invent a missing historical source audit; record that limitation explicitly if migrating older content.

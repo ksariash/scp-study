@@ -1,11 +1,13 @@
 schemaVersion: 1
 id: 2026-summer
 name: Nat Bar Nat & Stam Ye'enam - Summer 26
+assessmentTitle: סתם יינם & נ״ט בר נ״ט
 startsOn: 2026-06-01
 status: current
 legacyIds:
   - nat-bar-nat-stam-yeinam-summer-26
 contentVersion: 1
+documentSource: legacy-root
 audio:
   migrationMode: legacy-fallback
   legacyR2ObjectPrefix: audio/

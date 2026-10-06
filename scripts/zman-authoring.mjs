@@ -1,4 +1,4 @@
-import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { access, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import YAML from 'yaml';
@@ -55,20 +55,32 @@ export function parseVtt(source, file = 'transcript.vtt') {
 
 async function loadPackage(dir, id) {
   const base = path.join(dir, id);
-  const [manifest, questions, essays, glossary, audioReviews, chaburos] = await Promise.all([
+  const [manifest, questions, essays, glossary, audioReviews, chaburos, coverageAudit] = await Promise.all([
     readYaml(path.join(base, 'zman.yaml')),
     readYaml(path.join(base, 'questions.yaml')),
     readYaml(path.join(base, 'essays.yaml')),
     readYaml(path.join(base, 'glossary.yaml')),
     readYaml(path.join(base, 'audio-reviews.yaml')),
     readYaml(path.join(base, 'chaburos.yaml')),
+    readYaml(path.join(base, 'coverage-audit.yaml')),
   ]);
   const reviews = audioReviews.reviews || [];
+  if (manifest.documentSource === 'package') {
+    for (const key of ['compactReview', 'fullNotes']) {
+      const file = manifest.documents?.[key];
+      if (typeof file !== 'string' || file !== path.basename(file)) throw new Error(`${id}: invalid packaged document filename for ${key}`);
+      try {
+        await access(path.join(base, 'documents', file));
+      } catch {
+        throw new Error(`${id}: missing packaged document ${file}`);
+      }
+    }
+  }
   for (const review of reviews) {
     const transcriptFile = path.join(base, review.transcript);
     review._transcript = parseVtt(await readFile(transcriptFile, 'utf8'), transcriptFile);
   }
-  return { id, base, manifest, questions, essays, glossary, audioReviews, chaburos };
+  return { id, base, manifest, questions, essays, glossary, audioReviews, chaburos, coverageAudit };
 }
 
 export async function loadZmanAuthoring(sourceRoot = ZMAN_SOURCE_ROOT) {
@@ -86,27 +98,34 @@ export function validateAuthoring(registry, packages) {
   unique(ids, 'Zman IDs');
   invariant(ids.includes(registry.defaultZmanId), 'registry defaultZmanId must name an existing Zman');
   invariant(ids.includes(registry.latestZmanId), 'registry latestZmanId must name an existing Zman');
+  const packagesById = new Map(packages.map((pkg) => [pkg.id, pkg]));
+  invariant(packagesById.get(registry.defaultZmanId)?.manifest.status !== 'draft', 'registry defaultZmanId cannot point to a draft Zman');
+  invariant(packagesById.get(registry.latestZmanId)?.manifest.status !== 'draft', 'registry latestZmanId cannot point to a draft Zman');
 
   const legacyIds = [];
   for (const pkg of packages) {
-    const { id, manifest, questions, essays, glossary, audioReviews, chaburos } = pkg;
+    const { id, manifest, questions, essays, glossary, audioReviews, chaburos, coverageAudit } = pkg;
     invariant(manifest?.schemaVersion === 1, `${id}/zman.yaml: schemaVersion must be 1`);
     invariant(manifest.id === id, `${id}/zman.yaml: id must match its directory name`);
     invariant(typeof manifest.name === 'string' && manifest.name.trim(), `${id}: name is required`);
+    invariant(typeof manifest.assessmentTitle === 'string' && manifest.assessmentTitle.trim(), `${id}: assessmentTitle is required`);
     invariant(/^\d{4}-\d{2}-\d{2}$/.test(manifest.startsOn), `${id}: startsOn must be YYYY-MM-DD`);
-    invariant(['upcoming', 'current', 'archived'].includes(manifest.status), `${id}: invalid status`);
+    invariant(['draft', 'upcoming', 'current', 'archived'].includes(manifest.status), `${id}: invalid status`);
     invariant(Number.isInteger(manifest.contentVersion) && manifest.contentVersion > 0, `${id}: contentVersion must be a positive integer`);
+    invariant(['package', 'legacy-root'].includes(manifest.documentSource), `${id}: documentSource must be package or legacy-root`);
     invariant(Array.isArray(manifest.legacyIds), `${id}: legacyIds must be an array`);
     legacyIds.push(...manifest.legacyIds);
-    invariant(manifest.documents && Object.keys(manifest.documents).length === 6, `${id}: all six document filenames are required`);
+    const requiredDocumentKeys = ['compactReview', 'fullNotes', 'cumulativeTest', 'cumulativeAnswerKey', 'essayQuestionsAndAnswers', 'glossary'];
+    invariant(manifest.documents && requiredDocumentKeys.every((key) => typeof manifest.documents[key] === 'string') && Object.keys(manifest.documents).length === requiredDocumentKeys.length, `${id}: all six document filenames are required`);
     for (const [key, file] of Object.entries(manifest.documents)) {
       invariant(typeof file === 'string' && file === path.basename(file), `${id}: document ${key} must be a filename, not a path`);
     }
 
-    invariant(Array.isArray(questions), `${id}/questions.yaml must contain a list`);
+    invariant(Array.isArray(questions) && questions.length, `${id}/questions.yaml must contain questions`);
     unique(questions.map((q) => q.id), `${id} question IDs`);
     for (const q of questions) {
       invariant(q.category && q.prompt && q.type, `${id}: question ${q.id} needs category, prompt, and type`);
+      invariant(typeof q.testedConcept === 'string' && q.testedConcept.trim(), `${id}: question ${q.id} needs testedConcept for the answer-key audit`);
       invariant(['single', 'multi', 'truefalse'].includes(q.type), `${id}: question ${q.id} has unsupported type ${q.type}`);
       invariant(Array.isArray(q.choices) && q.choices.length >= 2, `${id}: question ${q.id} needs choices`);
       invariant(Array.isArray(q.answer) && q.answer.length > 0, `${id}: question ${q.id} has invalid answer`);
@@ -116,7 +135,7 @@ export function validateAuthoring(registry, packages) {
       invariant(q.notes?.compact && q.notes?.full, `${id}: question ${q.id} needs compact/full note pages`);
     }
 
-    invariant(Array.isArray(essays), `${id}/essays.yaml must contain a list`);
+    invariant(Array.isArray(essays) && essays.length, `${id}/essays.yaml must contain essays`);
     unique(essays.map((essay) => essay.id), `${id} essay IDs`);
     const factIds = essays.flatMap((essay) => essay.facts?.map((fact) => fact.id) || []);
     unique(factIds, `${id} essay fact IDs`);
@@ -130,7 +149,7 @@ export function validateAuthoring(registry, packages) {
       }
     }
 
-    invariant(Array.isArray(glossary), `${id}/glossary.yaml must contain a list`);
+    invariant(Array.isArray(glossary) && glossary.length, `${id}/glossary.yaml must contain terms`);
     unique(glossary.map((term) => term.id), `${id} glossary IDs`);
     for (const term of glossary) {
       invariant(term.term && term.definition, `${id}: glossary ${term.id} needs term and definition`);
@@ -138,7 +157,7 @@ export function validateAuthoring(registry, packages) {
     }
 
     const reviews = audioReviews?.reviews;
-    invariant(Array.isArray(reviews), `${id}/audio-reviews.yaml must have a reviews list`);
+    invariant(Array.isArray(reviews) && reviews.length, `${id}/audio-reviews.yaml must have reviews`);
     unique(reviews.map((review) => review.id), `${id} audio review IDs`);
     const reviewIds = new Set(reviews.map((review) => review.id));
     for (const review of reviews) {
@@ -154,9 +173,21 @@ export function validateAuthoring(registry, packages) {
       invariant(reviewIds.has(clip.review), `${id}: review clip references missing review ${clip.review}`);
       invariant(typeof clip.start === 'number' && clip.start >= 0 && typeof clip.label === 'string' && clip.label.trim(), `${id}: invalid review clip`);
     }
-    invariant(chaburos?.locationLabel && chaburos?.chaburaLabel && Array.isArray(chaburos.regions), `${id}: invalid chaburos.yaml`);
+    invariant(chaburos?.locationLabel && chaburos?.chaburaLabel && Array.isArray(chaburos.regions) && chaburos.regions.length, `${id}: invalid chaburos.yaml`);
     unique(chaburos.regions.map((region) => region.name), `${id} chabura region names`);
     for (const region of chaburos.regions) invariant(Array.isArray(region.ravs), `${id}: ${region.name} ravs must be a list`);
+    invariant(typeof coverageAudit?.scopeCheck === 'string' && coverageAudit.scopeCheck.trim() && coverageAudit.scopeCheck.trim() !== 'TODO', `${id}: coverage-audit.yaml needs a reviewed scopeCheck`);
+    invariant(Array.isArray(coverageAudit?.topics) && coverageAudit.topics.length, `${id}: coverage-audit.yaml needs audited topics`);
+    const questionIds = new Set(questions.map((question) => question.id));
+    const coveredQuestionIds = new Set();
+    for (const item of coverageAudit.topics) {
+      invariant(typeof item.topic === 'string' && item.topic.trim() && Array.isArray(item.questions) && item.questions.length, `${id}: invalid coverage-audit topic`);
+      for (const questionId of item.questions) {
+        invariant(questionIds.has(questionId), `${id}: coverage audit references missing question ${questionId}`);
+        coveredQuestionIds.add(questionId);
+      }
+    }
+    invariant(questions.every((question) => coveredQuestionIds.has(question.id)), `${id}: coverage audit must account for every question`);
   }
   unique(legacyIds, 'legacy Zman IDs');
 }
@@ -189,7 +220,7 @@ function runtimePackage(pkg) {
     glossaryCategoryLinks: Object.fromEntries(glossary.filter((term) => term.categories.length).map((term) => [term.id, term.categories])),
   };
 
-  const runtimeQuestions = questions.map(({ notes, reviewClips, ...question }) => question);
+  const runtimeQuestions = questions.map(({ notes, reviewClips, testedConcept, ...question }) => question);
   const runtimeEssays = essays.map(({ notes, tags, ...essay }) => ({
     ...essay,
     facts: essay.facts.map(({ authority, position, reviewClips, ...fact }) => ({
@@ -257,13 +288,14 @@ function renderRegistry(registry, packages) {
 export async function compileZmanim({ sourceRoot = ZMAN_SOURCE_ROOT, outputRoot } = {}) {
   invariant(outputRoot, 'compileZmanim requires outputRoot');
   const { registry, packages } = await loadZmanAuthoring(sourceRoot);
+  const deployablePackages = packages.filter((pkg) => pkg.manifest.status !== 'draft');
   await rm(outputRoot, { recursive: true, force: true });
   await mkdir(outputRoot, { recursive: true });
-  await writeFile(path.join(outputRoot, 'index.js'), renderRegistry(registry, packages));
-  for (const pkg of packages) {
+  await writeFile(path.join(outputRoot, 'index.js'), renderRegistry(registry, deployablePackages));
+  for (const pkg of deployablePackages) {
     const dir = path.join(outputRoot, pkg.id);
     await mkdir(dir, { recursive: true });
     for (const [file, contents] of Object.entries(renderPackageFiles(pkg))) await writeFile(path.join(dir, file), contents);
   }
-  return { registry, packages };
+  return { registry, packages: deployablePackages, authoringPackages: packages };
 }

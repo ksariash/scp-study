@@ -1,0 +1,258 @@
+/* SCP Study interface polish: mobile-first component system */
+:root {
+  --ui-control-bg: rgba(255,255,255,.12);
+  --ui-control-border: rgba(255,255,255,.20);
+  --ui-segment-bg: #e7ebf2;
+  --ui-segment-border: #cfd7e3;
+  --ui-segment-selected: #ffffff;
+  --ui-segment-text: #58677e;
+  --ui-segment-selected-text: #173f86;
+}
+
+.header-utility-btn,
+.notification-icon-btn {
+  border-radius: 999px !important;
+  background: var(--ui-control-bg) !important;
+  border-color: var(--ui-control-border) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+}
+.header-utility-btn svg,
+.notification-icon-btn svg {
+  width: 19px !important;
+  height: 19px !important;
+  stroke-width: 1.8 !important;
+}
+.header-utility-btn svg rect { fill: none; }
+.header-utility-btn:focus-visible,
+.notification-icon-btn:focus-visible,
+.timer-reset-btn:focus-visible {
+  outline: 2px solid rgba(255,255,255,.78);
+  outline-offset: 2px;
+}
+
+.timer-actions {
+  gap: 7px !important;
+}
+.timer-card {
+  padding-right: 12px !important;
+  border-radius: 13px !important;
+}
+.timer-reset-btn {
+  position: static !important;
+  transform: none !important;
+  flex: 0 0 34px;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  border-radius: 999px !important;
+  border: 1px solid var(--ui-control-border) !important;
+  background: var(--ui-control-bg) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+  font-size: 1rem;
+}
+.timer-reset-btn:hover:not(:disabled) { background: rgba(255,255,255,.20) !important; }
+
+.mode-nav {
+  width: min(440px, calc(100% - 28px));
+  margin: 10px auto 0;
+  padding: 3px !important;
+  gap: 3px !important;
+  border: 1px solid var(--ui-segment-border) !important;
+  border-radius: 13px;
+  background: var(--ui-segment-bg) !important;
+  box-shadow: inset 0 1px 2px rgba(24,39,75,.05), 0 6px 18px rgba(24,39,75,.05) !important;
+}
+.mode-nav-btn {
+  flex: 1 1 0;
+  min-width: 0 !important;
+  min-height: 36px;
+  padding: 7px 12px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: rgba(255,255,255,.16) !important;
+  color: var(--ui-segment-text) !important;
+  box-shadow: none !important;
+  font-size: .82rem !important;
+  font-weight: 800 !important;
+  text-align: center;
+}
+.mode-nav-btn:hover:not(:disabled) { background: rgba(255,255,255,.48) !important; color: #324767 !important; }
+.mode-nav-btn.active,
+.mode-nav-btn.active:disabled {
+  background: var(--ui-segment-selected) !important;
+  color: var(--ui-segment-selected-text) !important;
+  box-shadow: 0 1px 4px rgba(20,35,66,.16), inset 0 0 0 1px rgba(255,255,255,.8) !important;
+  opacity: 1 !important;
+}
+.mode-nav-btn:focus-visible {
+  outline: 2px solid #7b9bd3;
+  outline-offset: 1px;
+}
+
+.question-context-controls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  flex-wrap: nowrap;
+}
+.question-category-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.question-category-group .pill.subtle {
+  min-width: 0;
+  max-width: 100%;
+  margin-left: 0 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.question-filter-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  width: auto !important;
+  min-width: 0 !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  margin-left: 0 !important;
+  padding: 0 8px !important;
+  border-radius: 999px !important;
+  background: #f3f6fb !important;
+  border-color: #d7e1ef !important;
+  color: #3f5f91 !important;
+  font-size: .7rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.question-filter-btn:hover:not(:disabled) { background: #eaf0f9 !important; }
+.question-filter-label { line-height: 1; }
+
+.ui-settings-tab-hidden { display: none !important; }
+#materialsDialog:not(.settings-entry-surface) .materials-tabs {
+  grid-template-columns: repeat(5, minmax(0,1fr)) !important;
+}
+#materialsDialog.settings-entry-surface .materials-tabs { display: none !important; }
+#materialsDialog.settings-entry-surface .materials-panel { margin-top: 12px !important; }
+#materialsDialog.settings-entry-surface .materials-modal-head { padding-bottom: 4px; }
+
+@media (max-width: 780px) {
+  .topbar {
+    grid-template-columns: auto auto minmax(0,1fr) !important;
+    column-gap: 6px !important;
+    padding: 9px 10px !important;
+  }
+  .brand-logo {
+    width: 36px !important;
+    height: 36px !important;
+    flex-basis: 36px !important;
+  }
+  .timer-actions .timer-card {
+    min-width: 86px !important;
+    padding: 5px 9px !important;
+  }
+  .timer-label { font-size: .54rem !important; }
+  .timer-card strong { font-size: .8rem !important; }
+  .timer-reset-btn {
+    flex-basis: 32px;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+  }
+  .topbar-right {
+    gap: 4px !important;
+  }
+  .topbar-right > .header-utility-btn,
+  .topbar-right > #notificationsBtn {
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+  .mode-nav {
+    width: min(420px, calc(100% - 18px));
+    margin-top: 8px;
+  }
+  .mode-nav-btn {
+    min-height: 38px !important;
+    padding: 8px 7px !important;
+    font-size: .8rem !important;
+  }
+  .question-topline {
+    width: 100%;
+    gap: 10px !important;
+  }
+  .question-topline > div:first-child {
+    width: 100%;
+    min-width: 0;
+  }
+  .question-context-controls {
+    width: 100%;
+  }
+  .question-number-picker { flex: 0 0 auto; }
+  .question-category-group { justify-content: flex-end; }
+  .question-category-group .pill.subtle {
+    flex: 0 1 auto;
+    max-width: min(42vw, 170px);
+  }
+  #materialsDialog:not(.settings-entry-surface) .materials-tabs {
+    grid-template-columns: repeat(5, minmax(0,1fr)) !important;
+    gap: 3px !important;
+  }
+  #materialsDialog:not(.settings-entry-surface) .materials-tab {
+    min-height: 38px !important;
+    padding: 6px 2px !important;
+    font-size: .65rem !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .topbar {
+    grid-template-columns: auto auto minmax(0,1fr) !important;
+    column-gap: 4px !important;
+    padding-inline: 7px !important;
+  }
+  .brand-logo {
+    width: 32px !important;
+    height: 32px !important;
+    flex-basis: 32px !important;
+  }
+  .timer-actions { gap: 4px !important; }
+  .timer-actions .timer-card { min-width: 80px !important; padding-inline: 7px !important; }
+  .timer-reset-btn {
+    flex-basis: 30px;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+  }
+  .topbar-right > .header-utility-btn,
+  .topbar-right > #notificationsBtn {
+    flex-basis: 34px !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+  }
+  .header-utility-btn svg,
+  .notification-icon-btn svg { width: 18px !important; height: 18px !important; }
+  .mode-nav-btn { font-size: .76rem !important; }
+  .question-number-jump,
+  .question-number-trigger { width: 116px !important; max-width: 116px !important; }
+  .question-category-group .pill.subtle { max-width: 118px; }
+  .question-filter-btn { padding-inline: 7px !important; }
+}
+
+@media (pointer: coarse) {
+  .header-utility-btn,
+  .notification-icon-btn { touch-action: manipulation; }
+}

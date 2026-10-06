@@ -20,5 +20,16 @@
   window.SCP_ACTIVE_COHORT = zman;
   const base = String(zman.path || ('cohorts/' + zman.id)).replace(/\/$/, '');
   const files = ['cohort.js','questions.js','chaburos.js','audio-reviews.js','glossary.js','essay-practice.js','course-notes.js'];
-  document.write(files.map(file => '<script src="' + base + '/' + file + '"><\/script>').join(''));
+
+  // Load the shared UI component layer before app.js so it can normalize the
+  // shell without duplicating product behavior in markup-specific handlers.
+  const uiStyles = document.createElement('link');
+  uiStyles.rel = 'stylesheet';
+  uiStyles.href = 'ui-system.css';
+  document.head.append(uiStyles);
+
+  document.write(
+    files.map(file => '<script src="' + base + '/' + file + '"><\\/script>').join('') +
+    '<script src="ui-system.js"><\\/script>'
+  );
 })();

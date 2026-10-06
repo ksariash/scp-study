@@ -23,7 +23,7 @@
 
   // Shared shell/design normalization and the combined-test controller load
   // before app.js so their capture-phase entry contracts are established first.
-  for (const href of ['ui-system.css', 'test-mode.css']) {
+  for (const href of ['ui-system.css', 'test-mode.css', 'test-mode-polish.css']) {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = href;
@@ -35,4 +35,13 @@
     '<script src="ui-system.js"><\/script>' +
     '<script src="test-mode.js"><\/script>'
   );
+
+  // test-mode-polish.js intentionally loads after app.js. It augments the core
+  // test state rather than competing with the native start/submit handlers.
+  window.addEventListener('DOMContentLoaded', () => {
+    const script = document.createElement('script');
+    script.src = 'test-mode-polish.js';
+    script.async = false;
+    document.body.append(script);
+  }, { once:true });
 })();

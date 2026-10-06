@@ -2,11 +2,46 @@
 :root {
   --test-followup: #a16207;
   --test-followup-bg: #fff8e6;
+  --test-essay-progress: #8b5cf6;
+  --test-essay-progress-end: #a78bfa;
 }
 
 /* Materials and Progress remain hidden in test mode; Settings and Notifications remain available. */
-body.ui-test-active #settingsBtn.hidden { display: inline-flex !important; }
+body.ui-test-active #settingsBtn.hidden {
+  display: inline-grid !important;
+  place-items: center !important;
+}
+body.ui-test-active #settingsBtn,
+body.ui-test-active #notificationsBtn {
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+}
+body.ui-test-active #settingsBtn svg,
+body.ui-test-active #notificationsBtn svg {
+  margin: 0 !important;
+}
 
+/* No correctness feedback is exposed until the whole test is submitted. */
+body.ui-test-active #feedbackBox {
+  display: none !important;
+}
+body.ui-test-active .choice.correct-choice,
+body.ui-test-active .choice.wrong-choice {
+  border-color: #e2e9f5 !important;
+  background: #fff !important;
+  color: inherit !important;
+}
+body.ui-test-active .choice.selected.correct-choice,
+body.ui-test-active .choice.selected.wrong-choice {
+  border-color: #7da3f8 !important;
+  background: linear-gradient(180deg, #f6f9ff 0%, #eef4ff 100%) !important;
+}
+body.ui-test-active .choice.locked {
+  opacity: 1;
+}
+
+/* Questions / Essays are peer sections of one active attempt. */
 .test-section-nav {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -37,6 +72,39 @@ body.ui-test-active #settingsBtn.hidden { display: inline-flex !important; }
 }
 .test-section-btn:focus-visible { outline: 2px solid #7f9fd5; outline-offset: 1px; }
 
+/* Separate completion bars: questions first, essays second. */
+.test-progress-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 1px 5px;
+  color: #62718a;
+  font-size: .66rem;
+  font-weight: 800;
+}
+.test-progress-label strong {
+  color: #485a77;
+  font-size: .65rem;
+  font-variant-numeric: tabular-nums;
+}
+.test-question-progress-track { margin-bottom: 7px; }
+.test-essay-progress-label { margin-top: 8px; }
+.test-essay-progress-track {
+  height: 7px;
+  background: #eee9fb;
+}
+.test-essay-progress-fill {
+  background: linear-gradient(90deg, var(--test-essay-progress), var(--test-essay-progress-end)) !important;
+}
+
+.test-exit-btn.ready-to-finish {
+  border-color: #b9ccef !important;
+  background: #eef4ff !important;
+  color: #214b9a !important;
+}
+
+/* Follow-up marker and question-selector status. */
 .test-followup-btn {
   display: inline-grid;
   place-items: center;
@@ -81,98 +149,149 @@ body.ui-test-active #settingsBtn.hidden { display: inline-flex !important; }
   box-shadow: inset 0 0 0 1px #c58e13, 0 0 0 1px rgba(197,142,19,.08) !important;
 }
 
+/* Native Essay-mode surface reused for the exam, with study aids/feedback suppressed. */
 body.ui-test-essays .ui-test-section-hidden { display: none !important; }
-body.ui-test-essays #essayPracticeMain { display: block !important; }
-body.ui-test-essays #essayPracticeMain > :not(.test-essay-surface) { display: none !important; }
-.test-essay-surface {
-  width: min(780px, 100%);
+body.ui-test-essays #essayPracticeMain {
+  display: block !important;
+  width: min(980px, 100%);
   margin: 0 auto;
 }
-.test-essay-toolbar {
-  display: flex;
-  justify-content: flex-end;
-  margin: 0 0 14px;
+body.ui-test-essays #essayNoteLinks,
+body.ui-test-essays #essayQuestionAudio,
+body.ui-test-essays #essayFeedback,
+body.ui-test-essays #essayModelAnswerWrap,
+body.ui-test-essays #essayPromptReportBtn,
+body.ui-test-essays #essayPairingReportBtn,
+body.ui-test-essays #essayPairingResources {
+  display: none !important;
 }
-.test-essay-picker-label {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: 8px;
-  width: min(100%, 560px);
-  color: #5e6d85;
-  font-size: .72rem;
-  font-weight: 800;
+body.ui-test-essays #essayMasterySummary {
+  color: #5f6f88;
 }
-.test-essay-picker {
-  width: 100%;
-  min-width: 0;
-  min-height: 38px;
-  padding: 7px 9px;
-  border: 1px solid #cdd8e7;
-  border-radius: 10px;
+body.ui-test-essays .essay-match-section {
+  border-color: #dbe4f1;
   background: #fff;
-  color: var(--text);
-  font: inherit;
-  font-size: .78rem;
 }
-.test-essay-picker:focus-visible { outline: 2px solid #8aa8dc; outline-offset: 1px; }
-.test-essay-head { padding-bottom: 18px; border-bottom: 1px solid var(--line); }
-.test-essay-head .eyebrow {
-  color: #3156b7;
-  font-weight: 800;
-  letter-spacing: .08em;
+body.ui-test-essays .essay-choice.test-selected {
+  border-color: #7da3f8;
+  background: #eef4ff;
+  color: #214b9a;
+  box-shadow: inset 0 0 0 1px rgba(36,86,211,.08);
+}
+body.ui-test-essays .essay-choice.test-selected::after {
+  content: 'Selected';
+  float: right;
+  margin-left: 10px;
+  color: #5573ad;
+  font-size: .62rem;
+  font-weight: 850;
   text-transform: uppercase;
-  font-size: .7rem;
+  letter-spacing: .04em;
 }
-.test-essay-head h2 { margin: 7px 0 8px; font-size: clamp(1.25rem, 3vw, 1.7rem); line-height: 1.25; }
-.test-essay-prompt { margin: 0; color: var(--text); line-height: 1.55; font-size: 1rem; }
-.test-essay-response-field { display: grid; gap: 8px; margin-top: 20px; }
-.test-essay-response-field > span { font-weight: 800; color: #283a57; }
-.test-essay-response-field textarea {
+
+.test-pairing-row {
   width: 100%;
-  max-width: 100%;
-  min-height: 260px;
-  resize: vertical;
-  padding: 14px 15px;
-  border: 1px solid #cdd8e7;
-  border-radius: 14px;
-  background: #fff;
-  color: var(--text);
-  font: inherit;
-  font-size: 1rem;
-  line-height: 1.55;
-  box-shadow: inset 0 1px 2px rgba(20,35,66,.04);
+  grid-template-columns: auto minmax(0,1fr) auto !important;
+  border-color: #d7e1ef !important;
+  background: #f8faff !important;
+  color: inherit !important;
+  text-align: left;
+  cursor: pointer;
 }
-.test-essay-response-field textarea:focus {
-  outline: 2px solid #8aa8dc;
-  outline-offset: 1px;
-  border-color: #7899d2;
+.test-pairing-row:hover,
+.test-pairing-row:focus-visible {
+  border-color: #b6c8e3 !important;
+  background: #f1f6ff !important;
+  outline: none;
 }
-.test-essay-word-count { color: var(--muted); text-align: right; font-size: .76rem; }
-.test-essay-nav {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 20px;
-  padding-top: 18px;
-  border-top: 1px solid var(--line);
+.test-pairing-edit-icon {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border-radius: 7px;
+  background: #e8eef8;
+  color: #496995;
+  font-size: .68rem;
+  font-weight: 900;
 }
-.test-result-response,
-.test-result-essay-body p { white-space: pre-wrap; }
-.test-result-essay-body p { line-height: 1.5; }
+.test-pairing-edit-label {
+  align-self: center;
+  color: #516d9c;
+  font-size: .64rem;
+  font-weight: 850;
+}
+body.ui-test-essays .essay-answer-placeholder {
+  color: #78869b;
+}
+
+/* Post-submit essay grading. */
+.test-result-pairings {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+.test-result-pairing {
+  display: grid;
+  gap: 4px;
+  padding: 10px 11px;
+  border: 1px solid #dce5f1;
+  border-radius: 11px;
+  background: #f8faff;
+}
+.test-result-pairing strong { color: #263e69; font-size: .76rem; }
+.test-result-pairing span { color: #44546c; font-size: .73rem; line-height: 1.4; }
+.test-result-pairing small { color: #67758b; font-size: .66rem; font-weight: 800; }
+.test-result-pairing.correct {
+  border-color: #b9dec5;
+  background: #f2faf4;
+}
+.test-result-pairing.correct small { color: #24633d; }
+.test-result-pairing.incorrect,
+.test-result-pairing.unanswered {
+  border-color: #ebc9cd;
+  background: #fff7f8;
+}
+.test-result-pairing.incorrect small,
+.test-result-pairing.unanswered small { color: #8f3d47; }
+.test-result-essay-body p { white-space: pre-wrap; line-height: 1.5; }
+
 .test-time-value { font-size: 1.05rem !important; }
 
 @media (max-width: 780px) {
+  body.ui-test-active .topbar-right {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 6px !important;
+  }
+  body.ui-test-active .topbar-right > #settingsBtn,
+  body.ui-test-active .topbar-right > #notificationsBtn {
+    flex: 0 0 40px !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+  }
+
   .test-section-nav { margin-bottom: 7px; }
   .test-section-btn { min-height: 34px; padding-inline: 6px; font-size: .7rem; }
-  .test-essay-surface { padding: 0; }
-  .test-essay-picker-label { grid-template-columns: 1fr; gap: 5px; width: 100%; }
-  .test-essay-response-field textarea { min-height: 240px; }
-  .test-essay-nav { display: grid; grid-template-columns: 1fr 1fr; }
+  .test-progress-label { font-size: .63rem; }
+  .test-progress-label strong { font-size: .62rem; }
+  body.ui-test-essays #essayPracticeMain { padding: 16px 14px; }
   .test-combined-stats { grid-template-columns: repeat(2, 1fr) !important; }
 }
 
 @media (max-width: 390px) {
   .test-followup-btn { width: 30px; min-width: 30px; height: 30px; min-height: 30px; }
   .test-section-btn { font-size: .66rem; }
+  body.ui-test-active .topbar-right > #settingsBtn,
+  body.ui-test-active .topbar-right > #notificationsBtn {
+    flex-basis: 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
 }

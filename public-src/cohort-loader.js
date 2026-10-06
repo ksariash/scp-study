@@ -23,7 +23,7 @@
 
   // Shared shell/design normalization and the combined-test controller load
   // before app.js so their capture-phase entry contracts are established first.
-  for (const href of ['ui-system.css', 'test-mode.css', 'test-mode-polish.css']) {
+  for (const href of ['ui-system.css', 'test-mode.css', 'test-mode-polish.css', 'chabura-ui.css']) {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = href;

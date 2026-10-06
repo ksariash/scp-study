@@ -17,6 +17,11 @@
   const analyticsEnabled = () => parse(localStorage.getItem(SETTINGS) || '{}', {}).enabled !== false;
   const installationId = () => localStorage.getItem(INSTALLATION) || '';
   const appVersion = () => String((document.getElementById('appVersionFooter')?.textContent || '').match(/v(\d+)/i)?.[1] || '');
+  const configuredQuestionCount = () => {
+    if (typeof QUESTIONS !== 'undefined' && Array.isArray(QUESTIONS)) return QUESTIONS.length;
+    if (Array.isArray(window.QUESTIONS)) return window.QUESTIONS.length;
+    return Number(config.questionCount) || 0;
+  };
 
   function mainState() {
     const raw = parse(localStorage.getItem(MAIN), null);
@@ -38,6 +43,7 @@
     const questions = Array.isArray(row.questions) ? row.questions : [];
     const essays = Array.isArray(row.essays) ? row.essays : [];
     const ended = Number(row.endedAt || row.date) || Date.now();
+    const questionTotal = questions.length || Number(row.questionTotal) || configuredQuestionCount();
     return {
       eventId:`test-${row.id}`,
       installationId:installationId(),
@@ -48,8 +54,8 @@
       endedAt:new Date(ended).toISOString(),
       reason:row.reason || (row.completed ? 'completed' : 'exited'),
       completed:!!row.completed,
-      questionTotal:questions.length || Number(row.questionTotal) || 0,
-      questionAnswered:questions.length ? questions.filter(q => q.answered).length : Math.max(0, (Number(row.questionTotal) || 0) - (Number(row.unanswered) || 0)),
+      questionTotal,
+      questionAnswered:questions.length ? questions.filter(q => q.answered).length : Math.max(0, questionTotal - (Number(row.unanswered) || 0)),
       correct:Number(row.correct) || 0,
       partial:Number(row.partial) || 0,
       incorrect:Number(row.incorrect) || 0,
@@ -70,7 +76,7 @@
 
   function payloadFromSummary(row) {
     const ended = Number(row.date) || Date.now();
-    const questionTotal = Number(row.questionTotal) || (Array.isArray(window.QUESTIONS) ? window.QUESTIONS.length : 0);
+    const questionTotal = Number(row.questionTotal) || configuredQuestionCount();
     const unanswered = Number(row.unanswered) || 0;
     return {
       eventId:`test-${row.id}`,

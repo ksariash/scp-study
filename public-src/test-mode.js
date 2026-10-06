@@ -7,17 +7,15 @@
   const zman = window.SCP_ZMAN_CONFIG || window.SCP_COHORT_CONFIG || window.SCP_ACTIVE_ZMAN || window.SCP_ACTIVE_COHORT || {};
   const zid = String(zman.id || 'default');
   const analyticsZman = String(zman.analyticsKey || zid);
+  const essayTags = zman.essayCategoryTags && typeof zman.essayCategoryTags === 'object' ? zman.essayCategoryTags : {};
 
   const MAIN = 'courseReviewSpacedRepetition.v1';
   const SUP = `scpStudy.testSupplement.v2:${zid}`;
   const PENDING = `scpStudy.pendingCombinedTestResult.v2:${zid}`;
-  const RESP = `scpStudy.testEssayResponses.v1:${zid}`;
+  const ESSAY_RESULT = `scpStudy.testEssayPairings.v1:${zid}`;
   const SYNC = 'scpStudy.sync.v1';
   const SYNCQ = 'scpStudy.syncQueue.v1';
   const DURATION = 3 * 60 * 60 * 1000;
-  // Core app.js still owns the underlying M/C timer lifecycle. Give it a small
-  // internal grace period so this controller can close the combined attempt at
-  // exactly three hours without racing the legacy question-only timeout.
   const CORE_TIMER_GRACE = 3 * 1000;
 
   const qMap = new Map(Q.map(q => [Number(q.id), q]));
@@ -27,6 +25,10 @@
     catch (_) { return fallback; }
   };
   const uid = () => crypto?.randomUUID?.() || `t-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[character]));
+
   let finishing = false;
 
   function stored() {
@@ -67,20 +69,21 @@
 
   function baseSup(test) {
     return {
-      v: 3,
+      v: 4,
       testId: String(test.id),
       phase: 'questions',
       flags: [],
       essayOrder: E.map(essay => String(essay.id)),
       essayIndex: 0,
-      essayResponses: {}
+      essayFactIndex: {},
+      essayPairings: {}
     };
   }
 
   function normSup(test) {
     let sup = readSup();
     if (!sup || String(sup.testId) !== String(test.id)) sup = baseSup(test);
-    sup.v = 3;
+    sup.v = 4;
     sup.phase = sup.phase === 'essays' ? 'essays' : 'questions';
     sup.flags = [...new Set((sup.flags || []).map(Number).filter(id => qMap.has(id)))];
 
@@ -92,7 +95,24 @@
       ? savedOrder
       : ids;
     sup.essayIndex = Math.min(Math.max(0, Number(sup.essayIndex) || 0), Math.max(0, sup.essayOrder.length - 1));
-    sup.essayResponses = sup.essayResponses && typeof sup.essayResponses === 'object' ? sup.essayResponses : {};
+    sup.essayFactIndex = sup.essayFactIndex && typeof sup.essayFactIndex === 'object' ? sup.essayFactIndex : {};
+    sup.essayPairings = sup.essayPairings && typeof sup.essayPairings === 'object' ? sup.essayPairings : {};
+
+    for (const essayId of sup.essayOrder) {
+      const essay = eMap.get(essayId);
+      const maxFact = Math.max(0, Number(essay?.facts?.length || 0) - 1);
+      sup.essayFactIndex[essayId] = Math.min(Math.max(0, Number(sup.essayFactIndex[essayId]) || 0), maxFact);
+      const prior = sup.essayPairings[essayId];
+      sup.essayPairings[essayId] = prior && typeof prior === 'object' ? prior : {};
+      if (essay?.facts?.length) {
+        const validFactIds = new Set(essay.facts.map(fact => String(fact.id)));
+        for (const key of Object.keys(sup.essayPairings[essayId])) {
+          const value = String(sup.essayPairings[essayId][key] || '');
+          if (!validFactIds.has(String(key)) || !validFactIds.has(value)) delete sup.essayPairings[essayId][key];
+          else sup.essayPairings[essayId][String(key)] = value;
+        }
+      }
+    }
     saveSup(sup);
     return sup;
   }
@@ -121,27 +141,25 @@
   }
 
   function copy() {
-    const description = el('categoriesDialogDescription');
-    if (description && !document.body.classList.contains('essay-mode-active')) {
-      description.textContent = 'Choose which categories may be selected in Question study. The practice test always uses the full question bank.';
+    const intro = el('testIntroDialog');
+    if (intro) {
+      const introCopy = intro.querySelector('.modal-head p');
+      const calloutCopy = intro.querySelector('.callout p');
+      if (introCopy) {
+        introCopy.textContent = `All ${Q.length} questions plus ${E.length} essay${E.length === 1 ? '' : 's'}, with one 3-hour countdown. Multiple-choice timing and final results continue to feed study scheduling.`;
+      }
+      if (calloutCopy) {
+        calloutCopy.textContent = 'Questions and essay pairings are submitted without correctness feedback during the test. You can move freely between Questions and Essays, edit submitted essay pairings, flag questions for follow-up, and review everything before finishing.';
+      }
+      if (el('startTestBtn')) el('startTestBtn').textContent = 'Start 3-hour test';
     }
 
-    const intro = el('testIntroDialog');
-    if (!intro) return;
-    const introCopy = intro.querySelector('.modal-head p');
-    const calloutCopy = intro.querySelector('.callout p');
-    if (introCopy) {
-      introCopy.textContent = `All ${Q.length} questions plus ${E.length} essay${E.length === 1 ? '' : 's'}, with one 3-hour countdown. Multiple-choice timing and results continue to feed study scheduling.`;
+    const categoriesDescription = el('categoriesDialogDescription');
+    if (categoriesDescription && !document.body.classList.contains('essay-mode-active')) {
+      categoriesDescription.textContent = 'Choose which categories may be selected in Question study. The practice test always uses the full question bank.';
     }
-    if (calloutCopy) {
-      calloutCopy.textContent = `Questions are locked and graded when submitted. During the test you can move between Questions and Essays at any time, jump directly to any question or essay, and return to flagged questions before finishing. The test ends when you finish, exit, or the timer reaches zero.`;
-    }
-    if (el('startTestBtn')) el('startTestBtn').textContent = 'Start 3-hour test';
   }
 
-  // Let app.js create the native activeTest first, then extend that exact state
-  // into the combined three-hour attempt. This avoids competing initialization
-  // paths and keeps all existing question statistics/timing behavior intact.
   function bridgeNativeStart() {
     window.setTimeout(() => {
       const state = read();
@@ -158,6 +176,57 @@
     const selected = Number(el('questionNumber')?.value);
     if (qMap.has(selected)) return selected;
     return Number(test.order?.[Number(test.index) || 0]);
+  }
+
+  const questionAnswered = test => (test.order || []).filter(id => test.items?.[id]?.answered).length;
+  const allQuestionsAnswered = test => !!test.order?.length && questionAnswered(test) === test.order.length;
+
+  function pairingMap(sup, essayId) {
+    sup.essayPairings[String(essayId)] ||= {};
+    return sup.essayPairings[String(essayId)];
+  }
+
+  function essayIsAnswered(sup, essayId) {
+    const essay = eMap.get(String(essayId));
+    if (!essay?.facts?.length) return false;
+    const pairs = pairingMap(sup, essayId);
+    return essay.facts.every(fact => !!pairs[String(fact.id)]);
+  }
+
+  function essayAnsweredCount(sup) {
+    return (sup.essayOrder || []).filter(id => essayIsAnswered(sup, id)).length;
+  }
+
+  function essayPairingCount(sup, essayId) {
+    const essay = eMap.get(String(essayId));
+    if (!essay?.facts?.length) return 0;
+    const pairs = pairingMap(sup, essayId);
+    return essay.facts.filter(fact => !!pairs[String(fact.id)]).length;
+  }
+
+  function essayNameText(fact) {
+    return fact?.tokens?.[0]?.[1] || fact?.label || '';
+  }
+
+  function essayPositionText(fact) {
+    return fact?.tokens?.[1]?.[1] || '';
+  }
+
+  function pairingChoices(essay, factIndex) {
+    const facts = essay?.facts || [];
+    const current = facts[factIndex];
+    if (!current) return [];
+    const choices = [current];
+    for (let offset = 1; offset < facts.length && choices.length < 3; offset += 1) {
+      const candidate = facts[(factIndex + offset) % facts.length];
+      if (!choices.some(item => String(item.id) === String(candidate.id))) choices.push(candidate);
+    }
+    return choices.sort((a, b) => String(a.id).localeCompare(String(b.id)));
+  }
+
+  function status(test, sup, id) {
+    const item = test.items?.[id] || test.items?.[String(id)] || {};
+    return { answered: !!item.answered, flagged: sup.flags.includes(Number(id)) };
   }
 
   function followButton() {
@@ -183,22 +252,12 @@
       else flags.add(id);
       attempt.sup.flags = [...flags];
       saveSup(attempt.sup);
-      decorate(attempt);
+      decorateQuestions(attempt);
     });
     return button;
   }
 
-  function status(test, sup, id) {
-    const item = test.items?.[id] || test.items?.[String(id)] || {};
-    return { answered: !!item.answered, flagged: sup.flags.includes(Number(id)) };
-  }
-
-  const questionAnswered = test => test.order.filter(id => test.items?.[id]?.answered).length;
-  const allAnswered = test => !!test.order?.length && questionAnswered(test) === test.order.length;
-  const response = (sup, id) => String(sup.essayResponses?.[String(id)] || '');
-  const essayAnswered = sup => sup.essayOrder.filter(id => response(sup, id).trim()).length;
-
-  function ensurePhaseNav(attempt) {
+  function ensureSectionNav(attempt) {
     const wrap = el('testProgressWrap');
     if (!wrap) return null;
     let nav = el('testSectionNav');
@@ -211,14 +270,14 @@
       nav.innerHTML = `
         <button type="button" id="testQuestionsPhaseBtn" class="test-section-btn">Questions</button>
         <button type="button" id="testEssaysPhaseBtn" class="test-section-btn">Essays</button>`;
-      const track = wrap.querySelector('.progress-track');
-      wrap.insertBefore(nav, track || null);
+      const row = wrap.querySelector('.test-progress-row');
+      row?.insertAdjacentElement('afterend', nav);
       el('testQuestionsPhaseBtn')?.addEventListener('click', () => switchPhase('questions'));
       el('testEssaysPhaseBtn')?.addEventListener('click', () => switchPhase('essays'));
     }
 
     const qDone = questionAnswered(attempt.test);
-    const eDone = essayAnswered(attempt.sup);
+    const eDone = essayAnsweredCount(attempt.sup);
     const qButton = el('testQuestionsPhaseBtn');
     const eButton = el('testEssaysPhaseBtn');
     if (qButton) {
@@ -235,11 +294,78 @@
     return nav;
   }
 
+  function ensureProgressBars() {
+    const wrap = el('testProgressWrap');
+    const questionTrack = wrap?.querySelector('.progress-track');
+    if (!wrap || !questionTrack) return;
+
+    questionTrack.classList.add('test-question-progress-track');
+    if (!el('testQuestionProgressLabel')) {
+      const label = document.createElement('div');
+      label.id = 'testQuestionProgressLabel';
+      label.className = 'test-progress-label';
+      label.innerHTML = '<span>Questions</span><strong id="testQuestionProgressText">0/0 answered</strong>';
+      questionTrack.insertAdjacentElement('beforebegin', label);
+    }
+
+    if (!el('testEssayProgressTrack')) {
+      const label = document.createElement('div');
+      label.id = 'testEssayProgressLabel';
+      label.className = 'test-progress-label test-essay-progress-label';
+      label.innerHTML = '<span>Essays</span><strong id="testEssayProgressText">0/0 answered</strong>';
+      const track = document.createElement('div');
+      track.id = 'testEssayProgressTrack';
+      track.className = 'progress-track test-essay-progress-track';
+      track.innerHTML = '<div class="progress-fill test-essay-progress-fill" id="testEssayProgressFill"></div>';
+      questionTrack.insertAdjacentElement('afterend', label);
+      label.insertAdjacentElement('afterend', track);
+    }
+  }
+
+  function updateProgress(attempt) {
+    ensureSectionNav(attempt);
+    ensureProgressBars();
+
+    const qDone = questionAnswered(attempt.test);
+    const qTotal = attempt.test.order.length || 0;
+    const eDone = essayAnsweredCount(attempt.sup);
+    const eTotal = attempt.sup.essayOrder.length || 0;
+
+    if (el('testProgressFill')) {
+      el('testProgressFill').style.width = `${qTotal ? (qDone / qTotal) * 100 : 0}%`;
+    }
+    if (el('testEssayProgressFill')) {
+      el('testEssayProgressFill').style.width = `${eTotal ? (eDone / eTotal) * 100 : 0}%`;
+    }
+    if (el('testQuestionProgressText')) el('testQuestionProgressText').textContent = `${qDone}/${qTotal} answered`;
+    if (el('testEssayProgressText')) el('testEssayProgressText').textContent = `${eDone}/${eTotal} answered`;
+
+    if (attempt.sup.phase === 'essays') {
+      if (el('testQuestionCount')) el('testQuestionCount').textContent = `Essay ${attempt.sup.essayIndex + 1}/${Math.max(1, eTotal)}`;
+      if (el('testAnsweredCount')) el('testAnsweredCount').textContent = `${eDone}/${eTotal} essays answered`;
+    } else {
+      const index = Math.max(0, Number(attempt.test.index) || 0);
+      if (el('testQuestionCount')) el('testQuestionCount').textContent = `Question ${index + 1}/${Math.max(1, qTotal)}`;
+      if (el('testAnsweredCount')) el('testAnsweredCount').textContent = `${qDone}/${qTotal} questions answered`;
+    }
+
+    const exit = el('exitTestBtn');
+    if (exit) {
+      const ready = allQuestionsAnswered(attempt.test);
+      exit.textContent = ready ? 'Finish test' : 'Exit test';
+      exit.classList.toggle('ready-to-finish', ready);
+      exit.setAttribute('aria-label', ready ? 'Finish and submit practice test' : 'Exit practice test and save as incomplete');
+    }
+  }
+
   function switchPhase(phase) {
     const attempt = active();
     if (!attempt || !['questions', 'essays'].includes(phase)) return false;
     if (phase === 'essays' && !attempt.sup.essayOrder.length) return false;
-    if (attempt.sup.phase === phase) return true;
+    if (attempt.sup.phase === phase) {
+      if (phase === 'essays') renderEssay(attempt);
+      return true;
+    }
 
     attempt.sup.phase = phase;
     saveSup(attempt.sup);
@@ -247,16 +373,29 @@
       renderEssay(attempt);
       window.scrollTo({ top: 0, behavior: 'auto' });
     } else {
-      // Reloading when returning to Questions deliberately discards the hidden
-      // question timer tick that accrued while the learner was writing essays.
       window.location.reload();
     }
     return true;
   }
 
-  function decorate(attempt = active()) {
+  function neutralizeQuestionFeedback(attempt) {
+    const id = currentId(attempt.test);
+    const current = status(attempt.test, attempt.sup, id);
+    const chip = el('questionStatus');
+    if (chip) {
+      chip.textContent = current.answered ? 'Answered' : 'Unanswered';
+      chip.className = 'status-chip';
+    }
+    el('feedbackBox')?.classList.add('hidden');
+
+    el('answerForm')?.querySelectorAll('.choice').forEach(label => {
+      label.classList.remove('correct-choice', 'wrong-choice');
+    });
+  }
+
+  function decorateQuestions(attempt = active()) {
     if (!attempt || attempt.sup.phase !== 'questions') return;
-    ensurePhaseNav(attempt);
+    updateProgress(attempt);
     const id = currentId(attempt.test);
     const current = status(attempt.test, attempt.sup, id);
     const follow = followButton();
@@ -293,37 +432,89 @@
       trigger.setAttribute('aria-label', `Question ${id}, ${current.answered ? 'answered' : 'unanswered'}${current.flagged ? ', marked for follow-up' : ''}. Choose another question.`);
     }
 
-    if (allAnswered(attempt.test) && attempt.sup.essayOrder.length && el('nextBtn')) {
-      el('nextBtn').textContent = 'Review essays →';
+    if (allQuestionsAnswered(attempt.test) && attempt.sup.essayOrder.length && el('nextBtn')) {
+      el('nextBtn').textContent = 'Essays →';
     }
+    neutralizeQuestionFeedback(attempt);
   }
 
-  function essayHost() {
-    const host = el('essayPracticeMain');
-    if (!host) return null;
-    let surface = host.querySelector('.test-essay-surface');
-    if (!surface) {
-      surface = document.createElement('section');
-      surface.className = 'test-essay-surface';
-      host.append(surface);
+  function currentEssay(attempt) {
+    return eMap.get(String(attempt.sup.essayOrder[attempt.sup.essayIndex])) || null;
+  }
+
+  function currentEssayFactIndex(attempt, essay) {
+    const essayId = String(essay.id);
+    const max = Math.max(0, Number(essay.facts?.length || 0) - 1);
+    const index = Math.min(Math.max(0, Number(attempt.sup.essayFactIndex[essayId]) || 0), max);
+    attempt.sup.essayFactIndex[essayId] = index;
+    return index;
+  }
+
+  function nextUnansweredFactIndex(attempt, essay, afterIndex = -1) {
+    const pairs = pairingMap(attempt.sup, essay.id);
+    const facts = essay.facts || [];
+    for (let offset = 1; offset <= facts.length; offset += 1) {
+      const index = (afterIndex + offset + facts.length) % facts.length;
+      if (!pairs[String(facts[index].id)]) return index;
     }
-    return surface;
+    return Math.min(Math.max(0, afterIndex), Math.max(0, facts.length - 1));
   }
 
-  function combinedCompletion(attempt) {
-    const total = attempt.test.order.length + attempt.sup.essayOrder.length;
-    const done = questionAnswered(attempt.test) + essayAnswered(attempt.sup);
-    return { total, done, pct: total ? (done / total) * 100 : 0 };
+  function populateEssayPicker(attempt) {
+    const select = el('essayQuickNav');
+    if (!select) return;
+    select.innerHTML = '';
+    attempt.sup.essayOrder.forEach((id, index) => {
+      const essay = eMap.get(String(id));
+      if (!essay) return;
+      const option = document.createElement('option');
+      option.value = String(index);
+      option.textContent = `${essayIsAnswered(attempt.sup, id) ? '✓ ' : '○ '}Essay ${index + 1} · ${essay.title || 'Essay'}`;
+      select.append(option);
+    });
+    select.value = String(attempt.sup.essayIndex);
   }
 
-  function progress(attempt) {
-    const total = attempt.sup.essayOrder.length;
-    const done = essayAnswered(attempt.sup);
-    if (el('testQuestionCount')) el('testQuestionCount').textContent = `Essay ${attempt.sup.essayIndex + 1}/${total}`;
-    if (el('testAnsweredCount')) el('testAnsweredCount').textContent = `${done}/${total} essays answered`;
-    const combined = combinedCompletion(attempt);
-    if (el('testProgressFill')) el('testProgressFill').style.width = `${combined.pct}%`;
-    ensurePhaseNav(attempt);
+  function renderEssayTags(essay) {
+    const host = el('essayCategoryTags');
+    if (!host) return;
+    host.innerHTML = '';
+    (essayTags[essay?.id] || ['Essay']).forEach(tag => {
+      const chip = document.createElement('span');
+      chip.className = 'essay-category-tag';
+      chip.textContent = tag;
+      host.append(chip);
+    });
+  }
+
+  function renderSubmittedPairings(attempt, essay) {
+    const host = el('essayAnswerZone');
+    if (!host) return;
+    const pairs = pairingMap(attempt.sup, essay.id);
+    host.innerHTML = '';
+    const submitted = essay.facts.filter(fact => !!pairs[String(fact.id)]);
+    if (!submitted.length) {
+      const empty = document.createElement('span');
+      empty.className = 'essay-answer-placeholder';
+      empty.textContent = 'Submitted pairings will appear here. Tap any submitted pairing to edit it.';
+      host.append(empty);
+      return;
+    }
+
+    submitted.forEach(fact => {
+      const selectedId = pairs[String(fact.id)];
+      const selectedFact = essay.facts.find(item => String(item.id) === String(selectedId));
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'essay-built-row test-pairing-row';
+      row.dataset.testEditFact = String(fact.id);
+      row.innerHTML = `
+        <span class="test-pairing-edit-icon" aria-hidden="true">✎</span>
+        <div class="essay-built-copy"><strong>${escapeHtml(essayNameText(fact))}</strong><span>${escapeHtml(essayPositionText(selectedFact))}</span></div>
+        <span class="test-pairing-edit-label">Edit</span>`;
+      row.setAttribute('aria-label', `Edit pairing for ${essayNameText(fact)}`);
+      host.append(row);
+    });
   }
 
   function renderEssay(attempt = active()) {
@@ -333,98 +524,115 @@
     el('saveNote')?.classList.add('ui-test-section-hidden');
     el('essayPracticeMain')?.classList.remove('hidden');
     followButton()?.classList.add('hidden');
-    ensurePhaseNav(attempt);
+    updateProgress(attempt);
 
-    const host = essayHost();
-    const ids = attempt.sup.essayOrder;
-    if (!host || !ids.length) return;
-    const essay = eMap.get(ids[attempt.sup.essayIndex]);
-    if (!essay) return;
+    const essay = currentEssay(attempt);
+    if (!essay?.facts?.length) return;
+    const essayId = String(essay.id);
+    const factIndex = currentEssayFactIndex(attempt, essay);
+    const fact = essay.facts[factIndex];
+    const pairs = pairingMap(attempt.sup, essayId);
+    const selectedId = pairs[String(fact.id)] || '';
 
-    const renderKey = `${attempt.test.id}:${attempt.sup.essayIndex}`;
-    if (host.dataset.testEssayKey === renderKey) {
-      progress(attempt);
-      return;
+    populateEssayPicker(attempt);
+    renderEssayTags(essay);
+
+    if (el('essayPracticeCounter')) el('essayPracticeCounter').textContent = `Pairing ${factIndex + 1} of ${essay.facts.length}`;
+    if (el('essayMasterySummary')) {
+      el('essayMasterySummary').textContent = `${essayPairingCount(attempt.sup, essayId)}/${essay.facts.length} submitted`;
     }
-    host.dataset.testEssayKey = renderKey;
-    host.innerHTML = '';
+    if (el('essayPracticeTitle')) el('essayPracticeTitle').textContent = essay.title || 'Essay';
+    if (el('essayPracticePrompt')) el('essayPracticePrompt').textContent = essay.prompt || '';
+    el('essayNoteLinks')?.classList.add('hidden');
+    el('essayQuestionAudio')?.classList.add('hidden');
+    el('essayPromptReportBtn')?.classList.add('hidden');
 
-    const toolbar = document.createElement('div');
-    toolbar.className = 'test-essay-toolbar';
-    const pickerLabel = document.createElement('label');
-    pickerLabel.className = 'test-essay-picker-label';
-    const pickerCaption = document.createElement('span');
-    pickerCaption.textContent = 'Jump to essay';
-    const picker = document.createElement('select');
-    picker.className = 'test-essay-picker';
-    picker.setAttribute('aria-label', 'Jump to essay');
-    ids.forEach((id, index) => {
-      const candidate = eMap.get(id);
-      const option = document.createElement('option');
-      option.value = String(index);
-      option.textContent = `Essay ${index + 1} · ${candidate?.title || 'Essay'}`;
-      picker.append(option);
-    });
-    picker.value = String(attempt.sup.essayIndex);
-    picker.addEventListener('change', () => jumpEssay(Number(picker.value)));
-    pickerLabel.append(pickerCaption, picker);
-    toolbar.append(pickerLabel);
+    if (el('essayBuildProgress')) {
+      el('essayBuildProgress').textContent = `${essayPairingCount(attempt.sup, essayId)} of ${essay.facts.length} submitted`;
+    }
+    renderSubmittedPairings(attempt, essay);
 
-    const header = document.createElement('header');
-    header.className = 'test-essay-head';
-    const eyebrow = document.createElement('span');
-    eyebrow.className = 'eyebrow';
-    eyebrow.textContent = `Essay ${attempt.sup.essayIndex + 1} of ${ids.length}`;
-    const title = document.createElement('h2');
-    title.textContent = essay.title || 'Essay';
-    const prompt = document.createElement('p');
-    prompt.className = 'test-essay-prompt';
-    prompt.textContent = essay.prompt || '';
-    header.append(eyebrow, title, prompt);
+    el('essayMatchSection')?.classList.remove('complete');
+    if (el('essayMatchCount')) el('essayMatchCount').textContent = `${factIndex + 1} of ${essay.facts.length}`;
+    if (el('essayMatchContext')) el('essayMatchContext').textContent = fact.label || 'Match the position';
+    if (el('essayMatchName')) el('essayMatchName').textContent = essayNameText(fact);
+    el('essayPairingReportBtn')?.classList.add('hidden');
+    if (el('essayPairingResources')) {
+      el('essayPairingResources').innerHTML = '';
+      el('essayPairingResources').classList.add('hidden');
+    }
 
-    const label = document.createElement('label');
-    label.className = 'test-essay-response-field';
-    const caption = document.createElement('span');
-    caption.textContent = 'Your answer';
-    const textarea = document.createElement('textarea');
-    textarea.rows = 12;
-    textarea.maxLength = 12000;
-    textarea.placeholder = 'Write your essay response here…';
-    textarea.value = response(attempt.sup, essay.id);
-    const count = document.createElement('small');
-    count.className = 'test-essay-word-count';
-    const updateCount = () => {
-      const words = textarea.value.trim() ? textarea.value.trim().split(/\s+/).length : 0;
-      count.textContent = `${words} word${words === 1 ? '' : 's'} · saved automatically`;
-    };
-    updateCount();
-    textarea.addEventListener('input', () => {
-      const current = active();
-      if (!current) return;
-      current.sup.essayResponses[String(essay.id)] = textarea.value;
-      saveSup(current.sup);
-      updateCount();
-      progress(current);
-    });
-    label.append(caption, textarea, count);
+    const choices = el('essayChoiceList');
+    if (choices) {
+      choices.innerHTML = '';
+      pairingChoices(essay, factIndex).forEach(optionFact => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'essay-choice test-essay-choice';
+        button.dataset.testEssayChoice = String(optionFact.id);
+        button.textContent = essayPositionText(optionFact);
+        const selected = String(optionFact.id) === String(selectedId);
+        button.classList.toggle('test-selected', selected);
+        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+        choices.append(button);
+      });
+    }
 
-    const nav = document.createElement('div');
-    nav.className = 'test-essay-nav';
-    const previous = document.createElement('button');
-    previous.type = 'button';
-    previous.className = 'secondary';
-    previous.textContent = '← Previous essay';
-    previous.disabled = attempt.sup.essayIndex === 0;
-    previous.addEventListener('click', () => moveEssay(-1));
-    const next = document.createElement('button');
-    next.type = 'button';
-    next.className = 'primary';
-    next.textContent = attempt.sup.essayIndex === ids.length - 1 ? 'Finish test' : 'Next essay →';
-    next.addEventListener('click', () => attempt.sup.essayIndex === ids.length - 1 ? requestFinish() : moveEssay(1));
-    nav.append(previous, next);
+    if (el('essayFeedback')) {
+      el('essayFeedback').className = 'essay-choice-feedback hidden';
+      el('essayFeedback').textContent = '';
+    }
+    if (el('essayModelAnswerWrap')) {
+      el('essayModelAnswerWrap').classList.add('hidden');
+      el('essayModelAnswerWrap').open = false;
+    }
 
-    host.append(toolbar, header, label, nav);
-    progress(attempt);
+    const previous = el('essayTryAgainBtn');
+    if (previous) {
+      previous.hidden = false;
+      previous.textContent = '← Previous essay';
+      previous.disabled = attempt.sup.essayIndex === 0;
+    }
+    const next = el('essayNextBtn');
+    if (next) {
+      next.hidden = false;
+      if (attempt.sup.essayIndex < attempt.sup.essayOrder.length - 1) next.textContent = 'Next essay →';
+      else if (allQuestionsAnswered(attempt.test)) next.textContent = 'Finish test';
+      else next.textContent = 'Questions →';
+    }
+  }
+
+  function setEssayFact(attempt, essay, factIndex) {
+    const bounded = Math.min(Math.max(0, Number(factIndex) || 0), Math.max(0, essay.facts.length - 1));
+    attempt.sup.essayFactIndex[String(essay.id)] = bounded;
+    saveSup(attempt.sup);
+    renderEssay(attempt);
+  }
+
+  function submitEssayPairing(choiceId) {
+    const attempt = active();
+    if (!attempt || attempt.sup.phase !== 'essays') return;
+    const essay = currentEssay(attempt);
+    if (!essay?.facts?.length) return;
+    const factIndex = currentEssayFactIndex(attempt, essay);
+    const fact = essay.facts[factIndex];
+    const valid = essay.facts.some(item => String(item.id) === String(choiceId));
+    if (!fact || !valid) return;
+
+    pairingMap(attempt.sup, essay.id)[String(fact.id)] = String(choiceId);
+    attempt.sup.essayFactIndex[String(essay.id)] = nextUnansweredFactIndex(attempt, essay, factIndex);
+    saveSup(attempt.sup);
+    renderEssay(attempt);
+  }
+
+  function editSubmittedPairing(factId) {
+    const attempt = active();
+    if (!attempt || attempt.sup.phase !== 'essays') return;
+    const essay = currentEssay(attempt);
+    const index = essay?.facts?.findIndex(fact => String(fact.id) === String(factId)) ?? -1;
+    if (index < 0) return;
+    setEssayFact(attempt, essay, index);
+    el('essayMatchSection')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
   function jumpEssay(index) {
@@ -432,6 +640,15 @@
     if (!attempt || !attempt.sup.essayOrder.length) return;
     attempt.sup.phase = 'essays';
     attempt.sup.essayIndex = Math.min(Math.max(0, Number(index) || 0), attempt.sup.essayOrder.length - 1);
+    const essay = currentEssay(attempt);
+    if (essay && essayIsAnswered(attempt.sup, essay.id)) {
+      attempt.sup.essayFactIndex[String(essay.id)] = Math.min(
+        Math.max(0, Number(attempt.sup.essayFactIndex[String(essay.id)]) || 0),
+        Math.max(0, essay.facts.length - 1)
+      );
+    } else if (essay) {
+      attempt.sup.essayFactIndex[String(essay.id)] = nextUnansweredFactIndex(attempt, essay, -1);
+    }
     saveSup(attempt.sup);
     renderEssay(attempt);
     window.scrollTo({ top: 0, behavior: 'auto' });
@@ -439,22 +656,40 @@
 
   function moveEssay(delta) {
     const attempt = active();
-    if (!attempt) return;
-    jumpEssay(attempt.sup.essayIndex + delta);
+    if (!attempt || attempt.sup.phase !== 'essays') return;
+    const next = Math.min(Math.max(0, attempt.sup.essayIndex + Number(delta || 0)), attempt.sup.essayOrder.length - 1);
+    if (next === attempt.sup.essayIndex) return;
+    jumpEssay(next);
   }
 
   function requestFinish() {
     const attempt = active();
     if (!attempt) return;
     const unansweredQuestions = attempt.test.order.length - questionAnswered(attempt.test);
-    const unansweredEssays = attempt.sup.essayOrder.length - essayAnswered(attempt.sup);
+    const unansweredEssays = attempt.sup.essayOrder.length - essayAnsweredCount(attempt.sup);
     if (unansweredQuestions || unansweredEssays) {
       const parts = [];
       if (unansweredQuestions) parts.push(`${unansweredQuestions} unanswered question${unansweredQuestions === 1 ? '' : 's'}`);
-      if (unansweredEssays) parts.push(`${unansweredEssays} unanswered essay${unansweredEssays === 1 ? '' : 's'}`);
-      if (!confirm(`Finish the practice test with ${parts.join(' and ')}?`)) return;
+      if (unansweredEssays) parts.push(`${unansweredEssays} incomplete essay${unansweredEssays === 1 ? '' : 's'}`);
+      if (!confirm(`Finish and submit the practice test with ${parts.join(' and ')}?`)) return;
+    } else if (!confirm('Finish and submit this practice test? You will then see the grading feedback.')) {
+      return;
     }
     finish('completed');
+  }
+
+  function requestExit() {
+    const attempt = active();
+    if (!attempt) return;
+    if (allQuestionsAnswered(attempt.test)) {
+      requestFinish();
+      return;
+    }
+    const questions = questionAnswered(attempt.test);
+    const essays = essayAnsweredCount(attempt.sup);
+    if (confirm(`Exit the practice test now? ${questions}/${attempt.test.order.length} questions and ${essays}/${attempt.sup.essayOrder.length} essays are answered. This attempt will be saved as incomplete.`)) {
+      finish('exited');
+    }
   }
 
   function resultFor(test, sup, reason) {
@@ -494,26 +729,47 @@
       else { incorrect += 1; category.incorrect += 1; }
     });
 
+    let essayPairCorrect = 0;
+    let essayPairTotal = 0;
     const essays = sup.essayOrder.map(id => {
       const essay = eMap.get(String(id));
-      const text = response(sup, id);
+      const pairs = pairingMap(sup, id);
+      const pairings = (essay?.facts || []).map(fact => {
+        const selectedId = pairs[String(fact.id)] || null;
+        const selectedFact = selectedId ? essay.facts.find(item => String(item.id) === String(selectedId)) : null;
+        const correctPair = !!selectedId && String(selectedId) === String(fact.id);
+        essayPairTotal += 1;
+        if (correctPair) essayPairCorrect += 1;
+        return {
+          factId: String(fact.id),
+          name: essayNameText(fact),
+          selectedId: selectedId ? String(selectedId) : null,
+          selectedText: selectedFact ? essayPositionText(selectedFact) : '',
+          correct: correctPair,
+          correctText: essayPositionText(fact)
+        };
+      });
+      const answered = pairings.length > 0 && pairings.every(item => !!item.selectedId);
       return {
         essayId: String(id),
         title: essay?.title || 'Essay',
         prompt: essay?.prompt || '',
-        response: text,
-        answered: !!text.trim()
+        modelAnswer: essay?.modelAnswer || '',
+        answered,
+        correctCount: pairings.filter(item => item.correct).length,
+        total: pairings.length,
+        pairings
       };
     });
-    const date = Date.now();
 
+    const date = Date.now();
     return {
       summary: {
         id: String(test.id),
         date,
         reason,
         completed: reason === 'completed',
-        scorePct: Q.length ? points / Q.length * 100 : 0,
+        scorePct: test.order.length ? points / test.order.length * 100 : 0,
         points,
         correct,
         partial,
@@ -526,20 +782,23 @@
         essayTotal: essays.length,
         essayAnswered: essays.filter(item => item.answered).length,
         essayUnanswered: essays.filter(item => !item.answered).length,
+        essayPairCorrect,
+        essayPairTotal,
+        essayScorePct: essayPairTotal ? essayPairCorrect / essayPairTotal * 100 : 0,
         followUpQuestionIds: [...sup.flags],
-        testFormat: 'questions-plus-essays-v2'
+        testFormat: 'questions-plus-essay-pairings-v3'
       },
       essays
     };
   }
 
-  function saveResponses(id, responses) {
-    const history = json(localStorage.getItem(RESP), {}) || {};
-    history[String(id)] = { savedAt: Date.now(), responses };
+  function saveEssayResults(id, essays) {
+    const history = json(localStorage.getItem(ESSAY_RESULT), {}) || {};
+    history[String(id)] = { savedAt: Date.now(), essays };
     const rows = Object.entries(history)
       .sort((a, b) => Number(b[1]?.savedAt || 0) - Number(a[1]?.savedAt || 0))
       .slice(0, 30);
-    localStorage.setItem(RESP, JSON.stringify(Object.fromEntries(rows)));
+    localStorage.setItem(ESSAY_RESULT, JSON.stringify(Object.fromEntries(rows)));
   }
 
   function queueSync(test) {
@@ -566,7 +825,7 @@
     const sup = normSup(test);
     const built = resultFor(test, sup, reason);
     const result = built.summary;
-    saveResponses(result.id, built.essays);
+    saveEssayResults(result.id, built.essays);
     state.tests = Array.isArray(state.tests) ? state.tests : [];
     if (!state.tests.some(item => String(item?.id) === result.id)) state.tests.push(result);
     state.tests = state.tests.slice(-30);
@@ -577,22 +836,6 @@
     localStorage.removeItem(SUP);
     window.location.reload();
   }
-
-  function exit(event) {
-    const attempt = active();
-    if (!attempt) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    const questions = questionAnswered(attempt.test);
-    const essays = essayAnswered(attempt.sup);
-    if (confirm(`Exit the practice test now? ${questions}/${attempt.test.order.length} questions and ${essays}/${attempt.sup.essayOrder.length} essays are answered. This attempt will be saved as incomplete.`)) {
-      finish('exited');
-    }
-  }
-
-  const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, character => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  }[character]));
 
   function showResult() {
     const pending = json(localStorage.getItem(PENDING), null);
@@ -611,20 +854,31 @@
           : `Exited early — ${new Date(result.date).toLocaleString()}`;
     }
 
-    const history = json(localStorage.getItem(RESP), {}) || {};
-    const rows = history[String(result.id)]?.responses || [];
+    const history = json(localStorage.getItem(ESSAY_RESULT), {}) || {};
+    const essays = history[String(result.id)]?.essays || [];
     content.innerHTML = `
       <div class="stat-grid test-combined-stats">
         <div class="stat-card"><div class="label">M/C score</div><div class="value">${Number(result.scorePct || 0).toFixed(1)}%</div></div>
         <div class="stat-card"><div class="label">Correct</div><div class="value">${result.correct || 0}</div></div>
         <div class="stat-card"><div class="label">Partial</div><div class="value">${result.partial || 0}</div></div>
         <div class="stat-card"><div class="label">Incorrect</div><div class="value">${result.incorrect || 0}</div></div>
-        <div class="stat-card"><div class="label">Essays answered</div><div class="value">${result.essayAnswered || 0}/${result.essayTotal || 0}</div></div>
+        <div class="stat-card"><div class="label">Essay pairings</div><div class="value">${result.essayPairCorrect || 0}/${result.essayPairTotal || 0}</div></div>
+        <div class="stat-card"><div class="label">Essay score</div><div class="value">${Number(result.essayScorePct || 0).toFixed(1)}%</div></div>
       </div>
-      ${rows.length ? `<div class="stat-section"><h3>Essay responses</h3><p class="small-muted">Essay responses are for self-review and are not automatically graded.</p>${rows.map((item, index) => {
-        const essay = eMap.get(String(item.essayId));
-        return `<details class="test-result-essay"><summary>Essay ${index + 1}: ${escapeHtml(item.title)} · ${item.answered ? 'Answered' : 'Unanswered'}</summary><div class="test-result-essay-body"><strong>Prompt</strong><p>${escapeHtml(item.prompt)}</p><strong>Your response</strong><p class="test-result-response">${item.answered ? escapeHtml(item.response) : 'No response submitted.'}</p>${essay?.modelAnswer ? `<strong>Model answer</strong><p>${escapeHtml(essay.modelAnswer)}</p>` : ''}</div></details>`;
-      }).join('')}</div>` : ''}`;
+      ${essays.length ? `<div class="stat-section"><h3>Essay results</h3><p class="small-muted">Pairing correctness is shown only after the test is submitted.</p>${essays.map((item, index) => `
+        <details class="test-result-essay">
+          <summary>Essay ${index + 1}: ${escapeHtml(item.title)} · ${item.correctCount}/${item.total} correct</summary>
+          <div class="test-result-essay-body">
+            <strong>Prompt</strong><p>${escapeHtml(item.prompt)}</p>
+            <div class="test-result-pairings">${item.pairings.map(pair => `
+              <div class="test-result-pairing ${pair.correct ? 'correct' : pair.selectedId ? 'incorrect' : 'unanswered'}">
+                <strong>${escapeHtml(pair.name)}</strong>
+                <span>${pair.selectedId ? escapeHtml(pair.selectedText) : 'No pairing submitted.'}</span>
+                <small>${pair.correct ? 'Correct' : pair.selectedId ? `Correct pairing: ${escapeHtml(pair.correctText)}` : `Correct pairing: ${escapeHtml(pair.correctText)}`}</small>
+              </div>`).join('')}</div>
+            ${item.modelAnswer ? `<strong>Model answer</strong><p>${escapeHtml(item.modelAnswer)}</p>` : ''}
+          </div>
+        </details>`).join('')}</div>` : ''}`;
 
     localStorage.removeItem(PENDING);
     dialog.showModal();
@@ -650,12 +904,15 @@
     el('questionCard')?.classList.remove('ui-test-section-hidden');
     el('saveNote')?.classList.remove('ui-test-section-hidden');
     el('essayPracticeMain')?.classList.add('hidden');
-    decorate(attempt);
+    decorateQuestions(attempt);
   }
 
   function cleanupInactive() {
     followButton()?.classList.add('hidden');
     el('testSectionNav')?.remove();
+    el('testQuestionProgressLabel')?.remove();
+    el('testEssayProgressLabel')?.remove();
+    el('testEssayProgressTrack')?.remove();
     document.body.classList.remove('ui-test-essays');
     el('questionCard')?.classList.remove('ui-test-section-hidden');
     el('saveNote')?.classList.remove('ui-test-section-hidden');
@@ -669,16 +926,69 @@
     }
     syncExactTimer(attempt);
     if (finishing) return;
-    ensurePhaseNav(attempt);
+    updateProgress(attempt);
     if (attempt.sup.phase === 'essays') renderEssay(attempt);
     else showQuestionSurface(attempt);
   }
 
   el('startTestBtn')?.addEventListener('click', bridgeNativeStart);
-  el('exitTestBtn')?.addEventListener('click', exit, true);
+
+  document.addEventListener('click', event => {
+    const attempt = active();
+    if (!attempt) return;
+
+    if (event.target.closest?.('#exitTestBtn')) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      requestExit();
+      return;
+    }
+
+    if (attempt.sup.phase !== 'essays') return;
+
+    const choice = event.target.closest?.('[data-test-essay-choice]');
+    if (choice) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      submitEssayPairing(choice.dataset.testEssayChoice);
+      return;
+    }
+
+    const edit = event.target.closest?.('[data-test-edit-fact]');
+    if (edit) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      editSubmittedPairing(edit.dataset.testEditFact);
+      return;
+    }
+
+    if (event.target.closest?.('#essayTryAgainBtn')) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      moveEssay(-1);
+      return;
+    }
+
+    if (event.target.closest?.('#essayNextBtn')) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (attempt.sup.essayIndex < attempt.sup.essayOrder.length - 1) moveEssay(1);
+      else if (allQuestionsAnswered(attempt.test)) requestFinish();
+      else switchPhase('questions');
+    }
+  }, true);
+
+  el('essayQuickNav')?.addEventListener('change', event => {
+    const attempt = active();
+    if (!attempt || attempt.sup.phase !== 'essays') return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    jumpEssay(Number(event.currentTarget.value));
+  }, true);
+
   el('nextBtn')?.addEventListener('click', event => {
     const attempt = active();
-    if (attempt?.sup.phase === 'questions' && allAnswered(attempt.test) && attempt.sup.essayOrder.length) {
+    if (attempt?.sup.phase === 'questions' && allQuestionsAnswered(attempt.test) && attempt.sup.essayOrder.length) {
       event.preventDefault();
       event.stopImmediatePropagation();
       switchPhase('essays');
@@ -686,19 +996,27 @@
   }, true);
 
   document.addEventListener('keydown', event => {
-    if (
-      event.key !== 'ArrowRight' || event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
-      event.target?.closest?.('button,a,input,textarea,select,[contenteditable="true"]') || document.querySelector('dialog[open]')
-    ) return;
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
     const attempt = active();
-    if (attempt?.sup.phase === 'questions' && allAnswered(attempt.test) && attempt.sup.essayOrder.length) {
+    if (!attempt) return;
+    const key = event.key;
+    const interactiveTarget = event.target?.closest?.('button,a,input,textarea,select,[contenteditable="true"]');
+    const dialogOpen = !!document.querySelector('dialog[open]');
+    if (interactiveTarget || dialogOpen) return;
+
+    if (attempt.sup.phase === 'essays' && (key === 'ArrowLeft' || key === 'ArrowRight')) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      moveEssay(key === 'ArrowLeft' ? -1 : 1);
+      return;
+    }
+
+    if (attempt.sup.phase === 'questions' && key === 'ArrowRight' && allQuestionsAnswered(attempt.test) && attempt.sup.essayOrder.length) {
       event.preventDefault();
       event.stopImmediatePropagation();
       switchPhase('essays');
     }
   }, true);
-
-  el('categoriesBtn')?.addEventListener('click', () => window.setTimeout(copy, 0), true);
 
   copy();
   followButton();

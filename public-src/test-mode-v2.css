@@ -1,0 +1,210 @@
+/* Test-mode v2 interaction and review layer. Loaded after test-mode.css. */
+body.ui-test-active #testProgressFill {
+  width: var(--test-question-progress, 0%) !important;
+  transition: width .18s ease-out !important;
+}
+body.ui-test-active #testEssayProgressFill {
+  width: var(--test-essay-progress, 0%) !important;
+  transition: width .18s ease-out !important;
+}
+body.ui-test-active #mainTimer {
+  font-size: 0 !important;
+  line-height: 1;
+}
+body.ui-test-active #mainTimer::after {
+  content: attr(data-test-time);
+  font-size: .8rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .015em;
+}
+.question-number-option.test-unanswered:not(.selected) {
+  background: #fff7ed !important;
+  border-color: #f1c99d !important;
+  color: #8a4b10 !important;
+  box-shadow: inset 3px 0 0 #d97706 !important;
+  font-weight: 850 !important;
+}
+.question-number-option.test-answered:not(.selected) {
+  box-shadow: inset 3px 0 0 #3a8b58 !important;
+}
+.question-number-option.test-flagged {
+  box-shadow: inset 3px 0 0 #d39a16, inset 0 0 0 1px #d8a72f !important;
+}
+body.ui-test-essays .test-essay-choice {
+  position: relative;
+  display: grid !important;
+  grid-template-columns: 28px minmax(0,1fr);
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+body.ui-test-essays .test-essay-choice > * { pointer-events: none; }
+.test-choice-number {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #ced9e9;
+  border-radius: 8px;
+  background: #f4f7fb;
+  color: #506889;
+  font-size: .7rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.test-choice-copy { min-width: 0; line-height: 1.4; }
+body.ui-test-essays .test-essay-choice.test-keyboard-selected {
+  border-color: #6d92e8 !important;
+  background: #f2f6ff !important;
+  box-shadow: inset 0 0 0 1px rgba(54,96,205,.12) !important;
+}
+body.ui-test-essays .test-essay-choice.test-keyboard-selected .test-choice-number,
+body.ui-test-essays .test-essay-choice.test-selected .test-choice-number {
+  border-color: #6487d7;
+  background: #e7efff;
+  color: #234f9d;
+}
+.test-pairing-row { min-height: 50px; touch-action: manipulation; }
+.test-pairing-row > * { pointer-events: none; }
+.test-pairing-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.test-pairing-nav button { min-width: 0; }
+.test-keyboard-help {
+  margin: 14px 0 2px;
+  padding: 9px 12px;
+  border: 1px solid #e0e7f1;
+  border-radius: 10px;
+  background: #f8faff;
+  color: #697991;
+  font-size: .66rem;
+  font-weight: 750;
+  line-height: 1.45;
+  text-align: center;
+}
+.test-essay-followup-btn,
+.test-pairing-followup-btn { flex: 0 0 auto; }
+.essay-question-card-head #testEssayFollowUpBtn { margin-left: auto; }
+body.ui-test-essays #essayQuickNav {
+  width: min(100%, 520px);
+  min-height: 42px;
+  font-weight: 750;
+}
+.test-review-now-btn { width: 100%; margin-top: 14px; }
+.test-review-shell { max-height: min(92vh, 900px); }
+.test-review-section-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 4px;
+  margin: 2px 0 10px;
+  padding: 3px;
+  border: 1px solid #d7e0ec;
+  border-radius: 11px;
+  background: #eef2f7;
+}
+.test-review-section-nav .test-section-btn { min-height: 36px; }
+#testReviewPicker { width: 100%; margin: 0 0 14px; min-height: 42px; }
+.test-review-body { min-height: 300px; }
+.test-review-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  margin-bottom: 8px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #f1f4f8;
+  color: #5c6d84;
+  font-size: .67rem;
+  font-weight: 850;
+}
+.test-review-status.correct { background: #edf8f0; color: #25633d; }
+.test-review-status.partial { background: #fff8e7; color: #865b0e; }
+.test-review-status.incorrect,
+.test-review-status.unanswered { background: #fff1f2; color: #91404a; }
+.test-review-prompt { color: #3d4b60; line-height: 1.55; }
+.test-review-choices { display: grid; gap: 8px; margin: 14px 0; }
+.test-review-choice {
+  display: grid;
+  grid-template-columns: 28px minmax(0,1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #dce5f1;
+  border-radius: 11px;
+  background: #fff;
+}
+.test-review-choice > strong {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: #f0f4fa;
+  color: #4d6488;
+}
+.test-review-choice small { font-size: .6rem; font-weight: 850; color: #60708a; }
+.test-review-choice.correct { border-color: #afd7bb; background: #f4fbf6; }
+.test-review-choice.wrong { border-color: #e6bcc1; background: #fff5f6; }
+.test-review-choice.selected { box-shadow: inset 3px 0 0 #376bd8; }
+.test-review-explanation,
+.test-review-pairing-card,
+.test-review-buildout {
+  margin-top: 16px;
+  padding: 13px;
+  border: 1px solid #dde6f1;
+  border-radius: 12px;
+  background: #f9fbfe;
+}
+.test-review-explanation p,
+.test-review-pairing-card p,
+.test-review-model p { white-space: pre-wrap; line-height: 1.5; }
+.test-review-pairing-card { display: grid; gap: 8px; }
+.test-review-pairing-card small { color: #728198; font-weight: 800; }
+.test-review-buildout { display: grid; gap: 7px; }
+.test-review-buildout > strong { margin-bottom: 2px; }
+.test-review-model { margin-top: 14px; }
+.test-history-list { display: grid; gap: 9px; }
+.test-history-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border: 1px solid #dce5f1;
+  border-radius: 12px;
+  background: #f9fbfe;
+}
+.test-history-row > div { min-width: 0; display: grid; gap: 3px; }
+.test-history-row strong { color: #233d67; font-size: .76rem; }
+.test-history-row span { color: #687890; font-size: .67rem; line-height: 1.35; }
+.test-history-stats-panel { margin-top: 20px; }
+.test-history-stats-head {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  align-items: center;
+  gap: 14px;
+}
+@media (max-width: 620px) {
+  .test-keyboard-help { display: none; }
+  .test-review-choice { grid-template-columns: 28px minmax(0,1fr); }
+  .test-review-choice small { grid-column: 2; }
+  .test-history-row,
+  .test-history-stats-head { grid-template-columns: minmax(0,1fr); }
+  .test-history-row button,
+  .test-history-stats-head button { width: 100%; }
+  .test-review-dialog .modal-footer.split { gap: 8px; }
+  .test-review-dialog .essay-footer-right { display: flex; gap: 8px; }
+}
+@media (max-width: 390px) {
+  .test-pairing-nav { gap: 6px; }
+  .test-pairing-nav button { padding-inline: 8px !important; font-size: .7rem !important; }
+  body.ui-test-essays .test-essay-choice { grid-template-columns: 25px minmax(0,1fr); gap: 8px; }
+  .test-choice-number { width: 24px; height: 24px; }
+}

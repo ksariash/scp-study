@@ -348,17 +348,34 @@
     input.setAttribute('aria-autocomplete', 'list');
     input.setAttribute('aria-expanded', 'false');
     input.setAttribute('aria-label', label);
+
+    const clearButton = document.createElement('button');
+    clearButton.type = 'button';
+    clearButton.className = 'ui-rav-clear';
+    clearButton.hidden = true;
+    clearButton.setAttribute('aria-label', 'Clear Rav search');
+    clearButton.title = 'Clear search';
+    clearButton.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+
+    const searchIcon = document.createElement('span');
+    searchIcon.className = 'ui-rav-search-icon';
+    searchIcon.setAttribute('aria-hidden', 'true');
+    searchIcon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>';
+
     const list = document.createElement('div');
     list.className = 'ui-rav-suggestions';
     list.id = `${selectId}Suggestions`;
     list.setAttribute('role', 'listbox');
     list.hidden = true;
     input.setAttribute('aria-controls', list.id);
-    wrapper.append(input, list);
+    wrapper.append(input, clearButton, searchIcon, list);
     select.insertAdjacentElement('afterend', wrapper);
 
     let visible = [];
     let activeIndex = -1;
+    const syncClearButton = () => {
+      clearButton.hidden = !input.value.trim();
+    };
 
     const values = () => [...select.options].map(option => option.value).filter(Boolean);
     const close = () => {
@@ -371,6 +388,7 @@
       if (!values().includes(value)) return;
       select.value = value;
       input.value = value;
+      syncClearButton();
       select.dispatchEvent(new Event('change', { bubbles:true }));
       close();
     };
@@ -415,10 +433,24 @@
       const selected = String(select.value || '');
       if (selected) input.value = selected;
       else if (!preserveQuery) input.value = '';
+      syncClearButton();
     };
+
+    clearButton.addEventListener('pointerdown', event => event.preventDefault());
+    clearButton.addEventListener('click', () => {
+      input.value = '';
+      if (select.value) {
+        select.value = '';
+        select.dispatchEvent(new Event('change', { bubbles:true }));
+      }
+      syncClearButton();
+      input.focus({ preventScroll:true });
+      render();
+    });
 
     input.addEventListener('focus', render);
     input.addEventListener('input', () => {
+      syncClearButton();
       const currentValues = values();
       const exact = currentValues.find(value => value.toLocaleLowerCase() === input.value.trim().toLocaleLowerCase());
       if (exact) {

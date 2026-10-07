@@ -4195,3 +4195,65 @@ body.essay-mode-active.mini-audio-visible .question-search-fab{
   .topbar-right>.header-utility-btn,
   .topbar-right>#notificationsBtn{flex-basis:36px;width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important}
 }
+
+
+/* v76: native Rabbi dropdown with text filter */
+.chabura-field{
+  display:grid;
+  gap:5px;
+  min-width:0;
+}
+.chabura-field>span:first-child{
+  color:var(--muted);
+  font-size:.66rem;
+  font-weight:850;
+  letter-spacing:.045em;
+  text-transform:uppercase;
+}
+.chabura-rav-control{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:6px;
+  min-width:0;
+  width:100%;
+}
+.chabura-rav-filter,
+.chabura-rav-control select{
+  display:block;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  min-height:38px;
+  box-sizing:border-box;
+  padding:8px 9px;
+  border:1px solid #d7e1ef;
+  border-radius:10px;
+  background:#fff;
+  color:var(--text);
+  font:inherit;
+  font-size:.76rem;
+}
+.chabura-rav-filter{
+  -webkit-appearance:none;
+  appearance:none;
+}
+.chabura-rav-filter::placeholder{color:#8795a8}
+.chabura-rav-filter:focus,
+.chabura-rav-control select:focus{
+  outline:3px solid rgba(49,86,183,.16);
+  outline-offset:1px;
+  border-color:#8aa8dc;
+}
+.chabura-rav-filter:disabled,
+.chabura-rav-control select:disabled{
+  background:#f4f6f9;
+  color:#8a96a8;
+  cursor:not-allowed;
+}
+@media(max-width:780px){
+  .chabura-rav-filter,
+  .chabura-rav-control select{
+    min-height:44px;
+    font-size:16px;
+  }
+}

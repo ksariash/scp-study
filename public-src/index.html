@@ -499,8 +499,17 @@
               <h3 id="chaburaSettingHeading">Chabura</h3>
             </div>
             <div class="chabura-fields">
-              <select id="settingsChaburaLocation" aria-label="Chabura location"></select>
-              <select id="settingsChaburaSelect" aria-label="SCP chabura"></select>
+              <label class="chabura-field">
+                <span>Region</span>
+                <select id="settingsChaburaLocation" aria-label="Chabura region"></select>
+              </label>
+              <label class="chabura-field">
+                <span>Rabbi</span>
+                <span class="chabura-rav-control">
+                  <input id="settingsChaburaFilter" class="chabura-rav-filter" type="search" autocomplete="off" spellcheck="false" placeholder="Filter Rabbis…" aria-label="Filter Rabbis" />
+                  <select id="settingsChaburaSelect" aria-label="Choose Rabbi"></select>
+                </span>
+              </label>
               <button class="secondary settings-action-btn" type="button" id="saveChaburaSettingsBtn">Save chabura</button>
             </div>
             <span class="analytics-status setting-current-value" id="chaburaSettingsStatus" aria-live="polite"></span>
@@ -953,7 +962,13 @@
       </div>
       <div class="chabura-dialog-fields">
         <label><span>Where is your Semichas Chaver Chabura located?</span><select id="chaburaDialogLocation"></select></label>
-        <label><span>Which SCP chabura do you attend?</span><select id="chaburaDialogSelect"></select></label>
+        <label>
+          <span>Rabbi</span>
+          <span class="chabura-rav-control">
+            <input id="chaburaDialogFilter" class="chabura-rav-filter" type="search" autocomplete="off" spellcheck="false" placeholder="Filter Rabbis…" aria-label="Filter Rabbis" />
+            <select id="chaburaDialogSelect" aria-label="Choose Rabbi"></select>
+          </span>
+        </label>
       </div>
       <div class="modal-footer">
         <button class="primary" type="button" id="saveChaburaDialogBtn" disabled>Save and continue</button>

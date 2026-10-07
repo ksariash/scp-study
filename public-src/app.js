@@ -221,7 +221,7 @@
     feedbackBox: el('feedbackBox'), feedbackResult: el('feedbackResult'), feedbackTime: el('feedbackTime'), feedbackCategory: el('feedbackCategory'), feedbackExplanation: el('feedbackExplanation'), correctAnswerLine: el('correctAnswerLine'),
     questionCard: el('questionCard'), prevBtn: el('prevBtn'), submitBtn: el('submitBtn'), nextBtn: el('nextBtn'), saveNote: el('saveNote'),
     categoriesDialog: el('categoriesDialog'), categoriesDialogTitle: el('categoriesDialogTitle'), categoriesDialogDescription: el('categoriesDialogDescription'), categoryOptions: el('categoryOptions'), selectAllCategories: el('selectAllCategories'), clearCategories: el('clearCategories'), applyCategories: el('applyCategories'),
-    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), downloadAllPdfsBtn: el('downloadAllPdfsBtn'), pdfCacheStatus: el('pdfCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), fontSizeSelect: el('fontSizeSelect'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), syncToggle: el('syncToggle'), syncStatus: el('syncStatus'), syncNowBtn: el('syncNowBtn'), syncActions: el('syncActions'), joinSyncBtn: el('joinSyncBtn'), linkDeviceBtn: el('linkDeviceBtn'), manageDevicesBtn: el('manageDevicesBtn'), syncDevicesDialog: el('syncDevicesDialog'), closeSyncDevices: el('closeSyncDevices'), syncDeviceList: el('syncDeviceList'), syncDevicesStatus: el('syncDevicesStatus'), unlinkThisDeviceBtn: el('unlinkThisDeviceBtn'), unlinkOtherDevicesBtn: el('unlinkOtherDevicesBtn'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'), settingsTransferStatus: el('settingsTransferStatus'), settingsAboutBtn: el('settingsAboutBtn'), settingsAboutVersion: el('settingsAboutVersion'),
+    materialsDialog: el('materialsDialog'), closeMaterials: el('closeMaterials'), doneMaterialsBtn: el('doneMaterialsBtn'), materialsTabs: el('materialsTabs'), materialsPanelAudio: el('materialsPanelAudio'), materialsPanelQuestions: el('materialsPanelQuestions'), materialsPanelEssays: el('materialsPanelEssays'), materialsPanelGlossary: el('materialsPanelGlossary'), materialsPanelDownloads: el('materialsPanelDownloads'), materialsPanelSettings: el('materialsPanelSettings'), materialsQuestionInput: el('materialsQuestionInput'), materialsQuestionGoBtn: el('materialsQuestionGoBtn'), materialsBrowseAllQuestions: el('materialsBrowseAllQuestions'), materialsCurrentQuestionBtn: el('materialsCurrentQuestionBtn'), materialsQuestionCategories: el('materialsQuestionCategories'), materialsQuestionCount: el('materialsQuestionCount'), materialsEssayInput: el('materialsEssayInput'), materialsEssaySearchClear: el('materialsEssaySearchClear'), materialsBrowseAllEssays: el('materialsBrowseAllEssays'), materialsEssayList: el('materialsEssayList'), materialsEssayEmpty: el('materialsEssayEmpty'), materialsEssayCount: el('materialsEssayCount'), downloadAllAudioBtn: el('downloadAllAudioBtn'), audioCacheStatus: el('audioCacheStatus'), downloadAllPdfsBtn: el('downloadAllPdfsBtn'), pdfCacheStatus: el('pdfCacheStatus'), glossarySearchInput: el('glossarySearchInput'), glossarySearchClear: el('glossarySearchClear'), glossaryCount: el('glossaryCount'), glossaryList: el('glossaryList'), glossaryEmpty: el('glossaryEmpty'), fontSizeSelect: el('fontSizeSelect'), settingsCohortSelect: el('settingsCohortSelect'), switchCohortBtn: el('switchCohortBtn'), cohortSettingsStatus: el('cohortSettingsStatus'), analyticsToggle: el('analyticsToggle'), analyticsStatus: el('analyticsStatus'), syncToggle: el('syncToggle'), syncStatus: el('syncStatus'), syncNowBtn: el('syncNowBtn'), syncActions: el('syncActions'), joinSyncBtn: el('joinSyncBtn'), linkDeviceBtn: el('linkDeviceBtn'), manageDevicesBtn: el('manageDevicesBtn'), syncDevicesDialog: el('syncDevicesDialog'), closeSyncDevices: el('closeSyncDevices'), syncDeviceList: el('syncDeviceList'), syncDevicesStatus: el('syncDevicesStatus'), unlinkThisDeviceBtn: el('unlinkThisDeviceBtn'), unlinkOtherDevicesBtn: el('unlinkOtherDevicesBtn'), settingsChaburaLocation: el('settingsChaburaLocation'), settingsChaburaFilter: el('settingsChaburaFilter'), settingsChaburaSelect: el('settingsChaburaSelect'), saveChaburaSettingsBtn: el('saveChaburaSettingsBtn'), chaburaSettingsStatus: el('chaburaSettingsStatus'), clearCacheBtn: el('clearCacheBtn'), settingsResetStatsBtn: el('settingsResetStatsBtn'), settingsStatus: el('settingsStatus'), settingsTransferStatus: el('settingsTransferStatus'), settingsAboutBtn: el('settingsAboutBtn'), settingsAboutVersion: el('settingsAboutVersion'),
     essayIntroDialog: el('essayIntroDialog'), closeEssayIntro: el('closeEssayIntro'), cancelEssayStart: el('cancelEssayStart'), startEssayFromIntroBtn: el('startEssayFromIntroBtn'), viewEssayLibraryBtn: el('viewEssayLibraryBtn'), essayIntroMastered: el('essayIntroMastered'), essayIntroSeen: el('essayIntroSeen'), essayIntroPracticed: el('essayIntroPracticed'), essayIntroPerfect: el('essayIntroPerfect'),
     essayLibraryDialog: el('essayLibraryDialog'), closeEssayLibrary: el('closeEssayLibrary'), doneEssayLibrary: el('doneEssayLibrary'), essayLibrarySearch: el('essayLibrarySearch'), essayLibrarySearchClear: el('essayLibrarySearchClear'), essayLibrarySummary: el('essayLibrarySummary'), essayLibraryList: el('essayLibraryList'), essayLibraryEmpty: el('essayLibraryEmpty'),
     essayPracticeMain: el('essayPracticeMain'), essayQuickNav: el('essayQuickNav'), essayCategoryTags: el('essayCategoryTags'), essayPracticeCounter: el('essayPracticeCounter'), essayMasterySummary: el('essayMasterySummary'), essayPracticeTitle: el('essayPracticeTitle'), essayPracticePrompt: el('essayPracticePrompt'), essayNoteLinks: el('essayNoteLinks'), essayQuestionAudio: el('essayQuestionAudio'), essayPromptReportBtn: el('essayPromptReportBtn'), essayBuildProgress: el('essayBuildProgress'), essayAnswerZone: el('essayAnswerZone'), essayMatchSection: el('essayMatchSection'), essayMatchCount: el('essayMatchCount'), essayMatchContext: el('essayMatchContext'), essayMatchName: el('essayMatchName'), essayPairingReportBtn: el('essayPairingReportBtn'), essayPairingResources: el('essayPairingResources'), essayChoiceList: el('essayChoiceList'), essayFeedback: el('essayFeedback'), essayModelAnswerWrap: el('essayModelAnswerWrap'), essayModelAnswer: el('essayModelAnswer'), essayTryAgainBtn: el('essayTryAgainBtn'), essayNextBtn: el('essayNextBtn'),
@@ -235,7 +235,7 @@
     contentFeedbackDialog: el('contentFeedbackDialog'), closeContentFeedback: el('closeContentFeedback'), cancelContentFeedback: el('cancelContentFeedback'), submitContentFeedback: el('submitContentFeedback'), contentFeedbackType: el('contentFeedbackType'), contentFeedbackTitle: el('contentFeedbackTitle'), contentFeedbackPreview: el('contentFeedbackPreview'), contentFeedbackDetails: el('contentFeedbackDetails'), contentFeedbackCount: el('contentFeedbackCount'), contentFeedbackStatus: el('contentFeedbackStatus'),
     appVersionFooter: el('appVersionFooter'), appToast: el('appToast'), updatePullIndicator: el('updatePullIndicator'),
     pdfViewerDialog: el('pdfViewerDialog'), pdfViewerBackBtn: el('pdfViewerBackBtn'), pdfViewerTitle: el('pdfViewerTitle'), pdfViewerJumpPicker: el('pdfViewerJumpPicker'), pdfViewerJump: el('pdfViewerJump'), pdfViewerJumpTrigger: el('pdfViewerJumpTrigger'), pdfViewerJumpMenu: el('pdfViewerJumpMenu'), pdfViewerShareBtn: el('pdfViewerShareBtn'), pdfViewerPrintBtn: el('pdfViewerPrintBtn'), pdfViewerDownloadBtn: el('pdfViewerDownloadBtn'), pdfViewerBody: el('pdfViewerBody'), pdfViewerStatus: el('pdfViewerStatus'), pdfViewerPages: el('pdfViewerPages'),
-    chaburaDialog: el('chaburaDialog'), chaburaDialogLocation: el('chaburaDialogLocation'), chaburaDialogSelect: el('chaburaDialogSelect'), saveChaburaDialogBtn: el('saveChaburaDialogBtn')
+    chaburaDialog: el('chaburaDialog'), chaburaDialogLocation: el('chaburaDialogLocation'), chaburaDialogFilter: el('chaburaDialogFilter'), chaburaDialogSelect: el('chaburaDialogSelect'), saveChaburaDialogBtn: el('saveChaburaDialogBtn')
   };
 
   let importReloadPending = false;
@@ -314,14 +314,35 @@
     if (CHABURA_LOCATIONS.includes(selected)) select.value = selected;
   }
 
-  function fillChaburaSelect(select, location, selected = '') {
+  function fillChaburaSelect(select, location, selected = '', filter = '') {
     if (!select) return;
-    const options = CHABURA_LOCATIONS.includes(location) ? chaburaOptions(location) : [];
-    select.innerHTML = '<option value="">Choose a chabura…</option>' + options.map(chabura =>
+    const validLocation = CHABURA_LOCATIONS.includes(location);
+    const allOptions = validLocation ? chaburaOptions(location) : [];
+    const term = String(filter || '').trim().toLocaleLowerCase();
+    const options = term
+      ? allOptions.filter(chabura => String(chabura).toLocaleLowerCase().includes(term))
+      : allOptions;
+    const placeholder = !validLocation
+      ? 'Choose a region first…'
+      : (options.length ? 'Choose a Rabbi…' : 'No matching Rabbis');
+    select.innerHTML = `<option value="">${placeholder}</option>` + options.map(chabura =>
       `<option value="${escapeHtml(chabura)}">${escapeHtml(chabura)}</option>`
     ).join('');
-    select.disabled = !CHABURA_LOCATIONS.includes(location);
+    select.disabled = !validLocation;
     if (options.includes(selected)) select.value = selected;
+  }
+
+  function syncChaburaFilterAvailability(input, location) {
+    if (!input) return;
+    input.disabled = !CHABURA_LOCATIONS.includes(location);
+    if (input.disabled) input.value = '';
+  }
+
+  function chaburaDialogSelectionValid() {
+    return !!validChaburaSettings({
+      location: dom.chaburaDialogLocation?.value,
+      chabura: dom.chaburaDialogSelect?.value
+    });
   }
 
   function cohortRegistryEntries() {
@@ -358,8 +379,11 @@
 
   function syncChaburaSettingsUi() {
     const saved = loadChaburaSettings();
-    fillChaburaLocationSelect(dom.settingsChaburaLocation, saved?.location || '');
-    fillChaburaSelect(dom.settingsChaburaSelect, saved?.location || '', saved?.chabura || '');
+    const location = saved?.location || '';
+    fillChaburaLocationSelect(dom.settingsChaburaLocation, location);
+    if (dom.settingsChaburaFilter) dom.settingsChaburaFilter.value = '';
+    syncChaburaFilterAvailability(dom.settingsChaburaFilter, location);
+    fillChaburaSelect(dom.settingsChaburaSelect, location, saved?.chabura || '');
     if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = saved
       ? `Current: ${saved.chabura} · ${saved.location}`
       : 'Current: Not selected';
@@ -408,6 +432,8 @@
     const saved = loadChaburaSettings();
     if (saved || !dom.chaburaDialog) return;
     fillChaburaLocationSelect(dom.chaburaDialogLocation, '');
+    if (dom.chaburaDialogFilter) dom.chaburaDialogFilter.value = '';
+    syncChaburaFilterAvailability(dom.chaburaDialogFilter, '');
     fillChaburaSelect(dom.chaburaDialogSelect, '', '');
     dom.saveChaburaDialogBtn.disabled = true;
     if (!dom.chaburaDialog.open) dom.chaburaDialog.showModal();
@@ -4871,23 +4897,45 @@
     dom.settingsCohortSelect?.addEventListener('change', syncCohortSettingsUi);
     dom.switchCohortBtn?.addEventListener('click', switchStudyCohort);
     dom.settingsChaburaLocation?.addEventListener('change', e => {
-      fillChaburaSelect(dom.settingsChaburaSelect, e.currentTarget.value, '');
-      if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = 'Choose a chabura, then save.';
+      const location = e.currentTarget.value;
+      if (dom.settingsChaburaFilter) dom.settingsChaburaFilter.value = '';
+      syncChaburaFilterAvailability(dom.settingsChaburaFilter, location);
+      fillChaburaSelect(dom.settingsChaburaSelect, location, '');
+      if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = 'Choose a Rabbi, then save.';
+    });
+    dom.settingsChaburaFilter?.addEventListener('input', e => {
+      const selected = dom.settingsChaburaSelect?.value || '';
+      fillChaburaSelect(
+        dom.settingsChaburaSelect,
+        dom.settingsChaburaLocation?.value || '',
+        selected,
+        e.currentTarget.value
+      );
     });
     dom.saveChaburaSettingsBtn?.addEventListener('click', () => {
       if (setChaburaProfile(dom.settingsChaburaLocation?.value, dom.settingsChaburaSelect?.value)) {
         if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = 'Saved.';
-      } else if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = 'Choose both a location and chabura.';
+      } else if (dom.chaburaSettingsStatus) dom.chaburaSettingsStatus.textContent = 'Choose both a region and Rabbi.';
     });
     dom.chaburaDialogLocation?.addEventListener('change', e => {
-      fillChaburaSelect(dom.chaburaDialogSelect, e.currentTarget.value, '');
+      const location = e.currentTarget.value;
+      if (dom.chaburaDialogFilter) dom.chaburaDialogFilter.value = '';
+      syncChaburaFilterAvailability(dom.chaburaDialogFilter, location);
+      fillChaburaSelect(dom.chaburaDialogSelect, location, '');
       if (dom.saveChaburaDialogBtn) dom.saveChaburaDialogBtn.disabled = true;
     });
+    dom.chaburaDialogFilter?.addEventListener('input', e => {
+      const selected = dom.chaburaDialogSelect?.value || '';
+      fillChaburaSelect(
+        dom.chaburaDialogSelect,
+        dom.chaburaDialogLocation?.value || '',
+        selected,
+        e.currentTarget.value
+      );
+      if (dom.saveChaburaDialogBtn) dom.saveChaburaDialogBtn.disabled = !chaburaDialogSelectionValid();
+    });
     dom.chaburaDialogSelect?.addEventListener('change', () => {
-      if (dom.saveChaburaDialogBtn) dom.saveChaburaDialogBtn.disabled = !validChaburaSettings({
-        location: dom.chaburaDialogLocation?.value,
-        chabura: dom.chaburaDialogSelect?.value
-      });
+      if (dom.saveChaburaDialogBtn) dom.saveChaburaDialogBtn.disabled = !chaburaDialogSelectionValid();
     });
     dom.saveChaburaDialogBtn?.addEventListener('click', () => {
       if (!setChaburaProfile(dom.chaburaDialogLocation?.value, dom.chaburaDialogSelect?.value)) return;

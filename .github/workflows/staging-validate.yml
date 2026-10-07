@@ -38,6 +38,37 @@ jobs:
           node --check public-src/sw.js
           find public/cohorts -name '*.js' -print0 | xargs -0 -n1 node --check
 
+      - name: Generalized essay runtime shape
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const vm = require('node:vm');
+          const source = fs.readFileSync('public/cohorts/2026-summer/essay-practice.js', 'utf8');
+          const sandbox = { window: {} };
+          vm.createContext(sandbox);
+          vm.runInContext(source, sandbox);
+          const essays = sandbox.window.ESSAY_PRACTICE_DATA;
+          if (!Array.isArray(essays) || !essays.length) throw new Error('Essay runtime is empty');
+          for (const essay of essays) {
+            const roots = essay.pairings?.roots;
+            const responses = essay.pairings?.responses;
+            if (!Array.isArray(roots) || !roots.length || !Array.isArray(responses) || !responses.length) {
+              throw new Error('Missing generalized pairings for ' + essay.id);
+            }
+            const responseIds = new Set(responses.map(r => String(r.id)));
+            const rootIds = roots.map(r => String(r.id));
+            const factIds = (essay.facts || []).map(f => String(f.id));
+            if (JSON.stringify(rootIds) !== JSON.stringify(factIds)) {
+              throw new Error('Compatibility fact/root IDs drift for ' + essay.id);
+            }
+            for (const root of roots) {
+              if (!Array.isArray(root.accepts) || !root.accepts.length) throw new Error('Root has no accepted response: ' + root.id);
+              for (const id of root.accepts) if (!responseIds.has(String(id))) throw new Error('Missing response ' + id + ' for root ' + root.id);
+            }
+          }
+          console.log('Validated generalized runtime shape for', essays.length, 'essays');
+          NODE
+
       - name: Build output inventory
         run: |
           find public -type f -printf '%P\t%s\n' | sort > staging-build-inventory.tsv

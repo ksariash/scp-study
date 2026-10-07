@@ -54,7 +54,7 @@
   const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   const categories = [...new Set(QUESTIONS.map(q => q.category))];
   const questionById = new Map(QUESTIONS.map(q => [q.id, q]));
-  const ESSAY_BANK = Array.isArray(window.ESSAY_PRACTICE_DATA) ? window.ESSAY_PRACTICE_DATA : [];
+  const ESSAY_BANK = (Array.isArray(window.ESSAY_PRACTICE_DATA) ? window.ESSAY_PRACTICE_DATA : []).map(normalizeEssayRuntime);
   const COURSE_NOTE_REFS = window.COURSE_NOTE_REFS || { docs: {}, questions: {}, essays: {} };
   const ESSAY_CATEGORY_TAGS = ACTIVE_COHORT.essayCategoryTags && typeof ACTIVE_COHORT.essayCategoryTags === 'object'
     ? ACTIVE_COHORT.essayCategoryTags : {};
@@ -1010,6 +1010,62 @@
     };
   }
 
+  function normalizeEssayRuntime(essay) {
+    const source = essay && typeof essay === 'object' ? essay : {};
+    let roots = Array.isArray(source.pairings?.roots) ? source.pairings.roots.map(root => ({ ...root })) : [];
+    let responses = Array.isArray(source.pairings?.responses) ? source.pairings.responses.map(response => ({ ...response })) : [];
+    if (!roots.length && Array.isArray(source.facts)) {
+      roots = source.facts.map(fact => ({
+        id: fact.id,
+        label: fact?.tokens?.[0]?.[1] || fact.authority || fact.label || '',
+        context: fact.label || '',
+        accepts: [fact.id]
+      }));
+      responses = source.facts.map(fact => ({
+        id: fact.id,
+        text: fact?.tokens?.[1]?.[1] || fact.position || '',
+        maxUses: 1
+      }));
+    }
+    const responseMap = new Map(responses.map(response => [String(response.id), response]));
+    const facts = roots.map(root => {
+      const accepted = (root.accepts || []).map(id => responseMap.get(String(id))?.text).filter(Boolean);
+      return {
+        ...root,
+        tokens: [[`${root.id}a`, root.label || ''], [`${root.id}b`, accepted.join(' / ')]]
+      };
+    });
+    return { ...source, pairings: { roots, responses }, facts };
+  }
+
+  function essayResponseById(essay, responseId) {
+    return essay?.pairings?.responses?.find(response => String(response.id) === String(responseId)) || null;
+  }
+
+  function essayResponseText(response) {
+    return String(response?.text || '');
+  }
+
+  function essayResponseMaxUses(response) {
+    if (response?.maxUses === 'unlimited') return Number.POSITIVE_INFINITY;
+    const value = Number(response?.maxUses ?? 1);
+    return Number.isInteger(value) && value > 0 ? value : 1;
+  }
+
+  function essayResponseUseCount(selectedResponses, responseId) {
+    return Object.values(selectedResponses || {}).filter(id => String(id) === String(responseId)).length;
+  }
+
+  function essayResponseAvailable(essay, responseId, selectedResponses = {}) {
+    const response = essayResponseById(essay, responseId);
+    if (!response) return false;
+    return essayResponseUseCount(selectedResponses, response.id) < essayResponseMaxUses(response);
+  }
+
+  function essayRootAcceptsResponse(root, responseId) {
+    return Array.isArray(root?.accepts) && root.accepts.some(id => String(id) === String(responseId));
+  }
+
   function essayPromptFeedbackTarget(essay, source = 'essay_practice') {
     if (!essay) return null;
     return {
@@ -1028,7 +1084,8 @@
   function essayPairingFeedbackTarget(essay, fact, source = 'essay_practice') {
     if (!essay || !fact) return null;
     const name = essayNameText(fact);
-    const position = essayPositionText(fact);
+    const accepted = (fact.accepts || []).map(id => essayResponseText(essayResponseById(essay, id))).filter(Boolean);
+    const position = accepted.join(' / ');
     return {
       contentType: 'essay_pairing',
       contentId: String(fact.id),
@@ -1040,9 +1097,9 @@
       source,
       context: {
         essayId: essay.id,
-        pairingLabel: fact.label || '',
+        pairingLabel: fact.context || fact.label || '',
         options: essayRun?.essay?.id === essay.id && currentEssayFact()?.id === fact.id
-          ? (essayRun.stepChoices || []).map(id => essay.facts.find(item => item.id === id)).filter(Boolean).map(item => essayPositionText(item))
+          ? (essayRun.stepChoices || []).map(id => essayResponseText(essayResponseById(essay, id))).filter(Boolean)
           : []
       }
     };
@@ -1317,15 +1374,19 @@
     return crypto?.randomUUID?.() || `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   }
 
-  function essayFactContentHash(fact) {
-    return feedbackHash(`${essayNameText(fact)} → ${essayPositionText(fact)}`);
+  function essayFactContentHash(fact, essay = essayRun?.essay) {
+    const accepted = (fact?.accepts || []).map(id => essayResponseText(essayResponseById(essay, id))).filter(Boolean);
+    return feedbackHash(`${essayNameText(fact)} → ${accepted.join(' / ')}`);
   }
 
   function essayContentHash(essay) {
     if (!essay) return '';
     return feedbackHash([
       essay.prompt || '',
-      ...(essay.facts || []).map(fact => `${essayNameText(fact)} → ${essayPositionText(fact)}`),
+      ...(essay.facts || []).map(fact => {
+        const accepted = (fact.accepts || []).map(id => essayResponseText(essayResponseById(essay, id))).filter(Boolean);
+        return `${essayNameText(fact)} → ${accepted.join(' / ')}`;
+      }),
       essay.modelAnswer || ''
     ].join('\n'));
   }
@@ -1782,14 +1843,20 @@
     return fact?.tokens?.[0]?.[1] || fact?.label || '';
   }
 
-  function buildEssayStepChoices(essay, index) {
+  function buildEssayStepChoices(essay, index, selectedResponses = {}) {
     const current = essay.facts[index];
     if (!current) return [];
-    const currentName = essayNameText(current);
-    const differentNames = essay.facts.filter((fact, i) => i !== index && essayNameText(fact) !== currentName);
-    const fallback = essay.facts.filter((fact, i) => i !== index && !differentNames.includes(fact));
-    const others = [...shuffle(differentNames), ...shuffle(fallback)].slice(0, 2);
-    return shuffle([current, ...others].map(fact => fact.id));
+    const available = (essay.pairings?.responses || []).filter(response =>
+      essayResponseAvailable(essay, response.id, selectedResponses)
+    );
+    const correct = shuffle(available.filter(response => essayRootAcceptsResponse(current, response.id)));
+    const incorrect = shuffle(available.filter(response => !essayRootAcceptsResponse(current, response.id)));
+    if (!correct.length) return [];
+    const choices = [correct[0]];
+    if (incorrect.length) choices.push(incorrect.shift());
+    const remaining = shuffle([...correct.slice(1), ...incorrect]);
+    while (choices.length < 3 && remaining.length) choices.push(remaining.shift());
+    return shuffle(choices.map(response => response.id));
   }
 
   function currentEssayFact() {
@@ -1853,12 +1920,13 @@
     }
     essayRun.completedFactIds.forEach(id => {
       const fact = essay.facts.find(item => item.id === id);
-      if (!fact) return;
+      const response = essayResponseById(essay, essayRun.selectedResponses?.[id]);
+      if (!fact || !response) return;
       const row = document.createElement('div');
       row.className = 'essay-built-row';
       row.innerHTML = `<span class="essay-built-check" aria-hidden="true">✓</span><div class="essay-built-copy"><strong></strong><span></span></div><button class="content-report-btn essay-built-report" type="button" data-report-essay-pairing="${escapeHtml(fact.id)}" aria-label="Report an issue with this pairing" title="Report an issue">⚑</button>`;
       setGlossaryText(row.querySelector('strong'), essayNameText(fact));
-      setGlossaryText(row.querySelector('.essay-built-copy span'), essayPositionText(fact));
+      setGlossaryText(row.querySelector('.essay-built-copy span'), essayResponseText(response));
       dom.essayAnswerZone.append(row);
     });
   }
@@ -1868,10 +1936,11 @@
     const essay = essayRun.essay;
     const fact = currentEssayFact();
     const complete = essayRun.finished;
+    const total = essay.facts.length;
     dom.essayMatchSection.classList.toggle('complete', complete);
-    if (dom.essayBuildProgress) dom.essayBuildProgress.textContent = `${essayRun.completedFactIds.length} of ${essay.facts.length} complete`;
+    if (dom.essayBuildProgress) dom.essayBuildProgress.textContent = `${essayRun.completedFactIds.length} of ${total} complete`;
     if (complete) {
-      if (dom.essayPracticeCounter) dom.essayPracticeCounter.textContent = `Complete · ${essay.facts.length} pairings`;
+      if (dom.essayPracticeCounter) dom.essayPracticeCounter.textContent = `Complete · ${total} pairings`;
       if (dom.essayMatchCount) dom.essayMatchCount.textContent = 'Complete';
       if (dom.essayMatchContext) dom.essayMatchContext.textContent = 'Essay complete';
       if (dom.essayMatchName) dom.essayMatchName.textContent = 'All pairings matched';
@@ -1880,14 +1949,14 @@
       if (dom.essayChoiceList) dom.essayChoiceList.innerHTML = '';
       if (dom.essayFeedback) {
         dom.essayFeedback.className = 'essay-choice-feedback correct';
-        dom.essayFeedback.innerHTML = `<strong>Essay complete.</strong><span>${essayRun.firstTryCorrect}/${essay.facts.length} pairings were correct on the first try.</span>`;
+        dom.essayFeedback.innerHTML = `<strong>Essay complete.</strong><span>${essayRun.firstTryCorrect}/${total} pairings were correct on the first try.</span>`;
       }
       return;
     }
     const step = essayRun.currentIndex + 1;
-    if (dom.essayPracticeCounter) dom.essayPracticeCounter.textContent = `Pairing ${step} of ${essay.facts.length}`;
-    if (dom.essayMatchCount) dom.essayMatchCount.textContent = `${step} of ${essay.facts.length}`;
-    setGlossaryText(dom.essayMatchContext, fact.label || 'Match the position');
+    if (dom.essayPracticeCounter) dom.essayPracticeCounter.textContent = `Pairing ${step} of ${total}`;
+    if (dom.essayMatchCount) dom.essayMatchCount.textContent = `${step} of ${total}`;
+    setGlossaryText(dom.essayMatchContext, fact.context || 'Choose a matching response');
     setGlossaryText(dom.essayMatchName, essayNameText(fact));
     if (dom.essayPairingReportBtn) dom.essayPairingReportBtn.disabled = false;
     if (dom.essayPairingResources) {
@@ -1897,15 +1966,18 @@
     if (dom.essayChoiceList) {
       dom.essayChoiceList.innerHTML = '';
       essayRun.stepChoices.forEach(id => {
-        const optionFact = essay.facts.find(item => item.id === id);
-        if (!optionFact) return;
+        const response = essayResponseById(essay, id);
+        if (!response) return;
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'essay-choice';
         button.dataset.essayChoice = id;
-        setGlossaryText(button, essayPositionText(optionFact));
+        setGlossaryText(button, essayResponseText(response));
         if (essayRun.wrongChoiceIds.includes(id)) { button.classList.add('incorrect'); button.disabled = true; }
-        if (essayRun.transitioning) { button.disabled = true; if (id === fact.id) button.classList.add('correct'); }
+        if (essayRun.transitioning) {
+          button.disabled = true;
+          if (String(id) === String(essayRun.selectedResponses?.[fact.id])) button.classList.add('correct');
+        }
         dom.essayChoiceList.append(button);
       });
     }
@@ -1915,7 +1987,7 @@
         dom.essayFeedback.className = `essay-choice-feedback ${essayRun.feedbackType}`;
         dom.essayFeedback.innerHTML = essayRun.feedbackType === 'correct'
           ? '<strong>Correct.</strong><span>That pairing was added to the essay.</span>'
-          : '<strong>Not that pairing.</strong><span>That position belongs elsewhere in this essay. Try another choice.</span>';
+          : '<strong>Not a valid match.</strong><span>Choose another response for this pairing.</span>';
       }
     }
   }
@@ -1944,7 +2016,8 @@
     if (!essayRun || essayRun.finished || essayRun.transitioning) return;
     const fact = currentEssayFact();
     if (!fact) return;
-    if (choiceId !== fact.id) {
+    const valid = essayRootAcceptsResponse(fact, choiceId) && essayResponseAvailable(essayRun.essay, choiceId, essayRun.selectedResponses);
+    if (!valid) {
       if (!essayRun.wrongChoiceIds.includes(choiceId)) { essayRun.wrongChoiceIds.push(choiceId); essayRun.totalWrong += 1; }
       essayRun.stepHadError = true;
       essayRun.feedbackType = 'incorrect';
@@ -1952,11 +2025,13 @@
       return;
     }
     const firstTry = !essayRun.stepHadError;
+    essayRun.selectedResponses[fact.id] = choiceId;
     queueEssayAnalytics('essay_pairing', {
       roundId: essayRun.roundId, sessionId: essayRun.sessionId, essayId: essayRun.essay.id, factId: fact.id,
-      stepIndex: essayRun.currentIndex + 1, firstTry, presentedChoiceIds: [...essayRun.stepChoices],
-      wrongChoiceIds: [...essayRun.wrongChoiceIds], responseTimeBucket: responseTimeBucket(Date.now() - essayRun.stepStartedAt),
-      factContentHash: essayFactContentHash(fact), audioUsed: !!essayRun.stepAudioUsed
+      selectedResponseId: choiceId, stepIndex: essayRun.currentIndex + 1, firstTry,
+      presentedChoiceIds: [...essayRun.stepChoices], wrongChoiceIds: [...essayRun.wrongChoiceIds],
+      responseTimeBucket: responseTimeBucket(Date.now() - essayRun.stepStartedAt),
+      factContentHash: essayFactContentHash(fact, essayRun.essay), audioUsed: !!essayRun.stepAudioUsed
     });
     essayRun.transitioning = true;
     essayRun.feedbackType = 'correct';
@@ -1975,7 +2050,7 @@
       essayRun.stepAudioUsed = false;
       essayRun.stepStartedAt = Date.now();
       if (essayRun.currentIndex >= essayRun.essay.facts.length) finishEssayRound();
-      else essayRun.stepChoices = buildEssayStepChoices(essayRun.essay, essayRun.currentIndex);
+      else essayRun.stepChoices = buildEssayStepChoices(essayRun.essay, essayRun.currentIndex, essayRun.selectedResponses);
       renderEssayPractice();
     }, 520);
   }
@@ -1986,8 +2061,10 @@
     if (!essayAnalyticsSessionId) essayAnalyticsSessionId = analyticsUuid('essay-session');
     const attemptInRound = retry && essayRun ? essayRun.attemptInRound + 1 : 0;
     const now = Date.now();
+    const selectedResponses = {};
     essayRun = {
-      essay, currentIndex: 0, completedFactIds: [], stepChoices: buildEssayStepChoices(essay, 0), wrongChoiceIds: [],
+      essay, currentIndex: 0, completedFactIds: [], selectedResponses,
+      stepChoices: buildEssayStepChoices(essay, 0, selectedResponses), wrongChoiceIds: [],
       stepHadError: false, feedbackType: null, transitioning: false, firstTryCorrect: 0, totalWrong: 0, finished: false,
       attemptInRound, source, sessionId: essayAnalyticsSessionId, roundId: analyticsUuid('essay-round'),
       roundStartedAt: now, stepStartedAt: now, stepAudioUsed: false

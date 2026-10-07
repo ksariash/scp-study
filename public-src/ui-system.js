@@ -418,9 +418,9 @@
           button.setAttribute('role', 'option');
           button.textContent = value;
           button.addEventListener('pointerdown', event => {
-            event.preventDefault();
-            choose(value);
+            if (event.pointerType === 'mouse') event.preventDefault();
           });
+          button.addEventListener('click', () => choose(value));
           list.append(button);
         });
       }

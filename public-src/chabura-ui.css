@@ -16,6 +16,13 @@
   min-width: 0;
   width: 100%;
 }
+.chabura-fields,
+.chabura-dialog-fields {
+  overflow: visible !important;
+}
+.ui-rav-combobox:focus-within {
+  z-index: 80;
+}
 
 .ui-rav-search {
   box-sizing: border-box;
@@ -114,6 +121,7 @@
   background: #fff;
   box-shadow: 0 14px 34px rgba(27,45,78,.18);
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 .ui-rav-suggestions[hidden] { display: none !important; }
 .ui-rav-option {
@@ -130,7 +138,7 @@
   font-weight: 700;
   text-align: left;
   cursor: pointer;
-  touch-action: manipulation;
+  touch-action: pan-y;
 }
 .ui-rav-option:hover,
 .ui-rav-option.active,

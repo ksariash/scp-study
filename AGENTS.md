@@ -185,10 +185,11 @@ For client/source changes:
 2. Syntax-check modified JavaScript.
 3. Confirm Zman registry/package validation passes.
 4. Confirm app/package/service-worker/cache versions agree for a numbered app release, or confirm a cache-only revision changed `CACHE_NAME`.
-5. Check representative document and audio paths.
-6. Commit to `main`.
-7. Inspect the Cloudflare Workers Builds check.
-8. For cross-repo changes, verify Analytics first and Study second.
+5. For every learner-facing UI change, complete the **UI consistency implementation gate** in `public-src/AGENTS.md`. This is a required validation step, not optional design review.
+6. Check representative document and audio paths.
+7. Commit to `main`.
+8. Inspect the Cloudflare Workers Builds check.
+9. For cross-repo changes, verify Analytics first and Study second.
 
 For generated-PDF changes, additionally inspect the rendered PDF rather than relying only on extracted text. Mixed Hebrew/English text must be visually checked in at least one representative question and one representative title/table when those paths changed.
 
@@ -196,6 +197,8 @@ Do not commit secrets, generated `public/`, `.wrangler/`, or local environment f
 
 
 ## UI design rules
+
+A screenshot or bug report identifies one observed instance, not necessarily the full scope of a UI problem. Before changing learner-facing UI, search the canonical source for every equivalent implementation and entry point, then apply and validate the intended behavior consistently across those surfaces. The detailed required procedure is the **UI consistency implementation gate** in `public-src/AGENTS.md`.
 
 Prefer the interface itself over explanatory prose. If a heading, label, selected value, toggle, or visual grouping already communicates purpose, do not add a paragraph that restates it.
 

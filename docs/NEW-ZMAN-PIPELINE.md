@@ -1,80 +1,134 @@
-# New Zman creation pipeline for an LLM
+# Zman assessment and content-generation pipeline for an LLM
 
-Use this order when the inputs are full class notes, audio recordings, and example quizzes/tests. Example assessments guide scope; the supplied class notes remain authoritative unless the course owner explicitly requests outside verification.
+Use this pipeline when the course owner supplies course notes and wants Study content generated from them. The supplied course materials are authoritative. Do not silently add, repair, reconcile, or replace course content from general knowledge.
 
-## 1. Inventory source material
+## 1. Establish source roles
 
-Record all full notes, audio, transcripts, and example assessments. Preserve course terminology, spellings, names, distinctions, and practical framing. Flag contradictions or missing source support instead of silently repairing them from general knowledge.
+When the source package contains the three-document assessment workflow, the roles are strict:
 
-## 2. Produce and audit the concise review
+1. **Highlighted concise notes** are the assessment-scope authority.
+   - Yellow highlight means the highlighted knowledge must be tested by multiple choice.
+   - Green highlight means the highlighted knowledge must be tested by essay practice.
+   - A blue-highlighted name inside a yellow or green highlighted passage must be **explicitly tested** in the same assessment mode(s). It is not enough for the name merely to appear in a stem, explanation, model answer, or distractor; the learner must have to identify the name-to-rule/position relationship correctly.
+   - If a blue name lies inside material carrying both yellow and green scope, explicitly test that association in both applicable modes.
+2. **Non-highlighted concise notes** are the learner-facing compact-review document and the source for compact-note page links. They must have the same underlying course text as the highlighted copy. Differences other than highlight annotations are a stop condition that requires clarification.
+3. **Full class notes** are the learner-facing full-notes document and the source for full-note page links. They may be used to clarify the meaning or wording of a highlighted concise point, but they do not expand assessment scope beyond the highlights.
 
-Create the concise review from the full notes. Use example assessments only to identify emphasis and testing granularity.
+If the highlighted concise notes, plain concise notes, and full notes cannot be reconciled without assuming a new rule, attribution, exception, or interpretation, stop and ask the course owner rather than inventing the answer.
 
-Mark MC-level facts, authority/name associations, essay reasoning, qualifications, practical exceptions, and test-relevant minority/majority positions.
+## 2. Inventory highlighted scope
 
-Build an audit matrix from each supplied example question to the exact highlighted source fact(s) needed to answer it. Revise until all examples are source-supported.
+Extract every highlighted region and build a source audit before drafting questions.
 
-## 3. Generate original assessments from audited scope
+A **distinct highlighted point** includes each separately testable rule, condition, exception, threshold, enumerated criterion, authority/name attribution, practical result, or materially different case stated inside the highlighted scope. Do not collapse two points merely because they occur in the same bullet or paragraph.
 
-Once scope is audited, stop using example-question wording as drafting material.
+Coverage is semantic, not visual:
+- a single well-designed question may test more than one tightly related yellow point only when each point is necessary to answer it correctly;
+- merely mentioning a highlighted fact in the stem, explanation, or an incorrect option does not count as testing it;
+- an enumerated list is covered only when the learner must know the required members or distinctions, not merely recognize the list's topic;
+- blue-highlighted names require a direct name-to-position/rule association test.
 
-MC questions must test clear highlighted facts or deliberate combinations. Every correct answer must be supported; distractors must not teach false authority/position associations.
+Record page/region provenance for every extracted point so later coverage can be audited against the exact highlighted source.
 
-Essay practice must represent each graded relationship as an atomic authority/concept → complete position/qualification fact. Each fact must stand alone without dependent phrases such as “this case.”
+If the course owner specifies a fixed assessment count, satisfy both the count and full highlighted coverage. If that cannot be done without ambiguous over-combination, duplicate questions, or inventing unsupported distinctions, stop and ask for clarification before drafting.
 
-## 4. Audit generated coverage
+## 3. Generate original multiple-choice questions
 
-Build a second matrix from every highlighted fact to generated MC question(s), essay fact(s), or both. Check for gaps, over-repetition, missing authorities, lost qualifications, and material outside audited scope. Store the question-facing portion in `coverage-audit.yaml` and the concise tested concept beside each question so the instructor key is generated from the same reviewable evidence.
+Draft from the audited yellow scope, not from old Study questions or prior example-question wording.
 
-## 5. Process audio
+Each multiple-choice item must:
+- test one clear highlighted point or a deliberate, auditable combination of tightly related highlighted points;
+- have every correct answer directly supported by the supplied notes;
+- use distractors that are plausible in the local course context without teaching a false authority/position association;
+- preserve qualifications such as lechatchilla/bedieved, ben-yomo/eino-ben-yomo, loss, timing, identity of the actor, and other conditions when those qualifications are part of the highlighted point;
+- explicitly test every blue-highlighted name association within yellow scope.
 
-Create stable audio review IDs and transcripts/timestamps where available. Map each question and essay fact to the best relevant review and actual start time. Record no mapping rather than inventing a weak one.
+Do not use the full notes to create an additional testable distinction that is absent from the highlighted concise scope.
 
-For R2, use:
+## 4. Generate essay matching exercises
 
-`audio/<zman-id>/<filename>`
+Essay practice is a generalized matching task, not an authority-specific schema.
 
-## 6. Mark note locations
+Each essay contains one or more **pairing roots** and a response bank. Each root declares the response IDs that are correct for it. This relation graph must support one-to-one, one-to-many, many-to-one, and many-to-many relationships.
 
-For every MC question and essay, record concise-review and full-notes locations. Verify jumps land on the actual discussion, not merely the chapter.
+The learner selects one response for each pairing root. A response defaults to one use per essay; explicitly increase or make it reusable only when the source relationship requires many-to-one reuse.
 
-## 7. Create the Zman package
+For unordered-list prompts, use interchangeable roots such as `First`, `Second`, etc. If an essay asks for four criteria, all four roots may accept all four correct criteria while each correct response remains single-use. This grades the required set without inventing an order the notes do not teach.
 
-Create the readable skeleton with:
+Distractors must be credible but non-duplicative. They must be source-adjacent enough to challenge recall, must not duplicate or paraphrase a correct response into ambiguity, and must have no valid root edge.
+
+Every green-highlighted distinct point must be represented in the essay set. Every blue-highlighted name inside green scope must be explicitly tested as a root/response relationship, not only stated in the model answer.
+
+## 5. Audit generated coverage
+
+Build a coverage matrix from every extracted highlighted point to the generated assessment item(s):
+- yellow point -> one or more question IDs;
+- green point -> one or more essay/root IDs;
+- blue name -> the specific question or essay relationship that explicitly tests the name.
+
+Check for gaps, accidental out-of-scope material, repeated questions that add no coverage, missing qualifications, missing names, and distractors that create false course associations.
+
+Store the machine-reviewable audit with the Zman. Question `testedConcept` values and essay/root provenance should point back to this audit.
+
+## 6. Process audio
+
+Create stable audio review IDs and transcripts/timestamps where available. Map each question and essay pairing root to the best relevant review and actual start time. Record no mapping rather than inventing a weak one.
+
+For R2, use `audio/<zman-id>/<filename>`.
+
+## 7. Mark note locations
+
+For every multiple-choice question and essay, record both compact-review and full-notes locations.
+
+The compact page must resolve against the non-highlighted concise PDF. The full-notes page must resolve against the final converted/published full-notes PDF. Verify that jumps land on the actual discussion, not merely the correct chapter.
+
+## 8. Create or replace the Zman package
+
+For a normal new Zman, create the readable skeleton with:
 
 `npm run zman:new -- <zman-id> <YYYY-MM-DD> "<display name>"`
 
-Author the YAML and WebVTT files under `zmanim/<zman-id>/`. The scaffold starts as `status: draft`, which is validated but excluded from the browser build. Follow `zmanim/README.md`; never create or hand-edit a `public/cohorts/` package.
+Author under `zmanim/<zman-id>/`; never hand-author generated `public/cohorts/` runtime files.
 
-Give the Zman a permanent ID. The build derives its analytics key from that ID so the two cannot drift. Do not recycle an earlier ID for revised material.
+A normal shipped Zman ID is permanent and must not be recycled for different material.
 
-Set `contentVersion` deliberately. Increment it whenever a configured PDF is replaced at the same path so explicit offline document caches receive the new bytes. Legacy Zman IDs belong in `legacyIds` for migration; do not duplicate the canonical package under a legacy directory.
+The **Summer 2026 development-to-production cutover is an explicit one-time exception**: the course owner has authorized replacing the pre-production `2026-summer` assessment package in place, followed by a full production database reset. For that cutover:
+- retain the stable ID `2026-summer`;
+- increment its `contentVersion`;
+- deploy a server-side content-version fence before the reset so old/offline clients using the pre-cutover package cannot write stale records into the reset database;
+- reset the database only after the new Study and Analytics content have passed final validation and the course owner has authorized the destructive cutover;
+- after this cutover, return to the permanent-ID/no-reuse rule.
 
-Run `npm run zman:validate` while authoring. Counts, runtime paths, audio maps, course-note maps, category maps, and compatibility JavaScript are derived; do not maintain them separately.
+Run `npm run zman:validate` throughout authoring. Counts, runtime paths, audio maps, course-note maps, category maps, and compatibility JavaScript are derived and must not be maintained separately.
 
-## 8. Analytics readiness gate
+## 9. Analytics readiness gate
 
-Before the Zman becomes selectable:
-- add the stable Zman ID to Analytics;
-- generate that Zman's question/essay/fact catalogs;
-- ensure dashboard categories/options resolve inside that Zman;
-- verify feedback identity is Zman-scoped;
-- verify an ID valid only in another Zman is rejected;
+Before exposing new or replaced assessment content:
+- update Analytics' accepted Zman/content-version pair;
+- regenerate its question/essay/pairing-root catalogs from the canonical Study source;
+- ensure dashboard categories/options resolve inside that content version;
+- verify feedback identity is Zman-scoped and content-version-aware for the cutover;
+- verify stale pre-cutover writes are rejected;
 - deploy and verify Analytics first.
 
-Only after this gate should Study move the Zman out of `draft` and, when intended, update `latestZmanId` or `defaultZmanId` in `zmanim/registry.yaml`.
+Only after this gate should Study expose the final production content.
 
-## 9. Build and final QA
+## 10. Build and final QA
 
 Run `npm run zman:validate` and `npm run build`, then smoke-test:
-- Zman selection/switching;
-- M/C, Essay, and Test;
+- exact configured multiple-choice and essay counts;
+- highlighted-source coverage audit with no uncovered yellow/green/blue obligations;
+- Questions, Essay Practice, and combined Test;
+- one-to-one, one-to-many, many-to-one, and many-to-many essay matching;
+- unordered-list matching without duplicate response use;
 - categories/glossary;
-- documents and representative note jumps;
-- audio and Range seeking;
-- offline behavior/service-worker update;
+- compact/full document downloads and representative page jumps;
 - generated PDFs;
-- analytics and feedback;
-- notification inbox/push if enabled.
+- audio and Range seeking;
+- offline/service-worker update behavior;
+- analytics, feedback, and stale-content-version rejection;
+- notification/sync behavior where enabled.
 
-Keep source-material audit artifacts with the Zman so a future LLM can explain why each assessment item exists and which source material supports it. Do not invent a missing historical source audit; record that limitation explicitly if migrating older content.
+For source-document changes, visually inspect the final published PDFs. Do not rely only on extracted text, particularly for mixed Hebrew/English content, tables, headers/footers, and Word-to-PDF conversion.
+
+Keep the highlighted-scope audit with the Zman so a future human or LLM can explain exactly why every question and essay pairing exists.

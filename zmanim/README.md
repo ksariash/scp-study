@@ -1,32 +1,53 @@
 # Zman authoring
 
-This directory is the human- and AI-readable source for study content. The browser still receives optimized JavaScript; the build generates that JavaScript from these files.
+This directory is the human- and AI-readable source for study content. The browser receives optimized JavaScript generated from these files.
 
 Each Zman has one directory. Keep meaning next to the content it describes:
 
-- `zman.yaml` — identity, lifecycle, audio migration policy, and document filenames.
-- `questions.yaml` — questions, their course-note pages, and optional review-audio clips.
-- `essays.yaml` — prompts, facts, category tags, note pages, and optional review-audio clips.
-- `glossary.yaml` — terms and the categories that use them.
-- `audio-reviews.yaml` — review metadata and transcript filenames.
-- `transcripts/*.vtt` — standard WebVTT transcripts, editable in normal subtitle tools.
-- `chaburos.yaml` — locations and their Rav lists.
-- `coverage-audit.yaml` — highlighted-topic coverage and the reviewed scope statement used in the instructor key.
-- `documents/` — for a new Zman, the compact review and full-notes PDFs named in `zman.yaml`.
+- `zman.yaml` - identity, lifecycle, content version, audio policy, and document filenames.
+- `questions.yaml` - multiple-choice questions, tested concepts, note pages, provenance, and optional review-audio clips.
+- `essays.yaml` - essay prompts, generalized pairing roots/response banks, note pages, provenance, and optional review-audio clips.
+- `glossary.yaml` - terms and related categories.
+- `audio-reviews.yaml` - review metadata and transcript filenames.
+- `transcripts/*.vtt` - WebVTT transcripts.
+- `chaburos.yaml` - locations and Rav lists.
+- `coverage-audit.yaml` - machine-reviewable highlighted-scope coverage and reviewed scope statement.
+- `documents/` - canonical learner-facing compact-review and full-notes PDFs for package-backed Zmanim.
 
-Question `testedConcept` values and `coverage-audit.yaml` are audit evidence, not runtime plumbing. Keep them readable and source-grounded. A newly scaffolded Zman intentionally fails validation until its content and coverage audit are filled in.
+Derived values do not belong here: question/essay counts, analytics keys, public paths, R2 prefixes, runtime lookup maps, and compatibility JavaScript are generated.
 
-Derived values do not belong here: question/essay counts, analytics keys, public paths, R2 prefixes, token IDs, audio maps, category maps, and course-note lookup tables are generated.
+## Assessment-source contract
+
+When a highlighted concise copy is supplied, follow `docs/NEW-ZMAN-PIPELINE.md` exactly:
+- yellow = multiple-choice scope;
+- green = essay scope;
+- blue name inside scoped material = explicitly test that name association;
+- the plain concise PDF is the compact-study document/page-link authority;
+- the full notes clarify and support linkages but do not expand assessment scope.
+
+If source materials conflict or a highlighted point cannot be represented without assuming new course content, stop and ask rather than filling the gap from general knowledge.
+
+## Generalized essay matching
+
+Do not model essay data as hard-coded `authority` and `position` fields.
+
+Each essay uses a response bank plus pairing roots. A root has a stable ID, human-readable text, and one or more accepted response IDs. Response reuse is one use by default and may be explicitly increased/unlimited when the relationship requires many-to-one matching.
+
+This graph supports one-to-one, one-to-many, many-to-one, and many-to-many relationships. Unordered lists are represented by interchangeable roots (for example `First`, `Second`, `Third`, `Fourth`) which all accept the same correct response set while the responses themselves remain single-use.
+
+Distractors are responses with no valid root edge and must be explicitly marked as distractors. Their normalized text must not duplicate a correct response or another distractor.
+
+The validator must reject an essay whose root/response graph cannot produce at least one complete valid assignment under the configured response-use limits.
 
 ## Workflow
 
-Create a skeleton with:
+For a normal new Zman:
 
 ```sh
 npm run zman:new -- 2026-fall 2026-10-20 "Fall 2026"
 ```
 
-Then fill in the YAML/VTT files, put the referenced PDFs/audio objects in their documented storage locations, and run:
+Then fill the YAML/VTT files, place canonical documents in the Zman package, and run:
 
 ```sh
 npm run zman:validate
@@ -34,8 +55,6 @@ npm run zman:compile
 npm run build
 ```
 
-The validator treats an incomplete or inconsistent package as an error so the same contract works for a person editing by hand or an automated authoring workflow.
+Draft packages are validated but excluded from the browser runtime.
 
-New skeletons start with `status: draft` and `documentSource: package`. Put the compact-review and full-notes PDFs in that Zman's `documents/` directory; the cumulative test, answer key, essay Q&A, and glossary PDFs are generated from the YAML at build time. Draft directories are validated but never emitted into `public/cohorts/`, so Analytics-unapproved material cannot become student-selectable just because it exists on `main`. After the Analytics readiness gate, change the lifecycle status deliberately and update `latestZmanId`/`defaultZmanId` in `registry.yaml` only when that rollout behavior is intended.
-
-Summer 2026 alone uses `documentSource: legacy-root` so already-installed clients keep their historical root PDF URLs. Do not use that setting for a new Zman.
+Summer 2026 has a one-time development-to-production replacement authorized by the course owner. That exception retains `2026-summer`, increments `contentVersion`, and requires an Analytics content-version fence plus a validated database-reset cutover. It does not create a general precedent for recycling shipped Zman IDs.

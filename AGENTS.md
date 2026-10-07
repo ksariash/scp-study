@@ -6,6 +6,8 @@ Read this file before changing the repository. It is architecture documentation 
 
 A request to implement a change normally means: inspect current `main` → implement in canonical source → validate → commit to `main` → let Cloudflare Workers Builds deploy → inspect the resulting Cloudflare check. Do not stop at a branch or PR unless the user explicitly asks.
 
+**Current Summer 2026 cutover exception:** the owner explicitly requires all remaining migration/content work to stay on `zman-2026-summer-staging-v2` (or a clearly named descendant staging branch) until each stage has passed isolated CI and artifact review. Do not commit or merge further cutover work to `main` without a new explicit approval. Preserve the known-good learner shell while staging; do not replay the prior cleanup deletion commit as part of the cutover.
+
 Never claim production success from a Git commit alone. A completed successful Cloudflare Workers Builds check is the minimum deployment verification. When direct production HTTP access is available, also smoke-test the affected live path.
 
 ## Canonical source
@@ -156,12 +158,12 @@ The owner plans one exceptional clean cutover for the rewritten test when the ne
 
 Target public origins are `https://scp-study.com`, `https://dashboard.scp-study.com`, and `https://announcements.scp-study.com`. Treat a custom-domain move as an origin change: browser local storage, service-worker caches, Push subscriptions, and other origin-scoped state do not transfer automatically. Do not silently copy anonymous installation/device/sync credentials across origins. Expect users to relink Sync, re-enable Push where needed, and install the new-origin PWA.
 
-The rewritten question/essay set must receive a **new permanent Zman ID** even though D1 will be reset. Never reuse `2026-summer` for materially different content; old/offline clients and delayed sync operations may still exist. The owner must approve the final new ID during the cutover. Follow `docs/NEW-ZMAN-PIPELINE.md`, regenerate every derived PDF affected by the rewritten content, and deploy the backward-compatible Analytics catalog/API support before exposing the new Zman in Study.
+The owner has explicitly authorized one **development-to-production replacement of `2026-summer` in place**, followed by a full production D1 reset. This is a one-time exception to the normal permanent-ID rule, not a precedent for recycling shipped Zman IDs. Increment `2026-summer`'s `contentVersion` for the replacement package and deploy a server-side content-version fence before the destructive cutover so pre-cutover/offline clients cannot repopulate the reset database with stale question, essay, or sync data. Follow `docs/NEW-ZMAN-PIPELINE.md`, regenerate every derived PDF affected by the rewritten content, and deploy compatible Analytics catalog/API support before exposing the replacement package.
 
 Cutover order:
 
-1. Freeze and validate the rewritten canonical Study content and choose the new permanent Zman ID.
-2. Update Analytics catalogs/allowlists and Announcements current-Zman/chabura configuration for that ID; update cross-app links, API origins, CORS, and VAPID subject/origin configuration for the three target domains.
+1. Freeze and validate the rewritten canonical Study content at Zman ID `2026-summer`, increment its `contentVersion`, and verify exact highlighted-source coverage.
+2. Update Analytics catalogs/allowlists and Announcements current-Zman/chabura configuration for the replacement content version; update cross-app links, API origins, CORS, and VAPID subject/origin configuration for the three target domains.
 3. Verify all three custom domains/TLS routes reach the intended Workers before any destructive step. Decide explicitly whether the old `workers.dev` origins get a temporary compatibility path or are retired; do not assume redirects preserve origin-scoped PWA state.
 4. Fence retired-Zman writes so an old installed client cannot repopulate the freshly reset production database with stale question/sync data.
 5. Immediately before the reset, export a recoverable backup of the exact shared Analytics/Announcements D1 database and record the deployed Worker versions/configuration. Do not wipe R2 as part of the D1 reset.

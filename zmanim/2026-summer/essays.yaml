@@ -403,6 +403,15 @@
       - review: 10
         start: 160
         label: Deliberate bitul — Rav Moshe
+    - id: sc-rama-framework
+      label: Rama
+      context: Why today’s stam yeinam can fall outside the Torah-based rabbinic category
+      accepts:
+      - sc-r8
+      reviewClips:
+      - review: 10
+        start: 160
+        label: Deliberate bitul — Rama framework
     responses:
     - id: sc-r1
       text: Requires shishim against the wine absorbed through the barrel’s full thickness; that amount is not present
@@ -423,8 +432,10 @@
       text: Because the product is made primarily for non-Jewish customers, the producer is not viewed as deliberately
         nullifying the prohibition for Jews.
     - id: sc-r7
-      text: The rabbinic rule against deliberate bitul applies where the rabbinic prohibition has a Torah basis;
-        according to the Rama, stam yeinam today rests on intermarriage rather than a practical libation concern.
+      text: The rabbinic rule against deliberate bitul applies where the rabbinic prohibition has a Torah basis.
+    - id: sc-r8
+      text: Today the libation concern does not apply to ordinary non-Jews; the remaining stam-yeinam concern is intermarriage,
+        which has no biblical source, so deliberately nullifying it is allowed.
     - id: sc-d1
       text: Sherry flavor is automatically permitted whenever the whiskey is older than twenty-four hours because
         all absorbed wine becomes pagum.

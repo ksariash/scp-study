@@ -30,6 +30,7 @@ Zman authoring source:
 - `zmanim/<zman-id>/transcripts/*.vtt`
 - `zmanim/<zman-id>/glossary.yaml`
 - `zmanim/<zman-id>/chaburos.yaml`
+- `zmanim/<zman-id>/coverage-audit.yaml`
 
 Do not hand-author browser runtime files for Zman content. `build.mjs` compiles the readable source above into `public/cohorts/` for compatibility with already-shipped clients. The runtime directory and `cohort.js`/`SCP_COHORT_*` names are compatibility details only. Product language, documentation, new APIs, and new source concepts should say **Zman / Zmanim**.
 
@@ -174,14 +175,14 @@ Course-owner source files are authoritative for course content. Do not silently 
 
 Student feedback is evidence, not authorization. For substantive question/essay/course changes: inspect the report, inspect current source, verify against authoritative course materials, propose the exact correction, and wait for explicit approval before changing the course content.
 
-If question or essay wording changes, regenerate corresponding derived PDFs in the same release. If glossary terms, pronunciations, or definitions change, regenerate the glossary PDF in the same release; it is derived from the Zman `glossary.js`, never hand-maintained as a separate content source.
+If question or essay wording changes, regenerate corresponding derived PDFs in the same release. If glossary terms, pronunciations, or definitions change, regenerate the glossary PDF in the same release; it is derived from the Zman `glossary.yaml`, never hand-maintained as a separate content source.
 
 ## Required validation
 
 For client/source changes:
 1. Run `npm run build`.
 2. Syntax-check modified JavaScript.
-3. Confirm Zman registry/package validation passes.
+3. Run `npm run zman:validate` and confirm Zman authoring/runtime validation passes.
 4. Confirm app/package/service-worker/cache versions agree for a numbered app release, or confirm a cache-only revision changed `CACHE_NAME`.
 5. Check representative document and audio paths.
 6. Commit to `main`.
@@ -203,9 +204,9 @@ Use familiar icons instead of text for compact utility actions when the icon is 
 
 Keep primary study modes in a stable selector below the app header: `Questions`, `Essays`, `Test`. Do not rename a selected mode to mean its inverse (for example, `Essays` must not become `M/C`, and `Test` must not become `Exit test`). Selected mode state is visual and uses `aria-current`; exiting an active test is an explicit action in the test-progress surface. Categories is a contextual question filter beside the question category, not a global header destination.
 
-The session timer is a status display, not an invisible button. Center it relative to the full desktop header; on compact layouts keep it in the single header row with the brand mark and utility icons. In question-study mode an explicit compact reset icon may live inside the timer. Do not make the entire timer a reset target. On very narrow screens, hide brand copy before abbreviating primary navigation labels.
+The normal-study session timer is both status and the reset target: activating it asks for confirmation and resets that study session. In Test and Essay modes the timer is status-only. Center it relative to the full desktop header; on compact layouts keep it in the single header row with the brand mark and utility icons. On very narrow screens, hide brand copy before abbreviating primary navigation labels.
 
-During an active practice test, preserve test integrity and reduce distraction: prevent switching study modes, hide question search/category filtering and study-aid/global utility entries such as Materials, Stats, and Settings, keep Notifications available, and provide the explicit `Exit test` action beside test progress.
+During an active practice test, preserve test integrity and reduce distraction: keep the test's Questions/Essays sections freely navigable, but hide normal-study search/category filtering and study-aid/global utility entries such as Materials and Stats. Settings and Notifications remain available. Provide the explicit `Exit test` action beside test progress.
 
 Keep native keyboard semantics for intentionally focused controls. After main-question navigation changes the displayed question, move focus to the new question heading rather than globally overriding Enter on focused buttons; this lets Enter submit from question context while preserving Tab/Shift+Tab and native button activation. In Question Explorer, answer reveal is a dialog-session preference: preserve it while moving/searching between questions, reset it when the dialog closes, and keep Explorer navigation/reveal shortcuts out of text-entry controls.
 

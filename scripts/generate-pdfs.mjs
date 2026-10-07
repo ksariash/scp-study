@@ -22,8 +22,6 @@ function pdfTextOptions(value, base = {}) {
 const LETTER = [612, 792];
 const LANDSCAPE = [792, 612];
 
-const QUESTION_CONCEPTS = {"1":"Core נ״ט בר נ״ט; Shmuel; Tosfos; limit of the leniency","2":"Ben-yomo food already cooked; S”A/Rama; before vs. after mixing","3":"Eino-ben-yomo food already made","4":"Deliberately creating נ״ט בר נ״ט in a ben-yomo vessel","5":"Deliberate use of an eino-ben-yomo opposite pot","6":"Dry solid on opposite plate; two weakened tastes","7":"Food → food → vessel dispute","8":"Ongoing cooking connection","9":"דבר חריף; ben-yomo/eino-ben-yomo","10":"Direct hot-pot-lid contact vs. foil","11":"Sous-vide sequential use","12":"Canned vegetables; inherently forbidden taste","13":"Fish/meat in one oven; ריחא","14":"Separation between fish and meat","15":"Fish and meat at one table","16":"Fish cooked in chicken soup","17":"Bitul of a fish/meat סכנה mixture with ששים","18":"No ששים; possible tzirufim","19":"Simultaneous clean ben-yomo meat/dairy vessels in hot water","20":"One vessel eino-ben-yomo","21":"Sequential ben-yomo vessels","22":"Opposite ben-yomo ladle in parve soup","23":"Dirty opposite dishes in כלי שני","24":"עירוי כלי ראשון","25":"Continuous hot liquid stream into cold opposite bowl","26":"Hot solid removed from a vessel","27":"Clogged sink","28":"Hot faucet/pipes","29":"Opposite spoon found later","30":"פגום agent and timing","31":"Dishwasher analysis","32":"Accidental opposite fork in dishwasher","33":"Coffee-shop application","34":"Milk beside salt intended for meat","35":"Baseline status of יין נסך, סתם יינם, מגע עכו״ם","36":"Beit Yosef, Ran, Rashba - reason for benefit prohibition","37":"Modern benefit: Rashi/Geonim, Rosh, Rambam","38":"Benefit applications; S”A/Rama","39":"Proceeds/change from prohibited wine","40":"Illness and סתם יינם","41":"Life danger and יין נסך","42":"מבושל before touch vs. after prohibition","43":"Non-Jew-owned kosher mevushal wine","44":"Changed wine identity vs. distinct wine component","45":"Sherry-cask quantity/bitul","46":"Sherry-cask flavor reasoning","47":"Sherry color; אין מבטלין איסור לכתחילה","48":"Before המשכה","49":"Brandy and grappa","50":"Beer and the non-Jewish-establishment decree","51":"Business drink in a non-Jewish bar","52":"Muslim, Shabbat desecrator, hostile violator, benefit","53":"Four conditions for full touch prohibition","54":"Pouring vs. shaking an open bottle","55":"Practical wine-contact cases","56":"נצוק; great loss; מבושל","57":"Unattended wine: idolater, Muslim, fixed schedule","58":"יוצא ונכנס; open vs. closed; protective measures"};
-const COVERAGE_AUDIT = [["Core נ״ט בר נ״ט rule; Shmuel/Tosfos; limits of the leniency","1, 6, 12"],["Ben-yomo food already made; S”A/Rama; before vs. after mixing","2"],["Eino-ben-yomo food already made","3"],["Deliberately cooking in a ben-yomo vessel for the opposite type","4"],["Deliberate use of an eino-ben-yomo opposite vessel; Ashkenazic dispute","5"],["Dry solid on opposite plate; Rav Moshe/Pri Megadim; two weak tastes","6"],["Food → food → vessel","7"],["Transfer during an ongoing cooking connection","8, 10"],["דבר חריף","9"],["Direct pot-lid contact vs. foil","10"],["Sous-vide","11"],["Canned vegetables/shared processing water","12"],["Fish and meat in one oven; ריחא","13"],["Separation between fish and meat","14"],["Fish and meat at the same table","15"],["Fish cooked in meat soup; rinsing","16"],["Fish/meat mixture with ששים","17"],["Accidental fish/meat mixture without ששים; tzirufim","18"],["Simultaneous clean ben-yomo vessels in hot water","19"],["One vessel eino-ben-yomo","20"],["Sequential ben-yomo vessels","21"],["Opposite ben-yomo ladle","22"],["Dirty opposite dishes in כלי שני","23"],["עירוי כלי ראשון","24"],["Continuous liquid stream vs. removed hot solid","25-26"],["Clogged sink; faucet pipes; spoon found later","27-29"],["Ash/פגום timing","30"],["Dishwasher framework and outcome-changing factors","31"],["Accidental opposite fork in dishwasher","32"],["Coffee-shop washing-system application","33"],["Open milk beside salt intended for meat","34"],["יין נסך / סתם יינם / מגע עכו״ם baseline categories","35"],["Reasons for the benefit prohibition: Beit Yosef/Ran/Rashba","36"],["Benefit today: Rashi/Geonim, Rosh, Rambam","37"],["S”A/Rama framework for benefit applications","38"],["Cash change/proceeds at a wine store","39"],["Illness and סתם יינם","40"],["Life danger and יין נסך","41"],["מבושל before touch vs. cooking after prohibition","42"],["Non-Jew-owned kosher mevushal wine","43"],["Wine mixed/frozen vs. wine remaining distinct","44"],["Sherry-cask quantity","45"],["Sherry-cask flavor reasoning","46"],["Sherry color and אין מבטלין איסור לכתחילה","47"],["Wine before המשכה","48"],["Brandy and grappa","49"],["Social beer/non-Jewish establishment","50"],["Business drink; איבה","51"],["Muslim/nonreligious/hostile toucher distinctions","52"],["Four conditions for full wine-touch prohibition","53"],["Pouring, shaking, accidental contact, closed bottle, clinking","54-55"],["נצוק; great loss; מבושל source","56"],["Unattended wine: idolater vs. Muslim; known schedule","57"],["יוצא ונכנס; open vs. closed wine; seals/monitoring/screw cap","58"]];
 
 async function findFont(packageName, subset, weight) {
   const root = dirname(require.resolve(packageName + '/package.json'));
@@ -250,7 +248,14 @@ async function readZmanContent(zmanId = null) {
   const resolvedId = String(zmanId || registry.defaultZmanId);
   const pkg = packages.find((candidate) => candidate.id === resolvedId);
   if (!pkg) throw new Error('Could not load Zman ' + resolvedId);
-  return { id: resolvedId, questions: pkg.questions, essays: pkg.essays, glossary: pkg.glossary };
+  return {
+    id: resolvedId,
+    assessmentTitle: pkg.manifest.assessmentTitle,
+    questions: pkg.questions,
+    essays: pkg.essays,
+    glossary: pkg.glossary,
+    coverageAudit: pkg.coverageAudit,
+  };
 }
 
 function addPageFooter(doc, family = 'noto', prefix = 'Page ') {
@@ -267,7 +272,20 @@ function addPageFooter(doc, family = 'noto', prefix = 'Page ') {
   }
 }
 
-function renderTest(doc, questions) {
+function drawAssessmentHeading(doc, assessmentTitle, suffix, y, suffixSize) {
+  const title = pdfSafeText(assessmentTitle);
+  const titleParts = title.split(/(\s+&\s+)/).filter(Boolean);
+  const separator = ' - ';
+  const titleWidth = titleParts.reduce((total, part) => total + phraseWidth(doc, part, { size:11, family:'noto' }), 0);
+  const separatorWidth = phraseWidth(doc, separator, { size:11, family:'noto' });
+  const suffixWidth = phraseWidth(doc, suffix, { size:suffixSize, bold:true, family:'noto' });
+  let x = (doc.page.width - titleWidth - separatorWidth - suffixWidth) / 2;
+  for (const part of titleParts) x = drawPdfPhrase(doc, part, x, y, { size:11, family:'noto' }, '#000000');
+  x = drawPdfPhrase(doc, separator, x, y, { size:11, family:'noto' }, '#000000');
+  drawPdfPhrase(doc, suffix, x, y, { size:suffixSize, bold:true, family:'noto' }, '#000000');
+}
+
+function renderTest(doc, questions, assessmentTitle) {
   const left = 44.75;
   const right = 564;
   const promptWidth = right - left;
@@ -289,23 +307,7 @@ function renderTest(doc, questions) {
     y += leading;
   };
 
-  // Title.
-  const titleRuns = [
-    { text: 'סתם יינם', family: 'noto' },
-    { text: ' & ', family: 'noto' },
-    { text: 'נ״ט בר נ״ט', family: 'noto' },
-    { text: ' - Cumulative Test', family: 'noto', bold: true }
-  ];
-  const widths = titleRuns.map(run => {
-    const tokenSize = HEBREW_RE.test(run.text) ? 11 : (run.bold ? 17 : 11);
-    return phraseWidth(doc, run.text, { size: tokenSize, bold: run.bold, family: 'noto' });
-  });
-  const titleWidth = widths.reduce((a,b) => a+b, 0);
-  let tx = (612 - titleWidth) / 2;
-  titleRuns.forEach((run, idx) => {
-    const tokenSize = HEBREW_RE.test(run.text) ? 11 : (run.bold ? 17 : 11);
-    tx = drawPdfPhrase(doc, run.text, tx, 41.0, { size: tokenSize, bold: run.bold, family: 'noto' }, '#000000');
-  });
+  drawAssessmentHeading(doc, assessmentTitle, 'Cumulative Test', 41.0, 17);
   doc.font('NotoBold').fontSize(12).fillColor('#000000').text('Student Test', 0, 67.0, { width: 612, align: 'center', lineBreak: false });
 
   // Instructions use the original two-line measure.
@@ -390,7 +392,7 @@ function drawQuestionKeyTable(doc, questions) {
     const cells = [
       String(q.id),
       (q.answer || []).join(', '),
-      QUESTION_CONCEPTS[q.id] || q.category || '',
+      q.testedConcept || q.category || '',
       q.explanation || ''
     ].map((value, i) => wrapCell(doc, value, inner, 7.5, false));
     let offsets=[0,0,0,0];
@@ -429,7 +431,19 @@ function drawQuestionKeyTable(doc, questions) {
   }
 }
 
-function drawCoverageAudit(doc) {
+function compactQuestionIds(ids) {
+  const values = [...ids].map(Number).sort((a, b) => a - b);
+  const parts = [];
+  for (let index = 0; index < values.length;) {
+    let end = index;
+    while (end + 1 < values.length && values[end + 1] === values[end] + 1) end += 1;
+    parts.push(end > index ? `${values[index]}-${values[end]}` : String(values[index]));
+    index = end + 1;
+  }
+  return parts.join(', ');
+}
+
+function drawCoverageAudit(doc, coverageAudit) {
   doc.addPage({ size: LANDSCAPE, margin:0 });
   let y=34.6;
   doc.font('NotoBold').fontSize(13).fillColor('#000000').text('Coverage Audit',34.7,y,{lineBreak:false});
@@ -443,8 +457,8 @@ function drawCoverageAudit(doc) {
   };
   header();
 
-  for(const row of COVERAGE_AUDIT){
-    const cells=[wrapCell(doc,row[0],inner,8),wrapCell(doc,row[1],inner,8)];
+  for(const row of coverageAudit.topics){
+    const cells=[wrapCell(doc,row.topic,inner,8),wrapCell(doc,compactQuestionIds(row.questions),inner,8)];
     let offsets=[0,0];
     while(offsets.some((off,i)=>off<cells[i].length)){
       const maxRemaining=Math.max(...cells.map((lines,i)=>lines.length-offsets[i]));
@@ -472,30 +486,15 @@ function drawCoverageAudit(doc) {
   doc.font('NotoBold').fontSize(13).fillColor('#000').text('Scope Check',34.7,y,{lineBreak:false});
   y+=20.2;
   drawMixedParagraph(doc,
-    'None. After question-by-question review, no test question relies on an unhighlighted rule, exception, authority, qualification, factual distinction, or practical application from the full notes. The highlighted compact review is the closed universe of testable knowledge; the full notes were used only for verification and clarification.',
+    coverageAudit.scopeCheck,
     34.7,y,{width:707.8,size:9,leading:12.4,color:'#000'});
 }
 
-function renderAnswerKey(doc, questions) {
-  // First-page title.
-  const runs=[
-    {text:'סתם יינם',family:'noto'},
-    {text:' & ',family:'noto'},
-    {text:'נ״ט בר נ״ט',family:'noto'},
-    {text:' - Instructor Key',family:'noto',bold:true}
-  ];
-  const widths=runs.map(run=>{
-    const size=HEBREW_RE.test(run.text)?11:(run.bold?16:11);
-    return phraseWidth(doc,run.text,{size,bold:run.bold,family:'noto'});
-  });
-  let x=(792-widths.reduce((a,b)=>a+b,0))/2;
-  runs.forEach((run,i)=>{
-    const size=HEBREW_RE.test(run.text)?11:(run.bold?16:11);
-    x=drawPdfPhrase(doc,run.text,x,34.0,{size,bold:run.bold,family:'noto'},'#000');
-  });
+function renderAnswerKey(doc, questions, assessmentTitle, coverageAudit) {
+  drawAssessmentHeading(doc, assessmentTitle, 'Instructor Key', 34.0, 16);
   doc.font('NotoBold').fontSize(10.5).text('Answer Key, Coverage Audit, and Scope Check',0,58.5,{width:792,align:'center',lineBreak:false});
   drawQuestionKeyTable(doc,questions);
-  drawCoverageAudit(doc);
+  drawCoverageAudit(doc, coverageAudit);
 }
 
 function dejuvuTokenOptions(text,bold,size){
@@ -624,16 +623,22 @@ function renderGlossary(doc, glossary) {
   });
 }
 
-export async function generatePdfs(outputDir = join(ROOT, 'public'), zmanId = null) {
+export async function generatePdfs(outputDir = join(ROOT, 'public'), zmanId = null, configuredDocuments = null) {
   const [fonts, content] = await Promise.all([loadFonts(), readZmanContent(zmanId)]);
-  const { questions, essays, glossary } = content;
+  const { assessmentTitle, questions, essays, glossary, coverageAudit } = content;
   const documents = join(outputDir, 'documents');
   await mkdir(documents, { recursive:true });
+  const files = configuredDocuments || {
+    cumulativeTest: 'SCP-Study-Cumulative-Test.pdf',
+    cumulativeAnswerKey: 'SCP-Study-Cumulative-Test-Answer-Key.pdf',
+    essayQuestionsAndAnswers: 'SCP-Study-Essay-Questions-and-Sample-Answers.pdf',
+    glossary: 'SCP-Study-Course-Glossary.pdf',
+  };
 
-  await writePdf(join(documents,'SCP-Study-Cumulative-Test.pdf'),'SCP Study - Cumulative Test',fonts,{size:'LETTER'},doc=>renderTest(doc,questions),doc=>addPageFooter(doc,'noto','Page '));
-  await writePdf(join(documents,'SCP-Study-Cumulative-Test-Answer-Key.pdf'),'SCP Study - Cumulative Test Answer Key',fonts,{size:LANDSCAPE},doc=>renderAnswerKey(doc,questions),doc=>addPageFooter(doc,'noto','Page '));
-  await writePdf(join(documents,'SCP-Study-Essay-Questions-and-Sample-Answers.pdf'),'SCP Study - Essay Questions & Sample Answers',fonts,{size:'LETTER'},doc=>renderEssays(doc,essays),doc=>addPageFooter(doc,'dejavu','SCP Study | '));
-  await writePdf(join(documents,'SCP-Study-Course-Glossary.pdf'),'SCP Study - Course Glossary',fonts,{size:'LETTER'},doc=>renderGlossary(doc,glossary),doc=>addPageFooter(doc,'noto','Page '));
+  await writePdf(join(documents,files.cumulativeTest),`${assessmentTitle} - Cumulative Test`,fonts,{size:'LETTER'},doc=>renderTest(doc,questions,assessmentTitle),doc=>addPageFooter(doc,'noto','Page '));
+  await writePdf(join(documents,files.cumulativeAnswerKey),`${assessmentTitle} - Cumulative Test Answer Key`,fonts,{size:LANDSCAPE},doc=>renderAnswerKey(doc,questions,assessmentTitle,coverageAudit),doc=>addPageFooter(doc,'noto','Page '));
+  await writePdf(join(documents,files.essayQuestionsAndAnswers),'SCP Study - Essay Questions & Sample Answers',fonts,{size:'LETTER'},doc=>renderEssays(doc,essays),doc=>addPageFooter(doc,'dejavu','SCP Study | '));
+  await writePdf(join(documents,files.glossary),'SCP Study - Course Glossary',fonts,{size:'LETTER'},doc=>renderGlossary(doc,glossary),doc=>addPageFooter(doc,'noto','Page '));
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

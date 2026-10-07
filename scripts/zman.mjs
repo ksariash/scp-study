@@ -22,27 +22,32 @@ async function newZman() {
     throw new Error('Usage: npm run zman:new -- <id> <YYYY-MM-DD> <display name>');
   }
   const dir = path.join(ZMAN_SOURCE_ROOT, id);
-  await mkdir(path.join(dir, 'transcripts'), { recursive: false });
+  await mkdir(dir, { recursive: false });
+  await mkdir(path.join(dir, 'transcripts'));
+  await mkdir(path.join(dir, 'documents'));
   const manifest = {
     schemaVersion: 1,
     id,
     name,
+    assessmentTitle: name,
     startsOn,
-    status: 'upcoming',
+    status: 'draft',
     legacyIds: [],
     contentVersion: 1,
+    documentSource: 'package',
     audio: { migrationMode: 'canonical-only' },
     documents: {
-      compactReview: 'compact-course-review.pdf', fullNotes: 'full-course-notes.pdf',
-      cumulativeTest: 'cumulative-test.pdf', cumulativeAnswerKey: 'cumulative-test-answer-key.pdf',
-      essayQuestionsAndAnswers: 'essay-questions-and-answers.pdf', glossary: 'glossary.pdf',
+      compactReview: 'SCP-Study-Compact-Course-Review.pdf', fullNotes: 'SCP-Study-Full-Course-Notes.pdf',
+      cumulativeTest: 'SCP-Study-Cumulative-Test.pdf', cumulativeAnswerKey: 'SCP-Study-Cumulative-Test-Answer-Key.pdf',
+      essayQuestionsAndAnswers: 'SCP-Study-Essay-Questions-and-Sample-Answers.pdf', glossary: 'SCP-Study-Course-Glossary.pdf',
     },
   };
   await writeFile(path.join(dir, 'zman.yaml'), YAML.stringify(manifest, { lineWidth: 100 }));
   for (const file of ['questions.yaml', 'essays.yaml', 'glossary.yaml']) await writeFile(path.join(dir, file), '[]\n');
   await writeFile(path.join(dir, 'audio-reviews.yaml'), 'reviews: []\n');
   await writeFile(path.join(dir, 'chaburos.yaml'), 'locationLabel: Location\nchaburaLabel: Chabura\nregions: []\n');
-  console.log(`Created ${path.relative(REPO_ROOT, dir)}. Add it to zmanim/registry.yaml, fill in content, then run npm run zman:validate.`);
+  await writeFile(path.join(dir, 'coverage-audit.yaml'), 'scopeCheck: TODO\ntopics: []\n');
+  console.log(`Created draft ${path.relative(REPO_ROOT, dir)}. Fill in content and audit data, then run npm run zman:validate. Draft Zmanim are never emitted into the browser runtime.`);
 }
 
 if (command === 'validate') await validate();

@@ -151,7 +151,7 @@ async function validateZmanRuntimePackages() {
 await rm(outputDir, { recursive: true, force: true });
 await mkdir(outputDir, { recursive: true });
 await cp(sourceDir, outputDir, { recursive: true });
-await compileZmanim({ outputRoot: fileURLToPath(new URL('./cohorts/', outputDir)) });
+const compiledZmanim = await compileZmanim({ outputRoot: fileURLToPath(new URL('./cohorts/', outputDir)) });
 const zmanRegistry = await validateZmanRuntimePackages();
 
 const serviceWorkerUrl = new URL('./sw.js', outputDir);
@@ -223,20 +223,35 @@ const fullNotesDestination = new URL('./documents/SCP-Study-Full-Course-Notes.pd
 await mkdir(dirname(fullNotesDestination.pathname), { recursive: true });
 await writeFile(fullNotesDestination, Buffer.from(fullNotesEncoded, 'base64'));
 
-await generatePdfs(outputDir.pathname);
+const legacyDocumentPackages = compiledZmanim.packages.filter((pkg) => pkg.manifest.documentSource === 'legacy-root');
+if (legacyDocumentPackages.length !== 1) throw new Error('Exactly one deployed Zman must own the legacy root document URLs.');
+const legacyDocumentPackage = legacyDocumentPackages[0];
+await generatePdfs(fileURLToPath(outputDir), legacyDocumentPackage.id, legacyDocumentPackage.manifest.documents);
 
-const defaultZmanId = String(zmanRegistry.defaultZmanId || '2026-summer');
-const defaultDocumentsDir = new URL(`./documents/${defaultZmanId}/`, outputDir);
-await mkdir(defaultDocumentsDir, { recursive: true });
-for (const filename of [
-  'SCP-Study-Compact-Course-Review.pdf',
-  'SCP-Study-Full-Course-Notes.pdf',
-  'SCP-Study-Cumulative-Test.pdf',
-  'SCP-Study-Cumulative-Test-Answer-Key.pdf',
-  'SCP-Study-Essay-Questions-and-Sample-Answers.pdf',
-  'SCP-Study-Course-Glossary.pdf'
-]) {
-  await cp(new URL(`./documents/${filename}`, outputDir), new URL(`./documents/${defaultZmanId}/${filename}`, outputDir));
+const generatedDocumentKeys = ['cumulativeTest', 'cumulativeAnswerKey', 'essayQuestionsAndAnswers', 'glossary'];
+const packagedDocumentKeys = ['compactReview', 'fullNotes'];
+const temporaryPdfRoot = new URL('./.zman-pdf-build/', outputDir);
+for (const pkg of compiledZmanim.packages) {
+  const targetDir = new URL(`./documents/${pkg.id}/`, outputDir);
+  await mkdir(targetDir, { recursive: true });
+  if (pkg.manifest.documentSource === 'legacy-root') {
+    for (const filename of Object.values(pkg.manifest.documents)) {
+      await cp(new URL(`./documents/${filename}`, outputDir), new URL(filename, targetDir));
+    }
+    continue;
+  }
+
+  for (const key of packagedDocumentKeys) {
+    const filename = pkg.manifest.documents[key];
+    await cp(new URL(`./zmanim/${pkg.id}/documents/${filename}`, ROOT), new URL(filename, targetDir));
+  }
+  const generatedRoot = new URL(`./${pkg.id}/`, temporaryPdfRoot);
+  await generatePdfs(fileURLToPath(generatedRoot), pkg.id, pkg.manifest.documents);
+  for (const key of generatedDocumentKeys) {
+    const filename = pkg.manifest.documents[key];
+    await cp(new URL(`./documents/${filename}`, generatedRoot), new URL(filename, targetDir));
+  }
 }
+await rm(temporaryPdfRoot, { recursive: true, force: true });
 
 console.log(`Built SCP Study static assets for ${zmanRegistry.zmanim.length} Zman package(s); preserved legacy document URLs and generated namespaced documents. Short & Sweet review audio remains in R2.`);

@@ -231,7 +231,7 @@ PDF regression diagnostics compare generated study PDFs against the legacy refer
 ## Release 50
 
 - Begins the multi-Zman migration without changing the current Summer 26 course experience.
-- Adds a Zman registry and loader. The current Nat Bar Nat & Stam Ye'enam - Summer 26 questions, essays, glossary, audio metadata/mappings, chabura roster, and note references now have a Zman-scoped package under `public-src/cohorts/nat-bar-nat-stam-yeinam-summer-26/`.
+- Adds a Zman registry and loader and makes the Nat Bar Nat & Stam Ye'enam - Summer 26 questions, essays, glossary, audio metadata/mappings, chabura roster, and note references Zman-scoped.
 - Adds a Zman selector under Materials → Settings. With one configured Zman it shows the current course; future registry entries will appear automatically and switching reloads the selected package.
 - Keeps `courseReviewSpacedRepetition.v1` as the main progress key while migrating its internal shape to Zman-scoped progress. Essay progress, essay category filters, audio playback position, and chabura settings are also scoped by Zman.
 - Generated question/test/essay PDFs now read the default Zman package as their canonical question and essay source.

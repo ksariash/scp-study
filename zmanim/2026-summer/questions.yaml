@@ -20,6 +20,7 @@
     - review: 1
       start: 31
       label: Core נ״ט בר נ״ט
+  testedConcept: Core נ״ט בר נ״ט; Shmuel; Tosfos; limit of the leniency
 - id: 2
   category: נ״ט בר נ״ט
   type: single
@@ -42,6 +43,7 @@
     - review: 1
       start: 96
       label: "Ben-yomo: before vs. after mixing"
+  testedConcept: Ben-yomo food already cooked; S”A/Rama; before vs. after mixing
 - id: 3
   category: נ״ט בר נ״ט
   type: single
@@ -63,6 +65,7 @@
     - review: 1
       start: 184
       label: Eino-ben-yomo applications
+  testedConcept: Eino-ben-yomo food already made
 - id: 4
   category: נ״ט בר נ״ט
   type: single
@@ -85,6 +88,7 @@
     - review: 1
       start: 96
       label: Deliberately creating נ״ט בר נ״ט
+  testedConcept: Deliberately creating נ״ט בר נ״ט in a ben-yomo vessel
 - id: 5
   category: נ״ט בר נ״ט
   type: single
@@ -109,6 +113,7 @@
     - review: 1
       start: 184
       label: Eino-ben-yomo dispute
+  testedConcept: Deliberate use of an eino-ben-yomo opposite pot
 - id: 6
   category: נ״ט בר נ״ט
   type: multi
@@ -132,6 +137,7 @@
     - review: 2
       start: 0
       label: Serving and combining נ״ט בר נ״ט
+  testedConcept: Dry solid on opposite plate; two weakened tastes
 - id: 7
   category: נ״ט בר נ״ט
   type: single
@@ -155,6 +161,7 @@
     - review: 2
       start: 131
       label: Food → food → vessel
+  testedConcept: Food → food → vessel dispute
 - id: 8
   category: נ״ט בר נ״ט
   type: single
@@ -179,6 +186,7 @@
     - review: 2
       start: 153
       label: נ״ט בר נ״ט בשעת בישול
+  testedConcept: Ongoing cooking connection
 - id: 9
   category: נ״ט בר נ״ט
   type: single
@@ -202,6 +210,7 @@
     - review: 2
       start: 43
       label: דבר חריף
+  testedConcept: דבר חריף; ben-yomo/eino-ben-yomo
 - id: 10
   category: נ״ט בר נ״ט
   type: single
@@ -225,6 +234,7 @@
     - review: 2
       start: 361
       label: Challah on a cholent-pot lid
+  testedConcept: Direct hot-pot-lid contact vs. foil
 - id: 11
   category: נ״ט בר נ״ט
   type: single
@@ -248,6 +258,7 @@
     - review: 2
       start: 180
       label: Sous-vide and simultaneous transfer
+  testedConcept: Sous-vide sequential use
 - id: 12
   category: נ״ט בר נ״ט
   type: single
@@ -270,6 +281,7 @@
     - review: 2
       start: 439
       label: Canned foods and inherently forbidden taste
+  testedConcept: Canned vegetables; inherently forbidden taste
 - id: 13
   category: Fish & Meat
   type: single
@@ -292,6 +304,7 @@
     - review: 3
       start: 46
       label: Fish and meat in an oven
+  testedConcept: Fish/meat in one oven; ריחא
 - id: 14
   category: Fish & Meat
   type: single
@@ -314,6 +327,7 @@
     - review: 3
       start: 0
       label: Separating fish and meat
+  testedConcept: Separation between fish and meat
 - id: 15
   category: Fish & Meat
   type: truefalse
@@ -333,6 +347,7 @@
     - review: 3
       start: 92
       label: Fish and meat at one table
+  testedConcept: Fish and meat at one table
 - id: 16
   category: Fish & Meat
   type: single
@@ -354,6 +369,7 @@
     - review: 3
       start: 50
       label: Fish cooked with meat
+  testedConcept: Fish cooked in chicken soup
 - id: 17
   category: Fish & Meat
   type: single
@@ -376,6 +392,7 @@
     - review: 3
       start: 74
       label: Bitul in fish-and-meat mixtures
+  testedConcept: Bitul of a fish/meat סכנה mixture with ששים
 - id: 18
   category: Fish & Meat
   type: single
@@ -402,6 +419,7 @@
     - review: 3
       start: 74
       label: Bitul in a danger mixture
+  testedConcept: No ששים; possible tzirufim
 - id: 19
   category: Dishes, Sinks & Dishwashers
   type: single
@@ -423,6 +441,7 @@
     - review: 4
       start: 58
       label: Clean ben-yomo meat and dairy vessels
+  testedConcept: Simultaneous clean ben-yomo meat/dairy vessels in hot water
 - id: 20
   category: Dishes, Sinks & Dishwashers
   type: single
@@ -443,6 +462,7 @@
     - review: 4
       start: 112
       label: One vessel eino-ben-yomo
+  testedConcept: One vessel eino-ben-yomo
 - id: 21
   category: Dishes, Sinks & Dishwashers
   type: single
@@ -463,6 +483,7 @@
     - review: 4
       start: 186
       label: Sequential use
+  testedConcept: Sequential ben-yomo vessels
 - id: 22
   category: Dishes, Sinks & Dishwashers
   type: single
@@ -484,6 +505,7 @@
     - review: 4
       start: 0
       label: Opposite-type ladle or spoon
+  testedConcept: Opposite ben-yomo ladle in parve soup
 - id: 23
   category: Dishes, Sinks & Dishwashers
   type: single
@@ -505,6 +527,7 @@
     - review: 4
       start: 210
       label: כלי שני
+  testedConcept: Dirty opposite dishes in כלי שני
 - id: 24
   category: Dishes, Sinks & Dishwashers
   type: single
@@ -525,6 +548,7 @@
     - review: 4
       start: 237
       label: עירוי כלי ראשון
+  testedConcept: עירוי כלי ראשון
 - id: 25
   category: Dishes, Sinks & Dishwashers
   type: single
@@ -547,6 +571,7 @@
     - review: 4
       start: 128
       label: Continuous stream into the opposite vessel
+  testedConcept: Continuous hot liquid stream into cold opposite bowl
 - id: 26
   category: Dishes, Sinks & Dishwashers
   type: single
@@ -567,6 +592,7 @@
     - review: 2
       start: 0
       label: Hot parve food on opposite-type dishes
+  testedConcept: Hot solid removed from a vessel
 - id: 27
   category: Dishes, Sinks & Dishwashers
   type: single
@@ -589,6 +615,7 @@
     - review: 5
       start: 0
       label: Accidental opposite-type sink use
+  testedConcept: Clogged sink
 - id: 28
   category: Dishes, Sinks & Dishwashers
   type: multi
@@ -618,6 +645,7 @@
     - review: 5
       start: 22
       label: Practical sink leniencies
+  testedConcept: Hot faucet/pipes
 - id: 29
   category: Dishes, Sinks & Dishwashers
   type: truefalse
@@ -637,6 +665,7 @@
     - review: 4
       start: 260
       label: Opposite-type utensil found later
+  testedConcept: Opposite spoon found later
 - id: 30
   category: Dishes, Sinks & Dishwashers
   type: single
@@ -657,6 +686,7 @@
     - review: 5
       start: 42
       label: פוגם agents in wash water
+  testedConcept: פגום agent and timing
 - id: 31
   category: Dishes, Sinks & Dishwashers
   type: multi
@@ -683,6 +713,7 @@
     - review: 5
       start: 146
       label: Dishwasher framework
+  testedConcept: Dishwasher analysis
 - id: 32
   category: Dishes, Sinks & Dishwashers
   type: single
@@ -707,6 +738,7 @@
     - review: 6
       start: 0
       label: Opposite-type dish in a dishwasher
+  testedConcept: Accidental opposite fork in dishwasher
 - id: 33
   category: Dishes, Sinks & Dishwashers
   type: truefalse
@@ -727,6 +759,7 @@
     - review: 6
       start: 16
       label: Coffee-shop equipment
+  testedConcept: Coffee-shop application
 - id: 34
   category: Open Foods & Storage
   type: single
@@ -748,6 +781,7 @@
     - review: 6
       start: 63
       label: Open foods and salt
+  testedConcept: Milk beside salt intended for meat
 - id: 35
   category: סתם יינם — Foundations & Benefit
   type: single
@@ -771,6 +805,7 @@
     - review: 6
       start: 156
       label: יין נסך and סתם יינם foundations
+  testedConcept: Baseline status of יין נסך, סתם יינם, מגע עכו״ם
 - id: 36
   category: סתם יינם — Foundations & Benefit
   type: single
@@ -796,6 +831,7 @@
     - review: 6
       start: 199
       label: Reasons behind the decrees
+  testedConcept: Beit Yosef, Ran, Rashba - reason for benefit prohibition
 - id: 37
   category: סתם יינם — Foundations & Benefit
   type: single
@@ -819,6 +855,7 @@
     - review: 7
       start: 1
       label: Benefit from סתם יינם today
+  testedConcept: "Modern benefit: Rashi/Geonim, Rosh, Rambam"
 - id: 38
   category: סתם יינם — Foundations & Benefit
   type: single
@@ -846,6 +883,7 @@
     - review: 7
       start: 113
       label: Routine profit and gifting
+  testedConcept: Benefit applications; S”A/Rama
 - id: 39
   category: סתם יינם — Foundations & Benefit
   type: single
@@ -868,6 +906,7 @@
     - review: 7
       start: 196
       label: Proceeds and cash change
+  testedConcept: Proceeds/change from prohibited wine
 - id: 40
   category: סתם יינם — Foundations & Benefit
   type: single
@@ -889,6 +928,7 @@
     - review: 8
       start: 46
       label: סתם יינם and illness
+  testedConcept: Illness and סתם יינם
 - id: 41
   category: סתם יינם — Foundations & Benefit
   type: single
@@ -912,6 +952,7 @@
     - review: 8
       start: 14
       label: Wine treatment in a life-threatening case
+  testedConcept: Life danger and יין נסך
 - id: 42
   category: Wine Processing & Products
   type: single
@@ -934,6 +975,7 @@
     - review: 8
       start: 91
       label: Yayin mevushal before vs. after prohibition
+  testedConcept: מבושל before touch vs. after prohibition
 - id: 43
   category: Wine Processing & Products
   type: single
@@ -954,6 +996,7 @@
     - review: 8
       start: 128
       label: Non-Jew-owned mevushal wine
+  testedConcept: Non-Jew-owned kosher mevushal wine
 - id: 44
   category: Wine Processing & Products
   type: single
@@ -981,6 +1024,7 @@
     - review: 9
       start: 56
       label: Frozen or congealed wine
+  testedConcept: Changed wine identity vs. distinct wine component
 - id: 45
   category: Wine Processing & Products
   type: single
@@ -1006,6 +1050,7 @@
     - review: 10
       start: 11
       label: Bitul quantities and second fill
+  testedConcept: Sherry-cask quantity/bitul
 - id: 46
   category: Wine Processing & Products
   type: single
@@ -1030,6 +1075,7 @@
     - review: 10
       start: 65
       label: "Flavor: Rav Moshe and Mishnah Halachos"
+  testedConcept: Sherry-cask flavor reasoning
 - id: 47
   category: Wine Processing & Products
   type: multi
@@ -1059,6 +1105,7 @@
     - review: 10
       start: 136
       label: אין מבטלין איסור לכתחילה
+  testedConcept: Sherry color; אין מבטלין איסור לכתחילה
 - id: 48
   category: Wine Processing & Products
   type: truefalse
@@ -1078,6 +1125,7 @@
     - review: 10
       start: 230
       label: המשכה
+  testedConcept: Before המשכה
 - id: 49
   category: Wine Processing & Products
   type: single
@@ -1099,6 +1147,7 @@
     - review: 10
       start: 267
       label: Brandy, grappa and cognac
+  testedConcept: Brandy and grappa
 - id: 50
   category: Social Drinking
   type: single
@@ -1126,6 +1175,7 @@
     - review: 11
       start: 103
       label: Rama on ordinary beverages
+  testedConcept: Beer and the non-Jewish-establishment decree
 - id: 51
   category: Social Drinking
   type: single
@@ -1151,6 +1201,7 @@
     - review: 11
       start: 119
       label: Business drinks and איבה
+  testedConcept: Business drink in a non-Jewish bar
 - id: 52
   category: Wine Contact & Touch
   type: single
@@ -1184,6 +1235,7 @@
     - review: 12
       start: 25
       label: Nonreligious Jews
+  testedConcept: Muslim, Shabbat desecrator, hostile violator, benefit
 - id: 53
   category: Wine Contact & Touch
   type: single
@@ -1205,6 +1257,7 @@
     - review: 13
       start: 0
       label: Four conditions for full prohibition
+  testedConcept: Four conditions for full touch prohibition
 - id: 54
   category: Wine Contact & Touch
   type: single
@@ -1235,6 +1288,7 @@
     - review: 14
       start: 87
       label: Pouring as shaking
+  testedConcept: Pouring vs. shaking an open bottle
 - id: 55
   category: Wine Contact & Touch
   type: multi
@@ -1268,6 +1322,7 @@
     - review: 14
       start: 186
       label: Clinking and accidental contact
+  testedConcept: Practical wine-contact cases
 - id: 56
   category: Wine Contact & Touch
   type: single
@@ -1294,6 +1349,7 @@
     - review: 15
       start: 213
       label: נצוק with mevushal wine
+  testedConcept: נצוק; great loss; מבושל
 - id: 57
   category: Unattended Wine
   type: single
@@ -1319,6 +1375,7 @@
     - review: 15
       start: 260
       label: "Unattended wine: timing and who is present"
+  testedConcept: "Unattended wine: idolater, Muslim, fixed schedule"
 - id: 58
   category: Unattended Wine
   type: single
@@ -1353,3 +1410,4 @@
     - review: 16
       start: 196
       label: יוצא ונכנס and monitoring
+  testedConcept: יוצא ונכנס; open vs. closed; protective measures

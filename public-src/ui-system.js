@@ -528,9 +528,9 @@
     syncFromSelect();
   }
 
-  function installSettingsRavPicker() {
-    const select = el('settingsChaburaSelect');
-    const location = el('settingsChaburaLocation');
+  function installRavPicker(selectId, locationId, { settings = false } = {}) {
+    const select = el(selectId);
+    const location = el(locationId);
     if (!select || !location || select.dataset.ravPicker === 'true') return;
     select.dataset.ravPicker = 'true';
     select.classList.add('ui-rav-native-select');
@@ -547,15 +547,16 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>`;
     select.insertAdjacentElement('afterend', trigger);
 
+    const titleId = `${selectId}PickerTitle`;
     const picker = document.createElement('dialog');
     picker.className = 'ui-rav-picker-dialog';
-    picker.setAttribute('aria-labelledby', 'uiRavPickerTitle');
+    picker.setAttribute('aria-labelledby', titleId);
     picker.innerHTML = `
       <div class="ui-rav-picker-shell">
         <div class="ui-rav-picker-head">
           <div>
             <span class="eyebrow">Chabura</span>
-            <h2 id="uiRavPickerTitle">Find your Rav</h2>
+            <h2 id="${titleId}">Find your Rav</h2>
             <p class="ui-rav-picker-region"></p>
           </div>
           <button class="close-btn ui-rav-picker-close" type="button" aria-label="Close Rav picker">×</button>
@@ -592,6 +593,16 @@
       trigger.setAttribute('aria-label', selected ? `Change Rav. Current selection: ${selected}` : 'Find your Rav');
     };
 
+    const syncVisualViewport = () => {
+      const viewport = window.visualViewport;
+      const height = Math.max(260, Math.floor((viewport?.height || window.innerHeight) - 12));
+      const top = Math.max(6, Math.floor((viewport?.offsetTop || 0) + 6));
+      picker.style.setProperty('--rav-picker-visible-height', `${height}px`);
+      picker.style.setProperty('--rav-picker-visible-top', `${top}px`);
+      const keyboardOpen = !!viewport && window.innerHeight - viewport.height > 140;
+      picker.classList.toggle('keyboard-visible', keyboardOpen);
+    };
+
     const render = () => {
       const query = input.value.trim();
       const needle = query.toLocaleLowerCase();
@@ -621,8 +632,10 @@
           select.value = value;
           select.dispatchEvent(new Event('change', { bubbles:true }));
           syncTrigger();
-          const status = el('chaburaSettingsStatus');
-          if (status) status.textContent = `Selected: ${value}. Tap Save chabura to keep this change.`;
+          if (settings) {
+            const status = el('chaburaSettingsStatus');
+            if (status) status.textContent = `Selected: ${value}. Tap Save chabura to keep this change.`;
+          }
           picker.close();
           window.setTimeout(() => trigger.focus({ preventScroll:true }), 0);
         });
@@ -632,16 +645,25 @@
 
     const openPicker = () => {
       if (!location.value) {
-        const status = el('chaburaSettingsStatus');
-        if (status) status.textContent = 'Choose a region first, then find your Rav.';
+        if (settings) {
+          const status = el('chaburaSettingsStatus');
+          if (status) status.textContent = 'Choose a region first, then find your Rav.';
+        }
         location.focus({ preventScroll:true });
         return;
       }
       regionText.textContent = String(location.options[location.selectedIndex]?.textContent || location.value);
       input.value = '';
       render();
+      syncVisualViewport();
       if (!picker.open) picker.showModal();
-      window.setTimeout(() => input.focus({ preventScroll:true }), 0);
+
+      const mobileOrTouch = window.matchMedia?.('(pointer: coarse)').matches || window.innerWidth <= 620;
+      window.setTimeout(() => {
+        syncVisualViewport();
+        if (mobileOrTouch) close.focus({ preventScroll:true });
+        else input.focus({ preventScroll:true });
+      }, 0);
     };
 
     trigger.addEventListener('click', openPicker);
@@ -649,11 +671,16 @@
     picker.addEventListener('click', event => {
       if (event.target === picker) picker.close();
     });
+    picker.addEventListener('close', () => {
+      picker.classList.remove('keyboard-visible');
+      input.value = '';
+    });
     clear.addEventListener('click', () => {
       input.value = '';
       render();
       input.focus({ preventScroll:true });
     });
+    input.addEventListener('focus', syncVisualViewport);
     input.addEventListener('input', render);
     input.addEventListener('keydown', event => {
       if (event.key === 'Escape') {
@@ -667,6 +694,8 @@
     new MutationObserver(() => window.setTimeout(syncTrigger, 0))
       .observe(select, { childList:true, subtree:true });
 
+    window.visualViewport?.addEventListener('resize', syncVisualViewport);
+    window.visualViewport?.addEventListener('scroll', syncVisualViewport);
     syncTrigger();
   }
 
@@ -709,8 +738,8 @@
   }
 
   function installChaburaUi() {
-    installSettingsRavPicker();
-    installSearchableRavSelect('chaburaDialogSelect', 'chaburaDialogLocation', 'Find your Rav');
+    installRavPicker('settingsChaburaSelect', 'settingsChaburaLocation', { settings:true });
+    installRavPicker('chaburaDialogSelect', 'chaburaDialogLocation');
     ensureAboutChaburaCard();
     syncAboutChabura();
     void applyNetworkRegionSuggestion();

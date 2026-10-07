@@ -349,6 +349,7 @@
   font-weight: 750;
 }
 .ui-rav-picker-results {
+  flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -425,13 +426,37 @@
 
 @media (max-width: 620px) {
   .ui-rav-picker-dialog {
+    position: fixed;
+    inset: auto 0 auto 0;
+    top: var(--rav-picker-visible-top, 6px);
     width: calc(100% - 12px);
-    max-height: calc(100dvh - 12px);
+    height: var(--rav-picker-visible-height, calc(100dvh - 12px));
+    max-height: var(--rav-picker-visible-height, calc(100dvh - 12px));
+    margin: 0 auto;
     border-radius: 18px;
   }
   .ui-rav-picker-shell {
-    max-height: calc(100dvh - 12px);
+    height: 100%;
+    max-height: none;
     padding: 16px;
+  }
+  .ui-rav-picker-dialog.keyboard-visible .ui-rav-picker-help {
+    display: none;
+  }
+  .ui-rav-picker-dialog.keyboard-visible .ui-rav-picker-head .eyebrow {
+    display: none;
+  }
+  .ui-rav-picker-dialog.keyboard-visible .ui-rav-picker-head h2 {
+    margin-top: 0;
+    font-size: 1.05rem;
+  }
+  .ui-rav-picker-dialog.keyboard-visible .ui-rav-picker-region {
+    margin-top: 2px;
+    font-size: .7rem;
+  }
+  .ui-rav-picker-dialog.keyboard-visible .ui-rav-picker-meta {
+    margin-top: 5px;
+    margin-bottom: 3px;
   }
   .ui-rav-picker-option {
     min-height: 52px;

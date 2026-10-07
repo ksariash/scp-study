@@ -1,0 +1,93 @@
+scope: green highlights from Nat_Bar_Nat_and_Stam_Yeinam_highlighted(1).pdf
+essays:
+- essayId: fish-meat-bitul
+  concisePages:
+  - 6
+  - 7
+  coveredRoots:
+  - fmb-magen-avraham
+  - fmb-divrei-malkiel
+  - fmb-issur-veheter
+  - fmb-maharil
+  - fmb-shulchan-aruch
+  - fmb-pischei-teshuva
+  - fmb-rav-wosner
+  - fmb-chayei-halevi
+  blueNames:
+  - Magen Avraham
+  - Divrei Malkiel
+  - Issur V’Heter
+  - Maharil
+  - Pischei Teshuva
+  - Rama
+  - Rav Wosner
+  - Chayei Halevi
+- essayId: dish-transfer
+  concisePages:
+  - 9
+  - 10
+  coveredRoots:
+  - dt-rama
+  - dt-taz
+  - dt-shach-pmg
+  - dt-shach-distinction
+  - dt-shach-psak
+  - dt-chochmas-adam
+  blueNames:
+  - Shach
+  - Rama
+  - Chochmas Adam
+  note: Pri Megadim and Taz are also explicitly named in green source text even where not blue-highlighted.
+- essayId: stam-benefit
+  concisePages:
+  - 16
+  - 18
+  coveredRoots:
+  - sb-yayin-nesech
+  - sb-stam-yeinam
+  - sb-rashi-geonim
+  - sb-rosh
+  - sb-rambam
+  - sb-shulchan-aruch
+  - sb-rama
+  blueNames:
+  - Rashi
+  - Geonim
+  - Rosh
+  - Rambam
+  - Rama
+- essayId: sherry-casks
+  concisePages:
+  - 25
+  - 26
+  coveredRoots:
+  - sc-shach
+  - sc-sa-taz
+  - sc-rav-moshe-flavor
+  - sc-mishnah-halachos
+  - sc-minchas-yitzchak
+  - sc-majority-non-jews
+  - sc-rav-moshe-bitul
+  blueNames:
+  - Shach
+  - Taz
+  - Rav Moshe
+  - Mishnah Halachos
+  - Minchas Yitzchak
+  - Rama
+- essayId: wine-touch-criteria
+  concisePages:
+  - 33
+  coveredRoots:
+  - wtc-first
+  - wtc-second
+  - wtc-third
+  - wtc-fourth
+  requiredSet:
+  - Intent to touch the wine
+  - Knowledge that the liquid is wine
+  - Touching for the sake of the wine rather than while distracted
+  - Shaking the wine
+  blueNames: []
+  note: Interchangeable roots intentionally make the four-item set unordered; every required response is single-use.
+status: drafted-and-schema-validated

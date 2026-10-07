@@ -1,0 +1,35 @@
+sourceSet: summer-2026-production-cutover
+assessmentScope:
+  highlightedConcise:
+    file: Nat_Bar_Nat_and_Stam_Yeinam_highlighted(1).pdf
+    pages: 44
+    sha256: a091b1b3e7391c88b7e35c7f8c6a295abe2f3ddb6c61ce6b80eef322ce9bbc6f
+    annotations:
+      yellowMultipleChoice: 711
+      greenEssay: 198
+      blueNames: 90
+  plainConcise:
+    file: SCP summary Nat bar Nat and Stam Yeinam - תשפו(1).pdf
+    pages: 44
+    sha256: 5177f6a7f7d1f0de79c1bd2fc288ec8061bbbfdbd6b73685341a51153cdebb32
+    textEquivalentToHighlightedCopy: true
+  fullNotes:
+    sourceFile: Notes Summer 26 changes marked.docx
+    sourceSha256: 19fd8d037b6a3f1eae357f77d3c30340979301ba1b20fa62b8e76c61daf77b97
+    convertedPdf: SCP-Study-Full-Course-Notes.pdf
+    convertedPdfPages: 112
+    convertedPdfSha256: c45abe30d8ed57c39c9c05958786ce0cfb82a4b04ce3e8bcba6288cb68f06513
+verification:
+  conciseUnderlyingText:
+    pagesEqual: 44
+    pagesTotal: 44
+  fullNotesPdf:
+    openable: true
+    encrypted: false
+    likelyScanned: false
+    visualContactSheetReview: passed
+notes:
+  - Yellow annotations define multiple-choice scope.
+  - Green annotations define essay scope.
+  - Blue names inside scoped highlights must be explicitly tested.
+  - Plain concise and converted full-notes PDFs are the learner-facing documents.

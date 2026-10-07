@@ -311,11 +311,16 @@ function runtimePackage(pkg) {
       roots: normalized.roots.map(({ reviewClips, provenance: rootProvenance, ...root }) => ({ ...root })),
       responses: normalized.responses.map(({ provenance: responseProvenance, ...response }) => ({ ...response })),
     };
-    const legacyFacts = normalized.legacy ? facts.map(({ authority, position, reviewClips, ...fact }) => ({
-      ...fact,
-      tokens: [[`${fact.id}a`, authority], [`${fact.id}b`, position]],
-    })) : [];
-    return { ...essay, pairings: runtimePairings, facts: legacyFacts, distractors: [] };
+    const responseById = new Map(runtimePairings.responses.map((response) => [String(response.id), response]));
+    const compatibilityFacts = runtimePairings.roots.map((root) => ({
+      id: root.id,
+      label: root.context || root.label || '',
+      tokens: [
+        [`${root.id}a`, root.label || ''],
+        [`${root.id}b`, (root.accepts || []).map((responseId) => responseById.get(String(responseId))?.text).filter(Boolean).join(' / ')],
+      ],
+    }));
+    return { ...essay, pairings: runtimePairings, facts: compatibilityFacts, distractors: [] };
   });
   const runtimeGlossary = glossary.map(({ categories, ...term }) => term);
   const reviews = audioReviews.reviews.map(({ file, transcript, _transcript, ...review }) => ({

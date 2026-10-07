@@ -545,33 +545,24 @@ function drawEssayBlock(doc, essay, index, y) {
 }
 
 function renderEssays(doc, essays) {
-  const groups=[[0,1],[2,3,4],[5,6,7],[8,9,10],[11,12,13]];
-  const pageFooter=(page)=>'SCP Study | '+page;
-  for(let gi=0;gi<groups.length;gi++){
-    if(gi>0)doc.addPage({size:'LETTER',margin:0});
+  for (let index = 0; index < essays.length; index++) {
+    if (index > 0) doc.addPage({ size:'LETTER', margin:0 });
     let y;
-    if(gi===0){
-      const x=49,width=514;
+    if (index === 0) {
+      const x = 49;
+      const width = 514;
       drawEssayParagraph(doc,'SCP Study - Essay Questions & Sample Answers',x,50.0,width,22,true,'#16376e',26.4);
       doc.font('DejaVu').fontSize(10).fillColor('#5f6f86').text('Review sheet for the essay portion of the course exam',x,108.0,{lineBreak:false});
       doc.moveTo(49,151.8).lineTo(563,151.8).strokeColor('#d9e4f4').lineWidth(1.5).stroke();
       doc.roundedRect(49,165.8,514,46.5,5).fillAndStroke('#f5f8fd','#d9e4f4');
       drawEssayParagraph(doc,
-        'These sample answers summarize the course material used by Essay Practice. The goal is to recall the named authorities, their held positions, and the important qualifications quickly and accurately.',
+        'These sample answers summarize the course material used by Essay Practice. The goal is to recall the required relationships, lists, named positions, and qualifications quickly and accurately.',
         60.7,176.5,490,9.3,false,'#4b5d75',13.7);
-      y=229.5;
-    }else{
-      y=59.6;
+      y = 229.5;
+    } else {
+      y = 59.6;
     }
-    for(let k=0;k<groups[gi].length;k++){
-      const idx=groups[gi][k];
-      const bottom=drawEssayBlock(doc,essays[idx],idx,y);
-      if(k<groups[gi].length-1){
-        const sep=bottom+13.2;
-        doc.moveTo(49,sep).lineTo(563,sep).strokeColor('#dde6f2').lineWidth(1).stroke();
-        y=sep+28.8;
-      }
-    }
+    drawEssayBlock(doc, essays[index], index, y);
   }
 }
 

@@ -1,0 +1,432 @@
+schemaVersion: 1
+status: drafting
+source: Nat_Bar_Nat_and_Stam_Yeinam_highlighted(1).pdf
+rules:
+  questionCount: 58
+  yellowDefinesMultipleChoiceScope: true
+  blueNameMustBeExplicitlyTested: true
+  greenOnlyMaterialExcludedFromMultipleChoice: true
+questions:
+- id: 1
+  concisePages: [1]
+  category: נ״ט בר נ״ט
+  testedPoints:
+  - נ״ט בר נ״ט is a basar-b’chalav leniency and does not neutralize inherently forbidden taste.
+  blueNames: []
+- id: 2
+  concisePages: [2]
+  category: נ״ט בר נ״ט
+  testedPoints:
+  - Dairy already added to parve food cooked in a ben-yomo fleishig pot is permitted after removal from the pot.
+  - S”A permits adding dairy to already-cooked parve food from a ben-yomo fleishig pot; Rama forbids adding it le’chatchilla but permits after it was added.
+  blueNames: [Rama]
+- id: 3
+  concisePages: [2]
+  category: נ״ט בר נ״ט
+  testedPoints:
+  - Shach forbids deliberately cooking parve in a ben-yomo opposite-type vessel with intent to add the other type.
+  - Rav Ovadya permits deliberate creation in the S”A track.
+  blueNames: [Shach, Rav Ovadya]
+- id: 4
+  concisePages: [2]
+  category: נ״ט בר נ״ט
+  testedPoints:
+  - Rama permits adding the opposite type to parve food already cooked in an eino-ben-yomo vessel.
+  - Gra permits deliberately cooking parve in an eino-ben-yomo opposite-type vessel for later combination.
+  - Chochmas Adam forbids deliberate creation but allows reliance on Gra when no other pot is available.
+  - Rav Elyashiv follows Chochmas Adam.
+  blueNames: [Rama, Chochmas Adam, Rav Elyashiv]
+- id: 5
+  concisePages: [2, 4]
+  category: נ״ט בר נ״ט
+  testedPoints:
+  - Rama permits parve food cooked in a ben-yomo fleishig pot to be placed on a dairy plate.
+  - Two separate parve foods carrying weakened meat and dairy tastes may be eaten together.
+  blueNames: [Rama]
+- id: 6
+  concisePages: [4]
+  category: נ״ט בר נ״ט
+  testedPoints:
+  - In food-to-food-to-vessel transfer, Pri Megadim requires the first transfer to enter a vessel.
+  - Pnei Aryeh applies נ״ט בר נ״ט even when the first transfers are between foods.
+  - Chavos Daas requires at least one transfer through a vessel.
+  blueNames: [Pnei Aryeh, Chavos Daas]
+- id: 7
+  concisePages: [4]
+  category: נ״ט בר נ״ט
+  testedPoints:
+  - Rama treats davar charif cooked in an eino-ben-yomo opposite-type vessel more strictly because sharpness revives absorbed pagum flavor.
+  - S”A says a sharp food can draw taste from a ben-yomo knife without heat up to כדי נטילה; cooking affects the whole sharp food.
+  blueNames: [Rama]
+- id: 8
+  concisePages: [5]
+  category: נ״ט בר נ״ט
+  testedPoints:
+  - Chavos Daas says נ״ט בר נ״ט does not apply while the source and recipient remain connected during cooking.
+  - Beit Ephraim applies נ״ט בר נ״ט during cooking.
+  - Ashkenazim follow Chavos Daas le’chatchilla but may rely on Beit Ephraim after accidental mixing.
+  - Rav Ovadya follows Beit Ephraim le’chatchilla.
+  blueNames: [Chavos Daas, Beit Ephraim, Rav Ovadya]
+- id: 9
+  concisePages: [5]
+  category: נ״ט בר נ״ט
+  testedPoints:
+  - To heat challah on a fleishig pot and later eat it with dairy, wrap the bottom of the challah with foil.
+  - Ashkenazim should have separate sous-vide equipment for meat and dairy.
+  - Minchas Chen allows an Ashkenazi to rely on Beit Ephraim after the food was already cooked in significant-loss or comparable need.
+  blueNames: [Minchas Chen]
+- id: 10
+  concisePages: [6]
+  category: נ״ט בר נ״ט
+  testedPoints:
+  - Both Ashkenazim and Sephardim prohibit buying canned corn or green beans without a hechsher in the shared-pasteurization scenario.
+  blueNames: []
+- id: 11
+  concisePages: [4]
+  category: נ״ט בר נ״ט
+  testedPoints:
+  - Food cooked in a ben-yomo fleishig vessel may intentionally be served on dairy dishes.
+  - A hot clean opposite-type plate/pot raises a separate dispute from an ordinary clean plate.
+  blueNames: [Rama]
+- id: 12
+  concisePages: [8]
+  category: Fish & Meat
+  testedPoints:
+  - S”A requires washing hands and mouth between fish and meat.
+  - Rama’s minhag does not require washing hands/mouth but recommends eating and drinking between them.
+  - Chazon Ish, Steipler, and Rav Shach washed hands and drank between fish and meat.
+  blueNames: [Rama]
+- id: 13
+  concisePages: [8]
+  category: Fish & Meat
+  testedPoints:
+  - Lema’ase most permit fish and meat on the same table.
+  - Do not eat them together and change utensils between them when residue may remain; a certainly clean utensil may be reused.
+  blueNames: []
+- id: 14
+  concisePages: [10]
+  category: Dishes, Sinks & Dishwashers
+  testedPoints:
+  - S”A permits simultaneous clean ben-yomo meat/dairy vessels in hot water as נ״ט בר נ״ט.
+  - Rama forbids because of direct contact or because strong flavors meet before weakening.
+  blueNames: [Rama]
+- id: 15
+  concisePages: [10]
+  category: Dishes, Sinks & Dishwashers
+  testedPoints:
+  - Rama permits clean opposite-type vessels in hot water when one is eino-ben-yomo.
+  - Sequential washing of clean ben-yomo opposite-type vessels is permitted.
+  - Dirty opposite-type dishes washed together in a kli sheini are permitted.
+  blueNames: [Rama]
+- id: 16
+  concisePages: [10]
+  category: Dishes, Sinks & Dishwashers
+  testedPoints:
+  - Rama permits hot irui kli rishon over dirty meat/dairy dishes.
+  - Shach forbids if even one dish is dirty, with the taught sha’as-hadechak qualification when only one is dirty.
+  blueNames: [Shach, Rama]
+- id: 17
+  concisePages: [10]
+  category: Dishes, Sinks & Dishwashers
+  testedPoints:
+  - S”A permits an opposite ben-yomo ladle in parve soup as נ״ט בר נ״ט.
+  - Rama forbids soup, pot, and ladle only when both pot and ladle are ben-yomo; if either is eino-ben-yomo everything is permitted.
+  blueNames: [Rama]
+- id: 18
+  concisePages: [11]
+  category: Dishes, Sinks & Dishwashers
+  testedPoints:
+  - After removing an opposite-type utensil from a sink, avoid rinsing it with hot water because residue plus irui kli rishon can forbid it.
+  blueNames: []
+- id: 19
+  concisePages: [12]
+  category: Dishes, Sinks & Dishwashers
+  testedPoints:
+  - Rama permits a dairy utensil found in a fleishig drawer based on a safek-sfeika; contemporary practice remains lenient even if it was washed with fleishig dishes.
+  blueNames: [Rama]
+- id: 20
+  concisePages: [12]
+  category: Dishes, Sinks & Dishwashers
+  testedPoints:
+  - Accidental dirty meat/dairy washing has multiple leniency factors: temperature, possible irui kli sheini, Rama on irui, soap as pogem.
+  - Rav Moshe says opening cold water together with hot can make faucet output a kli sheini.
+  blueNames: [Rav Moshe]
+- id: 21
+  concisePages: [14]
+  category: Dishes, Sinks & Dishwashers
+  testedPoints:
+  - Avnei Yashfeh treats the dishwasher as a kli rishon and forbids meat then dairy and certainly together.
+  - Rav Moshe permits sequential meat/dairy use with separate racks and treats spray as irui kli rishon.
+  - Rav Moshe’s נ״ט בר נ״ט leniency does not extend to non-kosher/Pesach use.
+  blueNames: [Avnei Yashfeh, Rav Moshe]
+- id: 22
+  concisePages: [14]
+  category: Dishes, Sinks & Dishwashers
+  testedPoints:
+  - Agurah B’Ohalecha says today even Rav Moshe would not allow sequential meat/dairy use because accumulated filter particles are actual food.
+  - Rav Shmuel Tuvia Stern allows sequential use without changing racks, relying on irui status and detergent.
+  blueNames: [Rav Moshe, Rav Shmuel Tuvia Stern]
+- id: 23
+  concisePages: [14]
+  category: Dishes, Sinks & Dishwashers
+  testedPoints:
+  - Rav Ovadya permits simultaneous meat/dairy dishwasher use based on cold initial rinse and soap in the hot phase, though best not to do so.
+  - Yalkut Yosef permits sequential use when residue is small/pagum and distinguishes large food pieces.
+  blueNames: [Rav Ovadya Yosef]
+- id: 24
+  concisePages: [14, 15]
+  category: Dishes, Sinks & Dishwashers
+  testedPoints:
+  - Practical Ashkenazi and Sephardi dishwasher conclusions.
+  - Accidental opposite-type fork can be permitted through combined doubts; many recommend kashering the fork, while the other dishes remain permitted.
+  - Parve dishes require a clean parve-only cycle and should not be washed with dirty meat/dairy dishes.
+  blueNames: []
+- id: 25
+  concisePages: [15]
+  category: Dishes, Sinks & Dishwashers
+  testedPoints:
+  - Rabbi Fishbane’s taught Starbucks restrictions and the preferred certainty of espresso, americano, or tea without hot milk.
+  - Dunkin Donuts is preferred because of kosher-conscious sourcing and its soap/water dishwasher setup below yad soledes bo; latte is allowed in the taught framework.
+  blueNames: [Rabbi Fishbane]
+- id: 26
+  concisePages: [15]
+  category: Open Foods & Storage
+  testedPoints:
+  - Do not place open milk near open sugar intended for meat.
+  - If accidentally left together and no milk/sugar clumps are visible, the sugar may be used with meat.
+  blueNames: []
+- id: 27
+  concisePages: [18]
+  category: סתם יינם — Benefit & Commerce
+  testedPoints:
+  - One should not create a business based on stam yeinam.
+  - A bottle received bedieved should not be deliberately stored to appreciate in value, even at a non-Jew’s home.
+  blueNames: []
+- id: 28
+  concisePages: [18]
+  category: סתם יינם — Benefit & Commerce
+  testedPoints:
+  - S”A forbids paid services involving stam yeinam and even the payment.
+  - Shach says le’chatchilla not to provide services or rent equipment for stam yeinam; Rama’s leniency is bedieved.
+  blueNames: [Shach]
+- id: 29
+  concisePages: [18, 19]
+  category: סתם יינם — Benefit & Commerce
+  testedPoints:
+  - Money in a Jewish-owned store selling stam yeinam may include forbidden proceeds; use credit card or exact change when practical.
+  - A non-Jewish-owned store’s proceeds do not have that prohibition.
+  blueNames: [Shach]
+- id: 30
+  concisePages: [19]
+  category: סתם יינם — Medical Use
+  testedPoints:
+  - Shach permits drinking stam yeinam for pikuach nefesh.
+  - For yayin nesech, if a non-Jewish doctor specifically attributes the cure to yayin nesech it may not be used; if the doctor simply says to use wine it may be used to save life.
+  blueNames: [Shach]
+- id: 31
+  concisePages: [20]
+  category: סתם יינם — Medical Use
+  testedPoints:
+  - S”A forbids a non-dangerously ill person from bathing/anointing with stam yeinam.
+  - Rama permits bathing/anointing for illness but not drinking.
+  - Gra explains the Rama through the rabbinic status of סיכה כשתיה.
+  blueNames: [Rama]
+- id: 32
+  concisePages: [21]
+  category: Wine Processing & Products
+  testedPoints:
+  - For non-Jew-owned kosher mevushal wine, R’ Akiva Eiger forbids drinking because intermarriage concern remains.
+  - Rosh/Ritva and Ramban permit because mevushal wine was outside the original gezeirah.
+  blueNames: [R’ Akiva Eiger, Rosh, Ritva, Ramban]
+- id: 33
+  concisePages: [22]
+  category: Wine Processing & Products
+  testedPoints:
+  - Jewish-owned mevushal wine touched by a non-Jew remains permitted.
+  - Cooking wine after it has already become forbidden does not remove the prohibition.
+  blueNames: []
+- id: 34
+  concisePages: [22]
+  category: Wine Processing & Products
+  testedPoints:
+  - Rosh explains mevushal was uncommon and outside the original decree.
+  - Ramban says mevushal is not considered wine in this gezeirah.
+  - R’ Akiva Eiger distinguishes the libation concern from the intermarriage concern.
+  blueNames: []
+- id: 35
+  concisePages: [23]
+  category: Wine Processing & Products
+  testedPoints:
+  - Based on Rama, frozen wine touched while frozen is permitted; after melting it returns to ordinary wine status for future contact.
+  blueNames: [Rama]
+- id: 36
+  concisePages: [23]
+  category: Wine Processing & Products
+  testedPoints:
+  - Wine mixed into salad dressing is permitted when no longer distinct/noticeable; visible separated wine requires its flavor to have changed.
+  - Marinade is permitted when other ingredients alter the wine flavor; wine touched before mixing is forbidden.
+  - Cake batter whose wine flavor was changed/mixed is permitted after non-Jewish contact and certainly after baking.
+  blueNames: []
+- id: 37
+  concisePages: [27]
+  category: Wine Processing & Products
+  testedPoints:
+  - Rama treats distilled wine vapor/brandy as having the status of the wine.
+  - Pischei Teshuva treats grappa from grape skins/seeds as prohibited once wine separates from them.
+  - Kosher brandy/grappa require reliable supervision.
+  blueNames: [Rama, Pischei Teshuva]
+- id: 38
+  concisePages: [27]
+  category: Wine Processing & Products
+  testedPoints:
+  - S”A forbids non-Jewish grape stomping even before hamshacha out of concern for later hand contact.
+  - Rama limits the concern to a press where juice can drain; a no-drain pressing bucket is permitted.
+  blueNames: [Rama]
+- id: 39
+  concisePages: [27, 28]
+  category: Social Drinking
+  testedPoints:
+  - Ramban describes non-Jewish beer restrictions as an Amoraic practice rather than a formal beis-din gezeirah.
+  - Drinking at a non-Jew’s establishment is tied to established/permanent social drinking; a once-off or temporary-home/inn case is treated more leniently.
+  blueNames: [Ramban]
+- id: 40
+  concisePages: [28]
+  category: Social Drinking
+  testedPoints:
+  - Shach permits drinking when refusal would cause animosity.
+  - Rama limits the beer prohibition to date beer and permits barley beer/other beverages in the taught position.
+  blueNames: [Shach, Rama]
+- id: 41
+  concisePages: [29]
+  category: Social Drinking
+  testedPoints:
+  - S”A/Gra provide the stricter baseline for a business drink at a non-Jewish bar.
+  - Rav Moshe, based on Shach, gives room for leniency where refusal may cause animosity.
+  - A Jewish-owned bar is outside the non-Jewish-venue prohibition in the taught application.
+  blueNames: [Gra, Rav Moshe, Shach]
+- id: 42
+  concisePages: [30]
+  category: Social Drinking
+  testedPoints:
+  - Shav V’Rafah permits a ger to attend/eat at his non-Jewish father’s milestone birthday based on acceptance of the prohibition, animosity, and honoring parents.
+  - A regular family meal may not have the status of a party.
+  blueNames: [Shav V’Rafah]
+- id: 43
+  concisePages: [32]
+  category: Wine Contact & Touch
+  testedPoints:
+  - Rav Ovadya permits wine touched by traditional Jews; Binyan Tzion says there is room to rely; Rav Sternbuch prohibits.
+  - Wine touched by an antireligious/public Shabbat violator is forbidden to drink but permitted for benefit.
+  blueNames: [Rav Ovadya, Rav Sternbuch]
+- id: 44
+  concisePages: [33]
+  category: Wine Contact & Touch
+  testedPoints:
+  - A closed bottle does not become forbidden if shaken by a non-Jew.
+  - Moving a closed bottle, even if wine shakes during movement, does not create the libation-style prohibition.
+  blueNames: []
+- id: 45
+  concisePages: [34]
+  category: Wine Contact & Touch
+  testedPoints:
+  - S”A prohibits open-bottle shaking without lifting.
+  - Rama permits the case when there is financial loss.
+  blueNames: [Rama]
+- id: 46
+  concisePages: [35]
+  category: Wine Contact & Touch
+  testedPoints:
+  - Rav Ovadya forbids drinking wine deliberately poured by a Muslim but permits benefit.
+  - The same taught result applies to deliberate pouring by a public Shabbat violator.
+  - Nitzok does not extend a drinking-only prohibition back to the remaining bottle.
+  blueNames: [Rav Ovadya]
+- id: 47
+  concisePages: [36]
+  category: Wine Contact & Touch
+  testedPoints:
+  - Rav Elyashiv treats wine left in a bottle poured by a public Shabbat violator as forbidden.
+  - One rationale is that pouring can itself function as an act of shaking.
+  blueNames: [Rav Elyashiv]
+- id: 48
+  concisePages: [36, 37]
+  category: Wine Contact & Touch
+  testedPoints:
+  - Ordinary clinking does not create prohibited shaking because the motion is slight, usually comes from the Jew’s own hand, and joint force provides an additional leniency.
+  blueNames: []
+- id: 49
+  concisePages: [37]
+  category: Wine Contact & Touch
+  testedPoints:
+  - Accidental waiter contact by a Muslim is permitted for drinking under S”A, Rama, and Shach in the taught case.
+  - With a Christian waiter, S”A forbids drinking but permits benefit, while Rama permits drinking.
+  blueNames: [Rama, Shach]
+- id: 50
+  concisePages: [39]
+  category: נצוק
+  testedPoints:
+  - In great loss S”A allows reliance on Rabbeinu Tam that נצוק is not a connection.
+  - Rama defines wine in a cup/bottle as small loss and wine in a barrel as great loss for this rule.
+  blueNames: [Rama]
+- id: 51
+  concisePages: [40]
+  category: נצוק
+  testedPoints:
+  - Pouring mevushal wine into prohibited non-mevushal wine can prohibit the source through נצוק.
+  - The bottom wine is treated as mixed with the top; shishim in the source against the prohibited residue can matter.
+  blueNames: []
+- id: 52
+  concisePages: [41]
+  category: Unattended Wine
+  testedPoints:
+  - S”A treats wine left even briefly with an idolater/Christian as prohibited in the baseline case.
+  - With a Muslim, the result depends on whether enough unattended time elapsed to swap the wine; the drinking/benefit distinction remains.
+  - Concern that the non-Jew will drink/touch for personal benefit can prohibit immediately.
+  blueNames: []
+- id: 53
+  concisePages: [41, 42]
+  category: Unattended Wine
+  testedPoints:
+  - A screw-on safety ring that visibly breaks on opening protects unattended wine because tampering is identifiable.
+  - The taught sources treat certain tamper-evident caps as equivalent to the required seals.
+  blueNames: []
+- id: 54
+  concisePages: [42]
+  category: Unattended Wine
+  testedPoints:
+  - A very tightly inserted cork plus tape that must rip when opened constitutes a double seal.
+  - An unusual closure can supply one seal; adding a second tamper-evident barrier supplies the second.
+  blueNames: []
+- id: 55
+  concisePages: [42, 43]
+  category: Unattended Wine
+  testedPoints:
+  - Avnei Derech rejects a three-digit lock as insufficient effort but accepts a four-digit lock as a second seal.
+  - Gam Ani Odecha permits even a three-digit lock as the second seal.
+  - Rav Shlezinger and Rav Neventzal treat the lock itself more strongly, as taught.
+  blueNames: []
+- id: 56
+  concisePages: [43]
+  category: Unattended Wine
+  testedPoints:
+  - Beit Yosef says employee fear of being caught/losing the job can be a bedieved tziruf against suspected wine contact.
+  - Rama allows one seal bedieved; Aruch HaShulchan is more lenient today because non-Jews are not passionate about libation.
+  blueNames: [Beit Yosef]
+- id: 57
+  concisePages: [43, 44]
+  category: Unattended Wine
+  testedPoints:
+  - יוצא ונכנס requires unpredictability of return, an unlocked/observable entry, inability to see the Jew approaching, and no known extended absence.
+  - S”A permits under the conditions; Rama says not to rely on an extended absence le’chatchilla.
+  - Actual return within the opening/resealing time permits even le’chatchilla.
+  blueNames: [Rama]
+- id: 58
+  concisePages: [44]
+  category: Unattended Wine
+  testedPoints:
+  - Cameras plus a warning can function as יוצא ונכנס according to the taught approach, though camera limitations are noted.
+  - If the four conditions fail, open wine is immediately prohibited while a closed barrel depends on enough time to open/reseal.
+  - Hidden wine unknown to the non-Jew can remain permitted.
+  blueNames: []
+coverage:
+  yellowPagesRepresented: [1, 2, 4, 5, 6, 8, 10, 11, 12, 14, 15, 18, 19, 20, 21, 22, 23, 27, 28, 29, 30, 32, 33, 34, 35, 36, 37, 39, 40, 41, 42, 43, 44]
+  questionIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58]

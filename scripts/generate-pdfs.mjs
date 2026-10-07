@@ -1,10 +1,10 @@
 import PDFDocument from 'pdfkit';
 import { createWriteStream } from 'node:fs';
-import { mkdir, readFile, readdir } from 'node:fs/promises';
+import { mkdir, readdir } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { runInNewContext } from 'node:vm';
+import { loadZmanAuthoring } from './zman-authoring.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = dirname(HERE);
@@ -245,43 +245,12 @@ async function writePdf(path, title, fonts, options, render, footer) {
   });
 }
 
-async function readCohortRegistry() {
-  const source = await readFile(join(ROOT, 'public-src', 'cohorts', 'index.js'), 'utf8');
-  const sandbox = { window: {} };
-  runInNewContext(source, sandbox);
-  const registry = sandbox.window.SCP_COHORT_REGISTRY;
-  if (!registry || !Array.isArray(registry.cohorts) || !registry.cohorts.length) throw new Error('Could not load cohort registry');
-  return registry;
-}
-
-async function resolveCohortId(cohortId = null) {
-  if (cohortId) return String(cohortId);
-  const registry = await readCohortRegistry();
-  return String(registry.defaultCohortId || registry.cohorts[0].id);
-}
-
-async function readQuestions(cohortId) {
-  const source = await readFile(join(ROOT, 'public-src', 'cohorts', cohortId, 'questions.js'), 'utf8');
-  const sandbox = {};
-  runInNewContext(source + '\n;globalThis.__QUESTIONS = QUESTIONS;', sandbox);
-  if (!Array.isArray(sandbox.__QUESTIONS)) throw new Error('Could not load question bank for cohort ' + cohortId);
-  return sandbox.__QUESTIONS;
-}
-
-async function readEssays(cohortId) {
-  const source = await readFile(join(ROOT, 'public-src', 'cohorts', cohortId, 'essay-practice.js'), 'utf8');
-  const sandbox = { window: {} };
-  runInNewContext(source, sandbox);
-  if (!Array.isArray(sandbox.window.ESSAY_PRACTICE_DATA)) throw new Error('Could not load essay bank for cohort ' + cohortId);
-  return sandbox.window.ESSAY_PRACTICE_DATA;
-}
-
-async function readGlossary(cohortId) {
-  const source = await readFile(join(ROOT, 'public-src', 'cohorts', cohortId, 'glossary.js'), 'utf8');
-  const sandbox = {};
-  runInNewContext(source + '\n;globalThis.__GLOSSARY_TERMS = GLOSSARY_TERMS;', sandbox);
-  if (!Array.isArray(sandbox.__GLOSSARY_TERMS)) throw new Error('Could not load glossary for cohort ' + cohortId);
-  return sandbox.__GLOSSARY_TERMS;
+async function readZmanContent(zmanId = null) {
+  const { registry, packages } = await loadZmanAuthoring();
+  const resolvedId = String(zmanId || registry.defaultZmanId);
+  const pkg = packages.find((candidate) => candidate.id === resolvedId);
+  if (!pkg) throw new Error('Could not load Zman ' + resolvedId);
+  return { id: resolvedId, questions: pkg.questions, essays: pkg.essays, glossary: pkg.glossary };
 }
 
 function addPageFooter(doc, family = 'noto', prefix = 'Page ') {
@@ -655,9 +624,9 @@ function renderGlossary(doc, glossary) {
   });
 }
 
-export async function generatePdfs(outputDir = join(ROOT, 'public'), cohortId = null) {
-  const resolvedCohortId = await resolveCohortId(cohortId);
-  const [fonts, questions, essays, glossary] = await Promise.all([loadFonts(), readQuestions(resolvedCohortId), readEssays(resolvedCohortId), readGlossary(resolvedCohortId)]);
+export async function generatePdfs(outputDir = join(ROOT, 'public'), zmanId = null) {
+  const [fonts, content] = await Promise.all([loadFonts(), readZmanContent(zmanId)]);
+  const { questions, essays, glossary } = content;
   const documents = join(outputDir, 'documents');
   await mkdir(documents, { recursive:true });
 

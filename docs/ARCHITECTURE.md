@@ -6,7 +6,9 @@ One reusable PWA supports multiple independent Semichas Chaver **Zmanim** withou
 
 ## Registry and package loading
 
-`public-src/cohorts/index.js` is the Zman registry. The `cohorts/` directory and a few `SCP_COHORT_*` aliases remain only for compatibility with already-shipped clients and build code.
+`zmanim/registry.yaml` is the authoring registry. Each Zman's editable source lives under `zmanim/<zman-id>/`. `build.mjs` validates that source and compiles it to the browser runtime under `public/cohorts/`.
+
+The generated `cohorts/` runtime directory, `cohort.js` filename, and `SCP_COHORT_*` aliases remain only for compatibility with already-shipped clients. They are not source and must not be edited by hand.
 
 The canonical browser registry is `window.SCP_ZMAN_REGISTRY`. Each entry has:
 - stable `id`;
@@ -22,15 +24,15 @@ The active selection is stored at `scpStudy.activeZman.v1`. `cohort-loader.js` i
 Current Zman:
 - ID / analytics key: `2026-summer`
 - display: `Nat Bar Nat & Stam Ye'enam - Summer 26`
-- package: `public-src/cohorts/2026-summer/`
+- authoring package: `zmanim/2026-summer/`
 
 ## Zman package contract
 
-Each package contains `cohort.js`, `questions.js`, `essay-practice.js`, `audio-reviews.js`, `glossary.js`, `chaburos.js`, and `course-notes.js`.
+Each authoring package contains `zman.yaml`, `questions.yaml`, `essays.yaml`, `audio-reviews.yaml`, WebVTT transcripts, `glossary.yaml`, and `chaburos.yaml`. Note locations, review-audio clips, category links, and similar relationships live beside the content they describe.
 
-`cohort.js` exports `SCP_ZMAN_CONFIG` and a temporary `SCP_COHORT_CONFIG` alias. New logic should consume the Zman form.
+The compiler derives browser-only plumbing: analytics keys, content counts, document/audio namespaces, essay token IDs, category maps, audio maps, course-note lookup maps, and the compatibility registry/config aliases. The generated `cohort.js` exports `SCP_ZMAN_CONFIG` and a temporary `SCP_COHORT_CONFIG` alias; new logic should consume the Zman form.
 
-`build.mjs` validates identities, counts, IDs, answers, note coverage, audio references, namespace rules, and glossary IDs. Registered Zmanim must pass validation before deployment.
+`npm run zman:validate` validates the human-readable package. `build.mjs` then validates the compiled runtime identities, counts, IDs, answers, note coverage, audio references, namespace rules, and glossary IDs. Registered Zmanim must pass both layers before deployment.
 
 ## Browser data isolation
 

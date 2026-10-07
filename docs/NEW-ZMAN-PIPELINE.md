@@ -40,13 +40,17 @@ For every MC question and essay, record concise-review and full-notes locations.
 
 ## 7. Create the Zman package
 
-Create `public-src/cohorts/<zman-id>/`. The directory name `cohorts` is a legacy filesystem convention; new product/documentation language is Zman.
+Create the readable skeleton with:
 
-Give the Zman a permanent ID and analytics key. Do not recycle an earlier ID for revised material.
+`npm run zman:new -- <zman-id> <YYYY-MM-DD> "<display name>"`
+
+Add the ID to `zmanim/registry.yaml`, then author the YAML and WebVTT files under `zmanim/<zman-id>/`. Follow `zmanim/README.md`; never create or hand-edit a `public/cohorts/` package.
+
+Give the Zman a permanent ID. The build derives its analytics key from that ID so the two cannot drift. Do not recycle an earlier ID for revised material.
 
 Set `contentVersion` deliberately. Increment it whenever a configured PDF is replaced at the same path so explicit offline document caches receive the new bytes. Legacy Zman IDs belong in `legacyIds` for migration; do not duplicate the canonical package under a legacy directory.
 
-Populate all required package files described in `docs/ARCHITECTURE.md`.
+Run `npm run zman:validate` while authoring. Counts, runtime paths, audio maps, course-note maps, category maps, and compatibility JavaScript are derived; do not maintain them separately.
 
 ## 8. Analytics readiness gate
 
@@ -60,7 +64,7 @@ Before the Zman becomes selectable:
 
 ## 9. Build and final QA
 
-Run the Study build validator and smoke-test:
+Run `npm run zman:validate` and `npm run build`, then smoke-test:
 - Zman selection/switching;
 - M/C, Essay, and Test;
 - categories/glossary;

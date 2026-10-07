@@ -328,6 +328,26 @@
     if (!dialog.open) dialog.showModal();
   }
 
+  function renderRavName(target, value, query = '') {
+    const name = String(value || '');
+    const needle = String(query || '').trim();
+    target.textContent = '';
+    if (!needle) {
+      target.textContent = name;
+      return;
+    }
+    const matchAt = name.toLocaleLowerCase().indexOf(needle.toLocaleLowerCase());
+    if (matchAt < 0) {
+      target.textContent = name;
+      return;
+    }
+    target.append(document.createTextNode(name.slice(0, matchAt)));
+    const mark = document.createElement('mark');
+    mark.className = 'ui-rav-match';
+    mark.textContent = name.slice(matchAt, matchAt + needle.length);
+    target.append(mark, document.createTextNode(name.slice(matchAt + needle.length)));
+  }
+
   function installSearchableRavSelect(selectId, locationId, label) {
     const select = el(selectId);
     const location = el(locationId);
@@ -343,7 +363,7 @@
     input.id = `${selectId}Search`;
     input.autocomplete = 'off';
     input.spellcheck = false;
-    input.placeholder = 'Type to find a Rav…';
+    input.placeholder = 'Search by first or last name…';
     input.setAttribute('role', 'combobox');
     input.setAttribute('aria-autocomplete', 'list');
     input.setAttribute('aria-expanded', 'false');
@@ -373,6 +393,7 @@
 
     let visible = [];
     let activeIndex = -1;
+    let listTouchActive = false;
     const syncClearButton = () => {
       clearButton.hidden = !input.value.trim();
     };
@@ -416,7 +437,7 @@
           button.className = 'ui-rav-option';
           button.id = `${selectId}Option${index}`;
           button.setAttribute('role', 'option');
-          button.textContent = value;
+          renderRavName(button, value, query);
           button.addEventListener('pointerdown', event => {
             if (event.pointerType === 'mouse') event.preventDefault();
           });
@@ -487,7 +508,15 @@
         close();
       }
     });
-    input.addEventListener('blur', () => window.setTimeout(close, 120));
+    list.addEventListener('pointerdown', event => {
+      if (event.pointerType === 'touch') listTouchActive = true;
+    });
+    const releaseListTouch = () => window.setTimeout(() => { listTouchActive = false; }, 0);
+    list.addEventListener('pointerup', releaseListTouch);
+    list.addEventListener('pointercancel', releaseListTouch);
+    input.addEventListener('blur', () => window.setTimeout(() => {
+      if (!listTouchActive && !wrapper.contains(document.activeElement)) close();
+    }, 160));
     select.addEventListener('change', () => syncFromSelect());
     location?.addEventListener('change', () => window.setTimeout(() => {
       syncFromSelect();
@@ -497,6 +526,148 @@
       .observe(select, { childList:true, subtree:true });
 
     syncFromSelect();
+  }
+
+  function installSettingsRavPicker() {
+    const select = el('settingsChaburaSelect');
+    const location = el('settingsChaburaLocation');
+    if (!select || !location || select.dataset.ravPicker === 'true') return;
+    select.dataset.ravPicker = 'true';
+    select.classList.add('ui-rav-native-select');
+
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'ui-rav-picker-trigger';
+    trigger.setAttribute('aria-haspopup', 'dialog');
+    trigger.innerHTML = `
+      <span class="ui-rav-picker-trigger-copy">
+        <small>Rav</small>
+        <strong class="ui-rav-picker-trigger-value">Find your Rav</strong>
+      </span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>`;
+    select.insertAdjacentElement('afterend', trigger);
+
+    const picker = document.createElement('dialog');
+    picker.className = 'ui-rav-picker-dialog';
+    picker.setAttribute('aria-labelledby', 'uiRavPickerTitle');
+    picker.innerHTML = `
+      <div class="ui-rav-picker-shell">
+        <div class="ui-rav-picker-head">
+          <div>
+            <span class="eyebrow">Chabura</span>
+            <h2 id="uiRavPickerTitle">Find your Rav</h2>
+            <p class="ui-rav-picker-region"></p>
+          </div>
+          <button class="close-btn ui-rav-picker-close" type="button" aria-label="Close Rav picker">×</button>
+        </div>
+        <p class="ui-rav-picker-help">Search by first name, last name, or any part of the name.</p>
+        <div class="ui-rav-picker-search-wrap">
+          <input class="ui-rav-picker-search" type="search" inputmode="search" autocomplete="off" spellcheck="false"
+            placeholder="Search by first or last name…" aria-label="Search Rav by first or last name" />
+          <button class="ui-rav-picker-clear" type="button" aria-label="Clear Rav search" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+          <span class="ui-rav-picker-search-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+          </span>
+        </div>
+        <div class="ui-rav-picker-meta" aria-live="polite"></div>
+        <div class="ui-rav-picker-results" role="listbox" aria-label="Matching Ravs"></div>
+      </div>`;
+    document.body.append(picker);
+
+    const valueText = trigger.querySelector('.ui-rav-picker-trigger-value');
+    const regionText = picker.querySelector('.ui-rav-picker-region');
+    const input = picker.querySelector('.ui-rav-picker-search');
+    const clear = picker.querySelector('.ui-rav-picker-clear');
+    const results = picker.querySelector('.ui-rav-picker-results');
+    const meta = picker.querySelector('.ui-rav-picker-meta');
+    const close = picker.querySelector('.ui-rav-picker-close');
+
+    const values = () => [...select.options].map(option => String(option.value || '')).filter(Boolean);
+    const syncTrigger = () => {
+      const selected = String(select.value || '');
+      if (valueText) valueText.textContent = selected || 'Find your Rav';
+      trigger.classList.toggle('has-value', !!selected);
+      trigger.setAttribute('aria-label', selected ? `Change Rav. Current selection: ${selected}` : 'Find your Rav');
+    };
+
+    const render = () => {
+      const query = input.value.trim();
+      const needle = query.toLocaleLowerCase();
+      const matches = values().filter(value => !needle || value.toLocaleLowerCase().includes(needle));
+      results.textContent = '';
+      clear.hidden = !query;
+      meta.textContent = query
+        ? `${matches.length} match${matches.length === 1 ? '' : 'es'}`
+        : `${matches.length} Rav${matches.length === 1 ? '' : 's'} in this region`;
+
+      if (!matches.length) {
+        const empty = document.createElement('div');
+        empty.className = 'ui-rav-picker-empty';
+        empty.textContent = 'No matching Rav. Try the last name or another part of the name.';
+        results.append(empty);
+        return;
+      }
+
+      for (const value of matches) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'ui-rav-picker-option';
+        button.setAttribute('role', 'option');
+        button.setAttribute('aria-selected', String(select.value || '') === value ? 'true' : 'false');
+        renderRavName(button, value, query);
+        button.addEventListener('click', () => {
+          select.value = value;
+          select.dispatchEvent(new Event('change', { bubbles:true }));
+          syncTrigger();
+          const status = el('chaburaSettingsStatus');
+          if (status) status.textContent = `Selected: ${value}. Tap Save chabura to keep this change.`;
+          picker.close();
+          window.setTimeout(() => trigger.focus({ preventScroll:true }), 0);
+        });
+        results.append(button);
+      }
+    };
+
+    const openPicker = () => {
+      if (!location.value) {
+        const status = el('chaburaSettingsStatus');
+        if (status) status.textContent = 'Choose a region first, then find your Rav.';
+        location.focus({ preventScroll:true });
+        return;
+      }
+      regionText.textContent = String(location.options[location.selectedIndex]?.textContent || location.value);
+      input.value = '';
+      render();
+      if (!picker.open) picker.showModal();
+      window.setTimeout(() => input.focus({ preventScroll:true }), 0);
+    };
+
+    trigger.addEventListener('click', openPicker);
+    close.addEventListener('click', () => picker.close());
+    picker.addEventListener('click', event => {
+      if (event.target === picker) picker.close();
+    });
+    clear.addEventListener('click', () => {
+      input.value = '';
+      render();
+      input.focus({ preventScroll:true });
+    });
+    input.addEventListener('input', render);
+    input.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        picker.close();
+      }
+    });
+
+    select.addEventListener('change', syncTrigger);
+    location.addEventListener('change', () => window.setTimeout(syncTrigger, 0));
+    new MutationObserver(() => window.setTimeout(syncTrigger, 0))
+      .observe(select, { childList:true, subtree:true });
+
+    syncTrigger();
   }
 
   function installAboutLogo() {
@@ -538,7 +709,7 @@
   }
 
   function installChaburaUi() {
-    installSearchableRavSelect('settingsChaburaSelect', 'settingsChaburaLocation', 'Find your Rav');
+    installSettingsRavPicker();
     installSearchableRavSelect('chaburaDialogSelect', 'chaburaDialogLocation', 'Find your Rav');
     ensureAboutChaburaCard();
     syncAboutChabura();
